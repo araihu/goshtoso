@@ -18,17 +18,19 @@ func TestModulesSidebarAndAppShellsShowcase(t *testing.T) {
 	_, err := page.Goto(baseURL+"/modules/app-shells", playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateDomcontentloaded})
 	require.NoError(t, err)
 	require.NoError(t, page.Locator(`a[href="/modules/app-shells"][aria-current="page"]`).WaitFor())
-	require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{Name: "This documentation site uses Component Docs Shell"}).WaitFor())
+	require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{Name: "Goshtoso App Shells"}).WaitFor())
+	require.NoError(t, page.Locator(`[data-sidebar-section="Frames"]`).WaitFor())
+	require.NoError(t, page.Locator(`[data-sidebar-section="Shells"]`).WaitFor())
+	require.NoError(t, page.Locator(`a[href="/modules/app-shells/frames/component-page"]`).WaitFor())
+	require.NoError(t, page.Locator(`a[href="/modules/app-shells/shells/component-docs-shell"]`).WaitFor())
 	require.Equal(t, 1, mustCount(t, page.Locator(`a[href="/modules/charts"]`)))
 	require.Equal(t, 0, mustCount(t, page.Locator(`a[href="/components/app-shell"]`)))
 
-	moduleHeading := page.GetByRole("heading", playwright.PageGetByRoleOptions{Name: "Modules", Exact: playwright.Bool(true)})
-	examplesHeading := page.GetByRole("heading", playwright.PageGetByRoleOptions{Name: "Examples", Exact: playwright.Bool(true)})
-	moduleBox, err := moduleHeading.BoundingBox()
+	framesBox, err := page.Locator(`[data-sidebar-section="Frames"]`).BoundingBox()
 	require.NoError(t, err)
-	examplesBox, err := examplesHeading.BoundingBox()
+	shellsBox, err := page.Locator(`[data-sidebar-section="Shells"]`).BoundingBox()
 	require.NoError(t, err)
-	require.Less(t, moduleBox.Y, examplesBox.Y, "Modules must precede Examples in the sidebar")
+	require.Less(t, framesBox.Y, shellsBox.Y, "Frames must precede Shells in the sidebar")
 }
 
 func TestChartsModuleLazyLoadsStaticInteractiveAndThreeD(t *testing.T) {

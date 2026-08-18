@@ -15,10 +15,11 @@ func TestIconpackDocsRenderConsumerSurface(t *testing.T) {
 	html := output.String()
 
 	for _, expected := range []string{
-		"Consumer-local icon packs",
-		"Generate from an Assets release",
-		"Bring any pack with .iconpack.yaml",
-		"Bootstrap fixture",
+		"Icon Packs",
+		"Generate from a verified Assets release",
+		"Define sources with .iconpack.yaml",
+		"A generated pack keeps the same icon contract",
+		"Bootstrap Icons source",
 		".iconpack.lock.yaml",
 		"source-manifest",
 		"brand-developer-icons-tRPC",
@@ -31,6 +32,18 @@ func TestIconpackDocsRenderConsumerSurface(t *testing.T) {
 	} {
 		require.Contains(t, html, expected)
 	}
+}
+
+func TestIconCatalogDocsDefinitionIsRoutable(t *testing.T) {
+	for _, definition := range Definitions {
+		if definition.Key == "docs/icon-catalog" {
+			require.Equal(t, "Icon Catalog", definition.Title)
+			require.Equal(t, "icon-catalog", definition.Active)
+			require.NotNil(t, definition.Content)
+			return
+		}
+	}
+	t.Fatalf("docs/icon-catalog definition is missing from Definitions: %s", strings.Join(definitionKeys(), ", "))
 }
 
 func TestIconpackDocsDefinitionIsRoutable(t *testing.T) {

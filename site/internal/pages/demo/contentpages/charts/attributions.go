@@ -11,7 +11,7 @@ type attribution struct {
 
 var foundationAttributions = []attribution{
 	{Name: "Goshtoso", Version: "v0.2.0", ProjectURL: "https://github.com/araihu/goshtoso", License: "MIT", LicenseURL: "https://github.com/araihu/goshtoso/blob/v0.2.0/LICENSE", UsedFor: "UI components, SplitButton controls, theme tokens, shared browser assets, and the consumer-local iconpack."},
-	{Name: "Goshtoso App Shells", Version: "v0.1.1-0.20260730145401-4f5174eeb1a9", ProjectURL: "https://github.com/araihu/goshtoso-app-shells", License: "MIT", LicenseURL: "https://github.com/araihu/goshtoso-app-shells/blob/4f5174eeb1a97eb390b59a1070e3ced2bd5eb493/LICENSE", UsedFor: "Documentation shell, categorized navigation, page structure, responsive layout, and build metadata."},
+	{Name: "Goshtoso App Shells", Version: "v0.1.6", ProjectURL: "https://github.com/araihu/goshtoso-app-shells", License: "MIT", LicenseURL: "https://github.com/araihu/goshtoso-app-shells/blob/v0.1.6/LICENSE", UsedFor: "Component reference frames, documentation shell, console shell, landing shell, responsive layout, and build metadata."},
 	{Name: "templ", Version: "v0.3.1020", ProjectURL: "https://github.com/a-h/templ", License: "MIT", LicenseURL: "https://github.com/a-h/templ/blob/v0.3.1020/LICENSE", UsedFor: "Type-safe Go templates for chart components and documentation pages."},
 	{Name: "Heroicons", Version: "v2.2.0", ProjectURL: "https://github.com/tailwindlabs/heroicons", License: "MIT", LicenseURL: "https://github.com/tailwindlabs/heroicons/blob/v2.2.0/LICENSE", UsedFor: "Goshtoso iconpack sprite for chart expand, fullscreen, copy, and download controls."},
 }

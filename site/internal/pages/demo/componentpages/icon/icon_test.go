@@ -21,19 +21,22 @@ func renderIconShowcase(t *testing.T) string {
 	return rendered.String()
 }
 
-func TestIconShowcaseRendersEveryGlyphInResponsiveGrid(t *testing.T) {
-	html := renderIconShowcase(t)
+func renderIconCatalog(t *testing.T) string {
+	t.Helper()
+	var rendered strings.Builder
+	require.NoError(t, IconCatalogContent().Render(context.Background(), &rendered))
+	return rendered.String()
+}
+
+func TestIconCatalogRendersEveryGlyphInResponsiveGrid(t *testing.T) {
+	html := renderIconCatalog(t)
 
 	require.Len(t, heroicons.Glyphs, 67)
 	require.Equal(t, len(heroicons.Glyphs), strings.Count(html, `data-icon-card=`))
 	require.Contains(t, html, `grid-cols-1 sm:grid-cols-3 xl:grid-cols-6`)
 	require.Contains(t, html, "Paste into a")
 	require.Contains(t, html, "https://github.com/tailwindlabs/heroicons/blob/master/LICENSE")
-	require.Contains(t, html, "IconBrandDeveloperIconsTRPC")
-	require.Contains(t, html, "components/icon")
-	require.Contains(t, html, "/assets/icons/appicons/sprite.svg")
-	require.Contains(t, html, "Bootstrap Icons, generated locally")
-	require.Contains(t, html, "/assets/icons/bootstrapicons/sprite.svg")
+	require.Contains(t, html, ">Icon Catalog</h1>")
 }
 
 func TestIconShowcaseUsesCanonicalCatalogHeading(t *testing.T) {
@@ -44,6 +47,17 @@ func TestIconShowcaseUsesCanonicalCatalogHeading(t *testing.T) {
 	require.Truef(t, strings.Contains(html, `>`+entry.Title+`</h1>`), "icon H1 must match catalog title %q", entry.Title)
 }
 
+func TestIconPageKeepsPackAndCatalogContentSeparate(t *testing.T) {
+	html := renderIconShowcase(t)
+
+	require.Contains(t, html, "The core rendering contract")
+	require.Contains(t, html, "Render a meaningful icon")
+	require.NotContains(t, html, "Icon Packs")
+	require.NotContains(t, html, "Bootstrap Icons")
+	require.NotContains(t, html, "Arai Hu Assets")
+	require.NotContains(t, html, "data-icon-card=")
+}
+
 func TestIconShowcaseParticipatesInComponentDocsContract(t *testing.T) {
 	html := renderIconShowcase(t)
 
@@ -51,6 +65,7 @@ func TestIconShowcaseParticipatesInComponentDocsContract(t *testing.T) {
 	require.Equal(t, 1, strings.Count(html, `data-component-description`))
 	require.GreaterOrEqual(t, strings.Count(html, `data-component-preview`), 1)
 	require.GreaterOrEqual(t, strings.Count(html, `data-component-code`), 1)
+	require.Contains(t, html, `<div data-component-code>`)
 }
 
 func TestIconCodeEncoderReflectsMeaningfulSelectedOptions(t *testing.T) {
@@ -159,10 +174,11 @@ func iconRepoRoot(t *testing.T) string {
 }
 
 func TestIconShowcaseUsesModalSemanticsAndAccessibleControls(t *testing.T) {
-	html := renderIconShowcase(t)
+	html := renderIconCatalog(t)
 
 	require.Contains(t, html, `role="dialog"`)
 	require.Contains(t, html, `aria-modal="true"`)
+	require.Contains(t, html, `class="fixed inset-0 z-50`)
 	require.Contains(t, html, "x-trap.inert.noscroll")
 	require.Contains(t, html, "keydown.esc.window")
 	for _, control := range []string{"Size", "Label", "Decorative", "Color", "Paste into a .templ file", "Copy Paste into a .templ file code"} {

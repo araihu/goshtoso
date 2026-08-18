@@ -94,7 +94,7 @@ func chartsShowcaseInteractiveLine() interactive.Instance {
 
 func chartsShowcaseLine() interactive.Instance {
 	points := make([]interactive.Point3D, 0, 25000)
-	for index := 0; index < 25000; index++ {
+	for index := range 25000 {
 		t := float64(index) / 1000
 		radius := 1 + 0.25*math.Cos(75*t)
 		points = append(points, interactive.Point3D{
@@ -111,10 +111,10 @@ func chartsShowcaseLine() interactive.Instance {
 			Name: "line3D", Points: points,
 		}},
 		VisualRange: &interactive.Line3DVisualRange{
-			Min: 0, Max: 30, Calculable: interactive.Bool(false),
+			Min: 0, Max: 30, Calculable: new(false),
 		},
 		Grid: interactive.Line3DGrid{
-			View: &interactive.Line3DView{AutoRotate: interactive.Bool(true)},
+			View: &interactive.Line3DView{AutoRotate: new(true)},
 		},
 		DataSummary: interactive.Line3DDataSummary{
 			Formula:   chartsShowcaseLineFormula,
@@ -123,8 +123,8 @@ func chartsShowcaseLine() interactive.Instance {
 		Width:  "100%",
 		Height: "22rem",
 		Options: interactive.ChartOptions{
-			Animation: interactive.Bool(false),
-			Legend:    &interactive.LegendOptions{Show: interactive.Bool(false)},
+			Animation: new(false),
+			Legend:    &interactive.LegendOptions{Show: new(false)},
 			Controls:  chartcontrol.Options{Mode: chartcontrol.WrapperModeOmitted},
 			Export:    &chartcontrol.ExportOptions{Disabled: true},
 		},

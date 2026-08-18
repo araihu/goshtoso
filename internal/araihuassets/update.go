@@ -16,6 +16,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 
@@ -428,10 +429,8 @@ func validateManifest(manifest Manifest) error {
 				}
 			}
 		} else {
-			for _, role := range roles {
-				if role == "" {
-					return fmt.Errorf("mapping %d canonical selection has an empty role", index)
-				}
+			if slices.Contains(roles, "") {
+				return fmt.Errorf("mapping %d canonical selection has an empty role", index)
 			}
 		}
 	}

@@ -151,6 +151,19 @@ func TestSearch_FuzzyModeFiltersDOMItems(t *testing.T) {
 	}`, nil)
 	require.NoError(t, err)
 	assert.Equal(t, []any{"title", "text"}, ranked)
+
+	contextRanked, err := page.Evaluate(`() => {
+		const root = document.createElement("div");
+		root.dataset.searchMatchMode = "substring";
+		const modal = window.goshtosoSearchModal(root);
+		const values = [
+			{ id: "fallback", title: "Line chart", text: "chart component", priority: 0 },
+			{ id: "active", title: "Line chart", text: "chart component", priority: 1 },
+		];
+		return modal.rankedMatches(values, (value) => modal.resultScore("line", value.title, value.text, value.priority)).map((value) => value.id);
+	}`, nil)
+	require.NoError(t, err)
+	assert.Equal(t, []any{"active", "fallback"}, contextRanked, "active family should win equal-quality matches")
 }
 
 func TestSidebarSearch_UsesKbdAndNavigates(t *testing.T) {

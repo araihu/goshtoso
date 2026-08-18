@@ -62,7 +62,6 @@ import (
 	startpages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/start"
 	chatpage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/chat"
 	expensepage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/expense"
-	indexpage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/index"
 	logspage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/logs"
 	profilepage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/profile"
 	tickerpage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/ticker"
@@ -139,7 +138,6 @@ func mustDefault() *Registry {
 		tickerpage.Definition,
 		todopage.Definition,
 		wizardpage.Definition,
-		indexpage.Definition,
 	)
 
 	pages, err := New(definitions, catalog.ComponentPages())

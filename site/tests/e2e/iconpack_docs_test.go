@@ -28,28 +28,22 @@ func TestIconpackDocumentationPageBrowserProof(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, page.Locator("#iconpack-fragment").WaitFor())
 	require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{
-		Name:  "Consumer-local icon packs",
+		Name:  "Icon Packs",
 		Exact: playwright.Bool(true),
 	}).WaitFor())
 
 	body, err := page.Locator("body").TextContent()
 	require.NoError(t, err)
 	for _, expected := range []string{
-		"Generate from an Assets release",
-		"Serve the sprite and render through core",
+		"Generate from a verified Assets release",
+		"Serve the sprite and render the generated symbols",
+		"A generated pack keeps the same icon contract",
 		"IconBrandDeveloperIconsTRPC",
 		"appicons.Lookup",
 		"manifest.json",
 	} {
 		assert.Contains(t, body, expected)
 	}
-
-	link := page.GetByRole("link", playwright.PageGetByRoleOptions{
-		Name:  "Open the Icon component workbench",
-		Exact: playwright.Bool(true),
-	})
-	require.NoError(t, link.WaitFor())
-	assert.Equal(t, "/components/icon", mustAttribute(t, link, "href"))
 
 	sidebarLinks := page.Locator("a[href='/docs/iconpack']")
 	count, err := sidebarLinks.Count()

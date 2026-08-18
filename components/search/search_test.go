@@ -25,7 +25,7 @@ func TestSearchRendersTriggerKbdAndResults(t *testing.T) {
 		Label:       "Search components",
 		Placeholder: "Search docs...",
 		Items: []Item{
-			{ID: "result-kbd", Title: "KBD", Description: "Keyboard hints", Href: "/components/kbd", Kind: "Component", Method: "GET", Path: "/components/kbd", Section: "Display", Keywords: []string{"shortcut"}},
+			{ID: "result-kbd", Title: "KBD", Description: "Keyboard hints", Href: "/components/kbd", Kind: "Component", Method: "GET", Path: "/components/kbd", Section: "Display", Priority: 2, Keywords: []string{"shortcut"}},
 		},
 	}).Render(context.Background(), &buf)
 	if err != nil {
@@ -51,6 +51,7 @@ func TestSearchRendersTriggerKbdAndResults(t *testing.T) {
 		`data-search-kind="Component"`,
 		`data-search-method="GET"`,
 		`data-search-path="/components/kbd"`,
+		`data-search-priority="2"`,
 		`data-search-text="KBD Keyboard hints Component GET /components/kbd Display shortcut"`,
 		`rounded-radius w-fit font-medium text-[10px] px-1.5 py-0.5 border border-primary bg-primary text-on-primary`,
 		`shrink-0 font-mono font-bold uppercase`,
@@ -137,6 +138,7 @@ func TestSearchModalCanLoadResultsFromItemsURL(t *testing.T) {
 		`x-bind:data-search-kind="item.kind || null"`,
 		`x-bind:data-search-method="item.method || null"`,
 		`x-bind:data-search-path="item.path || null"`,
+		`x-bind:data-search-priority="item.priority || 0"`,
 		`<template x-if="item.method">`,
 		`x-text="item.method"`,
 		`<template x-if="item.kind || item.path">`,
@@ -151,6 +153,7 @@ func TestSearchModalCanLoadResultsFromItemsURL(t *testing.T) {
 		`kind: state.stringValue(raw.kind !== undefined ? raw.kind : raw.Kind)`,
 		`raw.method !== undefined ? raw.method : raw.Method`,
 		`raw.path !== undefined ? raw.path : raw.Path`,
+		`raw.priority !== undefined ? raw.priority : raw.Priority`,
 		`item.method`,
 		`item.path`,
 	} {

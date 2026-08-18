@@ -16,6 +16,8 @@ import (
 	"github.com/araihu/goshtoso-charts/components/line"
 	"github.com/araihu/goshtoso-charts/components/pie"
 	"github.com/araihu/goshtoso/components/head"
+	"github.com/araihu/goshtoso/components/icon"
+	"github.com/araihu/goshtoso/components/icon/heroicons"
 	selectfield "github.com/araihu/goshtoso/components/select"
 )
 
@@ -69,7 +71,7 @@ func themePlaygroundContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mx-auto max-w-6xl space-y-6\" data-theme-playground-parent><header class=\"space-y-3\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Appearance</p><h1 class=\"font-title text-4xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong\">Theme playground</h1><p class=\"max-w-3xl text-lg text-on-surface-muted dark:text-on-surface-dark-muted\">Compare four chart shapes in an isolated preview. Theme changes stay inside the frame, so the documentation shell remains Arai Hû.</p></header><iframe src=\"/modules/charts/docs/theme-playground/frame\" title=\"Theme playground chart preview\" loading=\"eager\" class=\"block w-full rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\" style=\"height: 62rem\" data-theme-playground-frame-host></iframe></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mx-auto max-w-6xl space-y-6\" data-theme-playground-parent><header class=\"space-y-3\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Appearance</p><h1 class=\"font-title text-4xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong\">Theme playground</h1><p class=\"max-w-3xl text-lg text-on-surface-muted dark:text-on-surface-dark-muted\">Compare four chart shapes in an isolated preview. Theme and color mode changes stay inside the frame, so the documentation shell remains Arai Hû.</p></header><iframe src=\"/modules/charts/docs/theme-playground/frame\" title=\"Theme playground chart preview\" loading=\"eager\" class=\"block w-full rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\" style=\"height: 62rem\" data-theme-playground-frame-host></iframe></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -105,7 +107,7 @@ func ThemePlaygroundFrame() templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(themePlaygroundShellData())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 38, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 40, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -118,7 +120,7 @@ func ThemePlaygroundFrame() templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(shellassets.ScriptURL("/componentdocshell/assets/"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 43, Col: 74}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 45, Col: 74}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -143,13 +145,13 @@ func ThemePlaygroundFrame() templ.Component {
 		var templ_7745c5c3_Var6 templ.SafeURL
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinURLErrs(shellassets.AraiHuThemeURL("/componentdocshell/assets/"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 46, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 48, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></head><body class=\"min-h-screen bg-surface p-4 text-on-surface dark:bg-surface-dark dark:text-on-surface-dark sm:p-6\"><main class=\"mx-auto max-w-6xl space-y-5\" data-theme-playground-frame><header class=\"flex flex-wrap items-end justify-between gap-4 rounded-radius border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"space-y-1\"><h1 class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Live theme preview</h1><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">One picker updates static vector and interactive charts together.</p><p class=\"max-w-2xl text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">All 16 built-in Goshtoso themes provide chart tokens. Application CSS can still override them on a chart root.</p></div><div class=\"w-44\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"></head><body class=\"min-h-screen bg-surface p-4 text-on-surface dark:bg-surface-dark dark:text-on-surface-dark sm:p-6\"><main class=\"mx-auto max-w-6xl space-y-5\" data-theme-playground-frame><header class=\"flex flex-wrap items-end justify-between gap-4 rounded-radius border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"space-y-1\"><h1 class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Live theme preview</h1><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Theme and color mode update all four charts together.</p><p class=\"max-w-2xl text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">All 16 built-in Goshtoso themes provide chart tokens. Switch light/dark mode here; application CSS can still override them on a chart root.</p></div><div class=\"flex flex-wrap items-end gap-3\"><div class=\"w-44\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -164,7 +166,23 @@ func ThemePlaygroundFrame() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></header><div class=\"grid grid-cols-2 gap-4\" data-theme-playground-grid>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div class=\"w-40\"><span class=\"mb-1 block text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Color mode</span> <button id=\"theme-playground-color-mode\" type=\"button\" class=\"inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-radius border border-outline bg-surface px-3 text-sm font-semibold text-on-surface transition-colors motion-reduce:transition-none hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark\" aria-label=\"Switch to dark mode\" x-bind:aria-label=\"dark ? 'Switch to light mode' : 'Switch to dark mode'\" x-bind:aria-pressed=\"dark\" x-on:click=\"toggleDark()\"><span x-show=\"!dark\" x-cloak>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidMoon, Decorative: true, RootClass: "size-5"}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</span> <span x-show=\"dark\" x-cloak>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidSun, Decorative: true, RootClass: "size-5"}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</span> <span x-show=\"!dark\" x-cloak>Light</span> <span x-show=\"dark\" x-cloak>Dark</span></button></div></div></header><div class=\"grid grid-cols-2 gap-4\" data-theme-playground-grid>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -184,7 +202,7 @@ func ThemePlaygroundFrame() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></main></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></main></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -213,46 +231,46 @@ func themePlaygroundChartCard(title string, renderer string, chart templ.Compone
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<section class=\"min-w-0 overflow-hidden rounded-radius border border-outline bg-surface-alt p-3 dark:border-outline-dark dark:bg-surface-dark-alt\" data-theme-playground-chart=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section class=\"min-w-0 overflow-hidden rounded-radius border border-outline bg-surface-alt p-3 dark:border-outline-dark dark:bg-surface-dark-alt\" data-theme-playground-chart=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(renderer)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 79, Col: 186}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 104, Col: 186}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\"><div class=\"mb-2 flex flex-wrap items-baseline justify-between gap-2\"><h2 class=\"font-title text-base font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"><div class=\"mb-2 flex flex-wrap items-baseline justify-between gap-2\"><h2 class=\"font-title text-base font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 81, Col: 113}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 106, Col: 113}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</h2><span class=\"text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</h2><span class=\"text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(renderer)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 82, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/theme_playground.templ`, Line: 107, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</span></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</span></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -260,7 +278,7 @@ func themePlaygroundChartCard(title string, renderer string, chart templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

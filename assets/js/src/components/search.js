@@ -96,18 +96,20 @@
 			if (cursor !== needle.length) return -1;
 			return 20 + first + gaps + Math.max(0, haystack.length - needle.length) / 10;
 		},
-		resultScore: function (query, title, text) {
+		resultScore: function (query, title, text, priority) {
 			var term = this.stringValue(query).trim().toLowerCase();
 			title = this.stringValue(title);
 			text = this.stringValue(text);
+			priority = Number(priority) || 0;
+			var contextScore = -priority;
 			if (!term) return null;
-			if (title.toLowerCase().indexOf(term) !== -1) return [0, 0];
-			if (text.toLowerCase().indexOf(term) !== -1) return [1, 0];
+			if (title.toLowerCase().indexOf(term) !== -1) return [0, contextScore, 0];
+			if (text.toLowerCase().indexOf(term) !== -1) return [1, contextScore, 0];
 			if (this.matchMode !== "fuzzy") return null;
 			var titleScore = this.fuzzyScore(term, title);
-			if (titleScore >= 0) return [2, titleScore];
+			if (titleScore >= 0) return [2, contextScore, titleScore];
 			var textScore = this.fuzzyScore(term, text);
-			if (textScore >= 0) return [3, textScore];
+			if (textScore >= 0) return [3, contextScore, textScore];
 			return null;
 		},
 		rankedMatches: function (values, scoreFor) {
@@ -117,8 +119,11 @@
 				if (score !== null) matches.push({ value: value, index: index, score: score });
 			});
 			matches.sort(function (left, right) {
-				if (left.score[0] !== right.score[0]) return left.score[0] - right.score[0];
-				if (left.score[1] !== right.score[1]) return left.score[1] - right.score[1];
+				for (var scoreIndex = 0; scoreIndex < Math.max(left.score.length, right.score.length); scoreIndex++) {
+					var leftScore = left.score[scoreIndex] || 0;
+					var rightScore = right.score[scoreIndex] || 0;
+					if (leftScore !== rightScore) return leftScore - rightScore;
+				}
 				return left.index - right.index;
 			});
 			return matches.map(function (match) { return match.value; });
@@ -189,9 +194,10 @@
               .stringValue(raw.method !== undefined ? raw.method : raw.Method)
               .trim()
               .toUpperCase(),
-            path: state.stringValue(raw.path !== undefined ? raw.path : raw.Path),
-            section: state.stringValue(raw.section !== undefined ? raw.section : raw.Section),
-            keywords: keywords.map(function (keyword) {
+				path: state.stringValue(raw.path !== undefined ? raw.path : raw.Path),
+				section: state.stringValue(raw.section !== undefined ? raw.section : raw.Section),
+				priority: Number(raw.priority !== undefined ? raw.priority : raw.Priority) || 0,
+				keywords: keywords.map(function (keyword) {
               return state.stringValue(keyword);
             }),
             index: index,
@@ -244,8 +250,8 @@
         if (!term) return [];
         if (term === this.cachedDOMTerm) return this.cachedDOMResults;
 		this.cachedDOMTerm = term;
-		this.cachedDOMResults = this.rankedMatches(this.allResults(), function (element) {
-			return this.resultScore(term, element.dataset.searchTitle, element.dataset.searchText);
+			this.cachedDOMResults = this.rankedMatches(this.allResults(), function (element) {
+				return this.resultScore(term, element.dataset.searchTitle, element.dataset.searchText, element.dataset.searchPriority);
 		}.bind(this)).slice(0, this.maxResults);
         return this.cachedDOMResults;
       },
@@ -254,8 +260,8 @@
         if (!term) return [];
         if (term === this.cachedClientTerm) return this.cachedClientResults;
 		this.cachedClientTerm = term;
-		this.cachedClientResults = this.rankedMatches(this.clientItems, function (item) {
-			return this.resultScore(term, item.title, item.searchText);
+			this.cachedClientResults = this.rankedMatches(this.clientItems, function (item) {
+				return this.resultScore(term, item.title, item.searchText, item.priority);
 		}.bind(this)).slice(0, this.maxResults);
         return this.cachedClientResults;
       },

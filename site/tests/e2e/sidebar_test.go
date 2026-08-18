@@ -98,7 +98,7 @@ func TestSidebar_LinksNavigate(t *testing.T) {
 	}
 }
 
-func TestSidebar_ExamplesTopItemNavigatesToOverview(t *testing.T) {
+func TestSidebar_ExamplesTopItemNavigatesToTicker(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -122,15 +122,15 @@ func TestSidebar_ExamplesTopItemNavigatesToOverview(t *testing.T) {
 		Timeout: playwright.Float(3000),
 	}))
 
-	examplesLink := sidebar.Locator("a[href='/examples']")
+	examplesLink := sidebar.Locator("a[href='/examples/ticker']")
 	count, err := examplesLink.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 1, count, "Examples overview should have a single sidebar link")
+	assert.Equal(t, 1, count, "Live Ticker should have a single sidebar link")
 
-	overviewItem := sidebar.Locator("a[href='/examples'][data-sidebar-item='Overview']")
+	overviewItem := sidebar.Locator("a[href='/examples/ticker'][data-sidebar-item='Live Ticker']")
 	count, err = overviewItem.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 1, count, "Examples should expose its overview after Modules")
+	assert.Equal(t, 1, count, "Examples should start with Live Ticker after Modules")
 
 	moduleHeading := sidebar.GetByRole("heading", playwright.LocatorGetByRoleOptions{Name: "Modules", Exact: playwright.Bool(true)})
 	examplesHeading := sidebar.GetByRole("heading", playwright.LocatorGetByRoleOptions{Name: "Examples", Exact: playwright.Bool(true)})
@@ -141,8 +141,8 @@ func TestSidebar_ExamplesTopItemNavigatesToOverview(t *testing.T) {
 	assert.Less(t, moduleBox.Y, examplesBox.Y, "Modules should precede Examples")
 
 	require.NoError(t, examplesLink.Click())
-	require.NoError(t, page.WaitForURL("**/examples"))
-	require.NoError(t, page.Locator("main h1", playwright.PageLocatorOptions{HasText: "Examples"}).WaitFor())
+	require.NoError(t, page.WaitForURL("**/examples/ticker"))
+	require.NoError(t, page.Locator("main h1", playwright.PageLocatorOptions{HasText: "Live Ticker"}).WaitFor())
 }
 
 func TestSidebarComponentDemoVariants(t *testing.T) {

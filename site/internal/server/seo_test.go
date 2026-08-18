@@ -69,9 +69,11 @@ func TestAgentsPageRendersSkillInstallGuidance(t *testing.T) {
 	require.Equal(t, http.StatusOK, rec.Code)
 	body := rec.Body.String()
 	require.Contains(t, body, "<title>Using Goshtoso With AI Agents</title>")
+	require.Contains(t, body, "Install the Skill")
 	require.Contains(t, body, `npx skills add araihu/goshtoso --skill using-goshtoso`)
 	require.Contains(t, body, `npx skills use araihu/goshtoso --skill using-goshtoso`)
-	require.Contains(t, body, "This skill is for consumer agents.")
+	require.NotContains(t, body, "This skill is for consumer agents.")
+	require.NotContains(t, body, "Runtime Contracts the Browser Must Prove")
 	require.Contains(t, body, `<link rel="canonical" href="https://goshtoso.araihu.com/docs/agents">`)
 }
 
@@ -114,5 +116,26 @@ func TestRobotsAndSitemapExposePublicPages(t *testing.T) {
 	require.Contains(t, body, `<loc>https://goshtoso.araihu.com/docs/agents</loc>`)
 	require.Contains(t, body, `<loc>https://goshtoso.araihu.com/docs/application-patterns</loc>`)
 	require.Contains(t, body, `<loc>https://goshtoso.araihu.com/examples/chat</loc>`)
+	require.Contains(t, body, `<loc>https://goshtoso.araihu.com/examples/ticker</loc>`)
+	require.NotContains(t, body, `<loc>https://goshtoso.araihu.com/examples</loc>`)
 	require.NotContains(t, body, `/api/`)
+}
+
+func TestLLMsTxtIsGeneratedFromPublicPages(t *testing.T) {
+	s := &Server{}
+	req := httptest.NewRequest(http.MethodGet, "/llms.txt", nil)
+	rec := httptest.NewRecorder()
+
+	s.handleLLMs(rec, req)
+
+	require.Equal(t, http.StatusOK, rec.Code)
+	require.Equal(t, "text/plain; charset=utf-8", rec.Header().Get("Content-Type"))
+	body := rec.Body.String()
+	require.True(t, strings.HasPrefix(body, "# Goshtoso\n\n> "))
+	require.Contains(t, body, "## Public pages\n")
+	require.Contains(t, body, "[Getting Started with Goshtoso Go UI Components](https://goshtoso.araihu.com/getting-started):")
+	require.Contains(t, body, "[Live Ticker Example - Goshtoso Go UI Components](https://goshtoso.araihu.com/examples/ticker):")
+	require.Contains(t, body, "[Sitemap XML](https://goshtoso.araihu.com/sitemap.xml):")
+	require.Contains(t, body, "[Robots.txt](https://goshtoso.araihu.com/robots.txt):")
+	require.NotContains(t, body, "/api/")
 }

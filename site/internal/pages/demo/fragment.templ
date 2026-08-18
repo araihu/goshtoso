@@ -19,7 +19,6 @@ templ FragmentWithMeta(meta PageMeta, activeComponent string, content templ.Comp
 			Items:         getSidebarTopItems(activeComponent),
 			SectionsTitle: "Components",
 			Sections:      getSidebarSections(activeComponent),
-			SearchSlot:    sidebarSearchSlot(),
 		})
 	</div>
 	@content

@@ -3,7 +3,6 @@ package demo
 import (
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso-app-shells/componentdocshell"
-	searchfield "github.com/araihu/goshtoso/components/search"
 	"github.com/araihu/goshtoso/components/sidebar"
 	sidebaricons "github.com/araihu/goshtoso/site/internal/demoicons/heroicons"
 )
@@ -49,11 +48,10 @@ func chartsDocsNavigation(active string) componentdocshell.Navigation {
 	}
 
 	return componentdocshell.Navigation{
-		Items:             items,
-		SectionsTitle:     "Documentation",
-		Sections:          sections,
-		SearchPlaceholder: "Search charts",
-		SearchSlot:        chartsSidebarSearchSlot(),
+		Items:         items,
+		SectionsTitle: "Documentation",
+		Sections:      sections,
+		DisableSearch: true,
 	}
 }
 
@@ -139,38 +137,6 @@ func chartsSidebarGroups() []chartsSidebarGroup {
 				{ID: "charts-live-availability", Label: "Live availability", Href: "/modules/charts/examples/live-availability", Description: "A complete status snapshot updated over SSE."},
 			},
 		},
-	}
-}
-
-func chartsSearchConfig() searchfield.Config {
-	items := make([]searchfield.Item, 0, 45)
-	for _, link := range chartsSidebarTopLinks() {
-		items = append(items, chartsSearchItem(link))
-	}
-	for _, group := range chartsSidebarGroups() {
-		for _, link := range group.Items {
-			items = append(items, chartsSearchItem(link))
-		}
-	}
-	return searchfield.Config{
-		ID:             "charts-search",
-		Label:          "Search charts",
-		Placeholder:    "Search charts",
-		GlobalShortcut: true,
-		Items:          items,
-		EmptyText:      "No chart docs found.",
-	}
-}
-
-func chartsSearchItem(link chartsSidebarLink) searchfield.Item {
-	return searchfield.Item{
-		ID:          "charts-search-" + link.ID,
-		Title:       link.Label,
-		Description: link.Description,
-		Href:        link.Href,
-		Section:     "Charts",
-		Keywords:    []string{link.ID},
-		Attrs:       navHxAttrs(link.Href, link.Label),
 	}
 }
 

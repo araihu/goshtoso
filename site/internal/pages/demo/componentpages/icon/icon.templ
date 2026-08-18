@@ -9,29 +9,43 @@ import (
 	"github.com/araihu/goshtoso/components/radio"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/textinput"
-	"github.com/araihu/goshtoso/site/internal/demoicons/bootstrapicons"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
-// IconDemoPage renders a working sprite workbench: scan bundled glyphs, then
-// configure one in the same focus-trapped modal used throughout Goshtoso.
+// IconDemoPage renders the core Icon component contract and its accessible
+// usage patterns.
 templ IconDemoPage() {
 	@demo.Layout("Icon", "icon", iconDemoContent())
 }
 
 templ iconDemoContent() {
-	<div id="icon-fragment" x-data="iconCatalog" data-component-page>
+	<div id="icon-fragment" data-component-page>
 		<div class="mb-8 max-w-3xl">
-			<p class="mb-2 text-sm font-medium text-primary dark:text-primary-dark">Sprite icons</p>
+			<p class="mb-2 text-sm font-medium text-primary dark:text-primary-dark">Core component</p>
 			<h1 id="icon" data-toc-heading class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Icon</h1>
 			<p data-component-description class="mt-3 text-lg text-on-surface-muted dark:text-on-surface-dark-muted">
-				Browse bundled, typed symbols. Pick one to tune its exact <code class="font-mono text-sm">icon.Config</code> and copy a paste-ready <code class="font-mono text-sm">.templ</code> example.
+				Render accessible SVG symbols from a sprite. Give meaningful icons a label, mark visual-only icons as decorative, and use the examples below as a starting point for your <code class="font-mono text-sm">.templ</code> code.
 			</p>
 		</div>
 
 		@iconUsageBasics()
-		@iconPackExtension()
-		@externalIconPackPreview()
+		@iconUsageCode()
+	</div>
+}
+
+// IconCatalogContent is the dedicated browser for Goshtoso's bundled symbols.
+// It stays separate from the Icon component page so the component contract and
+// the available glyph inventory can evolve independently.
+templ IconCatalogContent() {
+	<div id="icon-catalog-fragment" x-data="iconCatalog" data-component-page>
+		<div class="mb-8 max-w-3xl">
+			<p class="mb-2 text-sm font-medium text-primary dark:text-primary-dark">Bundled symbols</p>
+			<h1 id="icon-catalog" data-toc-heading class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Icon Catalog</h1>
+			<p data-component-description class="mt-3 text-lg text-on-surface-muted dark:text-on-surface-dark-muted">
+				Browse the bundled Heroicons sprite by Go symbol and SVG symbol. Select a glyph to inspect its size, label, color, and decorative behavior, then copy a ready-to-use <code class="font-mono text-sm">.templ</code> snippet.
+			</p>
+		</div>
+
 		@iconCatalogGrid()
 		@iconPickerModal()
 	</div>
@@ -41,23 +55,23 @@ templ iconUsageBasics() {
 	<section data-component-preview class="mb-10 rounded-radius border border-outline bg-surface-alt/50 p-5 dark:border-outline-dark dark:bg-surface-dark-alt/40" aria-labelledby="icon-basics-title">
 		<div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 			<div>
-				<h2 id="icon-basics-title" data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Accessible defaults, visible behavior</h2>
-				<p class="mt-1 max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted">A label makes an image. An empty label or <code class="font-mono">Decorative: true</code> hides the SVG from assistive technology. Sprite paths inherit <code class="font-mono">currentColor</code>; Goshtoso never forces fill or stroke.</p>
+				<h2 id="icon-basics-title" data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">The core rendering contract</h2>
+				<p class="mt-1 max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Meaningful icons need a non-empty <code class="font-mono">Label</code> and are exposed as images to assistive technology. Set <code class="font-mono">Decorative: true</code> when an icon is visual-only. Sprite symbols inherit <code class="font-mono">currentColor</code>; size and root classes remain consumer-controlled.</p>
 			</div>
-			<span class="shrink-0 rounded-full border border-outline bg-surface px-3 py-1 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-muted">67 bundled glyphs</span>
+			<span class="shrink-0 rounded-full border border-outline bg-surface px-3 py-1 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-muted">SVG sprite</span>
 		</div>
 		<dl class="mt-5 grid divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark md:grid-cols-3 md:divide-x md:divide-y-0">
 			<div data-testid="icon-variant-accessible" class="flex items-center gap-3 py-3 md:pr-4">
 				@icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidCheckCircle, Label: "Approved", RootClass: "text-success"})
-				<div><dt class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Labelled image</dt><dd class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Announced as Approved</dd></div>
+				<div><dt class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Meaningful icon</dt><dd class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Announced as “Approved”</dd></div>
 			</div>
 			<div data-testid="icon-variant-decorative" class="flex items-center gap-3 py-3 md:px-4">
 				@icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidSparkles, Decorative: true, RootClass: "text-primary"})
-				<div><dt class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Decorative accent</dt><dd class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Hidden from assistive tech</dd></div>
+				<div><dt class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Decorative icon</dt><dd class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Removed from the accessibility tree</dd></div>
 			</div>
 			<div data-testid="icon-variant-current-color" class="flex items-center gap-3 py-3 text-secondary md:pl-4 dark:text-secondary-dark">
 				@icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidPaintBrush, Decorative: true})
-				<div><dt class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">currentColor</dt><dd class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Color comes from its parent</dd></div>
+				<div><dt class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Inherited color</dt><dd class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Follows the parent color</dd></div>
 			</div>
 		</dl>
 		<div class="mt-4 flex flex-wrap items-center gap-4 text-primary dark:text-primary-dark" aria-label="Icon size scale">
@@ -71,89 +85,25 @@ templ iconUsageBasics() {
 	</section>
 }
 
-templ externalIconPackPreview() {
-	<section data-component-preview data-testid="bootstrap-iconpack-preview" class="mb-10 rounded-radius border border-outline bg-surface-alt/50 p-5 dark:border-outline-dark dark:bg-surface-dark-alt/40" aria-labelledby="bootstrap-iconpack-title">
-		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-			<div>
-				<p class="text-sm font-medium text-primary dark:text-primary-dark">Non-catalog source proof</p>
-				<h2 id="bootstrap-iconpack-title" data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Bootstrap Icons, generated locally</h2>
-				<p class="mt-1 max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted">This site also owns a tiny generated Bootstrap Icons package. It uses the same <code class="font-mono">components/icon</code> contract, but does not depend on the Arai Hu Assets catalog.</p>
-			</div>
-			<a href="https://icons.getbootstrap.com/" target="_blank" rel="noreferrer" class="text-sm font-medium text-primary underline underline-offset-4 dark:text-primary-dark">Bootstrap Icons</a>
-		</div>
-		<div class="mt-5 flex flex-wrap items-center gap-5" data-testid="bootstrap-iconpack-icons">
-			<div data-testid="bootstrap-icon-labelled" class="flex items-center gap-2 text-primary dark:text-primary-dark">
-				@bootstrapicons.Icon(bootstrapicons.Config{Symbol: bootstrapicons.IconBootstrapIconsAlarm, Label: "Alarm"})
-				<span class="text-sm">Labelled</span>
-			</div>
-			<div data-testid="bootstrap-icon-decorative" class="flex items-center gap-2 text-secondary dark:text-secondary-dark">
-				@bootstrapicons.Icon(bootstrapicons.Config{Symbol: bootstrapicons.IconBootstrapIconsBootstrap, Decorative: true})
-				<span class="text-sm">Decorative</span>
-			</div>
-		</div>
-	</section>
-}
-
-templ iconPackExtension() {
-	<section class="mb-10" aria-labelledby="iconpack-title">
+templ iconUsageCode() {
+	<section class="mb-10" aria-labelledby="icon-usage-code-title">
 		<div class="mb-4 max-w-3xl">
-			<p class="mb-2 text-sm font-medium text-primary dark:text-primary-dark">Consumer-local extension</p>
-			<h2 id="iconpack-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Generate an attributed icon pack</h2>
-			<p class="mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-			Select Arai Hu Assets icons by exact canonical name, or bring any GitHub tree, single SVG, or multiple packs with a Goshtoso-owned <code class="font-mono">.iconpack.yaml</code>. Muamba performs explicit TOFU and verified snapshots; <code class="font-mono">iconpack</code> then publishes a parallel consumer-owned sprite, typed Go component, manifest, provenance, and licenses. The curated embedded package stays unchanged.
-			</p>
+			<p class="mb-2 text-sm font-medium text-primary dark:text-primary-dark">Copy-ready example</p>
+			<h2 id="icon-usage-code-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Render a meaningful icon</h2>
+			<p class="mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Pass the sprite URL and symbol, then provide a label when the icon conveys information. Add size and root classes only when the surrounding interface needs them.</p>
 		</div>
 		<div data-component-code>
 			@codeblock.CodeBlock(codeblock.Config{
-				Language: "yaml",
-				Label: "Describe any source",
-				Code: `schemaVersion: 1
-sources:
-  - id: heroicons
-    url: https://github.com/tailwindlabs/heroicons/tree/master/src
-    packName: heroicons
-    paths: [16/solid/academic-cap.svg]
-    license: MIT
-    licensePath: LICENSE
-    licenseUrl: https://raw.githubusercontent.com/tailwindlabs/heroicons/master/LICENSE`,
-			})
-			@codeblock.CodeBlock(codeblock.Config{
-				Language: "bash",
-				Label: "First trust a consumer-owned pack",
-				Code: `go run github.com/araihu/goshtoso/cmd/iconpack@latest \
-  -config ./.iconpack.yaml -trust \
-  -out ./internal/appicons -package appicons \
-  -const-prefix Icon -sprite-url /assets/icons/appicons/sprite.svg`,
-			})
-			@codeblock.CodeBlock(codeblock.Config{
-				Language: "bash",
-				Label: "Generate from a verified release archive",
-				Code: `go run github.com/araihu/goshtoso/cmd/iconpack@latest \
-  -release-archive ./araihu-assets-vX.Y.Z.tar.gz \
-  -archive-sha256 "$ARCHIVE_SHA256" -release vX.Y.Z \
-  -catalog-sha256 "$CATALOG_SHA256" \
-  -release-json-sha256 "$RELEASE_JSON_SHA256" \
-  -checksums-sha256 "$CHECKSUMS_SHA256" \
-  -name brand-developer-icons-tRPC \
-  -out ./internal/appicons -package appicons \
-  -const-prefix Icon -sprite-url /assets/icons/appicons/sprite.svg`,
-			})
-			@codeblock.CodeBlock(codeblock.Config{
-				Language: "go",
-				Label: "Render the generated package through Goshtoso Icon",
-				Code: `import "github.com/your/app/internal/appicons"
-
-templ ProviderIcon() {
-    @appicons.Icon(appicons.Config{
-        Symbol: appicons.IconBrandDeveloperIconsTRPC,
-        Label:  "tRPC",
-    })
-}`,
+				Language: "templ",
+				Label: "Render an accessible icon",
+				Code: `@icon.Icon(icon.Config{
+	SpriteURL: heroicons.SpriteURL,
+	Symbol:    heroicons.Icon16SolidCheckCircle,
+	Label:     "Approved",
+	RootClass: "text-success",
+})`,
 			})
 		</div>
-		<p class="mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-			The generated helper delegates to <code class="font-mono">components/icon</code>. The generated <code class="font-mono">.iconpack.lock.yaml</code> is the explicit TOFU boundary, and existing JSON/YAML source manifests remain available for migration. See <code class="font-mono">docs/ICONPACK.md</code> to review Arai Hu Assets and arbitrary-pack boundaries.
-		</p>
 	</section>
 }
 
@@ -161,8 +111,8 @@ templ iconCatalogGrid() {
 	<section aria-labelledby="icon-catalog-title">
 		<div class="mb-4 flex flex-wrap items-end justify-between gap-3">
 			<div>
-				<h2 id="icon-catalog-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Bundled symbol catalog</h2>
-				<p class="mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Every card comes from <code class="font-mono">heroicons.Glyphs</code>, not a second hand-written list.</p>
+				<h2 id="icon-catalog-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Bundled Heroicons</h2>
+				<p class="mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">The grid is generated from <code class="font-mono">heroicons.Glyphs</code>, so every card stays aligned with the bundled sprite and typed Go symbols.</p>
 			</div>
 			<a href="https://github.com/tailwindlabs/heroicons/blob/master/LICENSE" target="_blank" rel="noreferrer" class="text-sm font-medium text-primary underline underline-offset-4 dark:text-primary-dark">Heroicons MIT license</a>
 		</div>
@@ -201,7 +151,7 @@ templ iconPickerModal() {
 		x-trap.inert.noscroll="open"
 		x-on:keydown.esc.window="close()"
 		x-on:click.self="close()"
-		class="fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
+		class="fixed inset-0 z-50 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
 		data-testid="icon-picker-dialog"
 		role="dialog"
 		aria-modal="true"

@@ -87,7 +87,6 @@ func FragmentWithMeta(meta PageMeta, activeComponent string, content templ.Compo
 			Items:         getSidebarTopItems(activeComponent),
 			SectionsTitle: "Components",
 			Sections:      getSidebarSections(activeComponent),
-			SearchSlot:    sidebarSearchSlot(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

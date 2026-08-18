@@ -71,7 +71,7 @@ func ChartControlsPage(fragment bool, examples ChartControlExamples) templ.Compo
 	})
 }
 
-func chartGuideNavigation(active string) templ.Component {
+func chartModesContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -92,119 +92,56 @@ func chartGuideNavigation(active string) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<nav aria-label=\"Chart guide index\" data-chart-guide-nav class=\"flex flex-wrap gap-2\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if active == "chart-modes" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<a href=\"/modules/charts/docs/chart-modes\" hx-get=\"/modules/charts/docs/chart-modes\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" aria-current=\"page\" class=\"rounded-radius border border-primary bg-primary/10 px-3 py-2 text-sm font-semibold text-primary dark:border-primary-dark dark:bg-primary-dark/10 dark:text-primary-dark\">Static and interactive</a> ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<a href=\"/modules/charts/docs/chart-modes\" hx-get=\"/modules/charts/docs/chart-modes\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"rounded-radius border border-outline px-3 py-2 text-sm font-semibold text-on-surface hover:bg-surface-alt dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Static and interactive</a> ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if active == "chart-controls" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<a href=\"/modules/charts/docs/chart-controls\" hx-get=\"/modules/charts/docs/chart-controls\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" aria-current=\"page\" class=\"rounded-radius border border-primary bg-primary/10 px-3 py-2 text-sm font-semibold text-primary dark:border-primary-dark dark:bg-primary-dark/10 dark:text-primary-dark\">Chart controls</a>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<a href=\"/modules/charts/docs/chart-controls\" hx-get=\"/modules/charts/docs/chart-controls\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"rounded-radius border border-outline px-3 py-2 text-sm font-semibold text-on-surface hover:bg-surface-alt dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Chart controls</a>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</nav>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func chartModesContent() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"mx-auto max-w-5xl space-y-10\" data-chart-modes-guide><header class=\"space-y-4\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Chart architecture</p><h1 class=\"font-title text-4xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong\">Static/vector and interactive charts</h1><p class=\"max-w-3xl text-lg text-on-surface-muted dark:text-on-surface-dark-muted\">Choose the delivery model from the job the chart must do. Both families share theme tokens, accessible framing, and chart controls, but their runtime, output, and failure behavior differ substantially.</p>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = chartGuideNavigation("chart-modes").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</header><section class=\"space-y-4\"><h2 id=\"choose-a-mode\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Choose a mode</h2><div class=\"grid gap-4 md:grid-cols-2\"><article class=\"rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h3 class=\"font-title text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Static/vector</h3><p class=\"mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Prefer it for server-rendered pages, reports, print, email image capture, scalable artifacts, and resilient first paint. The chart itself is inline SVG.</p></article><article class=\"rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h3 class=\"font-title text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Interactive</h3><p class=\"mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Prefer it when exploration, hover detail, chart-specific zoom, live categorical snapshots, or a continuously synchronized theme justify a browser runtime and canvas.</p></article></div></section><section class=\"space-y-4\"><h2 id=\"capability-comparison\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Capability comparison</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">Interactive is not an upgrade tier, and static is not a reduced preview. They solve different delivery and exploration problems.</p><div class=\"overflow-x-auto rounded-radius border border-outline dark:border-outline-dark\" data-chart-mode-comparison><table class=\"w-full min-w-[48rem] border-collapse text-left text-sm\"><thead class=\"bg-surface-alt text-on-surface-strong dark:bg-surface-dark-alt dark:text-on-surface-dark-strong\"><tr><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Capability</th><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Static/vector</th><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Interactive</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mx-auto max-w-5xl space-y-10\" data-chart-modes-guide><header class=\"space-y-4\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Chart architecture</p><h1 class=\"font-title text-4xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong\">Static/vector and interactive charts</h1><p class=\"max-w-3xl text-lg text-on-surface-muted dark:text-on-surface-dark-muted\">Choose the delivery model from the job the chart must do. Both families share theme tokens, accessible framing, and chart controls, but their runtime, output, and failure behavior differ substantially.</p></header><section class=\"space-y-4\"><h2 id=\"choose-a-mode\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Choose a mode</h2><div class=\"grid gap-4 md:grid-cols-2\"><article class=\"rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h3 class=\"font-title text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Static/vector</h3><p class=\"mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Prefer it for server-rendered pages, reports, print, email image capture, scalable artifacts, and resilient first paint. The chart itself is inline SVG.</p></article><article class=\"rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h3 class=\"font-title text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Interactive</h3><p class=\"mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Prefer it when exploration, hover detail, chart-specific zoom, live categorical snapshots, or a continuously synchronized theme justify a browser runtime and canvas.</p></article></div></section><section class=\"space-y-4\"><h2 id=\"capability-comparison\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Capability comparison</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">Interactive is not an upgrade tier, and static is not a reduced preview. They solve different delivery and exploration problems.</p><div class=\"overflow-x-auto rounded-radius border border-outline dark:border-outline-dark\" data-chart-mode-comparison><table class=\"w-full min-w-[48rem] border-collapse text-left text-sm\"><thead class=\"bg-surface-alt text-on-surface-strong dark:bg-surface-dark-alt dark:text-on-surface-dark-strong\"><tr><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Capability</th><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Static/vector</th><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Interactive</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, row := range chartModeComparisons {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<tr><th scope=\"row\" class=\"w-40 px-4 py-3 align-top font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<tr><th scope=\"row\" class=\"w-40 px-4 py-3 align-top font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(row.Capability)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 48, Col: 146}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</th><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(row.Capability)
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(row.Static)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 64, Col: 146}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 48, Col: 251}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</th><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(row.Static)
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(row.Interactive)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 64, Col: 251}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 48, Col: 361}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(row.Interactive)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 64, Col: 361}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</tbody></table></div><p class=\"max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Wrapper lifecycle is independent of renderer choice. Every chart accepts the same enabled, disabled, hidden, or omitted wrapper state; review <a class=\"font-semibold text-primary underline dark:text-primary-dark\" href=\"/modules/charts/docs/chart-controls\" hx-get=\"/modules/charts/docs/chart-controls\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\">chart controls and wrapper lifecycle</a> before choosing client-side transitions.</p></section><section class=\"space-y-4\" data-chart-mode-limits><h2 id=\"shared-wrapper-boundary\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Shared wrapper boundary</h2><div class=\"grid gap-4 md:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</tbody></table></div><p class=\"max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Wrapper lifecycle is independent of renderer choice. Every chart accepts the same enabled, disabled, hidden, or omitted wrapper state; review <a class=\"font-semibold text-primary underline dark:text-primary-dark\" href=\"/modules/charts/docs/chart-controls\" hx-get=\"/modules/charts/docs/chart-controls\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\">chart controls and wrapper lifecycle</a> before choosing client-side transitions.</p></section><section class=\"space-y-4\" data-chart-mode-limits><h2 id=\"shared-wrapper-boundary\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Shared wrapper boundary</h2><div class=\"grid gap-4 md:grid-cols-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -224,7 +161,7 @@ func chartModesContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></section><section class=\"space-y-4\"><h2 id=\"rendering-examples\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Render the same data two ways</h2><div class=\"grid gap-6 xl:grid-cols-2\"><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Static/vector</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></section><section class=\"space-y-4\"><h2 id=\"rendering-examples\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Render the same data two ways</h2><div class=\"grid gap-6 xl:grid-cols-2\"><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Static/vector</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -232,7 +169,7 @@ func chartModesContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Interactive</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Interactive</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -240,7 +177,7 @@ func chartModesContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div></section><section class=\"space-y-4 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h2 id=\"assets-and-csp\" data-toc-heading class=\"scroll-mt-8 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Assets and CSP</h2><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Interactive charts require the versioned local assets handler and <code class=\"font-mono\">dependencies.Dependencies()</code>; hosted delivery is an explicit opt-in. Dependency tags inherit a templ nonce. The current per-chart initializer, theme, and live-update scripts do not yet accept a nonce, so a strict nonce-only script policy is not fully supported for interactive charts. Static chart images avoid those initializer scripts, although enabled controls still load their same-origin external runtime.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div></section><section class=\"space-y-4 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h2 id=\"assets-and-csp\" data-toc-heading class=\"scroll-mt-8 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Assets and CSP</h2><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Interactive charts require the versioned local assets handler and <code class=\"font-mono\">dependencies.Dependencies()</code>; hosted delivery is an explicit opt-in. Dependency tags inherit a templ nonce. The current per-chart initializer, theme, and live-update scripts do not yet accept a nonce, so a strict nonce-only script policy is not fully supported for interactive charts. Static chart images avoid those initializer scripts, although enabled controls still load their same-origin external runtime.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -252,7 +189,7 @@ func chartModesContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -276,20 +213,12 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"mx-auto max-w-5xl space-y-10\" data-chart-controls-guide><header class=\"space-y-4\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Shared behavior</p><h1 class=\"font-title text-4xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong\">Chart controls</h1><p class=\"max-w-3xl text-lg text-on-surface-muted dark:text-on-surface-dark-muted\">Every chart accepts the same renderer-neutral wrapper options. Configure lifecycle, controls, and export on the chart config; the wrapper supplies responsive actions, a large modal, fullscreen behavior, downloads, and focus management when present.</p>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = chartGuideNavigation("chart-controls").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</header><section class=\"space-y-4\"><h2 id=\"defaults\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Defaults</h2><div class=\"grid gap-4 sm:grid-cols-2 xl:grid-cols-4\" data-control-defaults>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"mx-auto max-w-5xl space-y-10\" data-chart-controls-guide><header class=\"space-y-4\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Shared behavior</p><h1 class=\"font-title text-4xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong\">Chart controls</h1><p class=\"max-w-3xl text-lg text-on-surface-muted dark:text-on-surface-dark-muted\">Every chart accepts the same renderer-neutral wrapper options. Configure lifecycle, controls, and export on the chart config; the wrapper supplies responsive actions, a large modal, fullscreen behavior, downloads, and focus management when present.</p></header><section class=\"space-y-4\"><h2 id=\"defaults\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Defaults</h2><div class=\"grid gap-4 sm:grid-cols-2 xl:grid-cols-4\" data-control-defaults>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -309,7 +238,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -317,7 +246,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<section class=\"space-y-4\"><h2 id=\"wrapper-lifecycle\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Wrapper lifecycle</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\"><code class=\"font-mono\">chartcontrol.Options.Mode</code> is one closed state shared by static/vector and interactive charts. Its zero value and <code class=\"font-mono\">WrapperModeEnabled</code> both mean enabled, so overlapping wrapper booleans and precedence rules do not exist. Mode applies before individual action settings: omitted returns the chart without a wrapper, while every non-omitted mode preserves the configured action set and wrapper runtime. Even an actionless non-omitted wrapper loads the versioned same-origin external runtime, so lifecycle events work without inline script. Omitted mode alone suppresses that runtime.</p><div class=\"overflow-x-auto rounded-radius border border-outline dark:border-outline-dark\" data-wrapper-mode-comparison><table class=\"w-full min-w-[52rem] border-collapse text-left text-sm\"><thead class=\"bg-surface-alt text-on-surface-strong dark:bg-surface-dark-alt dark:text-on-surface-dark-strong\"><tr><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Mode</th><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Rendered result</th><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Client transition</th><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Use it when</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\"><tr><th scope=\"row\" class=\"px-4 py-3 align-top font-semibold\"><code class=\"font-mono\">WrapperModeEnabled</code></th><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Default. Wrapper, chart, available actions, and wrapper runtime are active.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Can enter from disabled or hidden.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">People should see and operate the chart normally.</td></tr><tr><th scope=\"row\" class=\"px-4 py-3 align-top font-semibold\"><code class=\"font-mono\">WrapperModeDisabled</code></th><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Chart stays visible, live, and theme-aware. Wrapper actions remain visible but inert and expose disabled state.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Can enter or leave with the set-mode event.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Context remains useful while actions must be temporarily unavailable.</td></tr><tr><th scope=\"row\" class=\"px-4 py-3 align-top font-semibold\"><code class=\"font-mono\">WrapperModeHidden</code></th><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Wrapper and chart remain in the DOM with runtime state intact, but the subtree is hidden, inert, and <code class=\"font-mono\">aria-hidden</code>.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Can enter or leave with an external trigger. Caller owns trigger placement and focus.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">The same initialized chart will be revealed again without a server round trip.</td></tr><tr><th scope=\"row\" class=\"px-4 py-3 align-top font-semibold\"><code class=\"font-mono\">WrapperModeOmitted</code></th><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Only the chart renders: no wrapper, actions, status region, modal, or wrapper-control runtime.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Server-only. Change it by rerendering or swapping the chart.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Consumer supplies its own shell or wants the smallest static/vector no-JavaScript surface.</td></tr></tbody></table></div><div class=\"rounded-radius border border-outline bg-surface-alt p-5 text-sm text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted\" data-wrapper-dom-contract><h3 class=\"font-title text-base font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Rendered DOM contract</h3><p class=\"mt-2\">Every non-omitted root exposes <code class=\"font-mono\">data-goshtoso-chart-wrapper</code> and <code class=\"font-mono\">data-goshtoso-chart-wrapper-mode=\"enabled|disabled|hidden\"</code>. When actions render, disabled applies native <code class=\"font-mono\">disabled</code> and <code class=\"font-mono\">aria-disabled=\"true\"</code> to their fieldset; it does not disable chart exploration, pause live data, or hide the chart. Re-enabling removes only wrapper-added disabled state and preserves any action that was already unavailable. Hidden applies native <code class=\"font-mono\">hidden</code>, <code class=\"font-mono\">inert</code>, and <code class=\"font-mono\">aria-hidden=\"true\"</code> to the wrapper. Omitted is exact chart passthrough: no wrapper root or wrapper-control runtime exists.</p><p class=\"mt-2\">Treat these attributes as observable state, not a mutation API. Use the public helper or request event so transient UI, focus, status, and resize behavior stay synchronized.</p></div><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Choose the initial state in Go</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<section class=\"space-y-4\"><h2 id=\"wrapper-lifecycle\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Wrapper lifecycle</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\"><code class=\"font-mono\">chartcontrol.Options.Mode</code> is one closed state shared by static/vector and interactive charts. Its zero value and <code class=\"font-mono\">WrapperModeEnabled</code> both mean enabled, so overlapping wrapper booleans and precedence rules do not exist. Mode applies before individual action settings: omitted returns the chart without a wrapper, while every non-omitted mode preserves the configured action set and wrapper runtime. Even an actionless non-omitted wrapper loads the versioned same-origin external runtime, so lifecycle events work without inline script. Omitted mode alone suppresses that runtime.</p><div class=\"overflow-x-auto rounded-radius border border-outline dark:border-outline-dark\" data-wrapper-mode-comparison><table class=\"w-full min-w-[52rem] border-collapse text-left text-sm\"><thead class=\"bg-surface-alt text-on-surface-strong dark:bg-surface-dark-alt dark:text-on-surface-dark-strong\"><tr><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Mode</th><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Rendered result</th><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Client transition</th><th scope=\"col\" class=\"px-4 py-3 font-semibold\">Use it when</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\"><tr><th scope=\"row\" class=\"px-4 py-3 align-top font-semibold\"><code class=\"font-mono\">WrapperModeEnabled</code></th><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Default. Wrapper, chart, available actions, and wrapper runtime are active.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Can enter from disabled or hidden.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">People should see and operate the chart normally.</td></tr><tr><th scope=\"row\" class=\"px-4 py-3 align-top font-semibold\"><code class=\"font-mono\">WrapperModeDisabled</code></th><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Chart stays visible, live, and theme-aware. Wrapper actions remain visible but inert and expose disabled state.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Can enter or leave with the set-mode event.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Context remains useful while actions must be temporarily unavailable.</td></tr><tr><th scope=\"row\" class=\"px-4 py-3 align-top font-semibold\"><code class=\"font-mono\">WrapperModeHidden</code></th><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Wrapper and chart remain in the DOM with runtime state intact, but the subtree is hidden, inert, and <code class=\"font-mono\">aria-hidden</code>.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Can enter or leave with an external trigger. Caller owns trigger placement and focus.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">The same initialized chart will be revealed again without a server round trip.</td></tr><tr><th scope=\"row\" class=\"px-4 py-3 align-top font-semibold\"><code class=\"font-mono\">WrapperModeOmitted</code></th><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Only the chart renders: no wrapper, actions, status region, modal, or wrapper-control runtime.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Server-only. Change it by rerendering or swapping the chart.</td><td class=\"px-4 py-3 align-top text-on-surface-muted dark:text-on-surface-dark-muted\">Consumer supplies its own shell or wants the smallest static/vector no-JavaScript surface.</td></tr></tbody></table></div><div class=\"rounded-radius border border-outline bg-surface-alt p-5 text-sm text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted\" data-wrapper-dom-contract><h3 class=\"font-title text-base font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Rendered DOM contract</h3><p class=\"mt-2\">Every non-omitted root exposes <code class=\"font-mono\">data-goshtoso-chart-wrapper</code> and <code class=\"font-mono\">data-goshtoso-chart-wrapper-mode=\"enabled|disabled|hidden\"</code>. When actions render, disabled applies native <code class=\"font-mono\">disabled</code> and <code class=\"font-mono\">aria-disabled=\"true\"</code> to their fieldset; it does not disable chart exploration, pause live data, or hide the chart. Re-enabling removes only wrapper-added disabled state and preserves any action that was already unavailable. Hidden applies native <code class=\"font-mono\">hidden</code>, <code class=\"font-mono\">inert</code>, and <code class=\"font-mono\">aria-hidden=\"true\"</code> to the wrapper. Omitted is exact chart passthrough: no wrapper root or wrapper-control runtime exists.</p><p class=\"mt-2\">Treat these attributes as observable state, not a mutation API. Use the public helper or request event so transient UI, focus, status, and resize behavior stay synchronized.</p></div><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Choose the initial state in Go</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -325,7 +254,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></section><section class=\"space-y-4\"><h2 id=\"client-transitions\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Client transitions</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">Dispatch the stable bubbling <code class=\"font-mono\">goshtoso-charts:set-wrapper-mode</code> event on a wrapper or any descendant. Its detail is <code class=\"font-mono\">&#123; mode, focusReturn? &#125;</code>; mode accepts <code class=\"font-mono\">enabled</code>, <code class=\"font-mono\">disabled</code>, or <code class=\"font-mono\">hidden</code>. After transient UI closes, a connected external <code class=\"font-mono\">HTMLElement</code> in <code class=\"font-mono\">focusReturn</code> receives focus only when focus remains inside the wrapper. Focus already outside the wrapper is preserved; focus still inside without a valid external target is blurred.</p><div class=\"grid gap-6 xl:grid-cols-2\"><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Plain JavaScript</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></section><section class=\"space-y-4\"><h2 id=\"client-transitions\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Client transitions</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">Dispatch the stable bubbling <code class=\"font-mono\">goshtoso-charts:set-wrapper-mode</code> event on a wrapper or any descendant. Its detail is <code class=\"font-mono\">&#123; mode, focusReturn? &#125;</code>; mode accepts <code class=\"font-mono\">enabled</code>, <code class=\"font-mono\">disabled</code>, or <code class=\"font-mono\">hidden</code>. After transient UI closes, a connected external <code class=\"font-mono\">HTMLElement</code> in <code class=\"font-mono\">focusReturn</code> receives focus only when focus remains inside the wrapper. Focus already outside the wrapper is preserved; focus still inside without a valid external target is blurred.</p><div class=\"grid gap-6 xl:grid-cols-2\"><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Plain JavaScript</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -333,7 +262,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Alpine</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Alpine</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -341,7 +270,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div></div><p class=\"max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The equivalent public helper is <code class=\"font-mono\">window.__goshtosoChartsControls.setWrapperMode(wrapper, mode, focusReturn)</code>. For compatibility it accepts both the empty Go zero value and <code class=\"font-mono\">\"enabled\"</code>, but DOM state and change-event details always use the canonical value <code class=\"font-mono\">\"enabled\"</code>. The helper returns false when the wrapper is missing or the requested mode is omitted or unknown; otherwise it returns true. After applying a changed state, the wrapper emits <code class=\"font-mono\">goshtoso-charts:wrapper-mode-change</code> with exact detail <code class=\"font-mono\">&#123; previousMode, mode &#125;</code>. Listen on the wrapper or an ancestor; the event bubbles. Directly editing mode, <code class=\"font-mono\">hidden</code>, <code class=\"font-mono\">inert</code>, or fieldset attributes bypasses lifecycle guarantees.</p></section><section class=\"space-y-4\"><h2 id=\"htmx-swaps\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">HTMX swaps</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">Let the server return the desired initial mode when HTMX replaces a chart. The runtime observes <code class=\"font-mono\">htmx:load</code> and <code class=\"font-mono\">htmx:afterSwap</code>, and a <code class=\"font-mono\">MutationObserver</code> covers other DOM insertion and removal. Preparation is idempotent: newly swapped wrappers rehydrate from their rendered mode without application re-init code. This also handles full wrapper replacement, including enabled-to-omitted and omitted-to-non-omitted transitions. An omitted chart itself has no wrapper to receive a client event.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div><p class=\"max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The equivalent public helper is <code class=\"font-mono\">window.__goshtosoChartsControls.setWrapperMode(wrapper, mode, focusReturn)</code>. For compatibility it accepts both the empty Go zero value and <code class=\"font-mono\">\"enabled\"</code>, but DOM state and change-event details always use the canonical value <code class=\"font-mono\">\"enabled\"</code>. The helper returns false when the wrapper is missing or the requested mode is omitted or unknown; otherwise it returns true. After applying a changed state, the wrapper emits <code class=\"font-mono\">goshtoso-charts:wrapper-mode-change</code> with exact detail <code class=\"font-mono\">&#123; previousMode, mode &#125;</code>. Listen on the wrapper or an ancestor; the event bubbles. Directly editing mode, <code class=\"font-mono\">hidden</code>, <code class=\"font-mono\">inert</code>, or fieldset attributes bypasses lifecycle guarantees.</p></section><section class=\"space-y-4\"><h2 id=\"htmx-swaps\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">HTMX swaps</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">Let the server return the desired initial mode when HTMX replaces a chart. The runtime observes <code class=\"font-mono\">htmx:load</code> and <code class=\"font-mono\">htmx:afterSwap</code>, and a <code class=\"font-mono\">MutationObserver</code> covers other DOM insertion and removal. Preparation is idempotent: newly swapped wrappers rehydrate from their rendered mode without application re-init code. This also handles full wrapper replacement, including enabled-to-omitted and omitted-to-non-omitted transitions. An omitted chart itself has no wrapper to receive a client event.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -349,7 +278,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<p class=\"max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Map request values to the four known <code class=\"font-mono\">WrapperMode</code> constants before rendering; reject unknown values instead of casting arbitrary input.</p></section><section class=\"space-y-4\"><h2 id=\"state-guarantees\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">State guarantees</h2><div class=\"grid gap-4 md:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<p class=\"max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Map request values to the four known <code class=\"font-mono\">WrapperMode</code> constants before rendering; reject unknown values instead of casting arbitrary input.</p></section><section class=\"space-y-4\"><h2 id=\"state-guarantees\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">State guarantees</h2><div class=\"grid gap-4 md:grid-cols-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -369,7 +298,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div></section><section class=\"space-y-4 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h2 id=\"no-javascript\" data-toc-heading class=\"scroll-mt-8 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">No-JavaScript behavior</h2><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Static/vector charts remain readable when enabled or disabled; controls cannot act without JavaScript. Hidden stays hidden. Omitted leaves the static/vector chart visible with no wrapper runtime. Interactive charts still require their chart runtime regardless of wrapper mode. Client mode events and hidden-to-visible transitions require JavaScript; use an HTMX or full-page server response when the server must own state.</p></section><section class=\"space-y-4\"><h2 id=\"expand-and-fullscreen\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Expand and fullscreen</h2><div class=\"grid gap-4 md:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></section><section class=\"space-y-4 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h2 id=\"no-javascript\" data-toc-heading class=\"scroll-mt-8 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">No-JavaScript behavior</h2><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Static/vector charts remain readable when enabled or disabled; controls cannot act without JavaScript. Hidden stays hidden. Omitted leaves the static/vector chart visible with no wrapper runtime. Interactive charts still require their chart runtime regardless of wrapper mode. Client mode events and hidden-to-visible transitions require JavaScript; use an HTMX or full-page server response when the server must own state.</p></section><section class=\"space-y-4\"><h2 id=\"expand-and-fullscreen\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Expand and fullscreen</h2><div class=\"grid gap-4 md:grid-cols-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -381,7 +310,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div></section><section class=\"space-y-4\"><h2 id=\"responsive-actions\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Responsive actions</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">The Goshtoso ActionGroup keeps the primary Expand action visible. When Expand and fullscreen are both enabled, a wide layout presents them as one stacked Expand dropdown. Multiple export formats use an Export dropdown. As space narrows, trailing groups are flattened into one accessible overflow menu—there are no nested submenus on constrained layouts.</p><div class=\"rounded-radius border border-outline bg-surface-alt p-5 text-sm text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted\" data-control-responsive-note><p><strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">Keyboard:</strong> Space, Enter, or Arrow Down opens a menu; Arrow Up and Arrow Down move through enabled actions; Escape closes it and returns focus to the trigger.</p></div></section><section class=\"space-y-4\"><h2 id=\"export-capabilities\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Export capabilities</h2><div class=\"overflow-x-auto rounded-radius border border-outline dark:border-outline-dark\" data-export-capabilities><table class=\"w-full min-w-[42rem] border-collapse text-left text-sm\"><thead class=\"bg-surface-alt dark:bg-surface-dark-alt\"><tr><th scope=\"col\" class=\"px-4 py-3\">Chart output</th><th scope=\"col\" class=\"px-4 py-3\">Default formats</th><th scope=\"col\" class=\"px-4 py-3\">Background</th><th scope=\"col\" class=\"px-4 py-3\">How it is captured</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\"><tr><th scope=\"row\" class=\"px-4 py-3\">Static/vector SVG</th><td class=\"px-4 py-3\">SVG and PNG</td><td class=\"px-4 py-3\">Opaque or transparent</td><td class=\"px-4 py-3\">Serialize computed SVG styles; rasterize in-browser for PNG.</td></tr><tr><th scope=\"row\" class=\"px-4 py-3\">Interactive canvas</th><td class=\"px-4 py-3\">PNG</td><td class=\"px-4 py-3\">Opaque</td><td class=\"px-4 py-3\">Snapshot the live chart instance.</td></tr></tbody></table></div><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><code class=\"font-mono\">PixelRatio</code> defaults to 1. Filenames are normalized to a lowercase, filesystem-safe basename. Unsupported format and background requests fail during rendering instead of showing a control that cannot work. Wrapper lifecycle does not expand this capability matrix.</p></section><section class=\"space-y-4\"><h2 id=\"configure-controls\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Configure controls</h2><div class=\"grid gap-6 xl:grid-cols-2\"><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Static/vector</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></section><section class=\"space-y-4\"><h2 id=\"responsive-actions\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Responsive actions</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">The Goshtoso ActionGroup keeps the primary Expand action visible. When Expand and fullscreen are both enabled, a wide layout presents them as one stacked Expand dropdown. Multiple export formats use an Export dropdown. As space narrows, trailing groups are flattened into one accessible overflow menu—there are no nested submenus on constrained layouts.</p><div class=\"rounded-radius border border-outline bg-surface-alt p-5 text-sm text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-muted\" data-control-responsive-note><p><strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">Keyboard:</strong> Space, Enter, or Arrow Down opens a menu; Arrow Up and Arrow Down move through enabled actions; Escape closes it and returns focus to the trigger.</p></div></section><section class=\"space-y-4\"><h2 id=\"export-capabilities\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Export capabilities</h2><div class=\"overflow-x-auto rounded-radius border border-outline dark:border-outline-dark\" data-export-capabilities><table class=\"w-full min-w-[42rem] border-collapse text-left text-sm\"><thead class=\"bg-surface-alt dark:bg-surface-dark-alt\"><tr><th scope=\"col\" class=\"px-4 py-3\">Chart output</th><th scope=\"col\" class=\"px-4 py-3\">Default formats</th><th scope=\"col\" class=\"px-4 py-3\">Background</th><th scope=\"col\" class=\"px-4 py-3\">How it is captured</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\"><tr><th scope=\"row\" class=\"px-4 py-3\">Static/vector SVG</th><td class=\"px-4 py-3\">SVG and PNG</td><td class=\"px-4 py-3\">Opaque or transparent</td><td class=\"px-4 py-3\">Serialize computed SVG styles; rasterize in-browser for PNG.</td></tr><tr><th scope=\"row\" class=\"px-4 py-3\">Interactive canvas</th><td class=\"px-4 py-3\">PNG</td><td class=\"px-4 py-3\">Opaque</td><td class=\"px-4 py-3\">Snapshot the live chart instance.</td></tr></tbody></table></div><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><code class=\"font-mono\">PixelRatio</code> defaults to 1. Filenames are normalized to a lowercase, filesystem-safe basename. Unsupported format and background requests fail during rendering instead of showing a control that cannot work. Wrapper lifecycle does not expand this capability matrix.</p></section><section class=\"space-y-4\"><h2 id=\"configure-controls\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Configure controls</h2><div class=\"grid gap-6 xl:grid-cols-2\"><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Static/vector</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -389,7 +318,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Interactive</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div><div class=\"min-w-0 space-y-3\"><h3 class=\"font-title text-lg font-semibold\">Interactive</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -397,7 +326,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div></div></section><section class=\"space-y-4 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h2 id=\"accessibility\" data-toc-heading class=\"scroll-mt-8 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Accessibility and status</h2><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Controls form a named group based on the chart label. Modal focus is contained while open. Fullscreen exposes pressed state. Export actions become busy while processing and report completion or failure through a polite live region. These controls improve operation, but they do not make chart geometry equivalent to exact data; retain a caption, summary, disclosure, or adjacent table as the task requires.</p></section><section class=\"space-y-4\"><h2 id=\"caller-responsibilities\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Caller responsibilities</h2><div class=\"grid gap-4 md:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div></div></section><section class=\"space-y-4 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h2 id=\"accessibility\" data-toc-heading class=\"scroll-mt-8 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Accessibility and status</h2><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Controls form a named group based on the chart label. Modal focus is contained while open. Fullscreen exposes pressed state. Export actions become busy while processing and report completion or failure through a polite live region. These controls improve operation, but they do not make chart geometry equivalent to exact data; retain a caption, summary, disclosure, or adjacent table as the task requires.</p></section><section class=\"space-y-4\"><h2 id=\"caller-responsibilities\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Caller responsibilities</h2><div class=\"grid gap-4 md:grid-cols-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -421,7 +350,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -433,7 +362,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -457,38 +386,38 @@ func controlFact(title string, text string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<article class=\"rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h3 class=\"font-title text-base font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<article class=\"rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt\"><h3 class=\"font-title text-base font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 220, Col: 234}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</h3><p class=\"mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 237, Col: 234}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 220, Col: 325}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</h3><p class=\"mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(text)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 237, Col: 325}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</p></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</p></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -512,17 +441,17 @@ func guideAPIReferences(packageNames []string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var12 == nil {
-			templ_7745c5c3_Var12 = templ.NopComponent
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<section data-guide-api-references data-go-api-version=\"v0.0.1\" class=\"scroll-mt-8 rounded-radius border border-outline bg-surface p-5 dark:border-outline-dark dark:bg-surface-dark\"><div class=\"mb-4 flex flex-wrap items-center gap-2\"><h2 id=\"go-api\" data-toc-heading class=\"scroll-mt-8 font-title text-lg font-semibold\">Go API</h2><span class=\"rounded-radius border border-outline px-2 py-0.5 font-mono text-xs text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\">v0.0.1</span></div><p class=\"max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">These guides explain behavior and composition. pkg.go.dev is the canonical reference for exported types, functions, methods, and Go documentation.</p><div class=\"mt-4 flex flex-wrap gap-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<section data-guide-api-references data-go-api-version=\"v0.0.1\" class=\"scroll-mt-8 rounded-radius border border-outline bg-surface p-5 dark:border-outline-dark dark:bg-surface-dark\"><div class=\"mb-4 flex flex-wrap items-center gap-2\"><h2 id=\"go-api\" data-toc-heading class=\"scroll-mt-8 font-title text-lg font-semibold\">Go API</h2><span class=\"rounded-radius border border-outline px-2 py-0.5 font-mono text-xs text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\">v0.0.1</span></div><p class=\"max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">These guides explain behavior and composition. pkg.go.dev is the canonical reference for exported types, functions, methods, and Go documentation.</p><div class=\"mt-4 flex flex-wrap gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, packageName := range packageNames {
-			templ_7745c5c3_Var13 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Var12 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 				if !templ_7745c5c3_IsBuffer {
@@ -534,27 +463,27 @@ func guideAPIReferences(packageNames []string) templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(packageName)
+				var templ_7745c5c3_Var13 string
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(packageName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 247, Col: 18}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 230, Col: 18}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, " API <span aria-hidden=\"true\">↗</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, " API <span aria-hidden=\"true\">↗</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = link.Link("https://pkg.go.dev/github.com/araihu/goshtoso-charts@v0.0.2/components/"+packageName, link.WithAppearance(link.AppearanceButton), link.WithTarget("_blank"), link.WithAttrs(templ.Attributes{"data-guide-api-link": packageName})).Render(templ.WithChildren(ctx, templ_7745c5c3_Var13), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = link.Link("https://pkg.go.dev/github.com/araihu/goshtoso-charts@v0.0.2/components/"+packageName, link.WithAppearance(link.AppearanceButton), link.WithTarget("_blank"), link.WithAttrs(templ.Attributes{"data-guide-api-link": packageName})).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -578,27 +507,27 @@ func relatedGuide(target string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var14 == nil {
+			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<section class=\"border-t border-outline pt-8 dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<section class=\"border-t border-outline pt-8 dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if target == "chart-controls" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<a class=\"group flex items-center justify-between gap-4 text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark\" href=\"/modules/charts/docs/chart-controls\" hx-get=\"/modules/charts/docs/chart-controls\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\"><span><span class=\"block text-xs font-semibold uppercase tracking-wide\">Related guide</span><span class=\"mt-1 block font-title text-lg font-semibold text-on-surface-strong group-hover:text-primary dark:text-on-surface-dark-strong dark:group-hover:text-primary-dark\">Chart controls</span></span><span aria-hidden=\"true\">→</span></a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<a class=\"group flex items-center justify-between gap-4 text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark\" href=\"/modules/charts/docs/chart-controls\" hx-get=\"/modules/charts/docs/chart-controls\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\"><span><span class=\"block text-xs font-semibold uppercase tracking-wide\">Related guide</span><span class=\"mt-1 block font-title text-lg font-semibold text-on-surface-strong group-hover:text-primary dark:text-on-surface-dark-strong dark:group-hover:text-primary-dark\">Chart controls</span></span><span aria-hidden=\"true\">→</span></a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<a class=\"group flex items-center justify-between gap-4 text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark\" href=\"/modules/charts/docs/chart-modes\" hx-get=\"/modules/charts/docs/chart-modes\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\"><span><span class=\"block text-xs font-semibold uppercase tracking-wide\">Related guide</span><span class=\"mt-1 block font-title text-lg font-semibold text-on-surface-strong group-hover:text-primary dark:text-on-surface-dark-strong dark:group-hover:text-primary-dark\">Static and interactive</span></span><span aria-hidden=\"true\">→</span></a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<a class=\"group flex items-center justify-between gap-4 text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark\" href=\"/modules/charts/docs/chart-modes\" hx-get=\"/modules/charts/docs/chart-modes\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\"><span><span class=\"block text-xs font-semibold uppercase tracking-wide\">Related guide</span><span class=\"mt-1 block font-title text-lg font-semibold text-on-surface-strong group-hover:text-primary dark:text-on-surface-dark-strong dark:group-hover:text-primary-dark\">Static and interactive</span></span><span aria-hidden=\"true\">→</span></a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

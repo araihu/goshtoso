@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"slices"
@@ -88,9 +89,7 @@ func selectChanges(ctx context.Context, repoRoot string, changes []Change) Resul
 		return fullResult(paths, classified.full...)
 	}
 	reasons := graph.impactedIdentities(classified.roots)
-	for identity, reason := range classified.direct {
-		reasons[identity] = reason
-	}
+	maps.Copy(reasons, classified.direct)
 	if len(reasons) == 0 {
 		return fullResult(paths, "no focused E2E identity selected")
 	}

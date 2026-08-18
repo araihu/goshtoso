@@ -168,6 +168,7 @@ func TestResultItemFullBranches(t *testing.T) {
 				Title:       "Complete",
 				Description: "Has every field",
 				Section:     "Reference",
+				Priority:    1,
 				Href:        "/complete",
 				Keywords:    []string{"kw1", "kw2"},
 				Attrs:       templ.Attributes{"data-extra": "yes"},
@@ -178,6 +179,7 @@ func TestResultItemFullBranches(t *testing.T) {
 	for _, want := range []string{
 		`id="full-result"`,
 		`data-search-section="Reference"`,
+		`data-search-priority="1"`,
 		`data-search-href="/complete"`,
 		`data-search-text="Complete Has every field Reference kw1 kw2"`,
 		`data-extra="yes"`,

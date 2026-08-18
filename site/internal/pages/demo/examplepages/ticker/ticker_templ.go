@@ -73,7 +73,7 @@ func tickerPane(symbols []ticker.Symbol) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"ticker-fragment\" x-data=\"tickerPane()\" class=\"mx-auto max-w-5xl\"><div class=\"mb-6 flex items-center justify-between\"><div><h1 class=\"text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Live Ticker</h1><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Simulated prices streamed over Server-Sent Events.</p></div><div class=\"flex items-center gap-4\"><span x-show=\"!connected\" class=\"inline-flex items-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"ticker-fragment\" x-data=\"tickerPane()\" class=\"mx-auto max-w-5xl\"><div class=\"mb-6 flex items-center justify-between\"><div><h1 class=\"text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Live Ticker</h1><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">A simulated market watchlist updated over Server-Sent Events. Pause the stream, scan the live cards, or sort and filter the full table.</p></div><div class=\"flex items-center gap-4\"><span x-show=\"!connected\" class=\"inline-flex items-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

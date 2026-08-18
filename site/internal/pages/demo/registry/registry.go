@@ -120,8 +120,6 @@ func MetaForDefinition(definition demo.PageDefinition) demo.PageMeta {
 	case strings.HasPrefix(definition.Key, "examples/"):
 		title = definition.Title + " Example - Goshtoso Go UI Components"
 		metaType = "SoftwareSourceCode"
-	case definition.Key == "examples":
-		title = "Example Apps - Goshtoso Go UI Components"
 	case definition.Key == "getting-started":
 		title = "Getting Started with Goshtoso Go UI Components"
 	case definition.Key == "docs/agents":
@@ -130,6 +128,8 @@ func MetaForDefinition(definition demo.PageDefinition) demo.PageMeta {
 		title = "Application Patterns for Goshtoso"
 	case definition.Key == "docs/component-model":
 		title = "Goshtoso Component Model"
+	case definition.Key == "docs/icon-catalog":
+		title = "Icon Catalog - Goshtoso UI Library for Go"
 	case definition.Key == "docs/iconpack":
 		title = "Icon Packs - Goshtoso UI Library for Go"
 	case definition.Key == "docs/theme":
@@ -138,6 +138,8 @@ func MetaForDefinition(definition demo.PageDefinition) demo.PageMeta {
 		title = "Goshtoso Charts Module"
 	case definition.Key == "modules/app-shells":
 		title = "Goshtoso App Shells Module"
+	case strings.HasPrefix(definition.Key, "modules/app-shells/"):
+		title = definition.Title + " - Goshtoso App Shells"
 	}
 
 	description := definition.Description

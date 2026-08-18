@@ -66,15 +66,15 @@ func loadPackageGraph(ctx context.Context, repoRoot string, known map[string]boo
 
 func packageIdentity(importPath string) (string, bool) {
 	const components = "/site/internal/pages/demo/componentpages/"
-	if index := strings.Index(importPath, components); index >= 0 {
-		remainder := importPath[index+len(components):]
+	if _, after, ok := strings.Cut(importPath, components); ok {
+		remainder := after
 		if remainder != "" && !strings.Contains(remainder, "/") {
 			return remainder, true
 		}
 	}
 	const examples = "/site/internal/pages/demo/examplepages/"
-	if index := strings.Index(importPath, examples); index >= 0 {
-		remainder := importPath[index+len(examples):]
+	if _, after, ok := strings.Cut(importPath, examples); ok {
+		remainder := after
 		if remainder != "" && remainder != "index" && !strings.Contains(remainder, "/") {
 			return "example_" + remainder, true
 		}

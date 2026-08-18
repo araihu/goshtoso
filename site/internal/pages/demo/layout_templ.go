@@ -9,6 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"strings"
+
 	searchfield "github.com/araihu/goshtoso/components/search"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/sidebar"
@@ -46,7 +48,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(meta.TitleText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 14, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 16, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -59,7 +61,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 15, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 17, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -72,7 +74,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var4 templ.SafeURL
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(meta.CanonicalURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 16, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 18, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -85,7 +87,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(SiteName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 17, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 19, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -98,7 +100,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.TitleText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 20, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 22, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
@@ -111,7 +113,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 21, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 23, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
@@ -124,7 +126,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.CanonicalURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 22, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 24, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -137,7 +139,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 23, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 25, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -150,7 +152,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(OGImageMIMEType)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 24, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 26, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
@@ -163,7 +165,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(OGImageWidth)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 25, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 27, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
@@ -176,7 +178,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(OGImageHeight)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 26, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 28, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
@@ -189,7 +191,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageAlt())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 27, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 29, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -202,7 +204,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.TitleText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 29, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 31, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
@@ -215,7 +217,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 30, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 32, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 		if templ_7745c5c3_Err != nil {
@@ -228,7 +230,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 31, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 33, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 		if templ_7745c5c3_Err != nil {
@@ -241,7 +243,7 @@ func HeadMeta(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageAlt())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 32, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 34, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 		if templ_7745c5c3_Err != nil {
@@ -327,7 +329,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		var templ_7745c5c3_Var20 templ.SafeURL
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinURLErrs(siteRuntimeStylesheetURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 55, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 57, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -346,7 +348,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(script.URL)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 62, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 64, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 				if templ_7745c5c3_Err != nil {
@@ -364,7 +366,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 				var templ_7745c5c3_Var22 string
 				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(script.URL)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 64, Col: 29}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 66, Col: 29}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 				if templ_7745c5c3_Err != nil {
@@ -376,7 +378,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<style>\n\t\t\t\t[x-cloak] { display: none !important; }\n\t\t\t\t/* Hide scrollbar for sidebar */\n\t\t\t\t.sidebar-scroll::-webkit-scrollbar {\n\t\t\t\t\tdisplay: none;\n\t\t\t\t}\n\t\t\t\t.sidebar-scroll {\n\t\t\t\t\t-ms-overflow-style: none;\n\t\t\t\t\tscrollbar-width: none;\n\t\t\t\t}\n\t\t\t\t/* Match the reference sidebar's 32px content gutters while retaining\n\t\t\t\t   the Sidebar component's established type scale and row rhythm. */\n\t\t\t\t.docs-sidebar .sidebar-scroll {\n\t\t\t\t\tpadding: 0.75rem 2rem 1rem;\n\t\t\t\t}\n\t\t\t\t.docs-sidebar .docs-sidebar-search {\n\t\t\t\t\tpadding: 0.75rem 2rem 0.5rem;\n\t\t\t\t}\n\t\t\t\t.docs-sidebar .docs-sidebar-search [data-search-field] button {\n\t\t\t\t\tmin-height: 2.5rem;\n\t\t\t\t\tpadding-inline: 1rem;\n\t\t\t\t\tfont-size: 1rem;\n\t\t\t\t\tfont-weight: 300;\n\t\t\t\t\tline-height: 1.5rem;\n\t\t\t\t}\n\t\t\t\t.docs-sidebar .docs-sidebar-search [data-search-field] button > svg {\n\t\t\t\t\twidth: 1.25rem;\n\t\t\t\t\theight: 1.25rem;\n\t\t\t\t}\n\t\t\t\t/* First-paint entrance animations — masks layout shift on hard reload.\n\t\t\t\t   Gated by html.boot which is stripped ~600ms after DOMContentLoaded,\n\t\t\t\t   so HTMX partial swaps do not retrigger. */\n\t\t\t\t@keyframes goshFadeIn { from { opacity: 0; } to { opacity: 1; } }\n\t\t\t\t@keyframes goshSlideDown {\n\t\t\t\t\tfrom { opacity: 0; transform: translate3d(0, -8px, 0); }\n\t\t\t\t\tto   { opacity: 1; transform: none; }\n\t\t\t\t}\n\t\t\t\t@keyframes goshSlideRight {\n\t\t\t\t\tfrom { opacity: 0; transform: translate3d(-12px, 0, 0); }\n\t\t\t\t\tto   { opacity: 1; transform: none; }\n\t\t\t\t}\n\t\t\t\thtml.boot [data-boot-anim=\"header\"]  { animation: goshSlideDown 260ms ease-out both; }\n\t\t\t\thtml.boot [data-boot-anim=\"sidebar\"] { animation: goshSlideRight 320ms ease-out 60ms both; }\n\t\t\t\thtml.boot [data-boot-anim=\"main\"]    { animation: goshFadeIn 320ms ease-out 120ms both; }\n\t\t\t\t@media (prefers-reduced-motion: reduce) {\n\t\t\t\t\thtml.boot [data-boot-anim] { animation: none; }\n\t\t\t\t}\n\t\t\t</style></head><body class=\"h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition motion-reduce:transition-none\"><!-- Header --><header data-boot-anim=\"header\" class=\"sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60\"><div class=\"flex h-16 items-center justify-between px-4 lg:px-8\"><div class=\"flex items-center gap-4\"><button @click=\"sidebarOpen = !sidebarOpen\" class=\"lg:hidden p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button> <a href=\"/\" class=\"flex items-center gap-2\" aria-label=\"Goshtoso home\"><img src=\"/assets/images/goshtoso-mark.svg\" alt=\"\" aria-hidden=\"true\" class=\"size-8 shrink-0 rounded-lg\"> <span class=\"hidden text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong sm:inline\">Goshtoso</span></a></div><!-- Right side controls --><div class=\"flex items-center gap-2\"><!-- Theme Selector --><div class=\"w-36 sm:w-44\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<style>\n\t\t\t\t[x-cloak] { display: none !important; }\n\t\t\t\t/* Hide scrollbar for sidebar */\n\t\t\t\t.sidebar-scroll::-webkit-scrollbar {\n\t\t\t\t\tdisplay: none;\n\t\t\t\t}\n\t\t\t\t.sidebar-scroll {\n\t\t\t\t\t-ms-overflow-style: none;\n\t\t\t\t\tscrollbar-width: none;\n\t\t\t\t}\n\t\t\t\t/* Match the reference sidebar's 32px content gutters while retaining\n\t\t\t\t   the Sidebar component's established type scale and row rhythm. */\n\t\t\t\t.docs-sidebar .sidebar-scroll {\n\t\t\t\t\tpadding: 0.75rem 2rem 1rem;\n\t\t\t\t}\n\t\t\t\t.demo-global-search {\n\t\t\t\t\tdisplay: flex;\n\t\t\t\t\tmin-width: 0;\n\t\t\t\t\tflex: 0 1 15rem;\n\t\t\t\t}\n\t\t\t\t.demo-global-search [data-search-field] {\n\t\t\t\t\twidth: 100%;\n\t\t\t\t}\n\t\t\t\t.demo-global-search [data-search-field] > button {\n\t\t\t\t\tmin-height: 2.5rem;\n\t\t\t\t}\n\t\t\t\t@media (max-width: 767px) {\n\t\t\t\t\t.demo-global-search {\n\t\t\t\t\t\twidth: 2.5rem;\n\t\t\t\t\t\tflex: 0 0 2.5rem;\n\t\t\t\t\t}\n\t\t\t\t\t.demo-global-search [data-search-field] {\n\t\t\t\t\t\twidth: 2.5rem;\n\t\t\t\t\t}\n\t\t\t\t\t.demo-global-search [data-search-field] > button {\n\t\t\t\t\t\tjustify-content: center;\n\t\t\t\t\t\tpadding-inline: 0.625rem;\n\t\t\t\t\t}\n\t\t\t\t\t.demo-global-search [data-search-field] > button > span.min-w-0 {\n\t\t\t\t\t\tposition: absolute;\n\t\t\t\t\t\twidth: 1px;\n\t\t\t\t\t\theight: 1px;\n\t\t\t\t\t\tpadding: 0;\n\t\t\t\t\t\tmargin: -1px;\n\t\t\t\t\t\toverflow: hidden;\n\t\t\t\t\t\tclip: rect(0, 0, 0, 0);\n\t\t\t\t\t\twhite-space: nowrap;\n\t\t\t\t\t\tborder: 0;\n\t\t\t\t\t}\n\t\t\t\t\t.demo-global-search [data-search-field] > button > kbd {\n\t\t\t\t\t\tdisplay: none;\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\t/* First-paint entrance animations — masks layout shift on hard reload.\n\t\t\t\t   Gated by html.boot which is stripped ~600ms after DOMContentLoaded,\n\t\t\t\t   so HTMX partial swaps do not retrigger. */\n\t\t\t\t@keyframes goshFadeIn { from { opacity: 0; } to { opacity: 1; } }\n\t\t\t\t@keyframes goshSlideDown {\n\t\t\t\t\tfrom { opacity: 0; transform: translate3d(0, -8px, 0); }\n\t\t\t\t\tto   { opacity: 1; transform: none; }\n\t\t\t\t}\n\t\t\t\t@keyframes goshSlideRight {\n\t\t\t\t\tfrom { opacity: 0; transform: translate3d(-12px, 0, 0); }\n\t\t\t\t\tto   { opacity: 1; transform: none; }\n\t\t\t\t}\n\t\t\t\thtml.boot [data-boot-anim=\"header\"]  { animation: goshSlideDown 260ms ease-out both; }\n\t\t\t\thtml.boot [data-boot-anim=\"sidebar\"] { animation: goshSlideRight 320ms ease-out 60ms both; }\n\t\t\t\thtml.boot [data-boot-anim=\"main\"]    { animation: goshFadeIn 320ms ease-out 120ms both; }\n\t\t\t\t@media (prefers-reduced-motion: reduce) {\n\t\t\t\t\thtml.boot [data-boot-anim] { animation: none; }\n\t\t\t\t}\n\t\t\t</style></head><body class=\"h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition motion-reduce:transition-none\"><!-- Header --><header data-boot-anim=\"header\" class=\"sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60\"><div class=\"flex h-16 items-center justify-between px-4 lg:px-8\"><div class=\"flex items-center gap-4\"><button @click=\"sidebarOpen = !sidebarOpen\" class=\"lg:hidden p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16M4 18h16\"></path></svg></button> <a href=\"/\" class=\"flex items-center gap-2\" aria-label=\"Goshtoso home\"><img src=\"/assets/images/goshtoso-mark.svg\" alt=\"\" aria-hidden=\"true\" class=\"size-8 shrink-0 rounded-lg\"> <span class=\"hidden text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong sm:inline\">Goshtoso</span></a></div><!-- Right side controls --><div class=\"flex items-center gap-2\"><!-- Theme Selector --><div class=\"w-36 sm:w-44\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -390,7 +392,15 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div><!-- Dark Mode Toggle --><button id=\"darkModeToggleBtn\" aria-label=\"dark mode toggle\" @click=\"$store.darkMode.toggle()\" class=\"p-2 text-on-surface hover:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 transition-colors motion-reduce:transition-none\"><!-- Light Mode Icon (Sun) - shows when dark mode is ON --><svg x-show=\"$store.darkMode.on\" name=\"Light Mode\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.2\" stroke=\"currentColor\" class=\"h-6 w-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z\"></path></svg><!-- Dark Mode Icon (Moon) - shows when dark mode is OFF --><svg x-show=\"!$store.darkMode.on\" name=\"Dark Mode\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.2\" stroke=\"currentColor\" class=\"h-6 w-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z\"></path></svg></button><!-- GitHub Link --><a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" class=\"hidden sm:inline-flex p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors motion-reduce:transition-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z\"></path></svg></a></div></div></header><div class=\"flex h-[calc(100vh-4rem)] overflow-hidden\"><!-- Sidebar Component --><div data-boot-anim=\"sidebar\" class=\"fixed top-16 bottom-0 left-0 z-40 w-72 shrink-0 transform transition-transform duration-200 ease-in-out motion-reduce:transition-none lg:static lg:translate-x-0 lg:h-full\" :class=\"sidebarOpen ? 'translate-x-0' : '-translate-x-full'\"><div class=\"h-full\"><div id=\"sidebar-nav-content\" class=\"h-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div><!-- Dark Mode Toggle --><button id=\"darkModeToggleBtn\" aria-label=\"dark mode toggle\" @click=\"$store.darkMode.toggle()\" class=\"p-2 text-on-surface hover:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 transition-colors motion-reduce:transition-none\"><!-- Light Mode Icon (Sun) - shows when dark mode is ON --><svg x-show=\"$store.darkMode.on\" name=\"Light Mode\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.2\" stroke=\"currentColor\" class=\"h-6 w-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z\"></path></svg><!-- Dark Mode Icon (Moon) - shows when dark mode is OFF --><svg x-show=\"!$store.darkMode.on\" name=\"Dark Mode\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.2\" stroke=\"currentColor\" class=\"h-6 w-6\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z\"></path></svg></button><!-- GitHub Link --><a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" class=\"hidden sm:inline-flex p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors motion-reduce:transition-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z\"></path></svg></a><div class=\"demo-global-search\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = searchfield.SearchField(docsSearchConfig(componentDocsFamily(activeComponent))).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div></div></div></header><div class=\"flex h-[calc(100vh-4rem)] overflow-hidden\"><!-- Sidebar Component --><div data-boot-anim=\"sidebar\" class=\"fixed top-16 bottom-0 left-0 z-40 w-72 shrink-0 transform transition-transform duration-200 ease-in-out motion-reduce:transition-none lg:static lg:translate-x-0 lg:h-full\" :class=\"sidebarOpen ? 'translate-x-0' : '-translate-x-full'\"><div class=\"h-full\"><div id=\"sidebar-nav-content\" class=\"h-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -399,12 +409,11 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 			SectionsTitle: "Components",
 			Sections:      getSidebarSections(activeComponent),
 			RootClass:     "docs-sidebar",
-			SearchSlot:    sidebarSearchSlot(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div></div></div><!-- Overlay for mobile sidebar --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"fixed inset-0 z-30 bg-black/50 lg:hidden\" x-cloak></div><!-- Main Content --><main id=\"page-scroll\" data-boot-anim=\"main\" class=\"flex-1 overflow-y-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div></div></div><!-- Overlay for mobile sidebar --><div x-show=\"sidebarOpen\" @click=\"sidebarOpen = false\" class=\"fixed inset-0 z-30 bg-black/50 lg:hidden\" x-cloak></div><!-- Main Content --><main id=\"page-scroll\" data-boot-anim=\"main\" class=\"flex-1 overflow-y-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -413,7 +422,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -426,7 +435,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\"><div id=\"main-content\" class=\"min-w-0 flex-1 p-6 lg:p-8\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\"><div id=\"main-content\" class=\"min-w-0 flex-1 p-6 lg:p-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -446,7 +455,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div><!-- Right rail: \"On this page\" section nav, built from [data-toc-heading]. --><div id=\"toc-rail\" data-boot-anim=\"main\" class=\"hidden w-60 shrink-0 xl:block\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div><!-- Right rail: \"On this page\" section nav, built from [data-toc-heading]. --><div id=\"toc-rail\" data-boot-anim=\"main\" class=\"hidden w-60 shrink-0 xl:block\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -455,7 +464,7 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<aside class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<aside class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -468,15 +477,15 @@ func LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\"><p class=\"mb-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">On this page</p><nav id=\"toc-list\" aria-label=\"On this page\" class=\"flex flex-col border-l border-outline dark:border-outline-dark\"></nav></aside></div></div></main></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\"><p class=\"mb-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">On this page</p><nav id=\"toc-list\" aria-label=\"On this page\" class=\"flex flex-col border-l border-outline dark:border-outline-dark\"></nav></aside></div></div></main></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = searchfield.SearchModal(docsSearchConfig()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = searchfield.SearchModal(docsSearchConfig(componentDocsFamily(activeComponent))).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<!-- Browser storage notice. Shows until the visitor chooses allowed or denied\n\t\t\t     storage via the gt_storage preference cookie. Keep in lock-step with\n\t\t\t     landing.templ's cookieConsent(). --><div x-data=\"demoStorageConsent\" x-show=\"show\" x-cloak x-transition:enter=\"transition ease-out duration-150 motion-reduce:transition-none\" x-transition:enter-start=\"opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0\" x-transition:enter-end=\"opacity-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-100 motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100 translate-y-0\" x-transition:leave-end=\"opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0\" class=\"fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-md flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"cookie-banner-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><h3 id=\"cookie-banner-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Browser storage</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso can store preferences and demo state in your browser. Some examples use cookies and IndexedDB to persist local demo state. There is no analytics, advertising, or third-party tracking. You can use the site without storage, but preferences and some examples will reset or stop persisting. Details in our <a href=\"/privacy\" hx-get=\"/privacy\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" @click=\"show = false\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex flex-col-reverse gap-2 px-4 pb-4 sm:flex-row sm:justify-end\"><button @click=\"deny()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">Use without storage</button> <button @click=\"allow()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity motion-reduce:transition-none\">Allow browser storage</button></div></div><!-- Right-rail \"On this page\" TOC: built from #main-content [data-toc-heading].\n\t\t\t     Rebuilt on every main-content HTMX swap by the site demo bundle. --></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<!-- Browser storage notice. Shows until the visitor chooses allowed or denied\n\t\t\t     storage via the gt_storage preference cookie. Keep in lock-step with\n\t\t\t     landing.templ's cookieConsent(). --><div x-data=\"demoStorageConsent\" x-show=\"show\" x-cloak x-transition:enter=\"transition ease-out duration-150 motion-reduce:transition-none\" x-transition:enter-start=\"opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0\" x-transition:enter-end=\"opacity-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-100 motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100 translate-y-0\" x-transition:leave-end=\"opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0\" class=\"fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-md flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"cookie-banner-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><h3 id=\"cookie-banner-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Browser storage</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso can store preferences and demo state in your browser. Some examples use cookies and IndexedDB to persist local demo state. There is no analytics, advertising, or third-party tracking. You can use the site without storage, but preferences and some examples will reset or stop persisting. Details in our <a href=\"/privacy\" hx-get=\"/privacy\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" @click=\"show = false\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex flex-col-reverse gap-2 px-4 pb-4 sm:flex-row sm:justify-end\"><button @click=\"deny()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">Use without storage</button> <button @click=\"allow()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity motion-reduce:transition-none\">Allow browser storage</button></div></div><!-- Right-rail \"On this page\" TOC: built from #main-content [data-toc-heading].\n\t\t\t     Rebuilt on every main-content HTMX swap by the site demo bundle. --></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -525,59 +534,22 @@ func getSidebarTopItems(activeComponent string) []sidebar.Item {
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineArrowDownTray, Decorative: true}), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
 		{ID: "component-model", Label: "Component Model", Href: "/docs/component-model", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineCube, Decorative: true}), Active: activeComponent == "component-model", LinkAttrs: navHxAttrs("/docs/component-model", "")},
 		{ID: "application-patterns", Label: "Application Patterns", Href: "/docs/application-patterns", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineQueueList, Decorative: true}), Active: activeComponent == "application-patterns", LinkAttrs: navHxAttrs("/docs/application-patterns", "")},
-		{ID: "iconpack", Label: "Icon Packs", Href: "/docs/iconpack", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineSquares2x2, Decorative: true}), Active: activeComponent == "iconpack", LinkAttrs: navHxAttrs("/docs/iconpack", "")},
-		{ID: "agents", Label: "AI Agents", Href: "/docs/agents", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineSparkles, Decorative: true}), Active: activeComponent == "agents", LinkAttrs: navHxAttrs("/docs/agents", "")},
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineSwatch, Decorative: true}), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
-		{ID: "attributions", Label: "Attributions", Href: "/attributions", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineHeart, Decorative: true}), Active: activeComponent == "attributions", LinkAttrs: navHxAttrs("/attributions", "")},
-		{ID: "license", Label: "License", Href: "/license", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineClipboardDocumentList, Decorative: true}), Active: activeComponent == "license", LinkAttrs: navHxAttrs("/license", "")},
 	}
 }
 
-func sidebarSearchSlot() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var27 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var27 == nil {
-			templ_7745c5c3_Var27 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<div class=\"docs-sidebar-search shrink-0\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = searchfield.SearchField(docsSearchConfig()).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func docsSearchConfig() searchfield.Config {
+func docsSearchConfig(activeFamily ...string) searchfield.Config {
+	scope := "core"
+	if len(activeFamily) > 0 {
+		scope = normalizeSearchScope(activeFamily[0])
+	}
 	return searchfield.Config{
 		ID:             "docs-search",
 		Label:          "Search docs...",
-		Placeholder:    "Search",
+		Placeholder:    "Search everything",
 		GlobalShortcut: true,
-		Items:          getSearchItems(),
-		EmptyText:      "No docs found.",
+		Items:          getSearchItems(scope),
+		EmptyText:      "No matching pages found.",
 	}
 }
 
@@ -591,60 +563,161 @@ func sItem(id, label, href, activeComponent string) sidebar.Item {
 	}
 }
 
-func getSearchItems() []searchfield.Item {
-	items := []searchfield.Item{
-		{ID: "search-getting-started", Title: "Getting Started", Description: "Install Goshtoso, wire assets, and render your first component.", Href: "/getting-started", Section: "Docs", Attrs: navHxAttrs("/getting-started", "")},
-		{ID: "search-component-model", Title: "Component Model", Description: "Learn the common component interface, concrete return values, constructor styles, and stable Kind identity.", Href: "/docs/component-model", Section: "Docs", Attrs: navHxAttrs("/docs/component-model", "")},
-		{ID: "search-application-patterns", Title: "Application Patterns", Description: "Compose App Shell, Operations List, Detail Workspace, and Multi-step Workflow product surfaces.", Href: "/docs/application-patterns", Section: "Docs", Keywords: []string{"recipes app shell operations detail workflow"}, Attrs: navHxAttrs("/docs/application-patterns", "")},
-		{ID: "search-iconpack", Title: "Icon Packs", Description: "Generate consumer-local packs from Arai Hu Assets, GitHub trees, single files, or multiple arbitrary sources with an iconpack-owned TOFU lock.", Href: "/docs/iconpack", Section: "Docs", Keywords: []string{"sprite heroicons developer icons bootstrap arbitrary source manifest muamba iconpack yaml lock"}, Attrs: navHxAttrs("/docs/iconpack", "")},
-		{ID: "search-examples", Title: "Examples", Description: "Full runnable app examples built with Goshtoso components.", Href: "/examples", Section: "Examples", Attrs: navHxAttrs("/examples", "")},
-		{ID: "search-agents", Title: "AI Agents", Description: "Install and verify the Goshtoso consumer integration skill for AI coding tools.", Href: "/docs/agents", Section: "Docs", Attrs: navHxAttrs("/docs/agents", "")},
-		{ID: "search-theme", Title: "Theme", Description: "Customize colors, radius, typography, and dark mode tokens.", Href: "/docs/theme", Section: "Docs", Attrs: navHxAttrs("/docs/theme", "")},
-		{ID: "search-attributions", Title: "Attributions", Description: "Third-party notices and project credits.", Href: "/attributions", Section: "Docs", Attrs: navHxAttrs("/attributions", "")},
-		{ID: "search-license", Title: "License", Description: "License details for using Goshtoso.", Href: "/license", Section: "Docs", Attrs: navHxAttrs("/license", "")},
-		{ID: "search-module-charts", Title: "Charts", Description: "Static, interactive, and 3D charts from the Goshtoso Charts module.", Href: "/modules/charts", Section: "Modules", Keywords: []string{"visualization line 3d"}, Attrs: navHxAttrs("/modules/charts", "")},
-		{ID: "search-module-app-shells", Title: "App Shells", Description: "Reusable component documentation and console shells from Goshtoso App Shells.", Href: "/modules/app-shells", Section: "Modules", Keywords: []string{"layout docs console shell"}, Attrs: navHxAttrs("/modules/app-shells", "")},
+func getSearchItems(activeFamily ...string) []searchfield.Item {
+	scope := "core"
+	if len(activeFamily) > 0 {
+		scope = normalizeSearchScope(activeFamily[0])
 	}
+
+	items := make([]searchfield.Item, 0, len(catalog.ComponentPages())+40)
+	seen := make(map[string]struct{}, cap(items))
+	appendItem := func(item searchfield.Item) {
+		if item.Href == "" {
+			return
+		}
+		if _, exists := seen[item.Href]; exists {
+			return
+		}
+		seen[item.Href] = struct{}{}
+		items = append(items, item)
+	}
+
 	for _, page := range catalog.ComponentPages() {
 		if page.Active == "app-shell" {
 			continue
 		}
-		items = append(items, searchfield.Item{
+		appendItem(searchfield.Item{
 			ID:          "search-" + page.Active,
 			Title:       page.Title,
 			Description: page.Description,
 			Href:        page.Path,
 			Section:     page.Section,
-			Keywords:    []string{page.Active},
+			Scope:       searchScopeForPath(page.Path),
+			Keywords:    []string{page.Active, "component"},
 			Attrs:       navHxAttrs(page.Path, ""),
 		})
 	}
-	for _, section := range getSidebarSections("") {
-		if section.Title == "Examples" {
-			for _, item := range section.Items {
-				items = append(items, searchfield.Item{
-					ID:          "search-" + item.ID,
-					Title:       item.Label,
-					Description: searchItemDescription(item.ID, item.Label, section.Title),
-					Href:        item.Href,
-					Section:     section.Title,
-					Keywords:    []string{item.ID},
-					Attrs:       navHxAttrs(item.Href, ""),
-				})
-			}
+
+	for _, item := range getSidebarTopItems("") {
+		appendItem(searchItemFromSidebar(item, "Docs"))
+	}
+	appendItem(searchfield.Item{
+		ID:          "search-agents",
+		Title:       "AI Agents",
+		Description: "Use Goshtoso with AI coding agents through documented component and project conventions.",
+		Href:        "/docs/agents",
+		Section:     "AI Agents",
+		Scope:       "agents",
+		Keywords:    []string{"agents", "ai"},
+		Attrs:       navHxAttrs("/docs/agents", ""),
+	})
+
+	for _, item := range iconsDocsNavigation("").Items {
+		appendItem(searchItemFromSidebar(item, "Icons"))
+	}
+	for _, link := range chartsSidebarTopLinks() {
+		appendItem(searchItemFromLink(link.ID, link.Label, link.Description, link.Href, "Charts", "chart"))
+	}
+	for _, group := range chartsSidebarGroups() {
+		for _, link := range group.Items {
+			appendItem(searchItemFromLink(link.ID, link.Label, link.Description, link.Href, "Charts", "chart"))
 		}
 	}
-	items = append(items, getSearchSectionItems()...)
+	for _, link := range appShellsSidebarTopLinks() {
+		appendItem(searchItemFromLink(link.ID, link.Label, link.Description, link.Href, "App Shells", "frame", "shell"))
+	}
+	for _, group := range appShellsSidebarGroups() {
+		for _, link := range group.Items {
+			appendItem(searchItemFromLink(link.ID, link.Label, link.Description, link.Href, "App Shells", "frame", "shell"))
+		}
+	}
+	for _, link := range examplesSidebarLinks() {
+		appendItem(searchItemFromLink(link.ID, link.Label, searchItemDescription(link.ID, link.Label, "Examples"), link.Href, "Examples", "example"))
+	}
+	for _, page := range []struct {
+		id          string
+		title       string
+		description string
+		href        string
+	}{
+		{id: "privacy", title: "Privacy", description: "How Goshtoso handles browser storage, local demos, and third-party assets.", href: "/privacy"},
+		{id: "attributions", title: "Attributions", description: "Third-party notices, licenses, and project credits for Goshtoso and its bundled assets.", href: "/attributions"},
+		{id: "license", title: "License", description: "License terms for using the Goshtoso Go UI component library.", href: "/license"},
+	} {
+		appendItem(searchItemFromLink(page.id, page.title, page.description, page.href, "Docs"))
+	}
+
+	for _, item := range getSearchSectionItems() {
+		appendItem(item)
+	}
+	for i := range items {
+		if items[i].Scope == "" {
+			items[i].Scope = "core"
+		}
+		if items[i].Scope == scope {
+			items[i].Priority = 1
+		}
+	}
 	return items
+}
+
+func searchItemFromSidebar(item sidebar.Item, section string) searchfield.Item {
+	return searchItemFromLink(item.ID, item.Label, searchItemDescription(item.ID, item.Label, section), item.Href, section)
+}
+
+func searchItemFromLink(id, title, description, href, section string, keywords ...string) searchfield.Item {
+	words := append([]string{id, title}, keywords...)
+	return searchfield.Item{
+		ID:          "search-" + id,
+		Title:       title,
+		Description: description,
+		Href:        href,
+		Section:     section,
+		Scope:       searchScopeForPath(href),
+		Keywords:    words,
+		Attrs:       navHxAttrs(href, ""),
+	}
+}
+
+func normalizeSearchScope(scope string) string {
+	switch scope {
+	case "icon-packs":
+		return "icons"
+	case "charts", "app-shells", "examples", "agents", "icons", "core":
+		return scope
+	default:
+		return "core"
+	}
+}
+
+func searchScopeForPath(path string) string {
+	switch {
+	case path == "/components/icon", path == "/docs/icon-catalog", path == "/docs/iconpack":
+		return "icons"
+	case path == "/docs/agents":
+		return "agents"
+	case strings.HasPrefix(path, "/modules/charts"):
+		return "charts"
+	case strings.HasPrefix(path, "/modules/app-shells"):
+		return "app-shells"
+	case strings.HasPrefix(path, "/examples/"):
+		return "examples"
+	default:
+		return "core"
+	}
 }
 
 func searchItemDescription(id, label, section string) string {
 	descriptions := map[string]string{
-		"todo":    "Runnable task-list example with add, edit, complete, and filter flows.",
-		"chat":    "Runnable chat interface example with messages, composer, and conversation layout.",
-		"logs":    "Live log-feed example with streaming updates and operational scanning patterns.",
-		"profile": "Profile editing example with forms, preferences, validation, and persisted state.",
-		"ticker":  "Live ticker example with real-time list updates and compact status rows.",
+		"home":                 "Install Goshtoso, wire assets, and render your first component.",
+		"component-model":      "Learn the common component interface, concrete return values, constructor styles, and stable Kind identity.",
+		"application-patterns": "Compose App Shell, Operations List, Detail Workspace, and Multi-step Workflow product surfaces.",
+		"theme":                "Customize colors, radius, typography, and dark mode tokens.",
+		"todo":                 "Runnable task-list example with add, edit, complete, and filter flows.",
+		"chat":                 "Runnable chat interface example with messages, composer, and conversation layout.",
+		"logs":                 "Live log-feed example with streaming updates and operational scanning patterns.",
+		"profile":              "Profile editing example with forms, preferences, validation, and persisted state.",
+		"ticker":               "Live ticker example with real-time list updates and compact status rows.",
 	}
 	if description, ok := descriptions[id]; ok {
 		return description
@@ -672,13 +745,7 @@ func getSearchSectionItems() []searchfield.Item {
 
 // getSidebarSections returns the component categories with left-border style items
 func getSidebarSections(activeComponent string) []sidebar.Section {
-	sections := []sidebar.Section{{
-		Title: "Modules",
-		Items: []sidebar.Item{
-			sItem("module-charts", "Charts", "/modules/charts", activeComponent),
-			sItem("module-app-shells", "App Shells", "/modules/app-shells", activeComponent),
-		},
-	}}
+	sections := []sidebar.Section{}
 	sectionIndex := map[string]int{}
 	for _, page := range catalog.ComponentPages() {
 		if page.Active == "app-shell" {
@@ -700,13 +767,12 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 		Title:       "Examples",
 		Collapsible: true,
 		Items: []sidebar.Item{
-			sItem("examples", "Overview", "/examples", activeComponent),
+			sItem("ticker", "Live Ticker", "/examples/ticker", activeComponent),
 			sItem("todo", "Todo List", "/examples/todo", activeComponent),
 			sItem("expense", "Expense Tracker", "/examples/expense", activeComponent),
 			sItem("chat", "Chat", "/examples/chat", activeComponent),
 			sItem("logs", "Live Log Feed", "/examples/logs", activeComponent),
 			sItem("profile", "Profile", "/examples/profile", activeComponent),
-			sItem("ticker", "Live Ticker", "/examples/ticker", activeComponent),
 			sItem("wizard", "Onboarding Wizard", "/examples/wizard", activeComponent),
 		},
 	})
@@ -761,33 +827,33 @@ func componentNavFooter(activeComponent string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var28 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var28 == nil {
-			templ_7745c5c3_Var28 = templ.NopComponent
+		templ_7745c5c3_Var27 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var27 == nil {
+			templ_7745c5c3_Var27 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		prev, next := getComponentNav(activeComponent)
 		if prev != nil || next != nil {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<div class=\"mt-12 flex items-center justify-between border-t border-outline dark:border-outline-dark pt-6 pb-4\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<div class=\"mt-12 flex items-center justify-between border-t border-outline dark:border-outline-dark pt-6 pb-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if prev != nil {
 				prevAttrs := navHxAttrs(prev.Href, "")
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<a href=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var29 templ.SafeURL
-				templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
+				var templ_7745c5c3_Var28 templ.SafeURL
+				templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 519, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 635, Col: 36}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -795,45 +861,45 @@ func componentNavFooter(activeComponent string) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, " class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M15 19l-7-7 7-7\"></path></svg> <span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, " class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M15 19l-7-7 7-7\"></path></svg> <span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var30 string
-				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
+				var templ_7745c5c3_Var29 string
+				templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 526, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 642, Col: 23}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</span></a> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</span></a> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 			if next != nil {
 				nextAttrs := navHxAttrs(next.Href, "")
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<a href=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var31 templ.SafeURL
-				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
+				var templ_7745c5c3_Var30 templ.SafeURL
+				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 534, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 650, Col: 36}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -841,30 +907,30 @@ func componentNavFooter(activeComponent string) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, " class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\"><span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, " class=\"group flex items-center gap-2 text-sm text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\"><span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var32 string
-				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
+				var templ_7745c5c3_Var31 string
+				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 538, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 654, Col: 23}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M9 5l7 7-7 7\"></path></svg></a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M9 5l7 7-7 7\"></path></svg></a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -892,15 +958,15 @@ func siteFooter() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var33 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var33 == nil {
-			templ_7745c5c3_Var33 = templ.NopComponent
+		templ_7745c5c3_Var32 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var32 == nil {
+			templ_7745c5c3_Var32 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		privacyAttrs := navHxAttrs("/privacy", "")
 		attrAttrs := navHxAttrs("/attributions", "")
 		licenseAttrs := navHxAttrs("/license", "")
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<footer class=\"mt-16 border-t border-outline dark:border-outline-dark pt-8 pb-10 text-center\"><p class=\"inline-flex items-center justify-center gap-2 font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong\"><img src=\"/assets/images/goshtoso-mark.svg\" alt=\"\" aria-hidden=\"true\" class=\"size-6 shrink-0 rounded-md\"> <span>Goshtoso <span class=\"font-normal text-on-surface-muted dark:text-on-surface-dark-muted\">2026</span></span></p><nav class=\"mt-3 flex items-center justify-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><a href=\"/privacy\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<footer class=\"mt-16 border-t border-outline dark:border-outline-dark pt-8 pb-10 text-center\"><p class=\"inline-flex items-center justify-center gap-2 font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong\"><img src=\"/assets/images/goshtoso-mark.svg\" alt=\"\" aria-hidden=\"true\" class=\"size-6 shrink-0 rounded-md\"> <span>Goshtoso <span class=\"font-normal text-on-surface-muted dark:text-on-surface-dark-muted\">2026</span></span></p><nav aria-label=\"Site links\" class=\"mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><a href=\"/privacy\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -908,7 +974,7 @@ func siteFooter() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, " class=\"hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">Privacy</a> <span class=\"text-primary dark:text-primary-dark\">•</span> <a href=\"/attributions\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, " class=\"hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">Privacy</a> <span class=\"text-primary dark:text-primary-dark\">•</span> <a href=\"/attributions\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -916,7 +982,7 @@ func siteFooter() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, " class=\"hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">Attributions</a> <span class=\"text-primary dark:text-primary-dark\">•</span> <a href=\"/license\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, " class=\"hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">Attributions</a> <span class=\"text-primary dark:text-primary-dark\">•</span> <a href=\"/license\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -924,7 +990,7 @@ func siteFooter() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, " class=\"hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">License</a></nav><div class=\"mt-4 flex items-center justify-center gap-4\"><a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" rel=\"noopener\" aria-label=\"GitHub\" class=\"text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong transition-colors motion-reduce:transition-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"currentColor\" class=\"size-5\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.523 2 12 2Z\"></path></svg></a></div></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, " class=\"hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">License</a> <span class=\"text-primary dark:text-primary-dark\">•</span> <a href=\"/sitemap.xml\" class=\"hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">Sitemap XML</a> <span class=\"text-primary dark:text-primary-dark\">•</span> <a href=\"/llms.txt\" class=\"hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">llms.txt</a></nav><div class=\"mt-4 flex items-center justify-center gap-4\"><a href=\"https://github.com/araihu/goshtoso\" target=\"_blank\" rel=\"noopener\" aria-label=\"GitHub\" class=\"text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong transition-colors motion-reduce:transition-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"currentColor\" class=\"size-5\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.523 2 12 2Z\"></path></svg></a></div></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -957,12 +1023,12 @@ func themeSelectIcon() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var34 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var34 == nil {
-			templ_7745c5c3_Var34 = templ.NopComponent
+		templ_7745c5c3_Var33 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var33 == nil {
+			templ_7745c5c3_Var33 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4 shrink-0\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01\"></path></svg>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"size-4 shrink-0\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01\"></path></svg>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

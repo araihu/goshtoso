@@ -2,6 +2,7 @@ package docspages
 
 import (
 	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/site/internal/demoicons/bootstrapicons"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -12,30 +13,31 @@ templ IconpackPage() {
 templ iconpackContent() {
 	<div id="iconpack-fragment" class="mx-auto max-w-5xl space-y-12">
 		<header class="space-y-4">
-			<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Extension surface</p>
-		<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Consumer-local icon packs</h1>
-		<p class="max-w-3xl text-lg leading-relaxed text-on-surface dark:text-on-surface-dark">
-				Bring any icon pack into your application without patching Goshtoso's curated core package. Arai Hu Assets releases and the Muamba-backed <code class="font-mono">.iconpack.yaml</code> contract are supported directly. The generator creates a parallel package and sprite inside your application, while rendering still goes through Goshtoso's accessible <code class="font-mono">components/icon</code> contract.
+			<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Consumer-owned extension</p>
+			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Icon Packs</h1>
+			<p class="max-w-3xl text-lg leading-relaxed text-on-surface dark:text-on-surface-dark">
+				Extend the icon set without changing Goshtoso's bundled components. The iconpack tool turns verified SVG sources into a typed Go package, a sprite, and the provenance files your application ships.
 			</p>
 			<div class="flex flex-wrap gap-4 text-sm font-semibold">
-				<a href="/components/icon" hx-get="/components/icon" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" class="text-primary underline underline-offset-2 dark:text-primary-dark">Open the Icon component workbench</a>
 				<a href="https://github.com/araihu/goshtoso/blob/main/docs/ICONPACK.md" target="_blank" rel="noopener" class="text-primary underline underline-offset-2 dark:text-primary-dark">Read the complete repository guide</a>
 			</div>
 		</header>
 
 		<section id="why-icon-packs" class="space-y-5" aria-labelledby="why-icon-packs-title">
-			<h2 id="why-icon-packs-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Why generate locally?</h2>
+			<h2 id="why-icon-packs-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">What stays under your control?</h2>
 			<div class="grid gap-4 md:grid-cols-3">
-				@iconpackPrinciple("Parallel package", "The generated Go package, sprite, manifest, provenance, and licenses stay under your application's ownership. Goshtoso's embedded Heroicons remain unchanged.")
-				@iconpackPrinciple("Any source", "Use Arai Hu Assets, a GitHub tree, a single remote SVG, or several packs together. Muamba owns TOFU and verified snapshots; iconpack owns the names and generated package.")
-				@iconpackPrinciple("One rendering contract", "The generated helper returns the same icon.Instance path as bundled icons, preserving URL validation, size classes, currentColor behavior, and accessibility semantics.")
+				@iconpackPrinciple("Own the output", "The generated Go package, sprite, manifest, provenance, and licenses live with your application. The bundled Goshtoso icons remain unchanged.")
+				@iconpackPrinciple("Choose the source", "Select exact names from an Arai Hu Assets release, or combine a GitHub tree, a remote SVG, and other packs through .iconpack.yaml.")
+				@iconpackPrinciple("Keep one rendering path", "Generated helpers use the same accessibility, sizing, color, and same-origin sprite rules as Goshtoso's core Icon component.")
 			</div>
 		</section>
 
+		@iconpackGeneratedProof()
+
 		<section id="generate" class="space-y-5" aria-labelledby="generate-title">
 			<div>
-				<h2 id="generate-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">1. Generate from an Assets release</h2>
-				<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">Use the archive digest and the release metadata digests published with the exact Assets release. Select by literal catalog <code class="font-mono">canonicalName</code>; do not derive names from filenames.</p>
+				<h2 id="generate-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">1. Generate from a verified Assets release</h2>
+				<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">Use the archive digest and the release metadata digests published with that Assets release. Select assets by their literal catalog <code class="font-mono">canonicalName</code>; do not infer names from filenames.</p>
 			</div>
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "bash",
@@ -59,8 +61,8 @@ templ iconpackContent() {
 
 		<section id="iconpack-config" class="space-y-5" aria-labelledby="iconpack-config-title">
 			<div>
-				<h2 id="iconpack-config-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">2. Bring any pack with .iconpack.yaml</h2>
-				<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">The config is Goshtoso-owned and never discovers or changes an existing <code class="font-mono">muamba.yaml</code>. Muamba is used as a Go library; the first lock is explicit and later runs verify the same source bytes.</p>
+				<h2 id="iconpack-config-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">2. Define sources with .iconpack.yaml</h2>
+				<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">This file belongs to Goshtoso. It does not discover or modify an existing <code class="font-mono">muamba.yaml</code>. Muamba runs as a Go library; the first trust records source bytes, and later runs verify them.</p>
 			</div>
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "yaml",
@@ -96,8 +98,8 @@ sources:
 
 		<section id="generic-source" class="space-y-5" aria-labelledby="generic-source-title">
 			<div>
-				<h2 id="generic-source-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">3. Compatibility source manifests</h2>
-				<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">Existing JSON or YAML source manifests remain accepted for migration and the checked-in Bootstrap fixture. New integrations should use <code class="font-mono">.iconpack.yaml</code> so Muamba owns acquisition and lock verification.</p>
+				<h2 id="generic-source-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">3. Keep compatibility manifests for migration</h2>
+				<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">Existing JSON and YAML manifests remain supported for migration and for the checked-in Bootstrap fixture. New integrations should use <code class="font-mono">.iconpack.yaml</code> so source acquisition and lock verification stay in one place.</p>
 			</div>
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "bash",
@@ -114,8 +116,8 @@ sources:
 
 		<section id="serve-and-render" class="space-y-5" aria-labelledby="serve-and-render-title">
 			<div>
-				<h2 id="serve-and-render-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">4. Serve the sprite and render through core</h2>
-				<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">Mount the generated <code class="font-mono">sprite.svg</code> at the exact same-origin URL supplied to the generator. The generated <code class="font-mono">Icon</code> helper accepts the small generated config and delegates to Goshtoso's core icon component.</p>
+				<h2 id="serve-and-render-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">4. Serve the sprite and render the generated symbols</h2>
+				<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">Serve the generated sprite at the same-origin URL passed to the generator. The generated <code class="font-mono">Icon</code> helper accepts a small config and delegates rendering to Goshtoso's core icon component.</p>
 			</div>
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "go",
@@ -142,8 +144,8 @@ templ ProviderIcon() {
 		</section>
 
 		<section id="lookup" class="space-y-5" aria-labelledby="lookup-title">
-			<h2 id="lookup-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">5. Resolve names from configuration</h2>
-			<p class="max-w-3xl text-on-surface dark:text-on-surface-dark">When an application stores canonical names in configuration, use the generated <code class="font-mono">Name</code> type and <code class="font-mono">Lookup</code>. An absent name is an application configuration error, not a reason to fall back to an arbitrary glyph.</p>
+			<h2 id="lookup-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">5. Resolve exact names from configuration</h2>
+			<p class="max-w-3xl text-on-surface dark:text-on-surface-dark">When configuration stores canonical names, resolve them through the generated <code class="font-mono">Name</code> type and <code class="font-mono">Lookup</code>. A missing name is a configuration error; do not silently substitute another glyph.</p>
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "go",
 				Label: "Resolve an exact canonical name",
@@ -161,8 +163,8 @@ templ ProviderIcon() {
 		</section>
 
 		<section id="manifest-and-licenses" class="space-y-5" aria-labelledby="manifest-and-licenses-title">
-			<h2 id="manifest-and-licenses-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Inspect the generated boundary</h2>
-			<p class="max-w-3xl text-on-surface dark:text-on-surface-dark">Keep these generated files with the application package. They make the selected release, source bytes, symbols, output hashes, provenance, and licenses auditable without reopening the vendored source tree.</p>
+			<h2 id="manifest-and-licenses-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Generated files are the audit boundary</h2>
+			<p class="max-w-3xl text-on-surface dark:text-on-surface-dark">Keep these files with the application. Together they record the selected release, source bytes, symbols, output hashes, provenance, and licenses without reopening the source tree.</p>
 			<div class="grid gap-3 sm:grid-cols-2">
 				@iconpackOutputFile("sprite.svg", "Only the selected SVG symbols, with the catalog sprite symbols preserved literally.")
 				@iconpackOutputFile("icons_gen.go", "Typed Name, Glyph, icon.Symbol constants, Lookup, Config, SpriteURL, and Icon.")
@@ -173,16 +175,39 @@ templ ProviderIcon() {
 		</section>
 
 		<section id="runtime-contract" class="space-y-5" aria-labelledby="runtime-contract-title">
-			<h2 id="runtime-contract-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Runtime and update contract</h2>
+			<h2 id="runtime-contract-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Runtime and update rules</h2>
 			<ul class="list-disc space-y-3 pl-5 text-on-surface dark:text-on-surface-dark">
 				<li>Use a relative same-origin sprite URL. HTTPS pages must not depend on an HTTP sprite or cross-origin <code class="font-mono">&lt;use&gt;</code> behavior.</li>
 				<li>Give labelled icons a nonblank <code class="font-mono">Label</code>. Set <code class="font-mono">Decorative: true</code> on purely visual icons; the generated helper passes both decisions to core.</li>
 				<li>Do not recolor protected brand assets. Monochrome assets can inherit <code class="font-mono">currentColor</code> through your normal Goshtoso classes.</li>
 				<li>When updating, generate a new versioned output and sprite route, verify the new manifest, then switch the application import and route together. Retain the previous output as a rollback artifact until the deployment is confirmed.</li>
 			</ul>
-			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">The <a href="/components/icon" hx-get="/components/icon" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" class="text-primary underline underline-offset-2 dark:text-primary-dark">Icon workbench</a> shows the same accessibility, size, color, and SVG geometry behavior within the embedded package. The generated-consumer proof follows that same core path.</p>
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">The generated-consumer proof above uses the same core rendering path as Goshtoso's bundled icons; it does not modify the bundled sprite.</p>
 		</section>
 	</div>
+}
+
+templ iconpackGeneratedProof() {
+	<section data-component-preview data-testid="bootstrap-iconpack-preview" class="rounded-radius border border-outline bg-surface-alt/50 p-5 dark:border-outline-dark dark:bg-surface-dark-alt/40" aria-labelledby="bootstrap-iconpack-title">
+		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+			<div>
+				<p class="text-sm font-medium text-primary dark:text-primary-dark">Extension proof</p>
+				<h2 id="bootstrap-iconpack-title" data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">A generated pack keeps the same icon contract</h2>
+				<p class="mt-1 max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted">This site ships a small Bootstrap Icons package generated outside the bundled Heroicons set. It keeps the same label, decorative, sprite, and parent-color behavior used by Goshtoso icons.</p>
+			</div>
+			<a href="https://icons.getbootstrap.com/" target="_blank" rel="noreferrer" class="text-sm font-medium text-primary underline underline-offset-4 dark:text-primary-dark">View Bootstrap Icons source</a>
+		</div>
+		<div class="mt-5 flex flex-wrap items-center gap-5" data-testid="bootstrap-iconpack-icons">
+			<div data-testid="bootstrap-icon-labelled" class="flex items-center gap-2 text-primary dark:text-primary-dark">
+				@bootstrapicons.Icon(bootstrapicons.Config{Symbol: bootstrapicons.IconBootstrapIconsAlarm, Label: "Alarm"})
+				<span class="text-sm">Meaningful</span>
+			</div>
+			<div data-testid="bootstrap-icon-decorative" class="flex items-center gap-2 text-secondary dark:text-secondary-dark">
+				@bootstrapicons.Icon(bootstrapicons.Config{Symbol: bootstrapicons.IconBootstrapIconsBootstrap, Decorative: true})
+				<span class="text-sm">Decorative</span>
+			</div>
+		</div>
+	</section>
 }
 
 templ iconpackPrinciple(title, description string) {

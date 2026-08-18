@@ -1,6 +1,8 @@
 package demo
 
 import (
+	"strings"
+
 	searchfield "github.com/araihu/goshtoso/components/search"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/sidebar"
@@ -79,19 +81,43 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 				.docs-sidebar .sidebar-scroll {
 					padding: 0.75rem 2rem 1rem;
 				}
-				.docs-sidebar .docs-sidebar-search {
-					padding: 0.75rem 2rem 0.5rem;
+				.demo-global-search {
+					display: flex;
+					min-width: 0;
+					flex: 0 1 15rem;
 				}
-				.docs-sidebar .docs-sidebar-search [data-search-field] button {
+				.demo-global-search [data-search-field] {
+					width: 100%;
+				}
+				.demo-global-search [data-search-field] > button {
 					min-height: 2.5rem;
-					padding-inline: 1rem;
-					font-size: 1rem;
-					font-weight: 300;
-					line-height: 1.5rem;
 				}
-				.docs-sidebar .docs-sidebar-search [data-search-field] button > svg {
-					width: 1.25rem;
-					height: 1.25rem;
+				@media (max-width: 767px) {
+					.demo-global-search {
+						width: 2.5rem;
+						flex: 0 0 2.5rem;
+					}
+					.demo-global-search [data-search-field] {
+						width: 2.5rem;
+					}
+					.demo-global-search [data-search-field] > button {
+						justify-content: center;
+						padding-inline: 0.625rem;
+					}
+					.demo-global-search [data-search-field] > button > span.min-w-0 {
+						position: absolute;
+						width: 1px;
+						height: 1px;
+						padding: 0;
+						margin: -1px;
+						overflow: hidden;
+						clip: rect(0, 0, 0, 0);
+						white-space: nowrap;
+						border: 0;
+					}
+					.demo-global-search [data-search-field] > button > kbd {
+						display: none;
+					}
 				}
 				/* First-paint entrance animations — masks layout shift on hard reload.
 				   Gated by html.boot which is stripped ~600ms after DOMContentLoaded,
@@ -177,6 +203,9 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 								<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
 							</svg>
 						</a>
+						<div class="demo-global-search">
+							@searchfield.SearchField(docsSearchConfig(componentDocsFamily(activeComponent)))
+						</div>
 					</div>
 				</div>
 			</header>
@@ -195,7 +224,6 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 							SectionsTitle:     "Components",
 							Sections:          getSidebarSections(activeComponent),
 							RootClass:         "docs-sidebar",
-							SearchSlot:        sidebarSearchSlot(),
 						})
 					</div>
 				</div>
@@ -228,7 +256,7 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 					</div>
 				</main>
 			</div>
-			@searchfield.SearchModal(docsSearchConfig())
+			@searchfield.SearchModal(docsSearchConfig(componentDocsFamily(activeComponent)))
 			<!-- Browser storage notice. Shows until the visitor chooses allowed or denied
 			     storage via the gt_storage preference cookie. Keep in lock-step with
 			     landing.templ's cookieConsent(). -->
@@ -319,28 +347,22 @@ func getSidebarTopItems(activeComponent string) []sidebar.Item {
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineArrowDownTray, Decorative: true}), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
 		{ID: "component-model", Label: "Component Model", Href: "/docs/component-model", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineCube, Decorative: true}), Active: activeComponent == "component-model", LinkAttrs: navHxAttrs("/docs/component-model", "")},
 		{ID: "application-patterns", Label: "Application Patterns", Href: "/docs/application-patterns", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineQueueList, Decorative: true}), Active: activeComponent == "application-patterns", LinkAttrs: navHxAttrs("/docs/application-patterns", "")},
-		{ID: "iconpack", Label: "Icon Packs", Href: "/docs/iconpack", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineSquares2x2, Decorative: true}), Active: activeComponent == "iconpack", LinkAttrs: navHxAttrs("/docs/iconpack", "")},
-		{ID: "agents", Label: "AI Agents", Href: "/docs/agents", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineSparkles, Decorative: true}), Active: activeComponent == "agents", LinkAttrs: navHxAttrs("/docs/agents", "")},
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineSwatch, Decorative: true}), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
-		{ID: "attributions", Label: "Attributions", Href: "/attributions", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineHeart, Decorative: true}), Active: activeComponent == "attributions", LinkAttrs: navHxAttrs("/attributions", "")},
-		{ID: "license", Label: "License", Href: "/license", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineClipboardDocumentList, Decorative: true}), Active: activeComponent == "license", LinkAttrs: navHxAttrs("/license", "")},
 	}
 }
 
-templ sidebarSearchSlot() {
-	<div class="docs-sidebar-search shrink-0">
-		@searchfield.SearchField(docsSearchConfig())
-	</div>
-}
-
-func docsSearchConfig() searchfield.Config {
+func docsSearchConfig(activeFamily ...string) searchfield.Config {
+	scope := "core"
+	if len(activeFamily) > 0 {
+		scope = normalizeSearchScope(activeFamily[0])
+	}
 	return searchfield.Config{
 		ID:             "docs-search",
 		Label:          "Search docs...",
-		Placeholder:    "Search",
+		Placeholder:    "Search everything",
 		GlobalShortcut: true,
-		Items:          getSearchItems(),
-		EmptyText:      "No docs found.",
+		Items:          getSearchItems(scope),
+		EmptyText:      "No matching pages found.",
 	}
 }
 
@@ -355,55 +377,156 @@ func sItem(id, label, href, activeComponent string) sidebar.Item {
 	}
 }
 
-func getSearchItems() []searchfield.Item {
-	items := []searchfield.Item{
-		{ID: "search-getting-started", Title: "Getting Started", Description: "Install Goshtoso, wire assets, and render your first component.", Href: "/getting-started", Section: "Docs", Attrs: navHxAttrs("/getting-started", "")},
-		{ID: "search-component-model", Title: "Component Model", Description: "Learn the common component interface, concrete return values, constructor styles, and stable Kind identity.", Href: "/docs/component-model", Section: "Docs", Attrs: navHxAttrs("/docs/component-model", "")},
-		{ID: "search-application-patterns", Title: "Application Patterns", Description: "Compose App Shell, Operations List, Detail Workspace, and Multi-step Workflow product surfaces.", Href: "/docs/application-patterns", Section: "Docs", Keywords: []string{"recipes app shell operations detail workflow"}, Attrs: navHxAttrs("/docs/application-patterns", "")},
-		{ID: "search-iconpack", Title: "Icon Packs", Description: "Generate consumer-local packs from Arai Hu Assets, GitHub trees, single files, or multiple arbitrary sources with an iconpack-owned TOFU lock.", Href: "/docs/iconpack", Section: "Docs", Keywords: []string{"sprite heroicons developer icons bootstrap arbitrary source manifest muamba iconpack yaml lock"}, Attrs: navHxAttrs("/docs/iconpack", "")},
-		{ID: "search-examples", Title: "Examples", Description: "Full runnable app examples built with Goshtoso components.", Href: "/examples", Section: "Examples", Attrs: navHxAttrs("/examples", "")},
-		{ID: "search-agents", Title: "AI Agents", Description: "Install and verify the Goshtoso consumer integration skill for AI coding tools.", Href: "/docs/agents", Section: "Docs", Attrs: navHxAttrs("/docs/agents", "")},
-		{ID: "search-theme", Title: "Theme", Description: "Customize colors, radius, typography, and dark mode tokens.", Href: "/docs/theme", Section: "Docs", Attrs: navHxAttrs("/docs/theme", "")},
-		{ID: "search-attributions", Title: "Attributions", Description: "Third-party notices and project credits.", Href: "/attributions", Section: "Docs", Attrs: navHxAttrs("/attributions", "")},
-		{ID: "search-license", Title: "License", Description: "License details for using Goshtoso.", Href: "/license", Section: "Docs", Attrs: navHxAttrs("/license", "")},
-		{ID: "search-module-charts", Title: "Charts", Description: "Static, interactive, and 3D charts from the Goshtoso Charts module.", Href: "/modules/charts", Section: "Modules", Keywords: []string{"visualization line 3d"}, Attrs: navHxAttrs("/modules/charts", "")},
-		{ID: "search-module-app-shells", Title: "App Shells", Description: "Reusable component documentation and console shells from Goshtoso App Shells.", Href: "/modules/app-shells", Section: "Modules", Keywords: []string{"layout docs console shell"}, Attrs: navHxAttrs("/modules/app-shells", "")},
+func getSearchItems(activeFamily ...string) []searchfield.Item {
+	scope := "core"
+	if len(activeFamily) > 0 {
+		scope = normalizeSearchScope(activeFamily[0])
 	}
+
+	items := make([]searchfield.Item, 0, len(catalog.ComponentPages())+40)
+	seen := make(map[string]struct{}, cap(items))
+	appendItem := func(item searchfield.Item) {
+		if item.Href == "" {
+			return
+		}
+		if _, exists := seen[item.Href]; exists {
+			return
+		}
+		seen[item.Href] = struct{}{}
+		items = append(items, item)
+	}
+
 	for _, page := range catalog.ComponentPages() {
 		if page.Active == "app-shell" {
 			continue
 		}
-		items = append(items, searchfield.Item{
+		appendItem(searchfield.Item{
 			ID:          "search-" + page.Active,
 			Title:       page.Title,
 			Description: page.Description,
 			Href:        page.Path,
 			Section:     page.Section,
-			Keywords:    []string{page.Active},
+			Scope:       searchScopeForPath(page.Path),
+			Keywords:    []string{page.Active, "component"},
 			Attrs:       navHxAttrs(page.Path, ""),
 		})
 	}
-	for _, section := range getSidebarSections("") {
-		if section.Title == "Examples" {
-			for _, item := range section.Items {
-				items = append(items, searchfield.Item{
-					ID:          "search-" + item.ID,
-					Title:       item.Label,
-					Description: searchItemDescription(item.ID, item.Label, section.Title),
-					Href:        item.Href,
-					Section:     section.Title,
-					Keywords:    []string{item.ID},
-					Attrs:       navHxAttrs(item.Href, ""),
-				})
-			}
+
+	for _, item := range getSidebarTopItems("") {
+		appendItem(searchItemFromSidebar(item, "Docs"))
+	}
+	appendItem(searchfield.Item{
+		ID:          "search-agents",
+		Title:       "AI Agents",
+		Description: "Use Goshtoso with AI coding agents through documented component and project conventions.",
+		Href:        "/docs/agents",
+		Section:     "AI Agents",
+		Scope:       "agents",
+		Keywords:    []string{"agents", "ai"},
+		Attrs:       navHxAttrs("/docs/agents", ""),
+	})
+
+	for _, item := range iconsDocsNavigation("").Items {
+		appendItem(searchItemFromSidebar(item, "Icons"))
+	}
+	for _, link := range chartsSidebarTopLinks() {
+		appendItem(searchItemFromLink(link.ID, link.Label, link.Description, link.Href, "Charts", "chart"))
+	}
+	for _, group := range chartsSidebarGroups() {
+		for _, link := range group.Items {
+			appendItem(searchItemFromLink(link.ID, link.Label, link.Description, link.Href, "Charts", "chart"))
 		}
 	}
-	items = append(items, getSearchSectionItems()...)
+	for _, link := range appShellsSidebarTopLinks() {
+		appendItem(searchItemFromLink(link.ID, link.Label, link.Description, link.Href, "App Shells", "frame", "shell"))
+	}
+	for _, group := range appShellsSidebarGroups() {
+		for _, link := range group.Items {
+			appendItem(searchItemFromLink(link.ID, link.Label, link.Description, link.Href, "App Shells", "frame", "shell"))
+		}
+	}
+	for _, link := range examplesSidebarLinks() {
+		appendItem(searchItemFromLink(link.ID, link.Label, searchItemDescription(link.ID, link.Label, "Examples"), link.Href, "Examples", "example"))
+	}
+	for _, page := range []struct {
+		id          string
+		title       string
+		description string
+		href        string
+	}{
+		{id: "privacy", title: "Privacy", description: "How Goshtoso handles browser storage, local demos, and third-party assets.", href: "/privacy"},
+		{id: "attributions", title: "Attributions", description: "Third-party notices, licenses, and project credits for Goshtoso and its bundled assets.", href: "/attributions"},
+		{id: "license", title: "License", description: "License terms for using the Goshtoso Go UI component library.", href: "/license"},
+	} {
+		appendItem(searchItemFromLink(page.id, page.title, page.description, page.href, "Docs"))
+	}
+
+	for _, item := range getSearchSectionItems() {
+		appendItem(item)
+	}
+	for i := range items {
+		if items[i].Scope == "" {
+			items[i].Scope = "core"
+		}
+		if items[i].Scope == scope {
+			items[i].Priority = 1
+		}
+	}
 	return items
+}
+
+func searchItemFromSidebar(item sidebar.Item, section string) searchfield.Item {
+	return searchItemFromLink(item.ID, item.Label, searchItemDescription(item.ID, item.Label, section), item.Href, section)
+}
+
+func searchItemFromLink(id, title, description, href, section string, keywords ...string) searchfield.Item {
+	words := append([]string{id, title}, keywords...)
+	return searchfield.Item{
+		ID:          "search-" + id,
+		Title:       title,
+		Description: description,
+		Href:        href,
+		Section:     section,
+		Scope:       searchScopeForPath(href),
+		Keywords:    words,
+		Attrs:       navHxAttrs(href, ""),
+	}
+}
+
+func normalizeSearchScope(scope string) string {
+	switch scope {
+	case "icon-packs":
+		return "icons"
+	case "charts", "app-shells", "examples", "agents", "icons", "core":
+		return scope
+	default:
+		return "core"
+	}
+}
+
+func searchScopeForPath(path string) string {
+	switch {
+	case path == "/components/icon", path == "/docs/icon-catalog", path == "/docs/iconpack":
+		return "icons"
+	case path == "/docs/agents":
+		return "agents"
+	case strings.HasPrefix(path, "/modules/charts"):
+		return "charts"
+	case strings.HasPrefix(path, "/modules/app-shells"):
+		return "app-shells"
+	case strings.HasPrefix(path, "/examples/"):
+		return "examples"
+	default:
+		return "core"
+	}
 }
 
 func searchItemDescription(id, label, section string) string {
 	descriptions := map[string]string{
+		"home":                  "Install Goshtoso, wire assets, and render your first component.",
+		"component-model":       "Learn the common component interface, concrete return values, constructor styles, and stable Kind identity.",
+		"application-patterns":   "Compose App Shell, Operations List, Detail Workspace, and Multi-step Workflow product surfaces.",
+		"theme":                 "Customize colors, radius, typography, and dark mode tokens.",
 		"todo":    "Runnable task-list example with add, edit, complete, and filter flows.",
 		"chat":    "Runnable chat interface example with messages, composer, and conversation layout.",
 		"logs":    "Live log-feed example with streaming updates and operational scanning patterns.",
@@ -436,13 +559,7 @@ func getSearchSectionItems() []searchfield.Item {
 
 // getSidebarSections returns the component categories with left-border style items
 func getSidebarSections(activeComponent string) []sidebar.Section {
-	sections := []sidebar.Section{{
-		Title: "Modules",
-		Items: []sidebar.Item{
-			sItem("module-charts", "Charts", "/modules/charts", activeComponent),
-			sItem("module-app-shells", "App Shells", "/modules/app-shells", activeComponent),
-		},
-	}}
+	sections := []sidebar.Section{}
 	sectionIndex := map[string]int{}
 	for _, page := range catalog.ComponentPages() {
 		if page.Active == "app-shell" {
@@ -464,13 +581,12 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 		Title:       "Examples",
 		Collapsible: true,
 		Items: []sidebar.Item{
-			sItem("examples", "Overview", "/examples", activeComponent),
+			sItem("ticker", "Live Ticker", "/examples/ticker", activeComponent),
 			sItem("todo", "Todo List", "/examples/todo", activeComponent),
 			sItem("expense", "Expense Tracker", "/examples/expense", activeComponent),
 			sItem("chat", "Chat", "/examples/chat", activeComponent),
 			sItem("logs", "Live Log Feed", "/examples/logs", activeComponent),
 			sItem("profile", "Profile", "/examples/profile", activeComponent),
-			sItem("ticker", "Live Ticker", "/examples/ticker", activeComponent),
 			sItem("wizard", "Onboarding Wizard", "/examples/wizard", activeComponent),
 		},
 	})
@@ -564,12 +680,16 @@ templ siteFooter() {
 			/>
 			<span>Goshtoso <span class="font-normal text-on-surface-muted dark:text-on-surface-dark-muted">2026</span></span>
 		</p>
-		<nav class="mt-3 flex items-center justify-center gap-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+		<nav aria-label="Site links" class="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
 			<a href="/privacy" { privacyAttrs... } class="hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none">Privacy</a>
 			<span class="text-primary dark:text-primary-dark">•</span>
 			<a href="/attributions" { attrAttrs... } class="hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none">Attributions</a>
 			<span class="text-primary dark:text-primary-dark">•</span>
 			<a href="/license" { licenseAttrs... } class="hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none">License</a>
+			<span class="text-primary dark:text-primary-dark">•</span>
+			<a href="/sitemap.xml" class="hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none">Sitemap XML</a>
+			<span class="text-primary dark:text-primary-dark">•</span>
+			<a href="/llms.txt" class="hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none">llms.txt</a>
 		</nav>
 		<div class="mt-4 flex items-center justify-center gap-4">
 			<a href="https://github.com/araihu/goshtoso" target="_blank" rel="noopener" aria-label="GitHub" class="text-on-surface-muted hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong transition-colors motion-reduce:transition-none">

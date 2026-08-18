@@ -13,11 +13,7 @@ func TestSidebarTopItemsUseTheConsumerLocalHeroiconsSprite(t *testing.T) {
 		"home":                 "heroicons-optimized-24-outline-arrow-down-tray",
 		"component-model":      "heroicons-optimized-24-outline-cube",
 		"application-patterns": "heroicons-optimized-24-outline-queue-list",
-		"iconpack":             "heroicons-optimized-24-outline-squares-2x2",
-		"agents":               "heroicons-optimized-24-outline-sparkles",
 		"theme":                "heroicons-optimized-24-outline-swatch",
-		"attributions":         "heroicons-optimized-24-outline-heart",
-		"license":              "heroicons-optimized-24-outline-clipboard-document-list",
 	}
 
 	for _, item := range getSidebarTopItems("") {

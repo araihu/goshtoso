@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/araihu/goshtoso/components/icon/heroicons"
-	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -29,10 +28,8 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 
 	t.Run("route renders every generated glyph and symbol reference", func(t *testing.T) {
 		page := openIconCatalogPage(t)
-		entry, ok := catalog.Lookup("components/icon")
-		require.True(t, ok)
 		require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{
-			Name:  entry.Title,
+			Name:  "Icon Catalog",
 			Exact: playwright.Bool(true),
 		}).WaitFor())
 
@@ -52,17 +49,6 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 			require.NoError(t, err)
 			assert.Equal(t, heroicons.SpriteURL+"#"+string(glyph.Symbol), href)
 		}
-	})
-
-	t.Run("consumer-local icon pack usage is documented", func(t *testing.T) {
-		page := openIconCatalogPage(t)
-		body, err := page.Locator("body").TextContent()
-		require.NoError(t, err)
-		assert.Contains(t, body, "Generate an attributed icon pack")
-		assert.Contains(t, body, "Render the generated package through Goshtoso Icon")
-		assert.Contains(t, body, "IconBrandDeveloperIconsTRPC")
-		assert.Contains(t, body, "components/icon")
-		assert.Contains(t, body, "/assets/icons/appicons/sprite.svg")
 	})
 
 	t.Run("grid uses one three and six columns at responsive breakpoints", func(t *testing.T) {
@@ -86,7 +72,7 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 	})
 
 	t.Run("showcase exposes accessible decorative and painted currentColor SVGs", func(t *testing.T) {
-		page := openIconCatalogPage(t)
+		page := openIconComponentPage(t)
 
 		accessible := page.Locator("[data-testid='icon-variant-accessible'] svg")
 		require.NoError(t, accessible.WaitFor())
@@ -102,7 +88,7 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 	})
 
 	t.Run("site renders a generic Bootstrap Icons pack through core", func(t *testing.T) {
-		page := openIconCatalogPage(t)
+		page := openIconPackPage(t)
 		labelled := page.Locator("[data-testid='bootstrap-icon-labelled'] svg")
 		require.NoError(t, labelled.WaitFor())
 		assertSVGAttributes(t, labelled, "img", "Alarm", "")
@@ -149,7 +135,7 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 		assert.Equal(t, "text-primary", selectedColor)
 		require.NoError(t, page.Locator("#icon-size-lg").Check())
 		require.NoError(t, page.Locator("#icon-label").Fill("Search"))
-		decorativeControl := page.Locator("#icon-fragment input[type='checkbox']")
+		decorativeControl := page.Locator("#icon-catalog-fragment input[type='checkbox']")
 		isDecorative, err := decorativeControl.IsChecked()
 		require.NoError(t, err)
 		assert.False(t, isDecorative)
@@ -184,7 +170,7 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 
 	t.Run("decorative and blank labels hide the live preview", func(t *testing.T) {
 		page, _, dialog := openMagnifyingGlassModal(t)
-		decorativeControl := page.Locator("#icon-fragment input[type='checkbox']")
+		decorativeControl := page.Locator("#icon-catalog-fragment input[type='checkbox']")
 		require.NoError(t, decorativeControl.Check())
 		preview := dialog.Locator("[data-testid='icon-live-preview']")
 		require.NoError(t, preview.WaitFor())
@@ -218,6 +204,40 @@ func openIconCatalogPage(t *testing.T) playwright.Page {
 	require.NoError(t, err)
 	require.NoError(t, waitForAlpine(page))
 	require.NoError(t, page.Locator("#icon-fragment").WaitFor())
+	t.Cleanup(func() {
+		waitForPageSettled(t, page)
+		failures.RequireEmpty(t)
+	})
+	return page
+}
+
+func openIconComponentPage(t *testing.T) playwright.Page {
+	t.Helper()
+	page := newPage(t, sharedBrowser)
+	failures := watchPageFailures(page)
+
+	_, err := page.Goto(baseURL+"/components/icon", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, page.Locator("#icon-fragment").WaitFor())
+	t.Cleanup(func() {
+		waitForPageSettled(t, page)
+		failures.RequireEmpty(t)
+	})
+	return page
+}
+
+func openIconPackPage(t *testing.T) playwright.Page {
+	t.Helper()
+	page := newPage(t, sharedBrowser)
+	failures := watchPageFailures(page)
+
+	_, err := page.Goto(baseURL+"/docs/iconpack", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+	require.NoError(t, page.Locator("#iconpack-fragment").WaitFor())
 	t.Cleanup(func() {
 		waitForPageSettled(t, page)
 		failures.RequireEmpty(t)

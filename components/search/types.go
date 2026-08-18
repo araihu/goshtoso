@@ -27,6 +27,12 @@ type Item struct {
 	Path string
 	// Section is optional grouping or eyebrow text.
 	Section string
+	// Scope identifies the product family used for contextual ranking. It is
+	// intentionally separate from Section, which is user-facing display text.
+	Scope string
+	// Priority is a contextual boost applied after match quality. Higher values
+	// rank first among equally relevant matches.
+	Priority int
 	// Keywords are extra terms included in client-side filtering.
 	Keywords []string
 	// Attrs are extra button attributes; use Href for navigation because reserved data-search-href values are revalidated before use.

@@ -63,6 +63,7 @@ func (s *Server) setupRoutes() {
 	// Component comparison pages
 	s.mux.HandleFunc("/robots.txt", s.handleRobots)
 	s.mux.HandleFunc("/sitemap.xml", s.handleSitemap)
+	s.mux.HandleFunc("/llms.txt", s.handleLLMs)
 	s.mux.HandleFunc("/form", s.handleFormPage)
 	s.mux.HandleFunc("/components/", s.handleComponent)
 
@@ -108,10 +109,12 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/docs/agents", s.handleAgentsPage)
 	s.mux.HandleFunc("/docs/application-patterns", s.handleApplicationPatternsPage)
 	s.mux.HandleFunc("/docs/component-model", s.handleComponentModelPage)
+	s.mux.HandleFunc("/docs/icon-catalog", s.handleIconCatalogPage)
 	s.mux.HandleFunc("/docs/iconpack", s.handleIconpackPage)
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
 	s.registerChartsRoutes()
 	s.mux.HandleFunc("/modules/app-shells", s.handleAppShellsModulePage)
+	s.mux.HandleFunc("/modules/app-shells/", s.handleAppShellsSubpage)
 	s.mux.HandleFunc("/getting-started", s.handleGettingStarted)
 	s.mux.HandleFunc("/attributions", s.handleAttributions)
 	s.mux.HandleFunc("/license", s.handleLicense)
@@ -269,7 +272,11 @@ func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
 
 	switch sub {
 	case "", "index":
-		s.renderDemo(w, r, "examples")
+		target := "/examples/ticker"
+		if r.URL.RawQuery != "" {
+			target += "?" + r.URL.RawQuery
+		}
+		http.Redirect(w, r, target, http.StatusMovedPermanently)
 	case "todo":
 		s.renderTodoPage(w, r)
 	case "expense":
@@ -329,6 +336,10 @@ func (s *Server) handleComponentModelPage(w http.ResponseWriter, r *http.Request
 	s.renderDemo(w, r, "docs/component-model")
 }
 
+func (s *Server) handleIconCatalogPage(w http.ResponseWriter, r *http.Request) {
+	s.renderDemo(w, r, "docs/icon-catalog")
+}
+
 func (s *Server) handleIconpackPage(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "docs/iconpack")
 }
@@ -343,6 +354,15 @@ func (s *Server) handleChartsModulePage(w http.ResponseWriter, r *http.Request) 
 
 func (s *Server) handleAppShellsModulePage(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "modules/app-shells")
+}
+
+func (s *Server) handleAppShellsSubpage(w http.ResponseWriter, r *http.Request) {
+	key := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/"), "/")
+	if !strings.HasPrefix(key, "modules/app-shells/") {
+		http.NotFound(w, r)
+		return
+	}
+	s.renderDemo(w, r, key)
 }
 
 func (s *Server) handleGettingStarted(w http.ResponseWriter, r *http.Request) {

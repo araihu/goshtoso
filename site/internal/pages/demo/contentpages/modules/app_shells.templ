@@ -1,0 +1,187 @@
+package modulespages
+
+import (
+	templpkg "github.com/a-h/templ"
+	"github.com/araihu/goshtoso-app-shells/componentpage"
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/components/pageheader"
+)
+
+templ appShellsComponentPageContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Component Page",
+		Description: "A foundational reference-page frame for showing a rendered preview, usage source, named variants, and consumer-owned guidance.",
+		RootAttrs:   templpkg.Attributes{"class": "mx-auto max-w-4xl"},
+		Primary: componentpage.Example{
+			PreviewLabel: "Reference composition",
+			Preview:      appShellsComponentPagePreview(),
+			Code:         appShellsComponentPageCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Named states",
+				Description: "Keep meaningful variants close to the default example so readers can compare the component contract without leaving the page.",
+				Preview:     appShellsComponentPageStatesPreview(),
+				Code:        appShellsComponentPageStatesCode(),
+			},
+		},
+		After: appShellsComponentPageGuidance(),
+	})
+}
+
+templ appShellsComponentPagePreview() {
+	<div class="space-y-5">
+		@pageheader.PageHeader(pageheader.Config{
+			Title:       "Deployments",
+			Description: "A page identity and one clear action establish the reference surface before examples begin.",
+			Actions:     appShellsPreviewAction(),
+		})
+		<div class="divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark">
+			<div class="grid gap-1 py-4 sm:grid-cols-[8rem_1fr] sm:gap-6">
+				<span class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Preview</span>
+				<span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Rendered component state, using the same page-owned layout as the production docs.</span>
+			</div>
+			<div class="grid gap-1 py-4 sm:grid-cols-[8rem_1fr] sm:gap-6">
+				<span class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Source</span>
+				<span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Copyable Go and templ code remains next to the rendered evidence.</span>
+			</div>
+			<div class="grid gap-1 py-4 sm:grid-cols-[8rem_1fr] sm:gap-6">
+				<span class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Guidance</span>
+				<span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">The consumer decides intent, content, and the right component states.</span>
+			</div>
+		</div>
+	</div>
+}
+
+templ appShellsComponentPageStatesPreview() {
+	<div class="space-y-4">
+		<div class="flex flex-wrap items-center justify-between gap-3 border-b border-outline pb-4 dark:border-outline-dark">
+			<div>
+				<p class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Button</p>
+				<p class="mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">A named secondary example keeps an unavailable state explicit.</p>
+			</div>
+			@button.Button(button.Disabled()) { Continue }
+		</div>
+		<p class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Each example can add its own description, preview, source block, and stable heading anchor.</p>
+	</div>
+}
+
+templ appShellsPreviewAction() {
+	@button.Button(button.WithSize(button.SizeSmall)) { Create deployment }
+}
+
+templ appShellsComponentPageGuidance() {
+	<section class="border-t border-outline pt-8 dark:border-outline-dark" aria-labelledby="component-page-boundary-title">
+		<h2 id="component-page-boundary-title" data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Consumer boundary</h2>
+		<p class="mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">The frame owns order, labels, spacing, and code presentation. The consumer owns every preview, code sample, description, control, and follow-up section.</p>
+	</section>
+}
+
+templ appShellsComponentDocsShellContent() {
+	@appShellPackagePage(
+		"Component Docs Shell",
+		"componentdocshell",
+		"A complete documentation frame for component libraries, API references, design systems, and product documentation.",
+		"app-shells-component-docs-shell",
+		appShellsComponentDocsShellPreview(),
+		appShellsComponentDocsShellCode(),
+		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/componentdocshell@v0.1.6",
+	)
+}
+
+templ appShellsConsoleShellContent() {
+	@appShellPackagePage(
+		"Console Shell",
+		"consoleshell",
+		"An application frame for operations consoles and HTMX products that need persistent navigation and predictable fragment lifecycle.",
+		"app-shells-console-shell",
+		appShellsConsoleShellPreview(),
+		appShellsConsoleShellCode(),
+		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/consoleshell@v0.1.6",
+	)
+}
+
+templ appShellsLandingShellContent() {
+	@appShellPackagePage(
+		"Landing Shell",
+		"landingshell",
+		"A public-site frame for product and organization landing pages with responsive brand navigation and a structured footer.",
+		"app-shells-landing-shell",
+		appShellsLandingShellPreview(),
+		appShellsLandingShellCode(),
+		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/landingshell@v0.1.6",
+	)
+}
+
+templ appShellPackagePage(title, packageName, description, codeID string, preview templpkg.Component, code, packageURL string) {
+	<div class="mx-auto max-w-4xl space-y-10">
+		<header class="space-y-4">
+			<p class="text-sm font-semibold text-primary dark:text-primary-dark">Goshtoso App Shells · { appShellsVersion }</p>
+			<h1 class="font-title text-3xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">{ title }</h1>
+			<p class="max-w-3xl text-lg leading-8 text-on-surface dark:text-on-surface-dark">{ description }</p>
+			<div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold">
+				<code class="font-mono text-primary dark:text-primary-dark">{ packageName }</code>
+				<a href={ templpkg.SafeURL(packageURL) } target="_blank" rel="noopener noreferrer" class="text-primary underline underline-offset-2 dark:text-primary-dark">Open API documentation</a>
+			</div>
+		</header>
+
+		<section class="space-y-4" aria-labelledby={ codeID + "-preview-title" }>
+			<div>
+				<h2 id={ codeID + "-preview-title" } data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">What the package owns</h2>
+				<p class="mt-2 max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Shell-owned structure stays stable while the application supplies its brand, navigation, routes, and content.</p>
+			</div>
+			<div data-app-shell-package={ packageName } class="rounded-radius border border-outline bg-surface p-5 dark:border-outline-dark dark:bg-surface-dark sm:p-6">
+				@preview
+			</div>
+		</section>
+
+		<section class="space-y-4" aria-labelledby={ codeID + "-code-title" }>
+			<h2 id={ codeID + "-code-title" } data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Install and compose</h2>
+			@codeblock.CodeBlock(codeblock.Config{
+				ID:       codeID + "-code",
+				Language: "go",
+				Label:    "Usage Example",
+				Code:     code,
+			})
+		</section>
+
+		<section class="border-t border-outline pt-8 dark:border-outline-dark" aria-labelledby={ codeID + "-boundary-title" }>
+			<h2 id={ codeID + "-boundary-title" } data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Consumer boundary</h2>
+			<p class="mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">The shell owns the surrounding frame, responsive behavior, and lifecycle hooks. The consumer owns product vocabulary, authorization, data, navigation policy, metadata, and content.</p>
+		</section>
+	</div>
+}
+
+templ appShellsComponentDocsShellPreview() {
+	<div class="space-y-5">
+		<p class="text-sm font-semibold text-success-text dark:text-success-text-dark">Live proof: this page is rendered inside Component Docs Shell.</p>
+		<div class="divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark">
+			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Header</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Brand, global search, appearance controls, and family navigation.</span></div>
+			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Scoped sidebar</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Local pages, grouped sections, active route, and mobile drawer behavior.</span></div>
+			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Main + TOC</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">One content scroller, optional table of contents, focus handling, and fragment navigation.</span></div>
+		</div>
+	</div>
+}
+
+templ appShellsConsoleShellPreview() {
+	<div class="space-y-5">
+		<p class="text-sm font-semibold text-primary dark:text-primary-dark">Operations frame</p>
+		<div class="divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark">
+			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Header</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Persistent identity, actions, and optional application header content.</span></div>
+			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Navigation</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Desktop sidebar and mobile drawer with active state and Escape recovery.</span></div>
+			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Lifecycle</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Stable main target, HTMX history, focus restoration, scroll reset, and optional navigation OOB.</span></div>
+		</div>
+	</div>
+}
+
+templ appShellsLandingShellPreview() {
+	<div class="space-y-5">
+		<p class="text-sm font-semibold text-primary dark:text-primary-dark">Public-site frame</p>
+		<div class="divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark">
+			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Brand header</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Logo, tagline, links, appearance control, repository link, and optional actions.</span></div>
+			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Hero slot</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">The consumer supplies the message, proof, art direction, and calls to action.</span></div>
+			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Footer</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Structured organization metadata and links remain separate from product content.</span></div>
+		</div>
+	</div>
+}

@@ -1546,6 +1546,8 @@ import "github.com/araihu/goshtoso/components/search"  // package search
 | `Method` | `string` | Method is optional method metadata, commonly an HTTP verb. |
 | `Path` | `string` | Path is optional route or resource path metadata. |
 | `Section` | `string` | Section is optional grouping or eyebrow text. |
+| `Scope` | `string` | Scope identifies the product family used for contextual ranking. It is intentionally separate from Section, which is user-facing display text. |
+| `Priority` | `int` | Priority is a contextual boost applied after match quality. Higher values rank first among equally relevant matches. |
 | `Keywords` | `[]string` | Keywords are extra terms included in client-side filtering. |
 | `Attrs` | `templ.Attributes` | Attrs are extra button attributes; use Href for navigation because reserved data-search-href values are revalidated before use. |
 

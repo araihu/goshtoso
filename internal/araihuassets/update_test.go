@@ -144,7 +144,7 @@ func writeOldFallbacks(t *testing.T, root string, mappings []Mapping) {
 		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 			t.Fatal(err)
 		}
-		if err := os.WriteFile(path, []byte(fmt.Sprintf("old-%d\n", index)), 0o644); err != nil {
+		if err := os.WriteFile(path, fmt.Appendf(nil, "old-%d\n", index), 0o644); err != nil {
 			t.Fatal(err)
 		}
 	}

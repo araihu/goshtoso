@@ -67,8 +67,8 @@ func waitForProfileImageStored(t *testing.T, page playwright.Page, kind string) 
 	require.NoError(t, err, "%s image should be stored in IndexedDB before reload", kind)
 }
 
-// TestProfileFragmentNavNoConsoleErrors lands on the examples gallery, then
-// navigates to the profile app via the gallery card (htmx fragment swap), and
+// TestProfileFragmentNavNoConsoleErrors lands on the first example, then
+// navigates to the profile app via the examples sidebar (htmx fragment swap), and
 // asserts there are zero console/page errors. This guards the examples mandate:
 // the profileImages Alpine.data must register on fragment-nav (Alpine already
 // running) and the IndexedDB/toast wiring must not error with no target.
@@ -86,13 +86,13 @@ func TestProfileFragmentNavNoConsoleErrors(t *testing.T) {
 	require.NoError(t, page.AddInitScript(playwright.Script{
 		Content: new("try{document.cookie='gt_storage=allowed; Path=/; SameSite=Lax'}catch(e){}"),
 	}))
-	// Land on the examples gallery first (seed=0 keeps state out of it).
-	_, err := page.Goto(baseURL + "/examples?seed=0")
+	// Start with the first example; the scoped sidebar owns example navigation.
+	_, err := page.Goto(baseURL + "/examples/ticker")
 	require.NoError(t, err)
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	require.NoError(t, err)
 
-	// Click the Profile gallery card → htmx fragment swap.
+	// Click the Profile sidebar item → htmx fragment swap.
 	require.NoError(t, page.Locator("a[href='/examples/profile']").First().Click())
 	_, err = page.WaitForFunction("() => !!document.querySelector('#profile-fragment')", nil)
 	require.NoError(t, err)

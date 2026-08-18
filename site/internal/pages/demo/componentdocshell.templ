@@ -35,7 +35,7 @@ templ componentDocsHead(meta PageMeta, activeFamily string) {
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 	<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 	<style>
-		/* componentdocshell v0.1.4 has one header row; this consumer-owned slot
+		/* componentdocshell keeps the header contract stable; this consumer-owned slot
 		   reserves a second row without changing the reusable shell contract. */
 		.component-doc-shell__header:has(.component-doc-shell__site-header-actions) {
 			height: 6.75rem !important;
@@ -56,6 +56,20 @@ templ componentDocsHead(meta PageMeta, activeFamily string) {
 			bottom: 0;
 			display: block;
 			height: 2.75rem;
+		}
+		.component-doc-shell__global-search {
+			display: flex;
+			min-width: 0;
+			flex: 0 1 15rem;
+		}
+		.component-doc-shell__global-search [data-search-field] {
+			width: 100%;
+		}
+		.component-doc-shell__global-search [data-search-field] > button {
+			min-height: 2.5rem;
+		}
+		.component-doc-shell__global-search [data-search-field] > button > span.min-w-0 {
+			min-width: 0;
 		}
 		.component-doc-shell__site-header-actions [data-navbar-secondary] {
 			height: 100%;
@@ -115,6 +129,33 @@ templ componentDocsHead(meta PageMeta, activeFamily string) {
 		.component-doc-shell:has(.component-doc-shell__site-header-actions) .component-doc-shell__toc-inner {
 			top: 6.75rem;
 		}
+		@media (max-width: 719px) {
+			.component-doc-shell__global-search {
+				width: 2.5rem;
+				flex: 0 0 2.5rem;
+			}
+			.component-doc-shell__global-search [data-search-field] {
+				width: 2.5rem;
+			}
+			.component-doc-shell__global-search [data-search-field] > button {
+				justify-content: center;
+				padding-inline: 0.625rem;
+			}
+			.component-doc-shell__global-search [data-search-field] > button > span.min-w-0 {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				padding: 0;
+				margin: -1px;
+				overflow: hidden;
+				clip: rect(0, 0, 0, 0);
+				white-space: nowrap;
+				border: 0;
+			}
+			.component-doc-shell__global-search [data-search-field] > button > kbd {
+				display: none;
+			}
+		}
 	</style>
 	<script src="/assets/js/darkmode.js"></script>
 	if activeFamily == "charts" {
@@ -123,6 +164,9 @@ templ componentDocsHead(meta PageMeta, activeFamily string) {
 }
 
 templ componentDocsHeaderActions(activeFamily string) {
+	<div class="component-doc-shell__global-search">
+		@search.SearchField(docsSearchConfig(activeFamily))
+	</div>
 	<div class="component-doc-shell__site-header-actions">
 		@navbar.SecondaryRow(componentDocsSecondaryConfig(activeFamily))
 	</div>
@@ -134,11 +178,7 @@ templ componentDocsBodyEnd() {
 
 templ componentDocsBodyEndFor(activeFamily string) {
 	@templ.Raw(componentDocsSecondaryNavigationScript())
-	if activeFamily == "charts" {
-		@search.SearchModal(chartsSearchConfig())
-	} else {
-		@search.SearchModal(docsSearchConfig())
-	}
+	@search.SearchModal(docsSearchConfig(activeFamily))
 	@componentDocsStorageConsent()
 }
 

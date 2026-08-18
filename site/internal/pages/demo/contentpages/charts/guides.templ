@@ -13,28 +13,12 @@ templ ChartControlsPage(fragment bool, examples ChartControlExamples) {
 	@chartsLayout("Chart controls", "chart-controls", chartControlsContent(examples), fragment)
 }
 
-templ chartGuideNavigation(active string) {
-	<nav aria-label="Chart guide index" data-chart-guide-nav class="flex flex-wrap gap-2">
-		if active == "chart-modes" {
-			<a href="/modules/charts/docs/chart-modes" hx-get="/modules/charts/docs/chart-modes" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" aria-current="page" class="rounded-radius border border-primary bg-primary/10 px-3 py-2 text-sm font-semibold text-primary dark:border-primary-dark dark:bg-primary-dark/10 dark:text-primary-dark">Static and interactive</a>
-		} else {
-			<a href="/modules/charts/docs/chart-modes" hx-get="/modules/charts/docs/chart-modes" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" class="rounded-radius border border-outline px-3 py-2 text-sm font-semibold text-on-surface hover:bg-surface-alt dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt">Static and interactive</a>
-		}
-		if active == "chart-controls" {
-			<a href="/modules/charts/docs/chart-controls" hx-get="/modules/charts/docs/chart-controls" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" aria-current="page" class="rounded-radius border border-primary bg-primary/10 px-3 py-2 text-sm font-semibold text-primary dark:border-primary-dark dark:bg-primary-dark/10 dark:text-primary-dark">Chart controls</a>
-		} else {
-			<a href="/modules/charts/docs/chart-controls" hx-get="/modules/charts/docs/chart-controls" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" class="rounded-radius border border-outline px-3 py-2 text-sm font-semibold text-on-surface hover:bg-surface-alt dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt">Chart controls</a>
-		}
-	</nav>
-}
-
 templ chartModesContent() {
 	<div class="mx-auto max-w-5xl space-y-10" data-chart-modes-guide>
 		<header class="space-y-4">
 			<p class="text-sm font-semibold text-primary dark:text-primary-dark">Chart architecture</p>
 			<h1 class="font-title text-4xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong">Static/vector and interactive charts</h1>
 			<p class="max-w-3xl text-lg text-on-surface-muted dark:text-on-surface-dark-muted">Choose the delivery model from the job the chart must do. Both families share theme tokens, accessible framing, and chart controls, but their runtime, output, and failure behavior differ substantially.</p>
-			@chartGuideNavigation("chart-modes")
 		</header>
 
 		<section class="space-y-4">
@@ -103,7 +87,6 @@ templ chartControlsContent(examples ChartControlExamples) {
 			<p class="text-sm font-semibold text-primary dark:text-primary-dark">Shared behavior</p>
 			<h1 class="font-title text-4xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong">Chart controls</h1>
 			<p class="max-w-3xl text-lg text-on-surface-muted dark:text-on-surface-dark-muted">Every chart accepts the same renderer-neutral wrapper options. Configure lifecycle, controls, and export on the chart config; the wrapper supplies responsive actions, a large modal, fullscreen behavior, downloads, and focus management when present.</p>
-			@chartGuideNavigation("chart-controls")
 		</header>
 
 		<section class="space-y-4">

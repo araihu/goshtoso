@@ -34,7 +34,9 @@ var handlerIdentities = map[string][]string{
 }
 
 var sharedServerFiles = map[string]bool{
+	"charts.go":                  true,
 	"getting_started_handler.go": true,
+	"llms.go":                    true,
 	"server.go":                  true,
 	"storage_consent.go":         true,
 }

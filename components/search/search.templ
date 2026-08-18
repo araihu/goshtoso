@@ -158,6 +158,7 @@ templ resultItem(item Item, index int) {
 		if item.Section != "" {
 			data-search-section={ item.Section }
 		}
+		data-search-priority={ fmt.Sprint(item.Priority) }
 		if item.SafeHref() != "" {
 			data-search-href={ item.SafeHref() }
 		}
@@ -216,6 +217,7 @@ templ clientResultItems() {
 			x-bind:data-search-method="item.method || null"
 			x-bind:data-search-path="item.path || null"
 			x-bind:data-search-section="item.section || null"
+			x-bind:data-search-priority="item.priority || 0"
 			x-bind:data-search-href="item.href || null"
 			x-bind:data-search-text="item.searchText"
 			x-bind:data-result-index="item.index"

@@ -60,91 +60,20 @@ func appShellsModuleContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"app-shells-module-fragment\" class=\"mx-auto max-w-6xl\"><header class=\"max-w-4xl pb-10\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Optional module</p><h1 class=\"mt-2 font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">Goshtoso App Shells</h1><p class=\"mt-4 max-w-3xl text-lg leading-relaxed text-on-surface dark:text-on-surface-dark\">Reusable product frames built from Goshtoso primitives. They own responsive regions, navigation behavior, and shell assets while application routes and content stay consumer-owned.</p><div class=\"mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold\"><a href=\"https://github.com/araihu/goshtoso-app-shells\" target=\"_blank\" rel=\"noopener\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">GitHub repository</a> <a href=\"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells\" target=\"_blank\" rel=\"noopener\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Package documentation</a></div></header><section id=\"current-shell\" class=\"scroll-mt-8 rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark\" aria-labelledby=\"current-shell-title\"><div class=\"border-b border-outline p-5 dark:border-outline-dark sm:p-6\"><p class=\"text-xs font-bold uppercase text-primary dark:text-primary-dark\">Live proof</p><h2 id=\"current-shell-title\" data-toc-heading class=\"mt-2 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">This documentation site uses Component Docs Shell</h2><p class=\"mt-2 max-w-3xl text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Header, searchable sidebar, active navigation, bounded content scroller, table-of-contents rail, dark mode, and HTMX fragment navigation come from the current <code class=\"font-mono\">componentdocshell</code> package.</p></div><div class=\"grid gap-px bg-outline dark:bg-outline-dark md:grid-cols-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"app-shells-module-fragment\" class=\"mx-auto max-w-5xl space-y-12\"><header class=\"max-w-4xl space-y-4\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Application frames and shells · ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = appShellPackage("componentdocshell", "Reference sites", "The shell visible around this page: docs navigation, TOC, theme hooks, and responsive layout.").Render(ctx, templ_7745c5c3_Buffer)
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(appShellsVersion)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/modules.templ`, Line: 12, Col: 123}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = appShellPackage("componentpage", "Component pages", "Shared preview, source, section, and API-reference composition for consistent component documentation.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = appShellPackage("consoleshell", "Operational consoles", "A reusable application frame for dense tools, status surfaces, and task-oriented navigation.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></section><section class=\"mt-12 border-y border-outline py-8 dark:border-outline-dark\" aria-labelledby=\"compose-shell-title\"><h2 id=\"compose-shell-title\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Need a custom application frame?</h2><p class=\"mt-2 max-w-3xl text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Keep composing Goshtoso's core layout primitives when a packaged shell does not match the product. Application Patterns documents that lower-level path.</p><a href=\"/docs/application-patterns#app-shell\" class=\"mt-3 inline-block text-sm font-semibold text-primary underline underline-offset-2 dark:text-primary-dark\">Read the App Shell composition recipe</a></section></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func appShellPackage(name, purpose, description string) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<article class=\"bg-surface p-5 dark:bg-surface-dark sm:p-6\"><code class=\"font-mono text-xs font-bold text-primary dark:text-primary-dark\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(name)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/modules.templ`, Line: 42, Col: 86}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</code><h3 class=\"mt-4 font-title text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(purpose)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/modules.templ`, Line: 43, Col: 113}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</h3><p class=\"mt-2 text-sm leading-6 text-on-surface dark:text-on-surface-dark\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(description)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/modules.templ`, Line: 44, Col: 91}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</p></article>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p><h1 class=\"font-title text-3xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">Goshtoso App Shells</h1><p class=\"text-lg leading-8 text-on-surface dark:text-on-surface-dark\">Build the frame once, then let each route focus on its work. Goshtoso App Shells provides server-rendered Go/templ frames for documentation pages, operations consoles, and public sites. Choose a frame for a repeatable page composition or a shell for a complete product surface; your routes, permissions, data, and content remain yours.</p><div class=\"flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold\"><a href=\"https://github.com/araihu/goshtoso-app-shells\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">View source on GitHub</a> <a href=\"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells@v0.1.6\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Read the v0.1.6 API docs</a></div></header><section id=\"frames\" class=\"scroll-mt-8 space-y-4\" aria-labelledby=\"frames-title\"><div class=\"space-y-2\"><p class=\"text-xs font-bold uppercase tracking-wide text-primary dark:text-primary-dark\">Choose a frame when you need a consistent page shape</p><h2 id=\"frames-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Frames</h2><p class=\"max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\">A frame standardizes the shape of a page without taking over application navigation. <code class=\"font-mono\">componentpage</code> keeps a preview, usage source, named variants, and guidance together so every reference page follows the same reading path.</p></div><div class=\"border-y border-outline dark:border-outline-dark\"><a href=\"/modules/app-shells/frames/component-page\" class=\"flex flex-col gap-2 py-5 transition-colors motion-reduce:transition-none hover:bg-surface-alt dark:hover:bg-surface-dark-alt sm:flex-row sm:items-start sm:justify-between sm:gap-8\"><span><code class=\"font-mono text-sm font-bold text-primary dark:text-primary-dark\">componentpage</code> <strong class=\"mt-1 block font-title text-lg text-on-surface-strong dark:text-on-surface-dark-strong\">Component Page</strong> <span class=\"mt-1 block max-w-2xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Keep the rendered preview, copyable source, named states, and application guidance in one reference page.</span></span> <span class=\"shrink-0 text-sm font-semibold text-primary dark:text-primary-dark\">Open Component Page&nbsp;↗</span></a></div></section><section id=\"shells\" class=\"scroll-mt-8 space-y-4\" aria-labelledby=\"shells-title\"><div class=\"space-y-2\"><p class=\"text-xs font-bold uppercase tracking-wide text-primary dark:text-primary-dark\">Choose a shell when the product owns the surrounding regions</p><h2 id=\"shells-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Shells</h2><p class=\"max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\">A shell owns the regions around a product surface—identity, navigation, responsive behavior, and page lifecycle. Your application still owns routes, permissions, data, and navigation items.</p></div><div class=\"divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\"><a href=\"/modules/app-shells/shells/component-docs-shell\" class=\"block py-5 transition-colors motion-reduce:transition-none hover:bg-surface-alt dark:hover:bg-surface-dark-alt\"><code class=\"font-mono text-sm font-bold text-primary dark:text-primary-dark\">componentdocshell</code> <strong class=\"mt-1 block font-title text-lg text-on-surface-strong dark:text-on-surface-dark-strong\">Component Docs Shell</strong> <span class=\"mt-1 block max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">A documentation frame for component libraries, API references, design systems, and product docs. It powers this site’s family navigation, scoped sidebar, search, TOC, theme controls, and HTMX-aware navigation.</span></a> <a href=\"/modules/app-shells/shells/console-shell\" class=\"block py-5 transition-colors motion-reduce:transition-none hover:bg-surface-alt dark:hover:bg-surface-dark-alt\"><code class=\"font-mono text-sm font-bold text-primary dark:text-primary-dark\">consoleshell</code> <strong class=\"mt-1 block font-title text-lg text-on-surface-strong dark:text-on-surface-dark-strong\">Console Shell</strong> <span class=\"mt-1 block max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">An operations frame for server-rendered HTMX products, with persistent navigation, a mobile drawer, a stable main target, focus and scroll recovery, and optional out-of-band navigation updates.</span></a> <a href=\"/modules/app-shells/shells/landing-shell\" class=\"block py-5 transition-colors motion-reduce:transition-none hover:bg-surface-alt dark:hover:bg-surface-dark-alt\"><code class=\"font-mono text-sm font-bold text-primary dark:text-primary-dark\">landingshell</code> <strong class=\"mt-1 block font-title text-lg text-on-surface-strong dark:text-on-surface-dark-strong\">Landing Shell</strong> <span class=\"mt-1 block max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">A public-site frame for product and organization pages, with brand navigation, first-paint color mode, mobile navigation, hero and footer boundaries. Your message, content, calls to action, and art direction stay yours.</span></a></div></section><section class=\"border-y border-outline py-8 dark:border-outline-dark\" aria-labelledby=\"compose-shell-title\"><h2 id=\"compose-shell-title\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Compose a custom shell when you need a different boundary</h2><p class=\"mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\">Use Goshtoso's core layout primitives when a packaged shell does not match the product. The App Shell pattern gives you the building blocks; your application decides how they fit together.</p><a href=\"/docs/application-patterns#app-shell\" class=\"mt-3 inline-block text-sm font-semibold text-primary underline underline-offset-2 dark:text-primary-dark\">Read the custom App Shell pattern</a></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -3,6 +3,7 @@ package demo
 import (
 	"testing"
 
+	searchfield "github.com/araihu/goshtoso/components/search"
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
 	"github.com/stretchr/testify/require"
 )
@@ -16,16 +17,15 @@ func TestComponentSidebarAndNavigationFollowCatalogOrder(t *testing.T) {
 	}
 	sections := getSidebarSections("button")
 
-	require.Len(t, sections, 7)
-	require.Equal(t, "Modules", sections[0].Title)
-	require.Equal(t, []string{"Charts", "App Shells"}, []string{sections[0].Items[0].Label, sections[0].Items[1].Label})
-	require.Equal(t, "Examples", sections[6].Title)
-	require.Equal(t, "Overview", sections[6].Items[0].Label)
-	require.Len(t, sections[6].Items, 8)
+	require.Len(t, sections, 6)
+	require.Equal(t, "Composition", sections[0].Title)
+	require.Equal(t, "Examples", sections[5].Title)
+	require.Equal(t, "Live Ticker", sections[5].Items[0].Label)
+	require.Len(t, sections[5].Items, 7)
 
 	var componentItems int
 	pageIndex := 0
-	for _, section := range sections[1:6] {
+	for _, section := range sections[:5] {
 		for _, item := range section.Items {
 			page := pages[pageIndex]
 			require.Equal(t, page.Section, section.Title)
@@ -92,4 +92,52 @@ func TestComponentSearchEntriesUseCatalogDescriptions(t *testing.T) {
 	require.True(t, hasExamples, "non-component example search entries must remain")
 	_, hasDocs := byHref["/getting-started"]
 	require.True(t, hasDocs, "non-component docs search entries must remain")
+	iconCatalog, hasIconCatalog := byHref["/docs/icon-catalog"]
+	require.True(t, hasIconCatalog, "dedicated Icon Catalog must be discoverable")
+	require.Equal(t, "Icon Catalog", iconCatalog.title)
+	iconPacks, hasIconPacks := byHref["/docs/iconpack"]
+	require.True(t, hasIconPacks, "Icon Packs must remain discoverable")
+	require.Equal(t, "Icon Packs", iconPacks.title)
+	for _, link := range appShellsSidebarTopLinks() {
+		_, exists := byHref[link.Href]
+		require.Truef(t, exists, "missing App Shells search entry for %s", link.Href)
+	}
+	for _, group := range appShellsSidebarGroups() {
+		for _, link := range group.Items {
+			_, exists := byHref[link.Href]
+			require.Truef(t, exists, "missing App Shells search entry for %s", link.Href)
+		}
+	}
+}
+
+func TestGlobalSearchBoostsActiveFamilyWithoutHidingFallbacks(t *testing.T) {
+	core := searchItemsByHref(getSearchItems("core"))
+	charts := searchItemsByHref(getSearchItems("charts"))
+
+	for _, href := range []string{
+		"/components/button",
+		"/docs/icon-catalog",
+		"/modules/charts/components/line",
+		"/modules/app-shells/shells/console-shell",
+		"/examples/ticker",
+	} {
+		_, coreOK := core[href]
+		_, chartsOK := charts[href]
+		require.Truef(t, coreOK, "core search is missing %s", href)
+		require.Truef(t, chartsOK, "charts search is missing fallback %s", href)
+	}
+
+	require.Equal(t, len(core), len(charts), "changing family should boost results, not remove them")
+	require.Equal(t, 1, core["/components/button"].Priority)
+	require.Equal(t, 0, core["/modules/charts/components/line"].Priority)
+	require.Equal(t, 1, charts["/modules/charts/components/line"].Priority)
+	require.Equal(t, 0, charts["/components/button"].Priority)
+}
+
+func searchItemsByHref(items []searchfield.Item) map[string]searchfield.Item {
+	byHref := make(map[string]searchfield.Item, len(items))
+	for _, item := range items {
+		byHref[item.Href] = item
+	}
+	return byHref
 }

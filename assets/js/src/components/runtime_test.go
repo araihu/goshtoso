@@ -124,6 +124,8 @@ func TestAuthoredComponentRuntimePreservesLifecycleAndDataContracts(t *testing.T
 		"root.dataset.searchId",
 		"root.dataset.searchMaxResults",
 		"root.dataset.searchMatchMode",
+		"element.dataset.searchPriority",
+		"priority: Number(raw.priority !== undefined ? raw.priority : raw.Priority) || 0",
 		"fuzzyScore: function",
 		"rankedMatches: function",
 		"destroy: function ()",

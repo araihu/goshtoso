@@ -17,12 +17,11 @@ import (
 	"github.com/araihu/goshtoso/components/radio"
 	selectfield "github.com/araihu/goshtoso/components/select"
 	"github.com/araihu/goshtoso/components/textinput"
-	"github.com/araihu/goshtoso/site/internal/demoicons/bootstrapicons"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
-// IconDemoPage renders a working sprite workbench: scan bundled glyphs, then
-// configure one in the same focus-trapped modal used throughout Goshtoso.
+// IconDemoPage renders the core Icon component contract and its accessible
+// usage patterns.
 func IconDemoPage() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -73,7 +72,7 @@ func iconDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"icon-fragment\" x-data=\"iconCatalog\" data-component-page><div class=\"mb-8 max-w-3xl\"><p class=\"mb-2 text-sm font-medium text-primary dark:text-primary-dark\">Sprite icons</p><h1 id=\"icon\" data-toc-heading class=\"font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Icon</h1><p data-component-description class=\"mt-3 text-lg text-on-surface-muted dark:text-on-surface-dark-muted\">Browse bundled, typed symbols. Pick one to tune its exact <code class=\"font-mono text-sm\">icon.Config</code> and copy a paste-ready <code class=\"font-mono text-sm\">.templ</code> example.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"icon-fragment\" data-component-page><div class=\"mb-8 max-w-3xl\"><p class=\"mb-2 text-sm font-medium text-primary dark:text-primary-dark\">Core component</p><h1 id=\"icon\" data-toc-heading class=\"font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Icon</h1><p data-component-description class=\"mt-3 text-lg text-on-surface-muted dark:text-on-surface-dark-muted\">Render accessible SVG symbols from a sprite. Give meaningful icons a label, mark visual-only icons as decorative, and use the examples below as a starting point for your <code class=\"font-mono text-sm\">.templ</code> code.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -81,11 +80,43 @@ func iconDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = iconPackExtension().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = iconUsageCode().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = externalIconPackPreview().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// IconCatalogContent is the dedicated browser for Goshtoso's bundled symbols.
+// It stays separate from the Icon component page so the component contract and
+// the available glyph inventory can evolve independently.
+func IconCatalogContent() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"icon-catalog-fragment\" x-data=\"iconCatalog\" data-component-page><div class=\"mb-8 max-w-3xl\"><p class=\"mb-2 text-sm font-medium text-primary dark:text-primary-dark\">Bundled symbols</p><h1 id=\"icon-catalog\" data-toc-heading class=\"font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Icon Catalog</h1><p data-component-description class=\"mt-3 text-lg text-on-surface-muted dark:text-on-surface-dark-muted\">Browse the bundled Heroicons sprite by Go symbol and SVG symbol. Select a glyph to inspect its size, label, color, and decorative behavior, then copy a ready-to-use <code class=\"font-mono text-sm\">.templ</code> snippet.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -97,7 +128,7 @@ func iconDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -121,12 +152,12 @@ func iconUsageBasics() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<section data-component-preview class=\"mb-10 rounded-radius border border-outline bg-surface-alt/50 p-5 dark:border-outline-dark dark:bg-surface-dark-alt/40\" aria-labelledby=\"icon-basics-title\"><div class=\"flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between\"><div><h2 id=\"icon-basics-title\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Accessible defaults, visible behavior</h2><p class=\"mt-1 max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">A label makes an image. An empty label or <code class=\"font-mono\">Decorative: true</code> hides the SVG from assistive technology. Sprite paths inherit <code class=\"font-mono\">currentColor</code>; Goshtoso never forces fill or stroke.</p></div><span class=\"shrink-0 rounded-full border border-outline bg-surface px-3 py-1 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-muted\">67 bundled glyphs</span></div><dl class=\"mt-5 grid divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark md:grid-cols-3 md:divide-x md:divide-y-0\"><div data-testid=\"icon-variant-accessible\" class=\"flex items-center gap-3 py-3 md:pr-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<section data-component-preview class=\"mb-10 rounded-radius border border-outline bg-surface-alt/50 p-5 dark:border-outline-dark dark:bg-surface-dark-alt/40\" aria-labelledby=\"icon-basics-title\"><div class=\"flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between\"><div><h2 id=\"icon-basics-title\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">The core rendering contract</h2><p class=\"mt-1 max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Meaningful icons need a non-empty <code class=\"font-mono\">Label</code> and are exposed as images to assistive technology. Set <code class=\"font-mono\">Decorative: true</code> when an icon is visual-only. Sprite symbols inherit <code class=\"font-mono\">currentColor</code>; size and root classes remain consumer-controlled.</p></div><span class=\"shrink-0 rounded-full border border-outline bg-surface px-3 py-1 text-xs font-medium text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark-muted\">SVG sprite</span></div><dl class=\"mt-5 grid divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark md:grid-cols-3 md:divide-x md:divide-y-0\"><div data-testid=\"icon-variant-accessible\" class=\"flex items-center gap-3 py-3 md:pr-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -134,7 +165,7 @@ func iconUsageBasics() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div><dt class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Labelled image</dt><dd class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Announced as Approved</dd></div></div><div data-testid=\"icon-variant-decorative\" class=\"flex items-center gap-3 py-3 md:px-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div><dt class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Meaningful icon</dt><dd class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Announced as “Approved”</dd></div></div><div data-testid=\"icon-variant-decorative\" class=\"flex items-center gap-3 py-3 md:px-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -142,7 +173,7 @@ func iconUsageBasics() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div><dt class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Decorative accent</dt><dd class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Hidden from assistive tech</dd></div></div><div data-testid=\"icon-variant-current-color\" class=\"flex items-center gap-3 py-3 text-secondary md:pl-4 dark:text-secondary-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div><dt class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Decorative icon</dt><dd class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Removed from the accessibility tree</dd></div></div><div data-testid=\"icon-variant-current-color\" class=\"flex items-center gap-3 py-3 text-secondary md:pl-4 dark:text-secondary-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -150,7 +181,7 @@ func iconUsageBasics() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div><dt class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">currentColor</dt><dd class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Color comes from its parent</dd></div></div></dl><div class=\"mt-4 flex flex-wrap items-center gap-4 text-primary dark:text-primary-dark\" aria-label=\"Icon size scale\"><span class=\"mr-1 text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted\">Size scale</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div><dt class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Inherited color</dt><dd class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Follows the parent color</dd></div></div></dl><div class=\"mt-4 flex flex-wrap items-center gap-4 text-primary dark:text-primary-dark\" aria-label=\"Icon size scale\"><span class=\"mr-1 text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted\">Size scale</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -174,7 +205,7 @@ func iconUsageBasics() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -182,52 +213,7 @@ func iconUsageBasics() templ.Component {
 	})
 }
 
-func externalIconPackPreview() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<section data-component-preview data-testid=\"bootstrap-iconpack-preview\" class=\"mb-10 rounded-radius border border-outline bg-surface-alt/50 p-5 dark:border-outline-dark dark:bg-surface-dark-alt/40\" aria-labelledby=\"bootstrap-iconpack-title\"><div class=\"flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between\"><div><p class=\"text-sm font-medium text-primary dark:text-primary-dark\">Non-catalog source proof</p><h2 id=\"bootstrap-iconpack-title\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Bootstrap Icons, generated locally</h2><p class=\"mt-1 max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">This site also owns a tiny generated Bootstrap Icons package. It uses the same <code class=\"font-mono\">components/icon</code> contract, but does not depend on the Arai Hu Assets catalog.</p></div><a href=\"https://icons.getbootstrap.com/\" target=\"_blank\" rel=\"noreferrer\" class=\"text-sm font-medium text-primary underline underline-offset-4 dark:text-primary-dark\">Bootstrap Icons</a></div><div class=\"mt-5 flex flex-wrap items-center gap-5\" data-testid=\"bootstrap-iconpack-icons\"><div data-testid=\"bootstrap-icon-labelled\" class=\"flex items-center gap-2 text-primary dark:text-primary-dark\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = bootstrapicons.Icon(bootstrapicons.Config{Symbol: bootstrapicons.IconBootstrapIconsAlarm, Label: "Alarm"}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<span class=\"text-sm\">Labelled</span></div><div data-testid=\"bootstrap-icon-decorative\" class=\"flex items-center gap-2 text-secondary dark:text-secondary-dark\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = bootstrapicons.Icon(bootstrapicons.Config{Symbol: bootstrapicons.IconBootstrapIconsBootstrap, Decorative: true}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<span class=\"text-sm\">Decorative</span></div></div></section>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func iconPackExtension() templ.Component {
+func iconUsageCode() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -248,69 +234,24 @@ func iconPackExtension() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<section class=\"mb-10\" aria-labelledby=\"iconpack-title\"><div class=\"mb-4 max-w-3xl\"><p class=\"mb-2 text-sm font-medium text-primary dark:text-primary-dark\">Consumer-local extension</p><h2 id=\"iconpack-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Generate an attributed icon pack</h2><p class=\"mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Select Arai Hu Assets icons by exact canonical name, or bring any GitHub tree, single SVG, or multiple packs with a Goshtoso-owned <code class=\"font-mono\">.iconpack.yaml</code>. Muamba performs explicit TOFU and verified snapshots; <code class=\"font-mono\">iconpack</code> then publishes a parallel consumer-owned sprite, typed Go component, manifest, provenance, and licenses. The curated embedded package stays unchanged.</p></div><div data-component-code>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<section class=\"mb-10\" aria-labelledby=\"icon-usage-code-title\"><div class=\"mb-4 max-w-3xl\"><p class=\"mb-2 text-sm font-medium text-primary dark:text-primary-dark\">Copy-ready example</p><h2 id=\"icon-usage-code-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Render a meaningful icon</h2><p class=\"mt-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Pass the sprite URL and symbol, then provide a label when the icon conveys information. Add size and root classes only when the surrounding interface needs them.</p></div><div data-component-code>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
-			Language: "yaml",
-			Label:    "Describe any source",
-			Code: `schemaVersion: 1
-sources:
-  - id: heroicons
-    url: https://github.com/tailwindlabs/heroicons/tree/master/src
-    packName: heroicons
-    paths: [16/solid/academic-cap.svg]
-    license: MIT
-    licensePath: LICENSE
-    licenseUrl: https://raw.githubusercontent.com/tailwindlabs/heroicons/master/LICENSE`,
+			Language: "templ",
+			Label:    "Render an accessible icon",
+			Code: `@icon.Icon(icon.Config{
+	SpriteURL: heroicons.SpriteURL,
+	Symbol:    heroicons.Icon16SolidCheckCircle,
+	Label:     "Approved",
+	RootClass: "text-success",
+})`,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
-			Language: "bash",
-			Label:    "First trust a consumer-owned pack",
-			Code: `go run github.com/araihu/goshtoso/cmd/iconpack@latest \
-  -config ./.iconpack.yaml -trust \
-  -out ./internal/appicons -package appicons \
-  -const-prefix Icon -sprite-url /assets/icons/appicons/sprite.svg`,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
-			Language: "bash",
-			Label:    "Generate from a verified release archive",
-			Code: `go run github.com/araihu/goshtoso/cmd/iconpack@latest \
-  -release-archive ./araihu-assets-vX.Y.Z.tar.gz \
-  -archive-sha256 "$ARCHIVE_SHA256" -release vX.Y.Z \
-  -catalog-sha256 "$CATALOG_SHA256" \
-  -release-json-sha256 "$RELEASE_JSON_SHA256" \
-  -checksums-sha256 "$CHECKSUMS_SHA256" \
-  -name brand-developer-icons-tRPC \
-  -out ./internal/appicons -package appicons \
-  -const-prefix Icon -sprite-url /assets/icons/appicons/sprite.svg`,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
-			Language: "go",
-			Label:    "Render the generated package through Goshtoso Icon",
-			Code: `import "github.com/your/app/internal/appicons"
-
-templ ProviderIcon() {
-    @appicons.Icon(appicons.Config{
-        Symbol: appicons.IconBrandDeveloperIconsTRPC,
-        Label:  "tRPC",
-    })
-}`,
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div><p class=\"mt-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The generated helper delegates to <code class=\"font-mono\">components/icon</code>. The generated <code class=\"font-mono\">.iconpack.lock.yaml</code> is the explicit TOFU boundary, and existing JSON/YAML source manifests remain available for migration. See <code class=\"font-mono\">docs/ICONPACK.md</code> to review Arai Hu Assets and arbitrary-pack boundaries.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -339,7 +280,7 @@ func iconCatalogGrid() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<section aria-labelledby=\"icon-catalog-title\"><div class=\"mb-4 flex flex-wrap items-end justify-between gap-3\"><div><h2 id=\"icon-catalog-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Bundled symbol catalog</h2><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Every card comes from <code class=\"font-mono\">heroicons.Glyphs</code>, not a second hand-written list.</p></div><a href=\"https://github.com/tailwindlabs/heroicons/blob/master/LICENSE\" target=\"_blank\" rel=\"noreferrer\" class=\"text-sm font-medium text-primary underline underline-offset-4 dark:text-primary-dark\">Heroicons MIT license</a></div><div data-testid=\"icon-catalog-grid\" class=\"grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-6 gap-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section aria-labelledby=\"icon-catalog-title\"><div class=\"mb-4 flex flex-wrap items-end justify-between gap-3\"><div><h2 id=\"icon-catalog-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Bundled Heroicons</h2><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The grid is generated from <code class=\"font-mono\">heroicons.Glyphs</code>, so every card stays aligned with the bundled sprite and typed Go symbols.</p></div><a href=\"https://github.com/tailwindlabs/heroicons/blob/master/LICENSE\" target=\"_blank\" rel=\"noreferrer\" class=\"text-sm font-medium text-primary underline underline-offset-4 dark:text-primary-dark\">Heroicons MIT license</a></div><div data-testid=\"icon-catalog-grid\" class=\"grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-6 gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -349,7 +290,7 @@ func iconCatalogGrid() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -378,46 +319,46 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<button type=\"button\" data-icon-card=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<button type=\"button\" data-icon-card=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 180, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 130, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" data-icon-name=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" data-icon-name=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 181, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 131, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" data-icon-symbol=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" data-icon-symbol=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(string(glyph.Symbol))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 182, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 132, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" @click=\"selectGlyph($el)\" class=\"group min-h-36 rounded-radius border border-outline bg-surface p-4 text-left transition-colors motion-reduce:transition-none hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark dark:hover:border-primary-dark dark:focus-visible:outline-primary-dark\"><span class=\"mx-auto mb-5 flex size-11 items-center justify-center rounded-radius bg-primary/10 text-primary transition-transform motion-reduce:transition-none group-hover:scale-105 motion-reduce:group-hover:scale-100 dark:bg-primary-dark/15 dark:text-primary-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" @click=\"selectGlyph($el)\" class=\"group min-h-36 rounded-radius border border-outline bg-surface p-4 text-left transition-colors motion-reduce:transition-none hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark dark:hover:border-primary-dark dark:focus-visible:outline-primary-dark\"><span class=\"mx-auto mb-5 flex size-11 items-center justify-center rounded-radius bg-primary/10 text-primary transition-transform motion-reduce:transition-none group-hover:scale-105 motion-reduce:group-hover:scale-100 dark:bg-primary-dark/15 dark:text-primary-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -425,46 +366,46 @@ func iconCatalogCard(glyph heroicons.Glyph) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</span> <span class=\"block truncate font-mono text-xs font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\" title=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</span> <span class=\"block truncate font-mono text-xs font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\" title=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 189, Col: 139}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 139, Col: 139}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(glyph.GoName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 189, Col: 156}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 139, Col: 156}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</span> <span class=\"mt-1 block truncate font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</span> <span class=\"mt-1 block truncate font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(glyph.Symbol)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 190, Col: 122}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/icon/icon.templ`, Line: 140, Col: 122}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</span></button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</span></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -495,7 +436,7 @@ func iconPickerModal() templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<div x-cloak x-show=\"open\" x-transition.opacity.duration.200ms x-trap.inert.noscroll=\"open\" x-on:keydown.esc.window=\"close()\" x-on:click.self=\"close()\" class=\"fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8\" data-testid=\"icon-picker-dialog\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"icon-picker-title\"><div x-show=\"open\" x-transition:enter=\"transition ease-out duration-200 delay-100 motion-reduce:transition-none motion-reduce:delay-0\" x-transition:enter-start=\"opacity-0 scale-50 motion-reduce:opacity-100 motion-reduce:scale-100\" x-transition:enter-end=\"opacity-100 scale-100\" class=\"flex max-h-full w-full max-w-3xl flex-col overflow-auto rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><div class=\"flex items-center justify-between border-b border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20\"><div><p class=\"text-xs font-medium text-primary dark:text-primary-dark\">Icon workbench</p><h2 id=\"icon-picker-title\" class=\"font-title text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong\" x-text=\"selected.name\"></h2></div><button data-testid=\"icon-modal-close\" type=\"button\" @click=\"close()\" aria-label=\"Close icon workbench\" class=\"rounded-radius p-1 text-on-surface-muted hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark\"><span aria-hidden=\"true\" class=\"text-xl leading-none\">×</span></button></div><div class=\"grid gap-6 p-5 md:grid-cols-[minmax(0,1fr)_18rem]\"><div><div class=\"flex min-h-44 items-center justify-center rounded-radius border border-dashed border-outline bg-surface-alt/40 text-primary dark:border-outline-dark dark:bg-surface-dark/30 dark:text-primary-dark\"><svg data-testid=\"icon-live-preview\" xmlns=\"http://www.w3.org/2000/svg\" x-bind:class=\"previewClass\" x-bind:aria-hidden=\"isDecorative\" x-bind:role=\"isDecorative ? null : 'img'\" x-bind:aria-label=\"isDecorative ? null : label\" viewBox=\"0 0 24 24\"><use x-bind:href=\"spriteHref\"></use></svg></div><p class=\"mt-3 font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\" x-text=\"selected.symbol\"></p><div data-component-code class=\"mt-4\" x-effect=\"document.querySelector('#icon-workbench-code code').textContent = code\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div x-cloak x-show=\"open\" x-transition.opacity.duration.200ms x-trap.inert.noscroll=\"open\" x-on:keydown.esc.window=\"close()\" x-on:click.self=\"close()\" class=\"fixed inset-0 z-50 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8\" data-testid=\"icon-picker-dialog\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"icon-picker-title\"><div x-show=\"open\" x-transition:enter=\"transition ease-out duration-200 delay-100 motion-reduce:transition-none motion-reduce:delay-0\" x-transition:enter-start=\"opacity-0 scale-50 motion-reduce:opacity-100 motion-reduce:scale-100\" x-transition:enter-end=\"opacity-100 scale-100\" class=\"flex max-h-full w-full max-w-3xl flex-col overflow-auto rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><div class=\"flex items-center justify-between border-b border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20\"><div><p class=\"text-xs font-medium text-primary dark:text-primary-dark\">Icon workbench</p><h2 id=\"icon-picker-title\" class=\"font-title text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong\" x-text=\"selected.name\"></h2></div><button data-testid=\"icon-modal-close\" type=\"button\" @click=\"close()\" aria-label=\"Close icon workbench\" class=\"rounded-radius p-1 text-on-surface-muted hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark\"><span aria-hidden=\"true\" class=\"text-xl leading-none\">×</span></button></div><div class=\"grid gap-6 p-5 md:grid-cols-[minmax(0,1fr)_18rem]\"><div><div class=\"flex min-h-44 items-center justify-center rounded-radius border border-dashed border-outline bg-surface-alt/40 text-primary dark:border-outline-dark dark:bg-surface-dark/30 dark:text-primary-dark\"><svg data-testid=\"icon-live-preview\" xmlns=\"http://www.w3.org/2000/svg\" x-bind:class=\"previewClass\" x-bind:aria-hidden=\"isDecorative\" x-bind:role=\"isDecorative ? null : 'img'\" x-bind:aria-label=\"isDecorative ? null : label\" viewBox=\"0 0 24 24\"><use x-bind:href=\"spriteHref\"></use></svg></div><p class=\"mt-3 font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\" x-text=\"selected.symbol\"></p><div data-component-code class=\"mt-4\" x-effect=\"document.querySelector('#icon-workbench-code code').textContent = code\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -513,7 +454,7 @@ func iconPickerModal() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div></div><div class=\"space-y-4\"><div><span id=\"icon-size-label\" class=\"mb-1 block text-sm font-medium\">Size</span><div data-testid=\"icon-size-selector\" role=\"group\" aria-labelledby=\"icon-size-label\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div></div><div class=\"space-y-4\"><div><span id=\"icon-size-label\" class=\"mb-1 block text-sm font-medium\">Size</span><div data-testid=\"icon-size-selector\" role=\"group\" aria-labelledby=\"icon-size-label\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -533,7 +474,7 @@ func iconPickerModal() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -541,7 +482,7 @@ func iconPickerModal() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -549,7 +490,7 @@ func iconPickerModal() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -557,7 +498,7 @@ func iconPickerModal() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -571,7 +512,7 @@ func iconPickerModal() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div><span class=\"sr-only\" data-testid=\"icon-size-selected\" x-text=\"size || 'md'\"></span></div><div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div><span class=\"sr-only\" data-testid=\"icon-size-selected\" x-text=\"size || 'md'\"></span></div><div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -588,7 +529,7 @@ func iconPickerModal() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<p class=\"mt-1 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\" x-show=\"!decorative && !label.trim()\">Blank label renders a decorative icon.</p></div><div class=\"rounded-radius border border-outline p-3 dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<p class=\"mt-1 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\" x-show=\"!decorative && !label.trim()\">Blank label renders a decorative icon.</p></div><div class=\"rounded-radius border border-outline p-3 dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -603,7 +544,7 @@ func iconPickerModal() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -623,7 +564,7 @@ func iconPickerModal() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<p class=\"rounded-radius border border-outline bg-surface-alt/50 p-3 text-xs text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark/30 dark:text-on-surface-dark-muted\"><code class=\"font-mono\">SpriteURL</code> is <code class=\"font-mono\">heroicons.SpriteURL</code>; <code class=\"font-mono\">ModeExternal</code> is its zero-value default.</p></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<p class=\"rounded-radius border border-outline bg-surface-alt/50 p-3 text-xs text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark/30 dark:text-on-surface-dark-muted\"><code class=\"font-mono\">SpriteURL</code> is <code class=\"font-mono\">heroicons.SpriteURL</code>; <code class=\"font-mono\">ModeExternal</code> is its zero-value default.</p></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

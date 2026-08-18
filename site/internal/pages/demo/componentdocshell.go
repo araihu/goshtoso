@@ -55,8 +55,15 @@ func componentDocsConfig(persist bool, active string) componentdocshell.Config {
 }
 
 func componentDocsNavigation(active string) componentdocshell.Navigation {
-	if componentDocsFamily(active) == "charts" {
+	switch componentDocsFamily(active) {
+	case "charts":
 		return chartsDocsNavigation(active)
+	case "icon-packs":
+		return iconsDocsNavigation(active)
+	case "app-shells":
+		return appShellsDocsNavigation(active)
+	case "examples":
+		return examplesDocsNavigation(active)
 	}
 
 	sections := getSidebarSections("")
@@ -66,11 +73,10 @@ func componentDocsNavigation(active string) componentdocshell.Navigation {
 		}
 	}
 	return componentdocshell.Navigation{
-		Items:             getSidebarTopItems(""),
-		SectionsTitle:     "Components",
-		Sections:          sections,
-		SearchPlaceholder: "Search",
-		SearchSlot:        sidebarSearchSlot(),
+		Items:         getSidebarTopItems(""),
+		SectionsTitle: "Components",
+		Sections:      sections,
+		DisableSearch: true,
 	}
 }
 
@@ -78,10 +84,11 @@ func componentDocsSecondaryConfig(activeFamily string) navbar.SecondaryConfig {
 	return navbar.SecondaryConfig{
 		Links: []navbar.SecondaryLink{
 			{Label: "Core", Href: "/getting-started", Current: componentDocsSecondaryCurrent("core", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("core")},
-			{Label: "Icon Packs", Href: "/docs/iconpack", Current: componentDocsSecondaryCurrent("icon-packs", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("icon-packs")},
+			{Label: "AI Agents", Href: "/docs/agents", Current: componentDocsSecondaryCurrent("agents", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("agents")},
+			{Label: "Icons", Href: "/components/icon", Current: componentDocsSecondaryCurrent("icon-packs", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("icon-packs")},
 			{Label: "Charts", Href: "/modules/charts", Current: componentDocsSecondaryCurrent("charts", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("charts")},
 			{Label: "App Shells", Href: "/modules/app-shells", Current: componentDocsSecondaryCurrent("app-shells", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("app-shells")},
-			{Label: "Examples", Href: "/examples", Current: componentDocsSecondaryCurrent("examples", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("examples")},
+			{Label: "Examples", Href: "/examples/ticker", Current: componentDocsSecondaryCurrent("examples", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("examples")},
 		},
 		AriaLabel:  "Goshtoso documentation",
 		Scrollable: true,
