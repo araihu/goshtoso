@@ -460,6 +460,7 @@ func TestNavbarRendersSecondaryLinksActionsAndLinkState(t *testing.T) {
 	assert.Equal(t, "nav", children[0].Data)
 	assert.Equal(t, "div", children[1].Data)
 	assert.Equal(t, "main navigation", getAttr(children[0], "aria-label"))
+	assert.NotContains(t, getAttr(children[0], "class"), "border-b")
 
 	secondaryRoot := children[1]
 	assert.Equal(t, "true", getAttr(secondaryRoot, "data-navbar-secondary"))

@@ -30,6 +30,12 @@ func TestCoverageNavbarClassHelpers(t *testing.T) {
 	assert.Contains(t, cfg.navClasses(), "border-b border-outline")
 	assert.Contains(t, cfg.navClasses(), "sticky top-0")
 
+	withSecondary := Config{Secondary: &SecondaryConfig{
+		Links: []SecondaryLink{{Label: "Overview", Href: "/overview"}},
+	}}
+	assert.NotContains(t, withSecondary.navClasses(), "border-b")
+	assert.NotContains(t, withSecondary.navClasses(), "dark:border-outline-dark")
+
 	activeLink := linkClasses(true)
 	assert.Contains(t, activeLink, "font-bold")
 	assert.NotContains(t, activeLink, "text-on-surface underline-offset")

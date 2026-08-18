@@ -195,7 +195,10 @@ func (cfg Config) rightActions() []ActionItem {
 
 // NavClasses returns the CSS classes for the outer nav element
 func (cfg Config) navClasses() string {
-	base := "flex items-center justify-between border-b border-outline px-6 py-4 dark:border-outline-dark"
+	base := "flex items-center justify-between px-6 py-4"
+	if !cfg.hasSecondaryContent() {
+		base += " border-b border-outline dark:border-outline-dark"
+	}
 	if cfg.NavClass != "" {
 		return base + " " + cfg.NavClass
 	}
