@@ -15,9 +15,9 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/assets"
-	"github.com/araihu/goshtoso/components/dropdown"
 	"github.com/araihu/goshtoso/components/head"
 	"github.com/araihu/goshtoso/components/navbar"
+	"github.com/araihu/goshtoso/components/popover"
 	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/require"
 )
@@ -151,12 +151,12 @@ func navbarCurrentSourcePage(t *testing.T, view string, scrollable bool) string 
 	}))
 	return fmt.Sprintf(`<!doctype html>
 <html lang="en" data-theme="goshtoso">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">%s<link rel="stylesheet" href="/assets/styles.css">%s<style>#navbar-secondary-row nav a{padding-inline:8px}</style></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">%s<link rel="stylesheet" href="/assets/styles.css">%s<style>#navbar-secondary-actions [data-popover-panel]{min-width:0}</style></head>
 <body class="min-h-[1200px] bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
 <main class="mx-auto w-full max-w-[1280px] overflow-x-hidden">
 <button id="outside-focus" type="button" class="m-2 min-h-11 min-w-11 px-3 py-2" hx-get="/api/navbar/unrelated" hx-target="#unrelated-content" hx-swap="innerHTML" hx-push-url="/other">Outside focus</button>
 <div id="navbar-visual-spacer" aria-hidden="true" style="height:256px;pointer-events:none"></div>
-<div id="navbar-secondary-host" style="margin-left:80px;width:calc(100%% - 62px)">%s</div>
+<div id="navbar-secondary-host">%s</div>
 <div id="unrelated-content" class="p-4">Initial unrelated content</div>
 </main>
 <script>
@@ -213,21 +213,27 @@ document.body.addEventListener("htmx:historyRestore", (event) => {
 }
 
 func navbarSecondaryConfig(view string, scrollable bool) navbar.SecondaryConfig {
+	leadingLabel := "Context"
+	var leadingAttrs templ.Attributes
+	if scrollable {
+		leadingLabel = "Menu"
+		leadingAttrs = templ.Attributes{"class": "mr-2"}
+	}
 	return navbar.SecondaryConfig{
 		Links: []navbar.SecondaryLink{
+			{Label: leadingLabel, Href: "#" + strings.ToLower(leadingLabel), LinkAttrs: leadingAttrs},
 			{Label: "Overview", Href: navbarOverviewURL, Current: currentForView(view, "overview"), LinkAttrs: navbarHTMXAttrs("overview")},
 			{Label: "Details", Href: navbarDetailsURL, Current: currentForView(view, "details"), LinkAttrs: navbarHTMXAttrs("details")},
 			{Label: "A long secondary navigation label for overflow", Href: "/components/navbar?view=long", LinkAttrs: navbarHTMXAttrs("overview")},
 			{Label: "More", Href: "/components/navbar?view=more", LinkAttrs: navbarHTMXAttrs("overview")},
 		},
-		Actions: []templ.Component{dropdown.Dropdown(dropdown.Config{
+		Actions: []templ.Component{popover.Popover(popover.Config{
 			ID:        "navbar-secondary-actions",
 			Label:     "Actions",
-			MenuAlign: dropdown.AlignEnd,
+			Placement: popover.PlacementBottomEnd,
+			Role:      "menu",
 			Trigger:   templ.Raw(`<button type="button" aria-haspopup="menu" class="inline-flex min-h-11 min-w-11 items-center gap-2 whitespace-nowrap px-3 py-2">Actions</button>`),
-			Sections: []dropdown.Section{{Items: []dropdown.Item{
-				{Label: "Open action", Href: "#open-action"},
-			}}},
+			Content:   templ.Raw(`<div class="flex flex-col py-1.5"><a href="#open-action" role="menuitem" tabindex="0" class="inline-flex min-h-11 min-w-11 items-center whitespace-nowrap px-4 py-2 text-sm">Open action</a></div>`),
 		})},
 		AriaLabel:  "secondary navigation",
 		Scrollable: scrollable,
@@ -558,7 +564,7 @@ func assertNavbarVisualGeometry(t *testing.T, page playwright.Page, scrollable, 
 
 func assertNavbarContrastMatrix(t *testing.T, page playwright.Page, dark bool) {
 	t.Helper()
-	link := page.Locator("#navbar-secondary-row nav a").Nth(1)
+	link := page.Locator("#navbar-secondary-row nav a:not([aria-current])").First()
 	current := page.Locator("#navbar-secondary-row nav a[aria-current]")
 	hoverOptions := playwright.LocatorHoverOptions{}
 	if mustEvaluateFloat(t, page, "() => visualViewport.scale") > 1.01 {
@@ -582,19 +588,16 @@ func assertNavbarContrastMatrix(t *testing.T, page playwright.Page, dark bool) {
 	require.GreaterOrEqual(t, measureRenderedContrast(t, current).Ratio, 4.5)
 	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
 
-	pressLocator(t, page, link, func() {
-		require.GreaterOrEqual(t, measureRenderedContrast(t, link).Ratio, 4.5)
-		require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, link, "borderBottomColor").Ratio, 3.0)
+	focusKeyboardLink(t, page, link)
+	assertNavbarFocusContrast(t, page, link, false)
+	pressFocusedLocator(t, page, link, func() {
+		assertNavbarFocusContrast(t, page, link, true)
 	})
-	pressLocator(t, page, current, func() {
-		require.GreaterOrEqual(t, measureRenderedContrast(t, current).Ratio, 4.5)
-		require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
-	})
-
 	focusKeyboardLink(t, page, current)
-	require.GreaterOrEqual(t, measureRenderedContrast(t, current).Ratio, 4.5)
-	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
-	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "outlineColor").Ratio, 3.0)
+	assertNavbarFocusContrast(t, page, current, true)
+	pressFocusedLocator(t, page, current, func() {
+		assertNavbarFocusContrast(t, page, current, true)
+	})
 	require.NoError(t, current.Hover(hoverOptions))
 	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "borderBottomColor").Ratio, 3.0)
 	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, current, "outlineColor").Ratio, 3.0)
@@ -604,9 +607,23 @@ func assertNavbarContrastMatrix(t *testing.T, page playwright.Page, dark bool) {
 	_ = dark
 }
 
-func pressLocator(t *testing.T, page playwright.Page, locator playwright.Locator, during func()) {
+func assertNavbarFocusContrast(t *testing.T, page playwright.Page, locator playwright.Locator, borderVisible bool) {
+	t.Helper()
+	require.True(t, mustEvaluateBool(t, locator, "element => element === document.activeElement"), "focused state must retain DOM focus")
+	require.True(t, mustEvaluateBool(t, locator, "element => element.matches(':focus-visible')"), "focused state must use focus-visible")
+	require.Equal(t, "solid", mustEvaluateString(t, locator, "element => getComputedStyle(element).outlineStyle"))
+	require.Equal(t, "2px", mustEvaluateString(t, locator, "element => getComputedStyle(element).outlineWidth"))
+	require.GreaterOrEqual(t, measureRenderedContrast(t, locator).Ratio, 4.5)
+	require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, locator, "outlineColor").Ratio, 3.0)
+	if borderVisible {
+		require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, locator, "borderBottomColor").Ratio, 3.0)
+	}
+}
+
+func pressFocusedLocator(t *testing.T, page playwright.Page, locator playwright.Locator, during func()) {
 	t.Helper()
 	require.NoError(t, locator.ScrollIntoViewIfNeeded())
+	require.True(t, mustEvaluateBool(t, locator, "element => element === document.activeElement"), "pressed focus state must start with DOM focus")
 	box, err := locator.BoundingBox()
 	require.NoError(t, err)
 	require.NotNil(t, box)
