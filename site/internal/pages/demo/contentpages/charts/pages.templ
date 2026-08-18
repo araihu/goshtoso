@@ -1,0 +1,1417 @@
+package charts
+
+import (
+	"github.com/araihu/goshtoso-app-shells/componentpage"
+	"github.com/araihu/goshtoso-charts/components/bar"
+	"github.com/araihu/goshtoso-charts/components/candlestick"
+	"github.com/araihu/goshtoso-charts/components/chart"
+	"github.com/araihu/goshtoso-charts/components/funnel"
+	"github.com/araihu/goshtoso-charts/components/heatmap"
+	interactive "github.com/araihu/goshtoso-charts/components/interactive"
+	interactivebar "github.com/araihu/goshtoso-charts/components/interactive/bar"
+	interactiveboxplot "github.com/araihu/goshtoso-charts/components/interactive/boxplot"
+	interactivegauge "github.com/araihu/goshtoso-charts/components/interactive/gauge"
+	interactivegraph "github.com/araihu/goshtoso-charts/components/interactive/graph"
+	interactiveheatmap "github.com/araihu/goshtoso-charts/components/interactive/heatmap"
+	interactiveline "github.com/araihu/goshtoso-charts/components/interactive/line"
+	interactivepie "github.com/araihu/goshtoso-charts/components/interactive/pie"
+	interactiveparallel "github.com/araihu/goshtoso-charts/components/interactive/parallel"
+	interactiveradar "github.com/araihu/goshtoso-charts/components/interactive/radar"
+	interactivesankey "github.com/araihu/goshtoso-charts/components/interactive/sankey"
+	interactivescatter "github.com/araihu/goshtoso-charts/components/interactive/scatter"
+	interactivesunburst "github.com/araihu/goshtoso-charts/components/interactive/sunburst"
+	interactivethemeriver "github.com/araihu/goshtoso-charts/components/interactive/themeriver"
+	interactivetree "github.com/araihu/goshtoso-charts/components/interactive/tree"
+	interactivetreemap "github.com/araihu/goshtoso-charts/components/interactive/treemap"
+	interactivewordcloud "github.com/araihu/goshtoso-charts/components/interactive/wordcloud"
+	"github.com/araihu/goshtoso-charts/components/line"
+	"github.com/araihu/goshtoso-charts/components/pie"
+	"github.com/araihu/goshtoso-charts/components/radar"
+	"github.com/araihu/goshtoso-charts/components/scatter"
+	charttable "github.com/araihu/goshtoso-charts/components/table"
+	"github.com/araihu/goshtoso-charts/components/violin"
+	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/components/link"
+)
+
+templ GettingStartedPage(fragment bool) {
+	@chartsLayout("Getting started", "getting-started", gettingStartedContent(), fragment)
+}
+
+templ gettingStartedContent() {
+	<div class="max-w-3xl space-y-12">
+		<section class="space-y-4">
+			<p class="text-sm font-semibold text-primary dark:text-primary-dark">Goshtoso Charts</p>
+			<h1 class="font-title text-4xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong">Add your first chart</h1>
+			<p class="text-lg text-on-surface-muted dark:text-on-surface-dark-muted">Render a static SVG chart in an existing Goshtoso application, then add the local browser runtime only if the chart needs interaction.</p>
+		</section>
+		<section class="space-y-4" data-getting-started-step>
+			<h2 id="install-the-module" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">1. Install the module</h2>
+			<p class="text-on-surface-muted dark:text-on-surface-dark-muted">Add Goshtoso Charts to an existing Go and templ application.</p>
+			@codeblock.CodeBlock(gettingStartedCodeBlock("bash", "bash", gettingStartedInstallCode))
+		</section>
+		<section class="space-y-4" data-getting-started-step>
+			<h2 id="mount-chart-assets" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">2. Mount chart assets</h2>
+			<p class="text-on-surface-muted dark:text-on-surface-dark-muted">Shared controls and interactive charts use versioned assets embedded in the module. Mount the handler at its exported prefix; the handler removes that prefix itself.</p>
+			@codeblock.CodeBlock(gettingStartedCodeBlock("go", "Go", gettingStartedAssetsCode))
+		</section>
+		<section class="space-y-4" data-getting-started-step>
+			<h2 id="render-a-static-chart" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">3. Render a static chart</h2>
+			<p class="text-on-surface-muted dark:text-on-surface-dark-muted">Static/vector components render on the server and need no browser chart runtime.</p>
+			@codeblock.CodeBlock(gettingStartedCodeBlock("templ", "templ", gettingStartedStaticCode))
+		</section>
+		<section class="space-y-4" data-getting-started-step>
+			<h2 id="include-chart-dependencies" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">4. Add interactive dependencies</h2>
+			<p class="text-on-surface-muted dark:text-on-surface-dark-muted">For interactive charts, render the dependency component once in the document head before chart initialization. Local vendored delivery is the default.</p>
+			@codeblock.CodeBlock(gettingStartedCodeBlock("templ", "templ", gettingStartedDependenciesCode))
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Third-party delivery is explicit: use <code class="font-mono">dependencies.WithCDN()</code> only when the application accepts that network and CSP boundary.</p>
+		</section>
+		<section class="space-y-4" data-getting-started-step>
+			<h2 id="render-an-interactive-chart" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">5. Render an interactive chart</h2>
+			<p class="text-on-surface-muted dark:text-on-surface-dark-muted">Interactive examples focus on visual behavior, exploration, and composition.</p>
+			@codeblock.CodeBlock(gettingStartedCodeBlock("templ", "templ", gettingStartedInteractiveCode))
+		</section>
+		<section class="space-y-4" data-getting-started-step>
+			<h2 id="choose-delivery-and-wrapper-behavior" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">6. Choose delivery and wrapper behavior</h2>
+			<p class="text-on-surface-muted dark:text-on-surface-dark-muted">Static/vector and interactive charts solve different jobs. Use the <a class="font-semibold text-primary underline dark:text-primary-dark" href="/modules/charts/docs/chart-modes">static/vector and interactive guide</a> to choose delivery, then configure shared controls and an initial enabled, disabled, hidden, or omitted wrapper state with the <a class="font-semibold text-primary underline dark:text-primary-dark" href="/modules/charts/docs/chart-controls">chart controls guide</a>.</p>
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Browse categorized <a class="font-semibold text-primary underline dark:text-primary-dark" href="/modules/charts/components/line">static/vector</a>, <a class="font-semibold text-primary underline dark:text-primary-dark" href="/modules/charts/components/interactive/bar">interactive Cartesian</a>, and <a class="font-semibold text-primary underline dark:text-primary-dark" href="/modules/charts/components/interactive/graph">relationship</a> charts. The <a class="font-semibold text-primary underline dark:text-primary-dark" href="/modules/charts/examples/live-availability">Live availability</a> example shows a current status snapshot.</p>
+		</section>
+	</div>
+}
+
+templ LinePage(fragment bool) {
+	@chartsLayout("Line chart", "line", lineContent(), fragment)
+}
+
+templ BarPage(fragment bool) {
+	@chartsLayout("Bar chart", "bar", barContent(), fragment)
+}
+
+templ barContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Bar chart",
+		Description: "Static/vector categorical comparisons in vertical, horizontal, grouped, or stacked layouts.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuide("Compare and rank named values across discrete categories, including grouped and stacked totals.", "Use when bar length makes difference, order, or contribution easy to scan; choose horizontal bars for longer category labels.", "Avoid when the key task is showing continuous change, dense distributions, or precise point-to-point relationships.", "Exact labels, category tables, and reference evidence accompany treatments that require precise reading without color alone."),
+			Preview:      bar.Bar(sampleBasicBar()),
+			Code:         basicBarCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Thickness and group spacing",
+				Description: "Compare automatic geometry, bars using 15% of each allotted slot, and grouped bars without an inter-series gap.",
+				Preview:     barGeometryComparison(false),
+				Code:        geometryBarCode(false),
+			},
+			{
+				Title:       "Rounded caps and value-label anchors",
+				Description: "Rounded value-end caps work with exact labels at either the value end or category-axis start.",
+				Preview:     roundedBarLabelComparison(),
+				Code:        roundedBarLabelsCode(),
+			},
+			{
+				Title:       "Statistical reference annotations",
+				Description: "Average lines and minimum/maximum points add context. Exact values and computed references remain adjacent without relying on color.",
+				Preview:     bar.Bar(sampleBarReferences()),
+				Code:        barReferencesCode(),
+			},
+			{
+				Title:       "Stacked totals",
+				Description: "Stacked bars preserve component contributions while a maximum line and global maximum point identify the largest total.",
+				Preview:     bar.Bar(sampleStackedBar()),
+				Code:        stackedBarCode(),
+			},
+			{
+				Title:       "Horizontal orientation",
+				Description: "Use horizontal bars when category labels read more naturally beside values. Vertical remains the default.",
+				Preview:     bar.Bar(sampleHorizontalWorldPopulation()),
+				Code:        horizontalBarCode(),
+			},
+			{
+				Title:       "Horizontal thickness and group spacing",
+				Description: "The same automatic, thin, and no-gap geometry options apply after changing orientation.",
+				Preview:     barGeometryComparison(true),
+				Code:        geometryBarCode(true),
+			},
+			{
+				Title:       "Horizontal maximum references",
+				Description: "Maximum reference lines remain aligned with the numeric axis after orientation changes.",
+				Preview:     bar.Bar(sampleHorizontalBarReferences()),
+				Code:        horizontalBarReferencesCode(),
+			},
+			{
+				Title:       "Stacked horizontal values",
+				Description: "Stacked horizontal bars can show exact segment labels and hide the redundant numeric axis.",
+				Preview:     bar.Bar(sampleHorizontalStackedBar()),
+				Code:        horizontalStackedBarCode(),
+			},
+		},
+		After: chartDocumentation("Static/vector behavior", "Bar renders inline SVG on the server, supports SVG and PNG download through the shared wrapper, and remains useful in print or no-JavaScript output. Review the shared chart-mode and control guides for delivery and wrapper choices.", "bar"),
+	})
+}
+
+templ barGeometryComparison(horizontal bool) {
+	{{ automatic, thin, noGap := sampleBarGeometryComparison(horizontal) }}
+	<div class="grid min-w-0 gap-4 xl:grid-cols-3">
+		<div class="min-w-0">@bar.Bar(automatic)</div>
+		<div class="min-w-0">@bar.Bar(thin)</div>
+		<div class="min-w-0">@bar.Bar(noGap)</div>
+	</div>
+}
+
+templ roundedBarLabelComparison() {
+	<div class="grid min-w-0 gap-4 lg:grid-cols-2">
+		<div class="min-w-0">@bar.Bar(sampleRoundedBarLabels(bar.DataLabelPositionEnd))</div>
+		<div class="min-w-0">@bar.Bar(sampleRoundedBarLabels(bar.DataLabelPositionStart))</div>
+	</div>
+}
+
+templ PiePage(fragment bool) {
+	@chartsLayout("Pie chart", "pie", pieContent(), fragment)
+}
+
+templ ScatterPage(fragment bool) {
+	@chartsLayout("Scatter chart", "scatter", scatterContent(), fragment)
+}
+
+templ RadarPage(fragment bool) {
+	@chartsLayout("Radar chart", "radar", radarContent(), fragment)
+}
+
+templ CandlestickPage(fragment bool) {
+	@chartsLayout("Candlestick", "candlestick", candlestickContent(), fragment)
+}
+
+templ FunnelPage(fragment bool) {
+	@chartsLayout("Funnel chart", "funnel", funnelContent(), fragment)
+}
+
+templ TablePage(fragment bool) {
+	@chartsLayout("Table", "table", tableContent(), fragment)
+}
+
+templ HeatMapPage(fragment bool) {
+	@chartsLayout("Heat map", "heatmap", heatMapContent(), fragment)
+}
+
+templ ViolinPage(fragment bool) {
+	@chartsLayout("Violin chart", "violin", violinContent(), fragment)
+}
+
+templ InteractiveBarPage(fragment bool) {
+	@chartsLayout("Interactive bar", "interactive-bar", interactiveChartBarContent(), fragment)
+}
+
+templ interactiveChartBarContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive bar",
+		Description: "Categorical comparisons with grouped, stacked, horizontal, labeled, referenced, and zoomable treatments.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Compare magnitudes across a small ordered or unordered category set.", "People need direct category comparisons, optional grouping or stacking, and hover exploration.", "Too many categories, too many stacks, or precise lookup dominates; use a table or another summary.", "Every example includes a keyboard-readable exact-value table; labels and references never rely on color alone."),
+			Preview:      interactivebar.Bar(sampleInteractiveBar()),
+			Code:         interactiveChartBarCode(),
+		},
+		Sections: []componentpage.Example{
+			{Title: "Labels", Description: "Visible labels repeat exact values directly on the marks while the disclosure table remains the complete reading path.", Preview: interactivebar.Bar(sampleInteractiveBarLabels()), Code: `SeriesOptions: chart.SeriesOptions{Label: &chart.LabelOptions{Show: chart.Bool(true), Position: "top"}}`},
+			{Title: "Axes and units", Description: "Named axes, literal unit suffixes, and split lines add reading context without accepting executable formatter code.", Preview: interactivebar.Bar(sampleInteractiveBarAxes()), Code: interactiveBarAxesCode()},
+			{Title: "Explicit colors", Description: "Caller-selected colors override theme series tokens when a fixed visual identity is required.", Preview: interactivebar.Bar(sampleInteractiveBarColors()), Code: `Style: charttheme.Style{Colors: []string{"#2563eb", "#db2777"}}`},
+			{Title: "Series arrangement", Description: "Widths, gaps, horizontal orientation, and stacking are typed treatments on the same Bar component.", Preview: interactiveBarArrangementVariants(), Code: interactiveBarLayoutCode()},
+			{Title: "Category zoom", Description: "Inside gestures and a visible slider expose the same bounded category window; exact values remain available outside the canvas.", Preview: interactiveBarZoomVariants(), Code: interactiveBarZoomCode()},
+			{Title: "Calculated and explicit references", Description: "Named points and guide lines add context while the adjacent table preserves every source value.", Preview: interactiveBarReferenceVariants(), Code: interactiveBarReferencesCode()},
+			{Title: "Large canvas", Description: "A taller chart preserves the upstream large-canvas intent while responsive width keeps page layout consumer-owned.", Preview: interactivebar.Bar(sampleInteractiveBarLargeCanvas()), Code: `Width: "100%", Height: "600px"`},
+		},
+		After: interactiveBarDocumentation(),
+	})
+}
+
+templ interactiveBarArrangementVariants() {
+	<div class="space-y-10" data-bar-variant-group="arrangement">
+		<div data-bar-variant="width-gap">@interactivebar.Bar(sampleInteractiveBarWidthsAndGap())</div>
+		<div data-bar-variant="horizontal">@interactivebar.Bar(sampleInteractiveBarHorizontal())</div>
+		<div data-bar-variant="stacked">@interactivebar.Bar(sampleInteractiveBarStacked())</div>
+	</div>
+}
+
+templ interactiveBarZoomVariants() {
+	<div class="space-y-10" data-bar-variant-group="zoom">
+		<div data-bar-variant="zoom-inside">@interactivebar.Bar(sampleInteractiveBarZoom(interactivebar.ZoomInside))</div>
+		<div data-bar-variant="zoom-slider">@interactivebar.Bar(sampleInteractiveBarZoom(interactivebar.ZoomSlider))</div>
+	</div>
+}
+
+templ interactiveBarReferenceVariants() {
+	<div class="space-y-10" data-bar-variant-group="references">
+		<div data-bar-variant="mark-points">@interactivebar.Bar(sampleInteractiveBarMarkPoints())</div>
+		<div data-bar-variant="mark-lines">@interactivebar.Bar(sampleInteractiveBarMarkLines())</div>
+	</div>
+}
+
+templ interactiveBarDocumentation() {
+	<div class="space-y-4">
+		<section class="rounded-radius border border-outline bg-surface-alt p-5 text-sm dark:border-outline-dark dark:bg-surface-dark-alt">
+			<h2 id="shared-chart-behavior" data-toc-heading class="text-base font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Shared chart behavior</h2>
+			<p class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">Use the <a class="font-semibold text-primary underline dark:text-primary-dark" href="/modules/charts/docs/chart-controls">chart controls guide</a> covering expand, fullscreen, and PNG export behavior. The <a class="font-semibold text-primary underline dark:text-primary-dark" href="/modules/charts/docs/chart-modes">chart modes guide</a> explains interactive canvas, runtime, and print tradeoffs.</p>
+		</section>
+		@demoNote("Mixed-series composition", "The upstream Bar, Line, and Scatter overlay needs a separate renderer-neutral composite chart API. Bar does not accept backing-renderer series or raw option escape hatches.")
+		@goAPIReference("interactive/bar")
+	</div>
+}
+
+templ InteractiveLinePage(fragment bool) {
+	@chartsLayout("Interactive line", "interactive-line", interactiveChartLineContent(), fragment)
+}
+
+templ interactiveChartLineContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive line",
+		Description: "Ordered numeric series with categorical, numerical, and temporal axes; labels, symbols, references, fills, and multiple aligned series.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Show change across an ordered sequence.", "Order and direction matter, especially for a small number of time series.", "Unordered categories or many crossing series obscure comparison.", "Provide the ordered values in an adjacent table when exact readings matter."),
+			Preview:      interactiveline.Line(sampleInteractiveLineBase()),
+			Code:         interactiveChartLineCode(),
+		},
+		Sections: []componentpage.Example{
+			{Title: "Labels and symbols", Description: "Labels expose exact point values; symbols distinguish points without changing the data.", Preview: interactiveLineLabelsAndSymbolsVariants(), Code: interactiveLineLabelsCode()},
+			{Title: "References and split lines", Description: "Calculated points and horizontal guides add context while the adjacent tables retain exact values.", Preview: interactiveLineReferenceVariants(), Code: interactiveLineReferencesCode()},
+			{Title: "Numerical axis and guides", Description: "A numerical x axis supports ranges, coordinate guides, vertical thresholds, and theme-aware scale pieces.", Preview: interactiveline.Line(sampleInteractiveLineNumerical()), Code: interactiveLineNumericalCode()},
+			{Title: "Line shape treatments", Description: "Step, smooth, area, and smooth-area treatments share one component and typed series options.", Preview: interactiveLineShapeVariants(), Code: interactiveLineShapesCode()},
+			{Title: "Multi-series comparisons", Description: "Aligned series share one ordered x axis; labels and average references can be configured per series.", Preview: interactiveLineMultiVariants(), Code: interactiveLineMultiCode()},
+			{Title: "Temporal X-axis treatment", Description: "UTC timestamps keep one chronological series in order, with exact values beside the chart.", Preview: interactiveline.Line(sampleInteractiveLineTime()), Code: interactiveLineTimeCode()},
+		},
+		After: interactiveLineDocumentation(),
+	})
+}
+
+templ interactiveLineLabelsAndSymbolsVariants() {
+	<div class="space-y-10" data-line-variant-group="labels-symbols">
+		<div data-line-variant="labels">@interactiveline.Line(sampleInteractiveLineLabels())</div>
+		<div data-line-variant="symbols">@interactiveline.Line(sampleInteractiveLineSymbols())</div>
+	</div>
+}
+
+templ interactiveLineReferenceVariants() {
+	<div class="space-y-10" data-line-variant-group="references">
+		<div data-line-variant="mark-points">@interactiveline.Line(sampleInteractiveLineMarkPoints())</div>
+		<div data-line-variant="split-lines">@interactiveline.Line(sampleInteractiveLineSplitLines())</div>
+	</div>
+}
+
+templ interactiveLineShapeVariants() {
+	<div class="space-y-10" data-line-variant-group="shapes">
+		<div data-line-variant="step">@interactiveline.Line(sampleInteractiveLineStep())</div>
+		<div data-line-variant="smooth">@interactiveline.Line(sampleInteractiveLineSmooth())</div>
+		<div data-line-variant="area">@interactiveline.Line(sampleInteractiveLineArea())</div>
+		<div data-line-variant="smooth-area">@interactiveline.Line(sampleInteractiveLineSmoothArea())</div>
+	</div>
+}
+
+templ interactiveLineMultiVariants() {
+	<div class="space-y-10" data-line-variant-group="multi-series">
+		<div data-line-variant="multi">@interactiveline.Line(sampleInteractiveLineMulti())</div>
+		<div data-line-variant="demo">@interactiveline.Line(sampleInteractiveLineDemo())</div>
+	</div>
+}
+
+templ interactiveLineDocumentation() {
+	<div class="space-y-4">
+		@demoNote("Time series", "Use a time axis for chronological observations; keep timestamps strictly ordered and show exact readings beside the chart when people need to compare them.")
+		@demoNote("Mixed-series composition", "The upstream mixed line and scatter overlay needs a separate renderer-neutral composite chart API. Line does not accept backing-renderer series or raw option escape hatches.")
+		@goAPIReference("interactive/line")
+	</div>
+}
+
+templ InteractiveScatterPage(fragment bool) {
+	@chartsLayout("Interactive scatter", "interactive-scatter", interactiveChartScatterContent(), fragment)
+}
+
+templ interactiveChartScatterContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive scatter",
+		Description: "Categorical or paired values with symbols, labels, axes, and optional ripple emphasis.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Compare point values across named categories or reveal relationships between two quantitative measures.", "Position, symbol shape, or restrained ripple emphasis helps readers compare observations, clusters, or exceptional points.", "Heavy overlap, precise lookup, or a stable reading order dominates; use the exact-value table or another summary.", "Every example includes a keyboard-readable table with each category, series, and value; ripple motion adds no data."),
+			Preview:      interactiveScatterVariant("base", sampleInteractiveScatter()),
+			Code:         interactiveChartScatterCode(),
+		},
+		Sections: []componentpage.Example{
+			{Title: "Visible point labels", Description: "Right-positioned labels repeat every exact score while retaining the same round-rectangle symbol geometry.", Preview: interactiveScatterVariant("labels", sampleInteractiveScatterLabels()), Code: `SeriesOptions: chart.SeriesOptions{Label: &chart.LabelOptions{Show: chart.Bool(true), Position: "right"}}`},
+			{Title: "Named axes and split lines", Description: "Sports and Score axis names plus split lines support aligned reading across the original six categories.", Preview: interactiveScatterVariant("split-lines", sampleInteractiveScatterSplitLines()), Code: `Options: chart.ChartOptions{XAxis: &chart.AxisOptions{Name: "Sports", ShowSplitLine: chart.Bool(true)}, YAxis: &chart.AxisOptions{Name: "Score", ShowSplitLine: chart.Bool(true)}}`},
+			{Title: "Effect variant", Description: "The same Scatter component can add a default ripple to the six player dunk values; reduced-motion preference disables chart animation.", Preview: interactiveScatterVariant("effect-base", sampleInteractiveEffectScatter()), Code: `Variant: interactivescatter.VariantEffect`},
+			{Title: "Per-series ripple styles", Description: "Dunk uses period 4, scale 10, and stroke; Shoot uses period 3, scale 6, and fill. Both remain series in one Scatter component.", Preview: interactiveScatterVariant("effect-styles", sampleInteractiveEffectScatterStyles()), Code: `Ripple: &chart.RippleOptions{Period: 4, Scale: 10, BrushType: "stroke"}`},
+		},
+		After: interactiveScatterDocumentation(),
+	})
+}
+
+templ interactiveScatterVariant(name string, config interactivescatter.Config) {
+	<div data-scatter-variant={ name }>
+		@interactivescatter.Scatter(config)
+	</div>
+}
+
+templ interactiveScatterDocumentation() {
+	<div class="space-y-4">
+		@demoNote("Motion and emphasis", "Ripple can call attention to points, but it does not add data. Keep it restrained; reduced-motion users receive the same exact values without animation.")
+		@goAPIReference("interactive/scatter")
+	</div>
+}
+
+templ InteractiveScatter3DPage(fragment bool) {
+	@chartsLayout("Interactive scatter 3D", "interactive-scatter-3d", interactiveScatter3DContent(), fragment)
+}
+
+templ interactiveScatter3DContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive scatter 3D",
+		Description: "Three-dimensional point clouds for exploring broad spatial clusters and separation across three measures.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Explore spatial patterns across three quantitative dimensions.", "A rotatable view helps identify broad clusters or separation.", "Exact comparison, dense points, or a fixed reading order matters; use a two-dimensional view or table.", "The adjacent table exposes every coordinate, including dense samples."),
+			Preview:      interactiveScatter3DVariants(),
+			Code:         interactiveScatter3DCode(),
+		},
+		After: interactiveDocumentation(demoNote("Reading the data", "Treat rotation and color as exploratory aids. Use the adjacent coordinate table for exact values and non-visual review.")),
+	})
+}
+
+templ interactiveScatter3DVariants() {
+	<div class="space-y-10" data-scatter3d-variants>
+		<div data-scatter3d-variant="basic">
+			@sampleInteractiveScatter3DBasic()
+		</div>
+		<div data-scatter3d-variant="item-style">
+			@sampleInteractiveScatter3DStyled()
+		</div>
+	</div>
+}
+
+templ InteractiveBar3DPage(fragment bool) {
+	@chartsLayout("Interactive bar 3D", "interactive-bar-3d", interactiveBar3DContent(), fragment)
+}
+
+templ InteractiveSurface3DPage(fragment bool) {
+	@chartsLayout("Interactive surface 3D", "interactive-surface-3d", interactiveSurface3DContent(), fragment)
+}
+
+templ InteractiveLine3DPage(fragment bool) {
+	@chartsLayout("Interactive line 3D", "interactive-line-3d", interactiveLine3DContent(), fragment)
+}
+
+templ interactiveLine3DContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive line 3D",
+		Description: "Ordered paths through three measures when overall trajectory matters more than individual coordinates.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Trace one ordered path through three quantitative dimensions.", "Path shape matters more than precise point-by-point comparison.", "Readers need exact coordinates or cannot use a rotatable view.", "The formula, domains, and CSV provide a non-visual equivalent; reduced motion keeps the view still."),
+			Preview:      interactiveLine3DVariants(),
+			Code:         interactiveLine3DCode(),
+		},
+		After: interactiveDocumentation(demoNote("Motion", "Auto-rotation is optional exploration. The stationary treatment remains available, including for reduced-motion preferences.")),
+	})
+}
+
+templ interactiveLine3DVariants() {
+	<div class="space-y-10" data-line3d-variants>
+		<div data-line3d-variant="base">
+			@sampleInteractiveLine3D("basic line3d example", "basic-line3d-example", false)
+		</div>
+		<div data-line3d-variant="auto-rotate">
+			@sampleInteractiveLine3D("auto rotating", "auto-rotating", true)
+		</div>
+	</div>
+}
+
+templ interactiveSurface3DContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive surface 3D",
+		Description: "Sampled mathematical surfaces and closed parametric meshes for seeing overall three-dimensional shape.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Explore a sampled height field or closed parametric mesh.", "Overall shape, peaks, valleys, or connected volume matter more than a single exact sample.", "Users need to compare individual values or cannot use a three-dimensional view.", "Formula, topology, domains, sample count, and downloadable CSV expose the full dataset."),
+			Preview:      interactiveSurface3DVariants(),
+			Code:         interactiveSurface3DCode(),
+		},
+		After: interactiveDocumentation(demoNote("Surface variants", "Height fields keep unique X/Y samples. Closed meshes add explicit row-major topology and may repeat seam or pole coordinates.")),
+	})
+}
+
+templ interactiveSurface3DVariants() {
+	<div class="space-y-10" data-surface3d-variants>
+		<div data-surface3d-variant="base">
+			@sampleInteractiveSurface3D("basic surface3D example", interactiveSurface3DBaseFormula, "basic-surface3d-example", interactiveSurface3DBasePoints)
+		</div>
+		<div data-surface3d-variant="rose">
+			@sampleInteractiveSurface3D("Rose style", interactiveSurface3DRoseFormula, "rose-style", interactiveSurface3DRosePoints)
+		</div>
+		<div data-surface3d-variant="heart">
+			@sampleInteractiveSurface3DHeart()
+		</div>
+	</div>
+}
+
+templ interactiveBar3DContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive bar 3D",
+		Description: "Category-grid comparisons where height gives a compact overview of two intersecting dimensions.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Compare values at intersections of two ordered categories with height.", "A compact overview of a small category grid is useful.", "Exact cell comparison or many categories matter; a heat map or table reads better.", "The adjacent disclosure lists every category pair and exact value."),
+			Preview:      interactiveBar3DVariants(),
+			Code:         interactiveBar3DCode(),
+		},
+		After: interactiveDocumentation(demoNote("View treatments", "Rotation and shading change presentation, not values. Use the exact-cell disclosure to compare values.")),
+	})
+}
+
+templ interactiveBar3DVariants() {
+	<div class="space-y-10" data-bar3d-variants>
+		<div data-bar3d-variant="base">
+			@sampleInteractiveBar3D("basic bar3d example", interactive.Bar3DGridSize{Width: 200, Depth: 80}, nil, interactive.Bar3DShadingDefault)
+		</div>
+		<div data-bar3d-variant="auto-rotate">
+			@sampleInteractiveBar3D("auto rotating", interactive.Bar3DGridSize{Width: 160, Depth: 80}, &interactive.Bar3DView{AutoRotate: interactive.Bool(true)}, interactive.Bar3DShadingDefault)
+		</div>
+		<div data-bar3d-variant="faster">
+			@sampleInteractiveBar3D("rotating faster", interactive.Bar3DGridSize{Width: 160, Depth: 80}, &interactive.Bar3DView{AutoRotate: interactive.Bool(true), AutoRotateSpeed: 200}, interactive.Bar3DShadingDefault)
+		</div>
+		<div data-bar3d-variant="lambert">
+			@sampleInteractiveBar3D("Bar3D-shading(lambert)", interactive.Bar3DGridSize{Width: 200, Depth: 80}, nil, interactive.Bar3DShadingLambert)
+		</div>
+	</div>
+}
+
+templ InteractivePiePage(fragment bool) {
+	@chartsLayout("Interactive pie", "interactive-pie", interactiveChartPieContent(), fragment)
+}
+
+templ interactiveChartPieContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive pie",
+		Description: "Compact part-to-whole views for a few named categories and their shares of one total.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Summarize a small named distribution as parts of a total.", "Few categories and approximate share comparison are the goal.", "There are many slices or close values; use bars for reliable comparison.", "Pair the chart with exact values and shares in text or a table."),
+			Preview:      interactivePieVariants(),
+			Code:         interactiveChartPieCode(),
+		},
+		After: templ.Join(interactivePieUsage(), goAPIReference("interactive/pie")),
+	})
+}
+
+templ interactivePieVariants() {
+	<div class="space-y-10" data-pie-variants>
+		<div data-pie-variant="base">
+			@interactivepie.Pie(sampleInteractivePie())
+		</div>
+		<div data-pie-variant="labels">
+			@interactivepie.Pie(sampleInteractivePieLabels())
+		</div>
+		<div data-pie-variant="radius">
+			@interactivepie.Pie(sampleInteractivePieRadius())
+		</div>
+		<div data-pie-variant="padded">
+			@interactivepie.Pie(sampleInteractivePiePadded())
+		</div>
+		<div class="space-y-10" data-pie-rose-variants>
+			<div data-pie-variant="rose-area">
+				@interactivepie.Pie(sampleInteractivePieRoseArea())
+			</div>
+			<div data-pie-variant="rose-radius">
+				@interactivepie.Pie(sampleInteractivePieRoseRadius())
+			</div>
+			<div data-pie-variant="paired-roses">
+				@interactivepie.Pie(sampleInteractivePiePairedRoses())
+			</div>
+		</div>
+		<div data-pie-variant="nested">
+			@interactivepie.Pie(sampleInteractivePieNested())
+		</div>
+		<div data-pie-variant="auto-emphasis">
+			@interactivepie.Pie(sampleInteractivePieAutoEmphasis())
+		</div>
+		<div data-pie-variant="selected">
+			@interactivepie.Pie(sampleInteractivePieSelected())
+		</div>
+	</div>
+}
+
+templ interactivePieUsage() {
+	<div class="space-y-4">
+		@demoNote("Accessibility", "The figure name comes from Label and Caption remains visible. Every example includes a keyboard-accessible exact-value disclosure with series, sector, value, and share; do not make hover, motion, or color the only route to meaning.")
+		@demoNote("Choose the encoding", "A standard pie maps value to angle. A donut reserves a non-data center. Area roses use equal angles and encode values by sector area; radius roses retain proportional angles and add radial variation. Side-by-side and nested series need clearly separated centers or non-overlapping radii.")
+		@demoNote("Interactive capabilities", "Hover tooltips, selectable sectors, typed emphasis, and optional rotating emphasis support exploration. Rotating emphasis stops for reduced-motion users. Exact values and shares remain in the adjacent disclosure rather than depending on hover, motion, or color.")
+		@demoNote("Shared controls and modes", "Expand, fullscreen, PNG export, hidden/disabled/unwrapped lifecycle modes, resize events, and HTMX replacement behavior come from the shared chart wrapper. Static/vector pie is the better choice for print, server-only delivery, SVG output, or a page that must work without the browser runtime.")
+	</div>
+}
+
+templ InteractiveRadarPage(fragment bool) {
+	@chartsLayout("Interactive radar", "interactive-radar", interactiveChartRadarContent(), fragment)
+}
+
+templ interactiveChartRadarContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive radar",
+		Description: "Aligned multidimensional profiles for comparing broad shapes over the same bounded indicators.",
+		Primary: componentpage.Example{
+			Title:        "Daily Beijing air quality",
+			AbovePreview: visualizationGuidance("Compare repeated observations over the same bounded dimensions.", "A few dimensions share stable maxima and the profile shape matters more than precise pairwise ranking.", "Exact ranking, many dimensions, incompatible scales, or small differences are the goal; use bars, parallel coordinates, or a table.", "Every chart is followed by a keyboard-accessible exact-value table with the city, day, and six pollutant values."),
+			Preview:      interactiveRadarVariant("base", interactiveradar.Radar(sampleInteractiveRadarBase())),
+			Code:         interactiveRadarBaseCode(),
+		},
+		Sections: []componentpage.Example{
+			{Title: "Circular style", Description: "Shape, split count, split-line treatment, line opacity, and area opacity remain typed options on the same Radar component.", Preview: interactiveRadarVariant("style", interactiveradar.Radar(sampleInteractiveRadarStyle())), Code: interactiveRadarStyleCode()},
+			{Title: "Multiple-series legend", Description: "All three city profiles may remain visible or be toggled independently.", Preview: interactiveRadarVariant("legend-multiple", interactiveradar.Radar(sampleInteractiveRadarLegendMulti())), Code: interactiveRadarLegendCode(chart.LegendSelectionMultiple)},
+			{Title: "Single-series legend", Description: "Exclusive legend selection reduces overlap while retaining all source observations in the exact-value table.", Preview: interactiveRadarVariant("legend-single", interactiveradar.Radar(sampleInteractiveRadarLegendSingle())), Code: interactiveRadarLegendCode(chart.LegendSelectionSingle)},
+		},
+		After: templ.Join(interactiveRadarUsage(), goAPIReference("interactive/radar")),
+	})
+}
+
+templ interactiveRadarVariant(name string, chart templ.Component) {
+	<div data-radar-variant={ name }>
+		@chart
+	</div>
+}
+
+templ interactiveRadarUsage() {
+	<div class="space-y-4">
+		@demoNote("When radar works", "Use a small, stable set of bounded indicators when the broad profile shape is meaningful. Polygon and circular coordinates change presentation, not values.")
+		@demoNote("When radar fails", "Overplotting, many dimensions, unequal scales, and close values make radar charts hard to compare. Prefer bars, parallel coordinates, or the exact-value table in those cases.")
+		@demoNote("Accessibility", "Hover and color are exploratory aids. Each example includes an exact radar values disclosure with every city, day, indicator, and value.")
+		@demoNote("Shared controls and modes", "Expand, fullscreen, PNG export, hidden/disabled/unwrapped lifecycle modes, resize events, and HTMX replacement behavior come from the shared chart wrapper. See chart controls and static/vector and interactive capabilities below.")
+	</div>
+}
+
+templ InteractiveHeatMapPage(fragment bool) {
+	@chartsLayout("Interactive heatmap", "interactive-heatmap", interactiveChartHeatMapContent(), fragment)
+}
+
+templ interactiveChartHeatMapContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive heatmap",
+		Description: "Intensity patterns across category grids or ordered calendar dates.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Reveal concentration, gaps, and repeated time patterns across two categorical dimensions.", "Relative intensity across a manageable grid is the question.", "Exact cell comparison, sequence, or color-independent interpretation is primary; use a table instead.", "The disclosure below preserves every category pair, value, and explicit no-data cell."),
+			Preview:      interactiveheatmap.HeatMap(sampleInteractiveHeatMap()),
+			Code:         interactiveChartHeatMapCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Calendar coordinates",
+				Description: "A full deterministic year preserves the source date range, value domain, cell borders, and explicit no-data days while using responsive cell sizing.",
+				Preview:     interactiveheatmap.HeatMap(sampleInteractiveCalendarHeatMap()),
+				Code:        interactiveCalendarHeatMapCode(),
+			},
+		},
+		After: templ.Join(interactiveHeatMapUsage(), goAPIReference("interactive/heatmap")),
+	})
+}
+
+templ interactiveHeatMapUsage() {
+	<div class="space-y-4">
+		@demoNote("Use a category grid", "Choose Cartesian coordinates for two finite category sets such as weekday and hour. Split areas help readers track dense rows and columns.")
+		@demoNote("Use a calendar", "Choose calendar coordinates when adjacency and seasonal gaps matter. Keep the date range explicit and use responsive cell sizing inside flexible layouts.")
+		@demoNote("Cold to warm", "The default scale follows theme-aware low, middle, and high tokens. Explicit chart colors remain caller-owned when a specialized scale is required.")
+		@demoNote("Missing is not zero", "Mark absent observations with Missing. Zero remains a valid measured value; both states stay distinct in the chart data and exact-value table.")
+		@demoNote("Equivalent data", "Every example includes a bounded, scrollable exact-value table. Use that table alone when exact comparison matters more than spatial pattern.")
+	</div>
+}
+
+templ InteractiveBoxPlotPage(fragment bool) {
+	@chartsLayout("Interactive box plot", "interactive-boxplot", interactiveChartBoxPlotContent(), fragment)
+}
+
+templ InteractiveCandlestickPage(fragment bool) {
+	@chartsLayout("Interactive candlestick", "interactive-candlestick", interactiveCandlestickContent(), fragment)
+}
+
+templ interactiveCandlestickContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive candlestick",
+		Description: "Open, high, low, and close movement across ordered periods, with range and direction in view.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Inspect open, high, low, and close movement across ordered dates.", "Range and direction over time matter, with a limited enough period to inspect.", "Readers only need one measure or exact comparisons; use a line or OHLC table.", "The adjacent table gives exact OHLC values and text direction without color."),
+			Preview:      sampleInteractiveCandlestick(),
+			Code:         interactiveCandlestickCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Inside zoom",
+				Description: "Inside gestures explore a bounded date window without adding a visible slider.",
+				Preview:     sampleInteractiveCandlestickInsideZoom(),
+				Code:        interactiveCandlestickInsideZoomCode(),
+			},
+			{
+				Title:       "Inside and slider zoom",
+				Description: "Inside gestures and a visible slider control the same bounded date window.",
+				Preview:     sampleInteractiveCandlestickBothZooms(),
+				Code:        interactiveCandlestickBothZoomsCode(),
+			},
+			{
+				Title:       "Y-axis slider zoom",
+				Description: "A vertical slider narrows the visible value range while preserving the ordered dates.",
+				Preview:     sampleInteractiveCandlestickYAxisZoom(),
+				Code:        interactiveCandlestickYAxisZoomCode(),
+			},
+			{
+				Title:       "Direction style and extrema",
+				Description: "Theme-token classes distinguish rising and falling periods; highest and lowest marks add range references while the exact-value table preserves meaning without color alone.",
+				Preview:     sampleInteractiveCandlestickUpstreamStyle(),
+				Code:        interactiveCandlestickStyleCode(),
+			},
+		},
+		After: interactiveCandlestickDocumentation(),
+	})
+}
+
+templ interactiveCandlestickDocumentation() {
+	<div class="space-y-4">
+		@demoNote("Ranges and zoom", "Each candle has a low, open, close, and high value. Zoom supports exploration; the table remains source for exact values.")
+		@goAPIReference("interactive/candlestick")
+	</div>
+}
+
+templ interactiveChartBoxPlotContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive box plot",
+		Description: "Distribution centers, spread, and range across categories through five-number summaries.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Compare distribution centers, spreads, and ranges across categories.", "Five-number summaries reveal how groups differ.", "Individual observations or unusual distribution shape must be inspected.", "Preserve five-number summaries in nearby content for exact comparison."),
+			Preview:      interactiveboxplot.BoxPlot(sampleInteractiveBoxPlot()),
+			Code:         interactiveChartBoxPlotCode(),
+		},
+		After: templ.Join(demoNote("Five-number summary", "Read minimum, first quartile, median, third quartile, and maximum together; this summary does not reveal individual observations."), goAPIReference("interactive/boxplot")),
+	})
+}
+
+templ InteractiveGaugePage(fragment bool) {
+	@chartsLayout("Interactive gauge", "interactive-gauge", interactiveChartGaugeContent(), fragment)
+}
+
+templ interactiveChartGaugeContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive gauge",
+		Description: "Current bounded readings where range context and status matter more than history.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Show one or more current readings against an explicit bounded range.", "A small number of status-like readings need range context.", "Trend, history, or precise comparison is central; use a line or table instead.", "State the exact reading, range, and status in nearby text; do not rely on color or fill level."),
+			Preview:      interactiveGaugeVariants(),
+			Code:         interactiveChartGaugeCode(),
+		},
+		After: templ.Join(interactiveGaugeUsage(), goAPIReference("interactive/gauge")),
+	})
+}
+
+templ interactiveGaugeVariants() {
+	<div class="space-y-8">
+		<div data-gauge-variant="progress">
+			@interactivegauge.Gauge(sampleInteractiveGauge())
+		</div>
+		<div class="flex flex-wrap gap-6" data-gauge-liquid-variants>
+			<div class="min-w-0 flex-[1_1_20rem]" data-gauge-liquid-variant="basic">
+				@interactivegauge.Gauge(sampleInteractiveLiquidGauge("basic liquid example", interactivegauge.LiquidShapeCircle, false, false, chart.Bool(true)))
+			</div>
+			<div class="min-w-0 flex-[1_1_20rem]" data-gauge-liquid-variant="label">
+				@interactivegauge.Gauge(sampleInteractiveLiquidGauge("show label", interactivegauge.LiquidShapeCircle, true, false, chart.Bool(true)))
+			</div>
+			<div class="min-w-0 flex-[1_1_20rem]" data-gauge-liquid-variant="outline">
+				@interactivegauge.Gauge(sampleInteractiveLiquidGauge("show outline", interactivegauge.LiquidShapeCircle, true, true, chart.Bool(true)))
+			</div>
+			<div class="min-w-0 flex-[1_1_20rem]" data-gauge-liquid-variant="static">
+				@interactivegauge.Gauge(sampleInteractiveLiquidGauge("disable wave animation", interactivegauge.LiquidShapeCircle, true, true, chart.Bool(false)))
+			</div>
+			<div class="min-w-0 flex-[1_1_20rem]" data-gauge-liquid-variant="diamond">
+				@interactivegauge.Gauge(sampleInteractiveLiquidGauge("shape(Diamond)", interactivegauge.LiquidShapeDiamond, false, false, chart.Bool(true)))
+			</div>
+			<div class="min-w-0 flex-[1_1_20rem]" data-gauge-liquid-variant="pin">
+				@interactivegauge.Gauge(sampleInteractiveLiquidGauge("shape(Pin)", interactivegauge.LiquidShapePin, false, false, chart.Bool(true)))
+			</div>
+			<div class="min-w-0 flex-[1_1_20rem]" data-gauge-liquid-variant="arrow">
+				@interactivegauge.Gauge(sampleInteractiveLiquidGauge("shape(Arrow)", interactivegauge.LiquidShapeArrow, false, false, chart.Bool(true)))
+			</div>
+			<div class="min-w-0 flex-[1_1_20rem]" data-gauge-liquid-variant="triangle">
+				@interactivegauge.Gauge(sampleInteractiveLiquidGauge("shape(Triangle)", interactivegauge.LiquidShapeTriangle, false, false, chart.Bool(true)))
+			</div>
+		</div>
+	</div>
+}
+
+templ interactiveGaugeUsage() {
+	<div class="space-y-4">
+		@demoNote("Gauge treatments", "Progress and liquid treatments change presentation only. Keep each reading's numeric value and range visible.")
+		@codeblock.CodeBlock(gettingStartedCodeBlock("templ", "Liquid Gauge usage", interactiveGaugeLiquidCode()))
+	</div>
+}
+
+templ InteractiveFunnelPage(fragment bool) {
+	@chartsLayout("Interactive funnel", "interactive-funnel", interactiveChartFunnelContent(), fragment)
+}
+
+templ InteractiveGraphPage(fragment bool) {
+	@chartsLayout("Interactive graph", "interactive-graph", interactiveGraphContent(), fragment)
+}
+
+templ interactiveGraphContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive graph",
+		Description: "Connections, neighborhoods, clusters, and weighted links among named entities.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Explore relationships, neighborhoods, and topology among named entities.", "Connections and clusters matter more than a fixed ordered comparison.", "People need an exact path, complete adjacency, or deterministic positions.", "Pair the graph with a textual relationship summary or adjacency list."),
+			Preview:      interactivegraph.Graph(sampleInteractiveGraph()),
+			Code:         interactiveGraphCode(),
+		},
+		After: templ.Join(demoNote("Layouts", "Choose a layout that makes the relationships readable; layout changes placement, not the underlying nodes and links."), goAPIReference("interactive/graph")),
+	})
+}
+
+templ InteractiveSankeyPage(fragment bool) {
+	@chartsLayout("Interactive Sankey", "interactive-sankey", interactiveSankeyContent(), fragment)
+}
+
+templ interactiveSankeyContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive Sankey",
+		Description: "Weighted movement, splitting, and convergence between named stages.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Show how quantities move, split, and converge across named stages.", "Flows between a small set of stages are the main story.", "Exact link comparison or many crossings make the layout hard to read.", "Preserve weighted links in adjacent text or a table."),
+			Preview:      interactivesankey.Sankey(sampleInteractiveSankey()),
+			Code:         interactiveSankeyCode(),
+		},
+		After: templ.Join(demoNote("Flows", "Each link connects declared source and target stages. Use the adjacent values for precise flow comparison."), goAPIReference("interactive/sankey")),
+	})
+}
+
+templ InteractiveTreePage(fragment bool) {
+	@chartsLayout("Interactive tree", "interactive-tree", interactiveTreeContent(), fragment)
+}
+
+templ InteractiveSunburstPage(fragment bool) {
+	@chartsLayout("Interactive sunburst", "interactive-sunburst", interactiveSunburstContent(), fragment)
+}
+
+templ InteractiveTreemapPage(fragment bool) {
+	@chartsLayout("Interactive treemap", "interactive-treemap", interactiveTreemapContent(), fragment)
+}
+
+templ InteractiveThemeRiverPage(fragment bool) {
+	@chartsLayout("Interactive theme river", "interactive-theme-river", interactiveThemeRiverContent(), fragment)
+}
+
+templ InteractiveWordCloudPage(fragment bool) {
+	@chartsLayout("Interactive word cloud", "interactive-word-cloud", interactiveWordCloudContent(), fragment)
+}
+
+templ InteractiveMapPage(fragment bool) {
+	@chartsLayout("Interactive map", "interactive-map", interactiveMapContent(), fragment)
+}
+
+templ InteractiveGeoPage(fragment bool) {
+	@chartsLayout("Interactive geo", "interactive-geo", interactiveGeoContent(), fragment)
+}
+
+templ interactiveGeoContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive geo",
+		Description: "Named coordinates and values over national or regional geography.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Plot named coordinates and values over geographic geometry.", "Location and spatial distribution provide important context.", "Precise coordinates, values, or geographic detail must be compared.", "Every variant includes a table with series, point, coordinate, value, and class."),
+			Preview:      interactiveGeoVariants(),
+			Code:         interactiveGeoCode(),
+		},
+		After: interactiveDocumentation(demoNote("Choose a map type", "Use Geo for positioned points. Use Map when values belong to geographic regions.")),
+	})
+}
+
+templ interactiveGeoVariants() {
+	<div class="flex flex-wrap gap-6" data-geo-variants>
+		for _, variant := range sampleInteractiveGeos() {
+			<div class="min-w-0 flex-[1_1_24rem]" data-geo-variant={ variant.name }>
+				@variant.chart
+			</div>
+		}
+	</div>
+}
+
+templ interactiveMapContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive map",
+		Description: "Regional values for comparing broad geographic distribution and patterns.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Compare named values across geographic regions.", "Regional distribution and broad geographic patterns matter.", "Precise regional values or a color-independent reading is needed.", "Every variant includes a table with region, value, and semantic class."),
+			Preview:      interactiveMapVariants(),
+			Code:         interactiveMapCode(),
+		},
+		After: interactiveDocumentation(demoNote("Regional values", "Use labels or the adjacent table when readers need exact regional values; color alone is not enough.")),
+	})
+}
+
+templ interactiveMapVariants() {
+	<div class="flex flex-wrap gap-6" data-map-variants>
+		for _, variant := range sampleInteractiveMaps() {
+			<div class="min-w-0 flex-[1_1_24rem]" data-map-variant={ string(variant.variant) }>
+				@variant.chart
+			</div>
+		}
+	</div>
+}
+
+templ interactiveWordCloudContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive word cloud",
+		Description: "Relative prominence across a bounded vocabulary of weighted terms.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Compare relative prominence across a bounded set of weighted terms.", "A quick impression of a small vocabulary is useful.", "Exact ranking, close weights, or complete reading order matters; use a sorted list or bars.", "Each variant includes an exact word, value, and semantic-class list."),
+			Preview:      wordCloudVariants(),
+			Code:         interactiveWordCloudCode(),
+		},
+		After: templ.Join(demoNote("Shapes", "Shapes alter layout only. The exact weighted list remains the reliable comparison surface."), goAPIReference("interactive/wordcloud")),
+	})
+}
+
+templ wordCloudVariants() {
+	<div class="flex flex-wrap gap-6" data-word-cloud-variants>
+		<div class="min-w-0 flex-[1_1_20rem]" data-word-cloud-variant="circle">
+			@interactivewordcloud.WordCloud(sampleInteractiveWordCloud("basic WordCloud example", interactivewordcloud.ShapeCircle))
+		</div>
+		<div class="min-w-0 flex-[1_1_20rem]" data-word-cloud-variant="cardioid">
+			@interactivewordcloud.WordCloud(sampleInteractiveWordCloud("cardioid shape", interactivewordcloud.ShapeCardioid))
+		</div>
+		<div class="min-w-0 flex-[1_1_20rem]" data-word-cloud-variant="star">
+			@interactivewordcloud.WordCloud(sampleInteractiveWordCloud("star shape", interactivewordcloud.ShapeStar))
+		</div>
+	</div>
+}
+
+templ interactiveThemeRiverContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive theme river",
+		Description: "How named categories rise, fall, and overlap across aligned dates.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Compare how named temporal streams rise, fall, and overlap.", "Shared movement and temporal pattern matter more than a single exact value.", "Precise values, many streams, or a stable baseline is required.", "An adjacent table preserves dates, stream names, exact values, and classes."),
+			Preview:      interactivethemeriver.ThemeRiver(sampleInteractiveThemeRiver()),
+			Code:         interactiveThemeRiverCode(),
+		},
+		After: templ.Join(demoNote("Shared dates", "Compare streams only over shared, strictly ordered dates. Use the table for exact readings."), goAPIReference("interactive/themeriver")),
+	})
+}
+
+templ InteractiveParallelPage(fragment bool) {
+	@chartsLayout("Interactive parallel coordinates", "interactive-parallel", interactiveParallelContent(), fragment)
+}
+
+templ interactiveParallelContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive parallel coordinates",
+		Description: "Multivariate profiles across the same ordered numeric and categorical dimensions.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Compare multivariate profiles across the same ordered dimensions.", "You need to spot broad profile differences across a modest number of observations.", "Exact values, many crossing lines, or unfamiliar dimensions dominate.", "An adjacent table preserves series, observation names, and every dimension value."),
+			Preview:      interactiveparallel.Parallel(sampleInteractiveParallel()),
+			Code:         interactiveParallelCode(),
+		},
+		After: templ.Join(demoNote("Comparable dimensions", "Each observation has one value for every declared dimension. Keep dimension names and scales clear before comparing paths."), goAPIReference("interactive/parallel")),
+	})
+}
+
+templ interactiveTreemapContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive treemap",
+		Description: "Weighted hierarchies shown as nested areas for broad branch-size comparison.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Explore weighted hierarchies with area for leaves and branch totals.", "Relative size within a recursive structure is more important than precise comparison.", "Deep nesting or exact values must be compared; use a tree and table.", "An adjacent table preserves node paths, parents, totals, leaf values, and classes."),
+			Preview:      interactivetreemap.Treemap(sampleInteractiveTreemap()),
+			Code:         interactiveTreemapCode(),
+		},
+		After: templ.Join(demoNote("Hierarchy values", "Leaf values determine branch area. Use the table for exact totals and paths; drill-down is only a visual exploration aid."), goAPIReference("interactive/treemap")),
+	})
+}
+
+templ interactiveSunburstContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive sunburst",
+		Description: "Weighted parent-child hierarchy shown as concentric sectors and nested branches.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Explore a weighted hierarchy as concentric radial sectors.", "A compact overview of a shallow hierarchy and its branch proportions is useful.", "Deep hierarchies, close comparisons, or a clear reading order matter; use a tree or table.", "Use the adjacent path-and-value table to inspect the same hierarchy with keyboard navigation and without relying on the radial graphic."),
+			Preview:      interactivesunburst.Sunburst(sampleInteractiveSunburst()),
+			Code:         interactiveSunburstCode(),
+		},
+		After: templ.Join(demoNote("Explore the hierarchy", "Visual drill-down can focus a branch, but it is not the accessible navigation path. Use the keyboard-accessible adjacent table to inspect every parent-child path and value."), goAPIReference("interactive/sunburst")),
+	})
+}
+
+templ interactiveTreeContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive tree",
+		Description: "Parent-child relationships for following paths, ancestry, taxonomy, and progressive disclosure.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Explore ownership, taxonomy, ancestry, and other parent-child structures.", "Paths and progressive disclosure are more useful than size comparison.", "The hierarchy is very deep or exact values must be compared.", "Preserve node names, values, and parent-child paths in adjacent text or a table."),
+			Preview:      interactivetree.Tree(sampleInteractiveTree()),
+			Code:         interactiveTreeCode(),
+		},
+		After: templ.Join(demoNote("Reading the tree", "Layered and radial views change layout. Keep an adjacent nested list or table as the exact-data source."), goAPIReference("interactive/tree")),
+	})
+}
+
+templ interactiveChartFunnelContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Interactive funnel",
+		Description: "Named values across a short ordered sequence, emphasizing stage shape and relative magnitude.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuidance("Show named values across a short sequence as progressively shaped stages.", "Use when stage order and broad relative magnitude matter more than precise comparison.", "Avoid when values must only decrease, paths branch, close values require comparison, or rates are the primary task; use a bar, Sankey, or explicit table instead.", "Every example preserves series, stage, value, and intended order in an adjacent exact-value table."),
+			Preview:      interactiveFunnelCandidate("base", sampleInteractiveFunnel()),
+			Code:         interactiveFunnelBaseCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Visible labels on the left",
+				Description: "The same upstream helper supplies a second deterministic value group. Labels remain visible to the left without changing series, stage order, or exact-data access.",
+				Preview:     interactiveFunnelCandidate("labels-left", sampleInteractiveFunnelLabels()),
+				Code:        interactiveFunnelLabelsCode(),
+			},
+		},
+		After: templ.Join(demoNote("Stage meaning", "A funnel does not prove conversion or enforce decreasing values. The upstream default sorts geometry by descending value; set OrderData when process order matters, and use the exact table for values and source order."), goAPIReference("interactive/funnel")),
+	})
+}
+
+templ pieContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Pie chart",
+		Description: "Static/vector part-to-whole summaries with pie, area-scaled radius, and doughnut treatments.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuide("Summarize a small categorical distribution as parts of one total.", "Use when there are few, clearly distinct slices and the part-to-whole relationship matters more than close ranking.", "Avoid for many slices, negative values, or small differences; a bar chart is easier to compare precisely.", "Every treatment retains an adjacent exact-value and share table. Slice names, values, totals, and label meaning never depend on geometry or color alone."),
+			Preview:      pie.Pie(sampleBasicPie()),
+			Code:         basicPieCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Area-scaled radii",
+				Description: "A rose-style treatment scales each radius by the square root of its value, so visible radius area carries the same value order while sector angles retain part-to-whole meaning. Use this redundant encoding only when it helps broad comparison; consult exact values for close differences.",
+				Preview:     pie.Pie(sampleAreaScaledPie()),
+				Code:        areaScaledPieCode(),
+			},
+			{
+				Title:       "Segment spacing",
+				Description: "Explicit slice gaps separate adjacent sectors. Spacing is presentation only and does not change totals, order, labels, or exact shares.",
+				Preview:     pie.Pie(sampleSegmentGapPie()),
+				Code:        segmentGapPieCode(),
+			},
+			{
+				Title:       "Doughnut treatment",
+				Description: "Open the center with an inner radius relative to the outer ring while preserving the same five values, title, legend, exact-value summary, theme tokens, controls, and exports.",
+				Preview:     pie.Pie(sampleBasicDoughnutChart()),
+				Code:        basicDoughnutCode(),
+			},
+			{
+				Title:       "Outside and inside labels",
+				Description: "Exterior labels maximize room around the ring. Inside labels use the open center for a compact square treatment; both keep the adjacent table as the accessible source of exact names, values, and shares.",
+				Preview:     doughnutLabelPlacementComparison(),
+				Code:        doughnutLabelPlacementCode(),
+			},
+			{
+				Title:       "Center total and overlay legend",
+				Description: "A compact humanized total occupies the center while slice labels are hidden and an overlay legend names every channel. The exact table preserves the unrounded total and each contribution.",
+				Preview:     pie.Pie(sampleDoughnutCenterTotal()),
+				Code:        doughnutCenterTotalCode(),
+			},
+		},
+		After: chartDocumentation("Static/vector behavior", "Pie renders inline SVG on the server, follows both Goshtoso themes in light and dark mode, supports decoded SVG and opaque or transparent PNG download through the shared wrapper, and remains readable in print or without chart JavaScript. Wrapper lifecycle and delivery-mode choices stay in the shared chart controls and chart modes guides.", "pie"),
+	})
+}
+
+templ doughnutLabelPlacementComparison() {
+	<div class="grid min-w-0 gap-4 lg:grid-cols-2">
+		<div class="min-w-0">@pie.Pie(sampleDoughnutOutsideLabels())</div>
+		<div class="min-w-0">@pie.Pie(sampleDoughnutInsideLabels())</div>
+	</div>
+}
+
+templ scatterContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Scatter chart",
+		Description: "Repeated observations across an ordered set for trends, clusters, density, and outliers.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuide("Compare repeated observations, trends, clusters, and outliers across an ordered set of categories.", "Use when point position, overlap, and density reveal variation that bars would hide.", "Avoid when categories lack meaningful order, values need a continuous numeric x-axis, or every observation must be read immediately.", "Names, captions, symbols, and selected-label summaries do not depend on color. For dense data, keep an equivalent caller-owned table, download, or drill-down instead of expanding thousands of values into page text."),
+			Preview:      scatter.Scatter(sampleBasicScatter()),
+			Code:         basicScatterCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Per-series symbols",
+				Description: "Circle, diamond, square, and filled-dot markers preserve the upstream four-series comparison and add a non-color channel for identification.",
+				Preview:     scatter.Scatter(sampleSymbolScatter()),
+				Code:        symbolScatterCode(),
+			},
+			{
+				Title:       "Dense multi-value observations",
+				Description: "Three deterministic 1,000-category bounded random walks retain repeated samples, SMA(100) trends, maximum reference lines, compact points, sampled and rotated axis labels, explicit bounds and units, right-side vertical legend, padding, and responsive theme tokens.",
+				Preview:     scatter.Scatter(sampleDenseScatter()),
+				Code:        scatterCode(),
+			},
+			{
+				Title:       "Top value labels",
+				Description: "Select exactly the highest N observations with deterministic input-order tie handling. Labels use chart-theme tokens by default; the accessible summary keeps every exact value and selection state available without color dependence.",
+				Preview:     scatter.Scatter(sampleTopNScatter()),
+				Code:        topNScatterCode(),
+			},
+			{
+				Title:       "Whole-number formatting",
+				Description: "The option-function source reuses the basic data with hollow circles and integer axis labels. Goshtoso expresses that visual result through typed options, without exposing callbacks or renderer option functions.",
+				Preview:     scatter.Scatter(sampleIntegerScatter()),
+				Code:        integerScatterCode(),
+			},
+		},
+		After: chartDocumentation("Static/vector behavior", "Scatter renders inline SVG on the server, follows Goshtoso and AraiHu tokens in light and dark mode, preserves print and no-JavaScript readability, and supports resolved SVG plus opaque or transparent PNG download through the shared wrapper. Wrapper lifecycle, modes, controls, export, and client events stay in the shared chart controls and chart modes guides.", "scatter"),
+	})
+}
+
+templ radarContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Radar chart",
+		Description: "A small number of profiles across shared bounded dimensions.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuide("Compare a small number of profiles across the same bounded dimensions.", "Use when shared dimensions and overall profile shape help readers spot broad strengths and gaps.", "Avoid when precise values or more than a few profiles must be compared; aligned bars or a table are clearer.", "Keep indicator maxima and every series value in adjacent text or a table; shape and color alone are not equivalent data."),
+			Preview:      radar.Radar(sampleBasicRadar()),
+			Code:         radarCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Readable values and compact layout",
+				Description: "The same profiles demonstrate typed dimension minimums, indicator labels, compact vertex formatting on one profile, logical title and legend placement, padding, and caller colors without changing the values.",
+				Preview:     radar.Radar(sampleReadableRadar()),
+				Code:        radarReadableCode(),
+			},
+		},
+		After: chartDocumentation("Static/vector behavior", "Radar renders inline SVG on the server, follows Goshtoso and AraiHu tokens in light and dark mode, stays readable in print and in no-JavaScript delivery, and provides resolved SVG plus opaque or transparent PNG download through the shared wrapper. Read shared chart controls and chart modes guides for lifecycle, export, client events, and the capability differences between static/vector and interactive charts.", "radar"),
+	})
+}
+
+templ candlestickContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Candlestick",
+		Description: "Ordered open-high-low-close observations with conventional increase and decrease treatments.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuide("Compare open, high, low, and close values across ordered periods.", "Use for financial or similarly structured ranges where intraperiod movement matters.", "Avoid for a single value per period or when a simple trend line communicates the question more directly.", "The adjacent disclosure states increase or decrease in text and preserves exact OHLC and trend values, so meaning never depends on candle color."),
+			Preview:      candlestick.Candlestick(sampleBasicCandlestick()),
+			Code:         candlestickCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Extended basic series",
+				Description: "The second upstream construction style adds an eighth daily candle, larger title text, explicit padding, and 800x600 geometry. It remains the same typed component rather than exposing construction functions.",
+				Preview:     candlestick.Candlestick(sampleCandlestickOptionFuncBasic()),
+				Code:        candlestickExtendedBasicCode(),
+			},
+			{
+				Title:       "Multiple aligned series",
+				Description: "The pinned upstream comparison keeps three named OHLC populations together and demonstrates filled, traditional, and outline bodies. Exact tables separate each series.",
+				Preview:     candlestick.Candlestick(sampleCandlestickMultipleSeries()),
+				Code:        candlestickMultipleSeriesCode(),
+			},
+			{
+				Title:       "Candle geometry and wicks",
+				Description: "Typed width, spacing, wick thickness, chart-level visibility, and per-series visibility options preserve automatic defaults while allowing compact or emphasis treatments.",
+				Preview:     candlestick.Candlestick(sampleCandlestickGeometry()),
+				Code:        candlestickGeometryCode(),
+			},
+			{
+				Title:       "Aggregation",
+				Description: "Compare the original ordered candles with fixed-size OHLC windows. The first open, highest high, lowest low, and final close define each aggregated candle.",
+				Preview:     candlestick.Candlestick(sampleCandlestickAggregation()),
+				Code:        candlestickAggregationCode(),
+			},
+			{
+				Title:       "Bollinger Bands",
+				Description: "Twenty OHLC observations with period-five upper, middle, and lower close-price trends. Distinct accessible theme tokens adapt across Goshtoso and AraiHu light and dark modes.",
+				Preview:     candlestick.Candlestick(sampleCandlestickBollingerBands()),
+				Code:        candlestickBollingerCode(),
+			},
+			{
+				Title:       "Presentation overrides",
+				Description: "Caller colors or classes may style candle directions and individual trend lines; each mark accepts one override mechanism at a time.",
+				Preview:     candlestick.Candlestick(sampleCandlestickPresentationOverrides()),
+				Code:        candlestickPresentationCode(),
+			},
+			{
+				Title:       "Pattern annotations",
+				Description: "Show all, core, or bullish patterns while the adjacent table names every detection.",
+				Preview:     candlestick.Candlestick(sampleCandlestickPatterns()),
+				Code:        candlestickPatternsCode(),
+			},
+			{
+				Title:       "Core, bullish, and label variants",
+				Description: "Core and bullish selections use the same ten observations, making differences in highlighted patterns easy to compare.",
+				Preview:     candlestick.Candlestick(sampleCandlestickCorePatterns()),
+				Code:        candlestickPatternVariantCode(),
+			},
+			{
+				Title:       "Preferred pattern labels",
+				Description: "A selected pattern label can show its first name and count with explicit text and background colors.",
+				Preview:     candlestick.Candlestick(sampleCandlestickPatternLabels()),
+				Code:        candlestickPatternVariantCode(),
+			},
+			{
+				Title:       "Bullish patterns",
+				Description: "Bullish-only selection keeps only the bullish pattern vocabulary while preserving source order and exact values.",
+				Preview:     candlestick.Candlestick(sampleCandlestickBullishPatterns()),
+				Code:        candlestickPatternVariantCode(),
+			},
+		},
+		After: chartDocumentation("Static/vector behavior", "Candlestick renders inline SVG on the server, follows Goshtoso and AraiHu tokens in light and dark mode, remains useful in print or without JavaScript, and provides resolved SVG plus opaque or transparent PNG download through the shared wrapper. Use the exact tables for comparisons that cannot be judged from geometry; shared chart controls and chart modes guides document lifecycle and delivery choices.", "candlestick"),
+	})
+}
+
+templ funnelContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Funnel chart",
+		Description: "Ordered stages whose non-increasing values narrow from the first stage to the last.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuide("Show progressive reduction through a small ordered sequence of stages.", "Use for a fixed process such as conversion or completion, where each stage follows the previous one.", "Avoid when stages can increase, branch, recur, or lack a single meaningful order.", "The adjacent disclosure preserves every stage value and its share of the first stage; width and color are not the only source of meaning."),
+			Preview:      funnel.Funnel(sampleBasicFunnel()),
+			Code:         funnelCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Compact five-stage sequence",
+				Description: "The same component accepts a shorter ordered sequence while preserving every exact value beside the geometry.",
+				Preview:     funnel.Funnel(sampleCompactFunnel()),
+				Code:        compactFunnelCode(),
+			},
+		},
+		After: chartDocumentation("Static/vector behavior", "Funnel renders inline SVG on the server, follows Goshtoso chart tokens in light and dark mode, remains useful in print or without JavaScript, and exports resolved SVG plus opaque PNG through the shared wrapper. Use the exact table for comparisons that cannot be judged from narrowing geometry; shared chart controls and chart modes guides document lifecycle and delivery choices.", "funnel"),
+	})
+}
+
+templ heatMapContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Heat map",
+		Description: "Values across a two-dimensional categorical matrix with a sequential color scale.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuide("Compare magnitude at the intersections of two ordered categorical axes.", "Use to reveal concentration, gaps, and broad patterns across a complete matrix.", "Avoid when exact cell-by-cell comparison is primary or the matrix is too large to scan.", "A bounded exact-value table preserves both axis labels and numeric values, so the color scale never carries meaning by itself."),
+			Preview:      heatmap.HeatMap(sampleBasicHeatMap()),
+			Code:         heatMapCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Typed presentation options",
+				Description: "This caller-style override deliberately reuses the same pinned upstream matrix. It demonstrates finite title, axis, spacing, value-label, and cold-to-warm scale options; it is not counted as a second upstream example.",
+				Preview:     heatmap.HeatMap(sampleBasicHeatMapOverride()),
+				Code:        heatMapOverrideCode(),
+			},
+		},
+		After: chartDocumentation("Static/vector behavior", "Heat map renders one inline 600 by 400 SVG from the pinned five-by-five matrix, follows Goshtoso chart tokens in light and dark mode, remains useful in print or without JavaScript, and exports resolved SVG plus opaque PNG through the shared wrapper. Read across and down for patterns, then use the adjacent values for exact cells; shared chart controls and chart modes guides document lifecycle and delivery choices.", "heatmap"),
+	})
+}
+
+templ tableContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Table",
+		Description: "Compact row-and-column presentation for aligned text and numeric values.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuide("Present compact aligned text values when row and column comparison is the task.", "Use for a small table that benefits from a graphic layout while retaining a clear row-and-column structure.", "Avoid for long, sortable, filterable, or interactive data sets; use semantic HTML tables for those jobs.", "The adjacent semantic HTML table preserves headers and every cell value for keyboard and assistive-technology navigation."),
+			Preview:      charttable.Table(samplePeopleTable()),
+			Code:         tableCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Explicit presentation overrides",
+				Description: "Color, numeric alignment, and cell backgrounds can emphasize values while headers and cells remain easy to scan.",
+				Preview:     charttable.Table(sampleMarketTable()),
+				Code:        marketTableCode(),
+			},
+		},
+		After: chartDocumentation("Choosing a table", "Use the vector treatment for concise visual presentation. Keep the semantic table beside it whenever readers need to navigate headers and cells directly.", "table"),
+	})
+}
+
+templ violinContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Violin chart",
+		Description: "Complete distribution shapes, centers, spread, skew, and multiple peaks from named samples.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuide("Compare distribution shape, center, spread, skew, and multiple peaks across named samples.", "Use when the sample distribution itself matters, not just a summary statistic.", "Avoid for very small samples or when a simple five-number summary answers the question.", "The adjacent statistical summary preserves sample count, minimum, quartiles, median, mean, and maximum without relying on shape or color."),
+			Preview:      violin.Violin(sampleDistributionShapes()),
+			Code:         violinCode(),
+		},
+		After: chartDocumentation("Interpreting distributions", "Width estimates density, not individual observations. Compare the summary statistics alongside the shape, especially when distributions overlap.", "violin"),
+	})
+}
+
+templ lineContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Line chart",
+		Description: "Ordered numeric series for trends, rates of change, and turning points over time or sequence.",
+		Primary: componentpage.Example{
+			AbovePreview: visualizationGuide("Summarize one or more ordered numeric series and their change over time or sequence.", "Use when order is meaningful and readers need to see trend, rate of change, or turning points.", "Avoid for unordered categories or dual scales that could make unrelated values appear directly comparable.", "An adjacent table maps every exact value to its series and axis; do not require readers to estimate values from line position."),
+			Preview:      line.Line(sampleLatency()),
+			Code:         lineCode(),
+		},
+		Sections: []componentpage.Example{
+			{
+				Title:       "Missing observations and basic presentation",
+				Description: "Explicit missing points break a series without inventing zero values. Title size, legend inset, point symbol, and stroke width remain typed options.",
+				Preview:     line.Line(sampleBasicLine()),
+				Code:        basicLineCode(),
+			},
+			{
+				Title:       "Per-series symbols",
+				Description: "Circle, diamond, square, and dot markers distinguish four series without requiring color alone.",
+				Preview:     line.Line(sampleSymbolLine()),
+				Code:        symbolLineCode(),
+			},
+			{
+				Title:       "Smoothed strokes",
+				Description: "Smoothing and stroke width support broad trend reading. Hidden markers and legend reduce clutter, while exact values remain adjacent.",
+				Preview:     line.Line(sampleSmoothLine()),
+				Code:        smoothLineCode(),
+			},
+			{
+				Title:       "Statistical references",
+				Description: "Average lines and maximum points add context to each series. The reference table exposes every computed value and matching label.",
+				Preview:     line.Line(sampleMarkedLine()),
+				Code:        markedLineCode(),
+			},
+			{
+				Title:       "Filled area treatment",
+				Description: "Theme-aware fill adds magnitude emphasis while preserving the same ordered Line semantics and exact values.",
+				Preview:     areaLineCandidate(),
+				Code:        areaLineCode(),
+			},
+			{
+				Title:       "Stacked contributions",
+				Description: "Stacked layers emphasize the cumulative total and its components. Point labels and maximum references stay available as typed options.",
+				Preview:     line.Line(sampleStackedLine()),
+				Code:        stackedLineCode(),
+			},
+			{
+				Title:       "Boundary-gap comparison",
+				Description: "The same dataset shows how category-edge spacing changes point placement. Compare the two treatments before choosing an explicit boundary gap.",
+				Preview:     boundaryGapLineVariants(),
+				Code:        boundaryGapLineCode(),
+			},
+			{
+				Title:       "Dual Y-axis treatment",
+				Description: "Two series retain independent theme-matched left and right scales while remaining one Line component.",
+				Preview:     dualAxisLineCandidate(),
+				Code:        dualAxisLineCode(),
+			},
+			{
+				Title:       "Dense axes, gaps, and positioned labels",
+				Description: "A dense focal-length series uses explicit gaps, sampled and rotated axis labels, hidden numeric labels, and positioned text annotations.",
+				Preview:     customLensLineCandidate(),
+				Code:        customLensLineCode(),
+			},
+			{
+				Title:       "Theme-aware value-label scale",
+				Description: "Point labels use the active chart palette's cold, midpoint, and warm scale tokens instead of fixed colors.",
+				Preview:     gradientLabelLineCandidate(),
+				Code:        gradientLabelLineCode(),
+			},
+			{
+				Title:       "Presentation overrides",
+				Description: "Series and axes accept either a caller color or semantic class at each boundary.",
+				Preview:     line.Line(sampleDualAxisLineOverrides()),
+				Code:        dualAxisLineOverridesCode(),
+			},
+		},
+		After: chartDocumentation("Reading series", "Gaps represent unavailable observations, not zero. Symbols and labels supplement color; smoothing favors broad trends; stacked layers emphasize totals; dual axes suit distinct units but require clearly labeled scales. Use a shared axis whenever direct value comparison matters.", "line"),
+	})
+}
+
+templ boundaryGapLineVariants() {
+	<div class="grid gap-8 xl:grid-cols-2" data-goshtoso-candidate="line-boundary-gap-comparison">
+		@line.Line(sampleBoundaryGapLine(true))
+		@line.Line(sampleBoundaryGapLine(false))
+	</div>
+}
+
+templ areaLineCandidate() {
+	<div data-goshtoso-candidate="line-area-b2d7b87ff675f437">
+		@line.Line(sampleAreaLine())
+	</div>
+}
+
+templ dualAxisLineCandidate() {
+	<div data-goshtoso-candidate="line-dual-axis-78a3edd9aa356dc7">
+		@line.Line(sampleDualAxisLine())
+	</div>
+}
+
+templ customLensLineCandidate() {
+	<div data-goshtoso-candidate="line-custom-67a9f05aba96e970">
+		@line.Line(sampleCustomLensLine())
+	</div>
+}
+
+templ gradientLabelLineCandidate() {
+	<div data-goshtoso-candidate="line-gradient-labels-21d84540f36ecdfb">
+		@line.Line(sampleGradientLabelLine())
+	</div>
+}
+
+templ LiveAvailabilityExample(fragment bool) {
+	@chartsLayout("Live availability", "live-availability", liveAvailabilityContent(), fragment)
+}
+
+templ liveAvailabilityContent() {
+	@componentpage.Page(componentpage.Config{
+		Title:       "Live availability",
+		Description: "An application example showing current availability states as a complete status snapshot.",
+		Primary: componentpage.Example{
+			AbovePreview: demoNote("Live-data contract", "Bar and Line accept an opt-in LiveData source. Each SSE event carries a complete CartesianSnapshot, so reconnects replace stale client state deterministically."),
+			Preview:      interactive.Bar(sampleLiveAvailability()),
+			Code:         liveAvailabilityCode(),
+		},
+		After: demoNote("Application semantics", "Availability states belong to this example, not the chart taxonomy. Narrow stacked bars express checks while text and legend preserve state meaning without relying on color alone."),
+	})
+}
+
+templ demoNote(title string, text string) {
+	<section class="rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt"><h2 id={ tocID(title) } data-toc-heading class="text-base font-bold text-on-surface-strong dark:text-on-surface-dark-strong">{ title }</h2><p class="mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ text }</p></section>
+}
+
+templ visualizationGuidance(purpose string, useWhen string, avoidWhen string, equivalentData string) {
+	<section data-visualization-guidance class="rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt">
+		<dl class="grid gap-4 lg:grid-cols-2">
+			<div><dt class="text-xs font-bold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Purpose</dt><dd class="mt-1 text-sm text-on-surface dark:text-on-surface-dark">{ purpose }</dd></div>
+			<div><dt class="text-xs font-bold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Use when</dt><dd class="mt-1 text-sm text-on-surface dark:text-on-surface-dark">{ useWhen }</dd></div>
+			<div><dt class="text-xs font-bold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Avoid when</dt><dd class="mt-1 text-sm text-on-surface dark:text-on-surface-dark">{ avoidWhen }</dd></div>
+			if equivalentData != "" {
+				<div><dt class="text-xs font-bold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Equivalent data</dt><dd class="mt-1 text-sm text-on-surface dark:text-on-surface-dark">{ equivalentData }</dd></div>
+			}
+		</dl>
+	</section>
+}
+
+templ interactiveDocumentation(content templ.Component) {
+	@content
+	@goAPIReference("interactive")
+}
+
+templ visualizationGuide(purpose string, useWhen string, avoidWhen string, equivalentData string) {
+	<section data-visualization-guidance class="rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt">
+		<dl class="grid gap-4 lg:grid-cols-2">
+			<div><dt class="text-xs font-bold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Purpose</dt><dd class="mt-1 text-sm text-on-surface dark:text-on-surface-dark">{ purpose }</dd></div>
+			<div><dt class="text-xs font-bold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Use when</dt><dd class="mt-1 text-sm text-on-surface dark:text-on-surface-dark">{ useWhen }</dd></div>
+			<div><dt class="text-xs font-bold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Avoid when</dt><dd class="mt-1 text-sm text-on-surface dark:text-on-surface-dark">{ avoidWhen }</dd></div>
+			if equivalentData != "" {
+				<div><dt class="text-xs font-bold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted">Equivalent data</dt><dd class="mt-1 text-sm text-on-surface dark:text-on-surface-dark">{ equivalentData }</dd></div>
+			}
+		</dl>
+	</section>
+}
+
+templ chartDocumentation(title string, text string, packageName string) {
+	@demoNote(title, text)
+	@goAPIReference(packageName)
+}
+
+templ goAPIReference(packageName string) {
+	{{ packagePath := "github.com/araihu/goshtoso-charts/components/" + packageName }}
+	<section data-api-reference data-go-api-reference data-go-api-version="v0.0.1" class="mt-10 scroll-mt-8 rounded-radius border border-outline bg-surface p-5 dark:border-outline-dark dark:bg-surface-dark">
+		<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+			<div class="min-w-0">
+				<div class="mb-2 flex flex-wrap items-center gap-2"><h2 id="api-reference" data-toc-heading class="scroll-mt-8 font-title text-lg font-semibold">Go API</h2><span class="rounded-radius border border-outline px-2 py-0.5 font-mono text-xs text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">v0.0.1</span></div>
+				<p class="max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted">The examples above cover behavior and composition. pkg.go.dev is the canonical reference for exported types, functions, methods, and Go documentation.</p>
+				<code class="mt-3 block break-all font-mono text-xs text-on-surface-strong dark:text-on-surface-dark-strong">{ packagePath }</code>
+				<p data-shared-chart-guidance class="mt-4 max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Enabled, disabled, hidden, and omitted wrapper behavior, controls, export, and client transitions are shared by every chart. Review <a class="font-semibold text-primary underline dark:text-primary-dark" href="/modules/charts/docs/chart-controls">chart controls</a>, then compare <a class="font-semibold text-primary underline dark:text-primary-dark" href="/modules/charts/docs/chart-modes">static/vector and interactive capabilities</a>.</p>
+			</div>
+				@link.Link("https://pkg.go.dev/github.com/araihu/goshtoso-charts@v0.0.2/components/"+packageName, link.WithAppearance(link.AppearanceButton), link.WithTarget("_blank"), link.WithRootClass("shrink-0"), link.WithAttrs(templ.Attributes{"data-go-api-link": ""})) {
+				Open v0.0.1 API <span aria-hidden="true">↗</span>
+			}
+		</div>
+	</section>
+}

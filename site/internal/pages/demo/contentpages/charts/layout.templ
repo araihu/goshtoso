@@ -1,0 +1,8 @@
+package charts
+
+// chartsLayout keeps the migrated chart pages content-only. The owning Goshtoso
+// site supplies the shared documentation shell, metadata, secondary navbar,
+// and family-specific sidebar around this content.
+templ chartsLayout(title string, active string, content templ.Component, fragment bool) {
+	@content
+}

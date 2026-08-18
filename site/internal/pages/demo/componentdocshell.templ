@@ -1,13 +1,14 @@
 package demo
 
 import (
+	"github.com/araihu/goshtoso-charts/components/dependencies"
 	"github.com/araihu/goshtoso/components/navbar"
 	"github.com/araihu/goshtoso/components/search"
 )
 
 // componentDocsHead preserves Goshtoso-owned metadata, install assets, fonts,
 // and storage policy while componentdocshell owns the document frame.
-templ componentDocsHead(meta PageMeta) {
+templ componentDocsHead(meta PageMeta, activeFamily string) {
 	<meta property="og:site_name" content={ SiteName }/>
 	<meta property="og:locale" content="en_US"/>
 	<meta property="og:type" content="website"/>
@@ -116,6 +117,9 @@ templ componentDocsHead(meta PageMeta) {
 		}
 	</style>
 	<script src="/assets/js/darkmode.js"></script>
+	if activeFamily == "charts" {
+		@dependencies.Dependencies()
+	}
 }
 
 templ componentDocsHeaderActions(activeFamily string) {
@@ -125,8 +129,16 @@ templ componentDocsHeaderActions(activeFamily string) {
 }
 
 templ componentDocsBodyEnd() {
+	@componentDocsBodyEndFor("core")
+}
+
+templ componentDocsBodyEndFor(activeFamily string) {
 	@templ.Raw(componentDocsSecondaryNavigationScript())
-	@search.SearchModal(docsSearchConfig())
+	if activeFamily == "charts" {
+		@search.SearchModal(chartsSearchConfig())
+	} else {
+		@search.SearchModal(docsSearchConfig())
+	}
 	@componentDocsStorageConsent()
 }
 

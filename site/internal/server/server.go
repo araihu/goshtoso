@@ -110,7 +110,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/docs/component-model", s.handleComponentModelPage)
 	s.mux.HandleFunc("/docs/iconpack", s.handleIconpackPage)
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
-	s.mux.HandleFunc("/modules/charts", s.handleChartsModulePage)
+	s.registerChartsRoutes()
 	s.mux.HandleFunc("/modules/app-shells", s.handleAppShellsModulePage)
 	s.mux.HandleFunc("/getting-started", s.handleGettingStarted)
 	s.mux.HandleFunc("/attributions", s.handleAttributions)

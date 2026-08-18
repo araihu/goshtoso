@@ -6,7 +6,7 @@ require (
 	github.com/a-h/templ v0.3.1020
 	github.com/araihu/goshtoso v0.2.1-0.20260818013211-1464812e6cfc
 	github.com/araihu/goshtoso-app-shells v0.1.4
-	github.com/araihu/goshtoso-charts v0.0.2-0.20260730033312-82e67bb7111f
+	github.com/araihu/goshtoso-charts v0.0.2
 	github.com/coder/websocket v1.8.15
 	github.com/mxschmitt/playwright-go v0.6100.0
 	github.com/stretchr/testify v1.11.1

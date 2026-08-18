@@ -25,15 +25,10 @@ func ComponentDocsFragment(meta PageMeta, active string, content templ.Component
 }
 
 func componentDocsConfig(persist bool, active string) componentdocshell.Config {
-	sections := getSidebarSections("")
-	for i := range sections {
-		for j := range sections[i].Items {
-			sections[i].Items[j].ID = componentDocsID(sections[i].Items[j].ID)
-		}
-	}
+	navigation := componentDocsNavigation(active)
 	return componentdocshell.Config{
 		Brand:      componentdocshell.Brand{Name: SiteName, HomeURL: "/", Logo: templ.Raw(`<img src="/assets/images/goshtoso-logo.svg" alt="" aria-hidden="true" class="h-12 w-auto">`), HideName: true, FaviconURL: "/favicon.svg", Badge: componentDocsBuildBadge(buildinfo.GoDocsVersion())},
-		Navigation: componentdocshell.Navigation{Items: getSidebarTopItems(""), SectionsTitle: "Components", Sections: sections, SearchPlaceholder: "Search", SearchSlot: sidebarSearchSlot()},
+		Navigation: navigation,
 		Appearance: componentdocshell.AppearanceConfig{
 			Themes:               getThemeOptions(),
 			DefaultTheme:         "araihu",
@@ -55,7 +50,27 @@ func componentDocsConfig(persist bool, active string) componentdocshell.Config {
 		},
 		TOC:           componentdocshell.TOCConfig{RailID: "toc-rail", ListID: "toc-list"},
 		HeaderActions: componentDocsHeaderActions(componentDocsFamily(active)),
-		BodyEnd:       componentDocsBodyEnd(), RepositoryURL: "https://github.com/araihu/goshtoso", AssetPrefix: "/componentdocshell/assets/",
+		BodyEnd:       componentDocsBodyEndFor(componentDocsFamily(active)), RepositoryURL: "https://github.com/araihu/goshtoso", AssetPrefix: "/componentdocshell/assets/",
+	}
+}
+
+func componentDocsNavigation(active string) componentdocshell.Navigation {
+	if componentDocsFamily(active) == "charts" {
+		return chartsDocsNavigation(active)
+	}
+
+	sections := getSidebarSections("")
+	for i := range sections {
+		for j := range sections[i].Items {
+			sections[i].Items[j].ID = componentDocsID(sections[i].Items[j].ID)
+		}
+	}
+	return componentdocshell.Navigation{
+		Items:             getSidebarTopItems(""),
+		SectionsTitle:     "Components",
+		Sections:          sections,
+		SearchPlaceholder: "Search",
+		SearchSlot:        sidebarSearchSlot(),
 	}
 }
 
@@ -101,7 +116,7 @@ func componentDocsBuildBadge(version string) *componentdocshell.BrandBadge {
 }
 
 func componentDocsPage(cfg componentdocshell.Config, meta PageMeta, active string, content templ.Component) componentdocshell.Page {
-	return componentdocshell.Page{Title: meta.Title, DocumentTitle: meta.TitleText(), Description: meta.Description, CanonicalURL: meta.CanonicalURL(), Active: configuredComponentDocsActive(cfg.Navigation, componentDocsID(active)), Content: componentDocsContent(content, active), Head: componentDocsHead(meta), EnableTOC: true}
+	return componentdocshell.Page{Title: meta.Title, DocumentTitle: meta.TitleText(), Description: meta.Description, CanonicalURL: meta.CanonicalURL(), Active: configuredComponentDocsActive(cfg.Navigation, componentDocsID(active)), Content: componentDocsContent(content, active), Head: componentDocsHead(meta, componentDocsFamily(active)), EnableTOC: true}
 }
 
 func configuredComponentDocsActive(navigation componentdocshell.Navigation, active string) string {

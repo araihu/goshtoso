@@ -8,18 +8,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestChartsModuleRendersThreeHTMXLazyShowcases(t *testing.T) {
+func TestChartsModuleRendersMigratedChartsGettingStartedPage(t *testing.T) {
 	t.Parallel()
 
 	var buffer bytes.Buffer
 	require.NoError(t, chartsModuleContent().Render(context.Background(), &buffer))
 	html := buffer.String()
-	for _, kind := range []string{"static", "interactive", "line-3d"} {
-		require.Contains(t, html, `data-chart-module-showcase="`+kind+`"`)
-		require.Contains(t, html, `hx-get="/playground/extensions/charts/frame?variant=`+kind+`"`)
-	}
-	require.Equal(t, 3, bytes.Count(buffer.Bytes(), []byte(`hx-trigger="intersect once"`)))
-	require.Contains(t, html, `https://charts.goshtoso.araihu.com`)
+	require.Contains(t, html, `Goshtoso Charts`)
+	require.Contains(t, html, `Add your first chart`)
+	require.Contains(t, html, `href="/modules/charts/docs/chart-modes"`)
+	require.NotContains(t, html, `charts.goshtoso.araihu.com`)
 }
 
 func TestChartsShowcaseVariantsUseRealModuleComponents(t *testing.T) {

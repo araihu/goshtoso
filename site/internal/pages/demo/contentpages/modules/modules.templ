@@ -1,50 +1,9 @@
 package modulespages
 
-templ chartsModuleContent() {
-	<div id="charts-module-fragment" class="mx-auto max-w-6xl">
-		<header class="max-w-4xl pb-10">
-			<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Optional module</p>
-			<h1 class="mt-2 font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Goshtoso Charts</h1>
-			<p class="mt-4 max-w-3xl text-lg leading-relaxed text-on-surface dark:text-on-surface-dark">Accessible Go chart components spanning server-rendered SVG, opt-in browser interaction, and WebGL-powered 3D. Each preview below arrives only when it nears the viewport.</p>
-			<div class="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
-				<a href="https://charts.goshtoso.araihu.com" target="_blank" rel="noopener" class="text-primary underline underline-offset-2 dark:text-primary-dark">Open Charts site</a>
-				<a href="https://github.com/araihu/goshtoso-charts" target="_blank" rel="noopener" class="text-primary underline underline-offset-2 dark:text-primary-dark">GitHub repository</a>
-			</div>
-		</header>
-		<div class="space-y-14">
-			@chartsModuleShowcase("static", "Static SVG", "Complete SVG markup rendered on the server. No chart runtime required.", "https://charts.goshtoso.araihu.com/components/line")
-			@chartsModuleShowcase("interactive", "Interactive line", "Theme-aware tooltips and exploration backed by the locally served Charts runtime.", "https://charts.goshtoso.araihu.com/components/interactive/line")
-			@chartsModuleShowcase("line-3d", "Interactive Line 3D", "The 25,000-point parametric shape auto-rotates after its isolated WebGL runtime loads.", "https://charts.goshtoso.araihu.com/components/interactive/line-3d")
-		</div>
-	</div>
-}
+import charts "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/charts"
 
-templ chartsModuleShowcase(kind, title, description, href string) {
-	<section id={ "charts-" + kind } class="scroll-mt-8" data-chart-module-showcase={ kind }>
-		<div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-			<div>
-				<h2 data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">{ title }</h2>
-				<p class="mt-2 max-w-3xl text-sm leading-6 text-on-surface dark:text-on-surface-dark">{ description }</p>
-			</div>
-			<a href={ templ.SafeURL(href) } target="_blank" rel="noopener" class="shrink-0 text-sm font-semibold text-primary underline underline-offset-2 dark:text-primary-dark">View full documentation</a>
-		</div>
-		<div
-			id={ "charts-module-loader-" + kind }
-			hx-get={ "/playground/extensions/charts/frame?variant=" + kind }
-			hx-trigger="intersect once"
-			hx-swap="outerHTML"
-			class="flex h-[34rem] w-full items-center justify-center rounded-radius border border-outline bg-surface-alt/40 p-6 dark:border-outline-dark dark:bg-surface-dark-alt/40"
-			role="status"
-			aria-live="polite"
-		>
-			<div class="w-full max-w-2xl space-y-3" aria-hidden="true">
-				<div class="h-3 w-28 rounded-radius bg-outline/40 dark:bg-outline-dark/40"></div>
-				<div class="h-4 w-48 rounded-radius bg-outline/50 dark:bg-outline-dark/50"></div>
-				<div class="h-80 rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark"></div>
-			</div>
-			<span class="sr-only">Loading { title }</span>
-		</div>
-	</section>
+templ chartsModuleContent() {
+	@charts.GettingStartedPage(false)
 }
 
 templ appShellsModuleContent() {

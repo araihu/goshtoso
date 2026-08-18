@@ -1,12 +1,14 @@
 package demo
 
+import "strings"
+
 func componentDocsSecondaryNavigationScript() string {
 	return `<script>
 (function () {
   "use strict";
   function currentFamily(pathname) {
-    if (pathname === "/docs/iconpack") return "icon-packs";
-    if (pathname === "/modules/charts") return "charts";
+		if (pathname === "/docs/iconpack") return "icon-packs";
+		if (pathname === "/modules/charts" || pathname.indexOf("/modules/charts/") === 0) return "charts";
     if (pathname === "/modules/app-shells") return "app-shells";
     if (pathname === "/examples" || pathname.indexOf("/examples/") === 0) return "examples";
     return "core";
@@ -38,6 +40,9 @@ func componentDocsFamily(active string) string {
 	case "examples", "todo", "expense", "chat", "logs", "profile", "ticker", "wizard":
 		return "examples"
 	default:
+		if strings.HasPrefix(active, "charts-") {
+			return "charts"
+		}
 		return "core"
 	}
 }

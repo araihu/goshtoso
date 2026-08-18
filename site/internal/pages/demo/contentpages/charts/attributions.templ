@@ -1,0 +1,67 @@
+package charts
+
+import "github.com/araihu/goshtoso/components/badge"
+
+templ AttributionsPage(fragment bool) {
+	@chartsLayout("Attributions", "attributions", attributionsContent(), fragment)
+}
+
+templ attributionsContent() {
+	<div class="max-w-4xl space-y-12">
+		<section class="space-y-3">
+			<p class="text-sm font-semibold text-primary dark:text-primary-dark">Project</p>
+			<h1 class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Attributions</h1>
+			<p class="max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted">Goshtoso Charts builds on excellent open-source projects. Versions match the modules and bundled browser assets used by this documentation site; original license texts remain with their projects and redistributed assets.</p>
+		</section>
+		@attributionGroup("Foundation dependencies", "Goshtoso components, documentation structure, and Go template generation.", foundationAttributions)
+		@attributionGroup("Chart and rendering libraries", "Rendering implementations remain private behind typed, renderer-neutral component APIs.", chartAttributions)
+		<section class="space-y-4" aria-labelledby="bundled-runtime-assets">
+			<div class="space-y-2">
+				<h2 id="bundled-runtime-assets" class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Bundled runtime and assets</h2>
+				<p class="text-on-surface-muted dark:text-on-surface-dark-muted">The interactive runtime is pinned and served locally by default; this site does not require a third-party runtime request.</p>
+			</div>
+			@attributionTable("Bundled runtime and assets", runtimeAttributions)
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Runtime checksum: <code class="break-all font-mono text-on-surface dark:text-on-surface-dark">SHA-256 987554a0014ad7be585eccc91c4329d050b40c2c0ebd2e8ec84adca82c0eb843</code>. Redistribution details: <code class="font-mono text-on-surface dark:text-on-surface-dark">assets/NOTICE.md</code>.</p>
+		</section>
+	</div>
+}
+
+templ attributionGroup(title string, description string, items []attribution) {
+	<section class="space-y-4">
+		<div class="space-y-2">
+			<h2 class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">{ title }</h2>
+			<p class="text-on-surface-muted dark:text-on-surface-dark-muted">{ description }</p>
+		</div>
+		@attributionTable(title, items)
+	</section>
+}
+
+templ attributionTable(label string, items []attribution) {
+	<div class="overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
+		<table class="min-w-full w-full border-collapse text-left text-sm" aria-label={ label }>
+			<thead class="bg-surface-alt text-on-surface-strong dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">
+				<tr>
+					<th class="min-w-52 px-4 py-3 font-bold" scope="col">Project</th>
+					<th class="min-w-32 px-4 py-3 font-bold" scope="col">License</th>
+					<th class="min-w-52 px-4 py-3 font-bold" scope="col">Used for</th>
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-outline bg-surface text-on-surface dark:divide-outline-dark dark:bg-surface-dark dark:text-on-surface-dark">
+				for _, item := range items {
+					<tr>
+						<td class="min-w-52 px-4 py-4 align-top">
+							<a class="font-semibold text-primary underline underline-offset-4 dark:text-primary-dark" href={ templ.URL(item.ProjectURL) }>{ item.Name }</a>
+							<span class="mt-1 block text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ item.Version }</span>
+						</td>
+						<td class="min-w-32 px-4 py-4 align-top">
+							<a class="inline-flex" href={ templ.URL(item.LicenseURL) }>
+								@badge.Badge(badge.Config{Label: item.License, Tone: badge.TonePrimary, Appearance: badge.AppearanceSoft, Size: badge.SizeSM})
+							</a>
+						</td>
+						<td class="min-w-52 px-4 py-4 align-top text-on-surface-muted dark:text-on-surface-dark-muted">{ item.UsedFor }</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
