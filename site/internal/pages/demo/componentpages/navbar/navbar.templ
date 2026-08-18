@@ -3,6 +3,7 @@ package navbarpage
 import (
 	templpkg "github.com/a-h/templ"
 	"github.com/araihu/goshtoso/components/navbar"
+	"github.com/araihu/goshtoso/components/popover"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -29,6 +30,34 @@ templ navbarDemoContent() {
         {Label: "Products", Href: "#", Active: true},
         {Label: "Pricing", Href: "#"},
         {Label: "Blog", Href: "#"},
+    },
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "With Secondary Row",
+				Description: "Add tab-style secondary navigation with primitive links. Keep arbitrary actions, menus, HTMX behavior, and responsive mobile substitution (such as a sidebar select) consumer-owned.",
+			},
+			navbarWithSecondaryPreview(),
+			`@navbar.Navbar(navbar.Config{
+    Brand: brand(),
+    Links: []navbar.NavLink{{Label: "Docs", Href: "/docs"}},
+    Secondary: &navbar.SecondaryConfig{
+        Links: []navbar.SecondaryLink{
+            {Label: "Context", Href: "#context"},
+            {Label: "Overview", Href: "#overview", Current: navbar.SecondaryCurrentPage},
+            {Label: "Details", Href: "#details"},
+        },
+        Actions: []templ.Component{
+            popover.Popover(popover.Config{
+                Label: "Actions",
+                Placement: popover.PlacementBottomEnd,
+                Role: "menu",
+                Trigger: templ.Raw("<button type=\"button\" aria-haspopup=\"menu\">Actions</button>"),
+                Content: templ.Raw("<a href=\"#open-action\" role=\"menuitem\">Open action</a>"),
+            }),
+        },
     },
 })`,
 		)
@@ -105,6 +134,34 @@ templ navbarSimplePreview() {
 				{Label: "Pricing", Href: "#"},
 				{Label: "Blog", Href: "#"},
 				{Label: "Login", Href: "#"},
+			},
+		})
+	</div>
+}
+
+// navbarWithSecondaryPreview renders the public secondary-row composition.
+templ navbarWithSecondaryPreview() {
+	<div id="navbar-secondary" class="w-full" style="min-height: 240px;">
+		@navbar.Navbar(navbar.Config{
+			Brand: demoBrandText(),
+			Links: []navbar.NavLink{{Label: "Docs", Href: "#docs"}},
+			Secondary: &navbar.SecondaryConfig{
+				Links: []navbar.SecondaryLink{
+					{Label: "Context", Href: "#context"},
+					{Label: "Overview", Href: "#overview", Current: navbar.SecondaryCurrentPage},
+					{Label: "Details", Href: "#details"},
+					{Label: "Settings", Href: "#settings"},
+				},
+				Actions: []templpkg.Component{popover.Popover(popover.Config{
+					ID:        "navbar-secondary-actions",
+					Label:     "Actions",
+					Placement: popover.PlacementBottomEnd,
+					Role:      "menu",
+					Trigger:   templpkg.Raw(`<button type="button" aria-haspopup="menu" class="inline-flex min-h-11 min-w-11 items-center gap-2 whitespace-nowrap px-3 py-2">Actions</button>`),
+					Content:   templpkg.Raw(`<div class="flex flex-col py-1.5"><a href="#open-action" role="menuitem" tabindex="0" class="inline-flex min-h-11 min-w-11 items-center whitespace-nowrap px-4 py-2 text-sm">Open action</a></div>`),
+				})},
+				AriaLabel: "secondary navigation",
+				RootAttrs: templpkg.Attributes{"data-demo": "navbar-secondary"},
 			},
 		})
 	</div>

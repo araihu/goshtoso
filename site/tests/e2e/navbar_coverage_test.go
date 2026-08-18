@@ -35,6 +35,20 @@ func TestNavbarCoverageDemo(t *testing.T) {
 
 	require.NoError(t, page.Locator("main").Filter(playwright.LocatorFilterOptions{HasText: "Navbar"}).WaitFor())
 	require.NoError(t, page.Locator("#navbar-simple nav[aria-label='main navigation']").WaitFor())
+	secondaryNav := page.Locator("#navbar-secondary nav[aria-label='secondary navigation']")
+	require.NoError(t, secondaryNav.WaitFor())
+	currentSecondary := secondaryNav.Locator("a[aria-current='page']")
+	require.Equal(t, 1, mustCount(t, currentSecondary))
+	require.Equal(t, "Overview", mustText(t, currentSecondary))
+
+	secondaryTrigger := page.Locator("#navbar-secondary-actions [data-popover-trigger] button")
+	secondaryPanel := page.Locator("#navbar-secondary-actions [data-popover-panel]")
+	require.NoError(t, secondaryTrigger.Click())
+	require.NoError(t, secondaryPanel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+	require.Equal(t, "Open action", mustText(t, secondaryPanel.Locator("[role='menuitem']")))
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, secondaryPanel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+
 	require.NoError(t, page.Locator("#navbar-user nav[aria-label='main navigation']").WaitFor())
 	rightSlotCount, err := page.Locator("#navbar-right-slot button[aria-label='Toggle dark mode']").Count()
 	require.NoError(t, err)
