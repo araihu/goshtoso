@@ -483,7 +483,8 @@ func assertNavbarKeyboardInteractions(t *testing.T, fixture *navbarCurrentSource
 
 	_, err := page.ExpectResponse("**"+navbarRowEndpoint+"details", func() error { return details.Press("Enter") }, playwright.PageExpectResponseOptions{Timeout: playwright.Float(3000)})
 	require.NoError(t, err)
-	require.NoError(t, page.WaitForURL("**"+navbarDetailsURL))
+	_, err = page.WaitForFunction(`href => window.location.pathname + window.location.search === href`, navbarDetailsURL, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	require.NoError(t, err)
 	assertNavbarCurrentState(t, page, "Details")
 	assertCurrentLinkFocused(t, page)
 	navigateNavbarFixture(t, page, fixture, navbarOverviewURL)
