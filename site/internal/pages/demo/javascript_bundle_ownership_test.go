@@ -16,7 +16,7 @@ import (
 func TestComponentDocsLayoutOwnsDemoBundleOutsideHeadDependencies(t *testing.T) {
 	t.Parallel()
 
-	cfg := componentDocsConfig(false)
+	cfg := componentDocsConfig(false, "")
 	require.True(t, cfg.Appearance.DisableThemeSelector)
 	require.Equal(t, "araihu", cfg.Appearance.DefaultTheme)
 	require.Equal(t, []string{
@@ -60,8 +60,11 @@ func TestComponentDocsLayoutMarksGettingStartedCurrent(t *testing.T) {
 	).Render(context.Background(), &page))
 
 	html := page.String()
-	linkStart := strings.Index(html, `href="/getting-started"`)
+	sidebarStart := strings.Index(html, `id="componentdocshell-sidebar"`)
+	require.NotEqual(t, -1, sidebarStart)
+	linkStart := strings.Index(html[sidebarStart:], `href="/getting-started"`)
 	require.NotEqual(t, -1, linkStart)
+	linkStart += sidebarStart
 	linkEnd := strings.Index(html[linkStart:], `</a>`)
 	require.NotEqual(t, -1, linkEnd)
 	require.Contains(t, html[linkStart:linkStart+linkEnd], `aria-current="page"`)

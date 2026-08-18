@@ -8,7 +8,10 @@ package demo
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/araihu/goshtoso/components/search"
+import (
+	"github.com/araihu/goshtoso/components/navbar"
+	"github.com/araihu/goshtoso/components/search"
+)
 
 // componentDocsHead preserves Goshtoso-owned metadata, install assets, fonts,
 // and storage policy while componentdocshell owns the document frame.
@@ -40,7 +43,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(SiteName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 8, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 11, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -53,7 +56,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.TitleText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 11, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 14, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -66,7 +69,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 12, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 15, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -79,7 +82,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.CanonicalURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 13, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 16, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -92,7 +95,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 14, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 17, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
@@ -105,7 +108,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(OGImageMIMEType)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 15, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 18, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
@@ -118,7 +121,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(OGImageWidth)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 16, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 19, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -131,7 +134,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(OGImageHeight)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 17, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 20, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -144,7 +147,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageAlt())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 18, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 21, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
@@ -157,7 +160,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.TitleText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 20, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 23, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {
@@ -170,7 +173,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 21, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 24, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
@@ -183,7 +186,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 22, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 25, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -196,7 +199,7 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(meta.OGImageAlt())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 23, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentdocshell.templ`, Line: 26, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
@@ -210,7 +213,44 @@ func componentDocsHead(meta PageMeta) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<link rel=\"icon\" type=\"image/png\" href=\"/favicon-96x96.png\" sizes=\"96x96\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><link rel=\"shortcut icon\" href=\"/favicon.ico\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\"><link rel=\"manifest\" href=\"/site.webmanifest\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"/assets/js/darkmode.js\"></script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<link rel=\"icon\" type=\"image/png\" href=\"/favicon-96x96.png\" sizes=\"96x96\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\"><link rel=\"shortcut icon\" href=\"/favicon.ico\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-icon.png\"><link rel=\"manifest\" href=\"/site.webmanifest\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><style>\n\t\t/* componentdocshell v0.1.4 has one header row; this consumer-owned slot\n\t\t   reserves a second row without changing the reusable shell contract. */\n\t\t.component-doc-shell__header:has(.component-doc-shell__site-header-actions) {\n\t\t\theight: 6.75rem !important;\n\t\t\tborder-bottom: 0 !important;\n\t\t}\n\t\t.component-doc-shell__header:has(.component-doc-shell__site-header-actions) .component-doc-shell__header-inner {\n\t\t\tposition: relative;\n\t\t\talign-items: flex-start;\n\t\t\theight: 100%;\n\t\t}\n\t\t.component-doc-shell__header:has(.component-doc-shell__site-header-actions) .component-doc-shell__brand-group,\n\t\t.component-doc-shell__header:has(.component-doc-shell__site-header-actions) .component-doc-shell__controls {\n\t\t\theight: 4rem;\n\t\t}\n\t\t.component-doc-shell__site-header-actions {\n\t\t\tposition: absolute;\n\t\t\tinset-inline: 0;\n\t\t\tbottom: 0;\n\t\t\tdisplay: block;\n\t\t\theight: 2.75rem;\n\t\t}\n\t\t.component-doc-shell__site-header-actions [data-navbar-secondary] {\n\t\t\theight: 100%;\n\t\t\tflex-wrap: nowrap;\n\t\t\talign-items: stretch;\n\t\t}\n\t\t#goshtoso-site-secondary-navigation a[data-site-secondary-family][aria-current=\"location\"] {\n\t\t\tborder-color: var(--color-primary) !important;\n\t\t\tfont-weight: 600 !important;\n\t\t\tcolor: var(--color-on-surface-strong) !important;\n\t\t}\n\t\t#goshtoso-site-secondary-navigation a[data-site-secondary-family]:not([aria-current]) {\n\t\t\tborder-color: transparent !important;\n\t\t\tfont-weight: 400 !important;\n\t\t\tcolor: var(--color-on-surface) !important;\n\t\t}\n\t\t#goshtoso-site-secondary-navigation a[data-site-secondary-family]:not([aria-current]):hover {\n\t\t\tborder-color: var(--color-outline-strong) !important;\n\t\t\tcolor: var(--color-on-surface-strong) !important;\n\t\t}\n\t\t.dark #goshtoso-site-secondary-navigation a[data-site-secondary-family][aria-current=\"location\"] {\n\t\t\tborder-color: var(--color-primary-dark) !important;\n\t\t\tcolor: var(--color-on-surface-dark-strong) !important;\n\t\t}\n\t\t.dark #goshtoso-site-secondary-navigation a[data-site-secondary-family]:not([aria-current]) {\n\t\t\tcolor: var(--color-on-surface-dark) !important;\n\t\t}\n\t\t.dark #goshtoso-site-secondary-navigation a[data-site-secondary-family]:not([aria-current]):hover {\n\t\t\tborder-color: var(--color-outline-dark-strong) !important;\n\t\t\tcolor: var(--color-on-surface-dark-strong) !important;\n\t\t}\n\t\t.component-doc-shell:has(.component-doc-shell__site-header-actions) .component-doc-shell__frame {\n\t\t\theight: calc(100vh - 6.75rem);\n\t\t}\n\t\t.component-doc-shell:has(.component-doc-shell__site-header-actions) .component-doc-shell__sidebar {\n\t\t\ttop: 6.75rem;\n\t\t}\n\t\t.component-doc-shell:has(.component-doc-shell__site-header-actions) .component-doc-shell__backdrop {\n\t\t\ttop: 6.75rem;\n\t\t}\n\t\t.component-doc-shell:has(.component-doc-shell__site-header-actions) .component-doc-shell__toc-inner {\n\t\t\ttop: 6.75rem;\n\t\t}\n\t</style><script src=\"/assets/js/darkmode.js\"></script>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func componentDocsHeaderActions(activeFamily string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"component-doc-shell__site-header-actions\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = navbar.SecondaryRow(componentDocsSecondaryConfig(activeFamily)).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -234,11 +274,15 @@ func componentDocsBodyEnd() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var15 == nil {
-			templ_7745c5c3_Var15 = templ.NopComponent
+		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var16 == nil {
+			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templ.Raw(componentDocsSecondaryNavigationScript()).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = search.SearchModal(docsSearchConfig()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -267,12 +311,12 @@ func componentDocsStorageConsent() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var16 == nil {
-			templ_7745c5c3_Var16 = templ.NopComponent
+		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var17 == nil {
+			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div x-data=\"demoStorageConsent\" x-show=\"show\" x-cloak x-transition:enter=\"transition ease-out duration-150 motion-reduce:transition-none\" x-transition:enter-start=\"opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0\" x-transition:enter-end=\"opacity-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-100 motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100 translate-y-0\" x-transition:leave-end=\"opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0\" class=\"fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-md flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"cookie-banner-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><h3 id=\"cookie-banner-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Browser storage</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso can store preferences and demo state in your browser. Some examples use cookies and IndexedDB to persist local demo state. There is no analytics, advertising, or third-party tracking. You can use the site without storage, but preferences and some examples will reset or stop persisting. Details in our <a href=\"/privacy\" hx-get=\"/privacy\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" @click=\"show = false\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex flex-col-reverse gap-2 px-4 pb-4 sm:flex-row sm:justify-end\"><button @click=\"deny()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">Use without storage</button> <button @click=\"allow()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity motion-reduce:transition-none\">Allow browser storage</button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div x-data=\"demoStorageConsent\" x-show=\"show\" x-cloak x-transition:enter=\"transition ease-out duration-150 motion-reduce:transition-none\" x-transition:enter-start=\"opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0\" x-transition:enter-end=\"opacity-100 translate-y-0\" x-transition:leave=\"transition ease-in duration-100 motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100 translate-y-0\" x-transition:leave-end=\"opacity-0 translate-y-1 motion-reduce:opacity-100 motion-reduce:translate-y-0\" class=\"fixed bottom-4 left-4 right-4 sm:left-auto z-50 flex max-w-none sm:max-w-md flex-col gap-4 rounded-radius border border-outline bg-surface text-on-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\" role=\"dialog\" aria-modal=\"false\" aria-labelledby=\"cookie-banner-title\"><div class=\"flex items-center gap-2 border-b border-outline px-4 py-3 dark:border-outline-dark\"><h3 id=\"cookie-banner-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Browser storage</h3></div><p class=\"px-4 text-sm text-on-surface dark:text-on-surface-dark\">Goshtoso can store preferences and demo state in your browser. Some examples use cookies and IndexedDB to persist local demo state. There is no analytics, advertising, or third-party tracking. You can use the site without storage, but preferences and some examples will reset or stop persisting. Details in our <a href=\"/privacy\" hx-get=\"/privacy\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" @click=\"show = false\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Privacy Policy</a>.</p><div class=\"flex flex-col-reverse gap-2 px-4 pb-4 sm:flex-row sm:justify-end\"><button @click=\"deny()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none\">Use without storage</button> <button @click=\"allow()\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity motion-reduce:transition-none\">Allow browser storage</button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

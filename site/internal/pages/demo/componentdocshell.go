@@ -6,6 +6,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso-app-shells/componentdocshell"
+	"github.com/araihu/goshtoso/components/navbar"
 	"github.com/araihu/goshtoso/components/sidebar"
 	"github.com/araihu/goshtoso/site/internal/buildinfo"
 	"github.com/araihu/goshtoso/site/internal/pages/catalog"
@@ -14,16 +15,16 @@ import (
 // ComponentDocsLayout delegates the demo frame to the reusable component
 // documentation shell while retaining Goshtoso-owned routes and content.
 func ComponentDocsLayout(meta PageMeta, active string, content templ.Component, persist bool) templ.Component {
-	cfg := componentDocsConfig(persist)
+	cfg := componentDocsConfig(persist, active)
 	return componentdocshell.Layout(cfg, componentDocsPage(cfg, meta, active, content))
 }
 
 func ComponentDocsFragment(meta PageMeta, active string, content templ.Component, persist bool) templ.Component {
-	cfg := componentDocsConfig(persist)
+	cfg := componentDocsConfig(persist, active)
 	return componentdocshell.Fragment(cfg, componentDocsPage(cfg, meta, active, content))
 }
 
-func componentDocsConfig(persist bool) componentdocshell.Config {
+func componentDocsConfig(persist bool, active string) componentdocshell.Config {
 	sections := getSidebarSections("")
 	for i := range sections {
 		for j := range sections[i].Items {
@@ -52,9 +53,37 @@ func componentDocsConfig(persist bool) componentdocshell.Config {
 			// alpine:init before Alpine executes, without entering head.Dependencies.
 			RuntimeScripts: componentDocsAdditionalRuntimeScripts(),
 		},
-		TOC:     componentdocshell.TOCConfig{RailID: "toc-rail", ListID: "toc-list"},
-		BodyEnd: componentDocsBodyEnd(), RepositoryURL: "https://github.com/araihu/goshtoso", AssetPrefix: "/componentdocshell/assets/",
+		TOC:           componentdocshell.TOCConfig{RailID: "toc-rail", ListID: "toc-list"},
+		HeaderActions: componentDocsHeaderActions(componentDocsFamily(active)),
+		BodyEnd:       componentDocsBodyEnd(), RepositoryURL: "https://github.com/araihu/goshtoso", AssetPrefix: "/componentdocshell/assets/",
 	}
+}
+
+func componentDocsSecondaryConfig(activeFamily string) navbar.SecondaryConfig {
+	return navbar.SecondaryConfig{
+		Links: []navbar.SecondaryLink{
+			{Label: "Core", Href: "/getting-started", Current: componentDocsSecondaryCurrent("core", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("core")},
+			{Label: "Icon Packs", Href: "/docs/iconpack", Current: componentDocsSecondaryCurrent("icon-packs", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("icon-packs")},
+			{Label: "Charts", Href: "/modules/charts", Current: componentDocsSecondaryCurrent("charts", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("charts")},
+			{Label: "App Shells", Href: "/modules/app-shells", Current: componentDocsSecondaryCurrent("app-shells", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("app-shells")},
+			{Label: "Examples", Href: "/examples", Current: componentDocsSecondaryCurrent("examples", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("examples")},
+		},
+		AriaLabel:  "Goshtoso documentation",
+		Scrollable: true,
+		RootClass:  "component-doc-shell__site-secondary-row",
+		RootAttrs:  templ.Attributes{"id": "goshtoso-site-secondary-navigation"},
+	}
+}
+
+func componentDocsSecondaryLinkAttrs(familyID string) templ.Attributes {
+	return templ.Attributes{"data-site-secondary-family": familyID}
+}
+
+func componentDocsSecondaryCurrent(familyID, activeFamily string) navbar.SecondaryCurrent {
+	if familyID == activeFamily {
+		return navbar.SecondaryCurrentLocation
+	}
+	return navbar.SecondaryCurrentNone
 }
 
 func componentDocsBuildBadge(version string) *componentdocshell.BrandBadge {

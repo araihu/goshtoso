@@ -1,6 +1,9 @@
 package demo
 
-import "github.com/araihu/goshtoso/components/search"
+import (
+	"github.com/araihu/goshtoso/components/navbar"
+	"github.com/araihu/goshtoso/components/search"
+)
 
 // componentDocsHead preserves Goshtoso-owned metadata, install assets, fonts,
 // and storage policy while componentdocshell owns the document frame.
@@ -30,10 +33,83 @@ templ componentDocsHead(meta PageMeta) {
 	<link rel="preconnect" href="https://fonts.googleapis.com"/>
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 	<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+	<style>
+		/* componentdocshell v0.1.4 has one header row; this consumer-owned slot
+		   reserves a second row without changing the reusable shell contract. */
+		.component-doc-shell__header:has(.component-doc-shell__site-header-actions) {
+			height: 6.75rem !important;
+			border-bottom: 0 !important;
+		}
+		.component-doc-shell__header:has(.component-doc-shell__site-header-actions) .component-doc-shell__header-inner {
+			position: relative;
+			align-items: flex-start;
+			height: 100%;
+		}
+		.component-doc-shell__header:has(.component-doc-shell__site-header-actions) .component-doc-shell__brand-group,
+		.component-doc-shell__header:has(.component-doc-shell__site-header-actions) .component-doc-shell__controls {
+			height: 4rem;
+		}
+		.component-doc-shell__site-header-actions {
+			position: absolute;
+			inset-inline: 0;
+			bottom: 0;
+			display: block;
+			height: 2.75rem;
+		}
+		.component-doc-shell__site-header-actions [data-navbar-secondary] {
+			height: 100%;
+			flex-wrap: nowrap;
+			align-items: stretch;
+		}
+		#goshtoso-site-secondary-navigation a[data-site-secondary-family][aria-current="location"] {
+			border-color: var(--color-primary) !important;
+			font-weight: 600 !important;
+			color: var(--color-on-surface-strong) !important;
+		}
+		#goshtoso-site-secondary-navigation a[data-site-secondary-family]:not([aria-current]) {
+			border-color: transparent !important;
+			font-weight: 400 !important;
+			color: var(--color-on-surface) !important;
+		}
+		#goshtoso-site-secondary-navigation a[data-site-secondary-family]:not([aria-current]):hover {
+			border-color: var(--color-outline-strong) !important;
+			color: var(--color-on-surface-strong) !important;
+		}
+		.dark #goshtoso-site-secondary-navigation a[data-site-secondary-family][aria-current="location"] {
+			border-color: var(--color-primary-dark) !important;
+			color: var(--color-on-surface-dark-strong) !important;
+		}
+		.dark #goshtoso-site-secondary-navigation a[data-site-secondary-family]:not([aria-current]) {
+			color: var(--color-on-surface-dark) !important;
+		}
+		.dark #goshtoso-site-secondary-navigation a[data-site-secondary-family]:not([aria-current]):hover {
+			border-color: var(--color-outline-dark-strong) !important;
+			color: var(--color-on-surface-dark-strong) !important;
+		}
+		.component-doc-shell:has(.component-doc-shell__site-header-actions) .component-doc-shell__frame {
+			height: calc(100vh - 6.75rem);
+		}
+		.component-doc-shell:has(.component-doc-shell__site-header-actions) .component-doc-shell__sidebar {
+			top: 6.75rem;
+		}
+		.component-doc-shell:has(.component-doc-shell__site-header-actions) .component-doc-shell__backdrop {
+			top: 6.75rem;
+		}
+		.component-doc-shell:has(.component-doc-shell__site-header-actions) .component-doc-shell__toc-inner {
+			top: 6.75rem;
+		}
+	</style>
 	<script src="/assets/js/darkmode.js"></script>
 }
 
+templ componentDocsHeaderActions(activeFamily string) {
+	<div class="component-doc-shell__site-header-actions">
+		@navbar.SecondaryRow(componentDocsSecondaryConfig(activeFamily))
+	</div>
+}
+
 templ componentDocsBodyEnd() {
+	@templ.Raw(componentDocsSecondaryNavigationScript())
 	@search.SearchModal(docsSearchConfig())
 	@componentDocsStorageConsent()
 }
