@@ -1,5 +1,7 @@
 package charts
 
+import demo "github.com/araihu/goshtoso/site/internal/pages/demo"
+
 type chartModeComparison struct {
 	Capability  string
 	Static      string
@@ -111,7 +113,8 @@ const changed = window.__goshtosoChartsControls.setWrapperMode(
   showButton,
 );`
 
-const wrapperModeAlpineCode = `<div
+func wrapperModeAlpineCode() string {
+	return demo.DisplayCode(`<div
   x-data="{
     mode: 'enabled',
     setMode(next, focusReturn) {
@@ -136,7 +139,8 @@ const wrapperModeAlpineCode = `<div
       }},
     })
   </div>
-</div>`
+</div>`)
+}
 
 const wrapperModeHTMXCode = `templ WeeklyRevenue(mode chartcontrol.WrapperMode) {
   <div id="weekly-revenue-slot">

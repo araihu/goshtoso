@@ -2,6 +2,13 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.2] - 2026-08-18
+
+### Release integrity
+
+- Regenerated the bundled JavaScript artifact so release verification and downstream deployments consume source-synchronized assets.
+- Pinned the demo site to the published `v0.2.1` module for standalone dependency resolution.
+
 ## [v0.2.1] - 2026-08-18
 
 ### Documentation and site navigation
@@ -424,6 +431,7 @@ before upgrading.
   complete component catalog plus a representative light/dark Goshtoso/Minimal
   theme matrix.
 
+[v0.2.2]: https://github.com/araihu/goshtoso/compare/v0.2.1...v0.2.2
 [v0.2.1]: https://github.com/araihu/goshtoso/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/araihu/goshtoso/compare/v0.1.16...v0.2.0
 [v0.1.9]: https://github.com/araihu/goshtoso/compare/v0.1.8...v0.1.9

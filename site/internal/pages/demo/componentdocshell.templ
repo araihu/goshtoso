@@ -177,7 +177,6 @@ templ componentDocsBodyEnd() {
 }
 
 templ componentDocsBodyEndFor(activeFamily string) {
-	@templ.Raw(componentDocsSecondaryNavigationScript())
 	@search.SearchModal(docsSearchConfig(activeFamily))
 	@componentDocsStorageConsent()
 }

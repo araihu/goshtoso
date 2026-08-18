@@ -62,6 +62,7 @@ var defaultArtifacts = []artifact{
 		output: "site/assets/js/goshtoso-demo.min.js",
 		inputs: []string{
 			"site/assets/js/src/site-bootstrap.js",
+			"site/assets/js/src/site-navigation.js",
 			"site/assets/js/src/demo-layout.js",
 			"site/assets/js/src/select-demo.js",
 			"site/assets/js/src/action-group.js",

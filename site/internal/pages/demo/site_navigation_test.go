@@ -23,7 +23,7 @@ func TestComponentDocsSecondaryNavigationUsesSiteFamilies(t *testing.T) {
 	html := page.String()
 	require.Contains(t, html, `id="goshtoso-site-secondary-navigation"`)
 	require.Contains(t, html, `data-site-secondary-family="core"`)
-	require.Contains(t, html, `window.addEventListener("componentdocshell:navigated"`)
+	require.NotContains(t, html, `window.addEventListener("componentdocshell:navigated"`)
 	for _, link := range []string{
 		`href="/getting-started"`,
 		`href="/docs/agents"`,

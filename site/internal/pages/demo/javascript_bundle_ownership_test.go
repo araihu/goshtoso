@@ -85,6 +85,7 @@ func TestDemoRuntimeProvidersStayExternalAndLifecycleAware(t *testing.T) {
 		wants []string
 	}{
 		{path: "../../../assets/js/src/site-bootstrap.js", wants: []string{"goshtosoStorageConsent", "data-demo-theme-bootstrap"}},
+		{path: "../../../assets/js/src/site-navigation.js", wants: []string{"componentdocshell:navigated", "goshtoso-site-secondary-navigation", "data-site-secondary-family"}},
 		{path: "../../../assets/js/src/landing-playground.js", wants: []string{"goshtoso:landing-playground-height", "ResizeObserver", "htmx:afterSettle"}},
 		{path: "../../../assets/js/src/demo-layout.js", wants: []string{"Alpine.data(\"demoLayout\"", "Alpine.data(\"demoStorageConsent\"", "removeEventListener", "disconnect"}},
 		{path: "../../../assets/js/src/select-demo.js", wants: []string{"goshtosoRestoreSelectDraft"}},
