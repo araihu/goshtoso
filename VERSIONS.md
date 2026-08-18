@@ -11,6 +11,7 @@ is retained in this table.
 
 | Goshtoso | Tailwind CSS |
 |----------|--------------|
+| v0.2.1   | 4.3.3        |
 | v0.2.0   | 4.3.3        |
 | v0.1.16  | 4.3.3        |
 | v0.1.14  | 4.3.3        |

@@ -972,9 +972,6 @@
   .aspect-3\/1 {
     aspect-ratio: 3/1;
   }
-  .aspect-\[16\/10\] {
-    aspect-ratio: 16/10;
-  }
   .size-1\.5 {
     width: calc(var(--spacing) * 1.5);
     height: calc(var(--spacing) * 1.5);
@@ -1314,6 +1311,9 @@
   .w-40 {
     width: calc(var(--spacing) * 40);
   }
+  .w-44 {
+    width: calc(var(--spacing) * 44);
+  }
   .w-48 {
     width: calc(var(--spacing) * 48);
   }
@@ -1479,6 +1479,15 @@
   .min-w-52 {
     min-width: calc(var(--spacing) * 52);
   }
+  .min-w-\[42rem\] {
+    min-width: 42rem;
+  }
+  .min-w-\[48rem\] {
+    min-width: 48rem;
+  }
+  .min-w-\[52rem\] {
+    min-width: 52rem;
+  }
   .min-w-\[200px\] {
     min-width: 200px;
   }
@@ -1490,6 +1499,12 @@
   }
   .flex-1 {
     flex: 1;
+  }
+  .flex-\[1_1_20rem\] {
+    flex: 1 1 20rem;
+  }
+  .flex-\[1_1_24rem\] {
+    flex: 1 1 24rem;
   }
   .shrink-0 {
     flex-shrink: 0;
@@ -1754,9 +1769,6 @@
   .gap-14 {
     gap: calc(var(--spacing) * 14);
   }
-  .gap-px {
-    gap: 1px;
-  }
   :where(.space-y-1 > :not(:last-child)) {
     --tw-space-y-reverse: 0;
     margin-block-start: calc(var(--spacing) * var(--tw-space-y-reverse));
@@ -1806,11 +1818,6 @@
     --tw-space-y-reverse: 0;
     margin-block-start: calc(calc(var(--spacing) * 12) * var(--tw-space-y-reverse));
     margin-block-end: calc(calc(var(--spacing) * 12) * calc(1 - var(--tw-space-y-reverse)));
-  }
-  :where(.space-y-14 > :not(:last-child)) {
-    --tw-space-y-reverse: 0;
-    margin-block-start: calc(calc(var(--spacing) * 14) * var(--tw-space-y-reverse));
-    margin-block-end: calc(calc(var(--spacing) * 14) * calc(1 - var(--tw-space-y-reverse)));
   }
   .gap-x-2 {
     column-gap: calc(var(--spacing) * 2);
@@ -1954,6 +1961,10 @@
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
+  }
+  .border-0 {
+    border-style: var(--tw-border-style);
+    border-width: 0px;
   }
   .border-2 {
     border-style: var(--tw-border-style);
@@ -4075,9 +4086,6 @@
       --tw-scale-z: 105%;
       scale: var(--tw-scale-x) var(--tw-scale-y);
     }
-    .group-hover\:scale-\[1\.02\]:is(:where(.group):hover *) {
-      scale: 1.02;
-    }
     .group-hover\:gap-1\.5:is(:where(.group):hover *) {
       gap: calc(var(--spacing) * 1.5);
     }
@@ -4411,10 +4419,6 @@
   }
   .first\:mt-2:first-child {
     margin-top: calc(var(--spacing) * 2);
-  }
-  .first\:border-t-0:first-child {
-    border-top-style: var(--tw-border-style);
-    border-top-width: 0px;
   }
   .first\:pt-0:first-child {
     padding-top: 0px;
@@ -5264,6 +5268,12 @@
     .sm\:grid-cols-\[3rem_minmax\(0\,1fr\)\] {
       grid-template-columns: 3rem minmax(0,1fr);
     }
+    .sm\:grid-cols-\[8rem_1fr\] {
+      grid-template-columns: 8rem 1fr;
+    }
+    .sm\:grid-cols-\[9rem_1fr\] {
+      grid-template-columns: 9rem 1fr;
+    }
     .sm\:grid-cols-\[9rem_minmax\(0\,1fr\)\] {
       grid-template-columns: 9rem minmax(0,1fr);
     }
@@ -5299,6 +5309,9 @@
     }
     .sm\:gap-6 {
       gap: calc(var(--spacing) * 6);
+    }
+    .sm\:gap-8 {
+      gap: calc(var(--spacing) * 8);
     }
     .sm\:p-5 {
       padding: calc(var(--spacing) * 5);
@@ -5450,9 +5463,6 @@
     .md\:grid-cols-\[minmax\(0\,1fr\)_18rem\] {
       grid-template-columns: minmax(0,1fr) 18rem;
     }
-    .md\:grid-cols-\[minmax\(0\,2fr\)_minmax\(18rem\,3fr\)\] {
-      grid-template-columns: minmax(0,2fr) minmax(18rem,3fr);
-    }
     .md\:flex-row {
       flex-direction: row;
     }
@@ -5470,9 +5480,6 @@
     }
     .md\:gap-3 {
       gap: calc(var(--spacing) * 3);
-    }
-    .md\:gap-10 {
-      gap: calc(var(--spacing) * 10);
     }
     .md\:gap-12 {
       gap: calc(var(--spacing) * 12);
@@ -5562,6 +5569,9 @@
     .lg\:w-\[80\%\] {
       width: 80%;
     }
+    .lg\:w-auto {
+      width: auto;
+    }
     .lg\:translate-x-0 {
       --tw-translate-x: 0px;
       translate: var(--tw-translate-x) var(--tw-translate-y);
@@ -5592,6 +5602,9 @@
     }
     .lg\:grid-cols-\[minmax\(0\,1fr\)_minmax\(0\,1\.1fr\)\] {
       grid-template-columns: minmax(0,1fr) minmax(0,1.1fr);
+    }
+    .lg\:grid-cols-\[minmax\(12rem\,1\.25fr\)_repeat\(4\,minmax\(7rem\,1fr\)\)_auto\] {
+      grid-template-columns: minmax(12rem,1.25fr) repeat(4,minmax(7rem,1fr)) auto;
     }
     .lg\:flex-row {
       flex-direction: row;
@@ -5696,6 +5709,12 @@
     }
     .xl\:block {
       display: block;
+    }
+    .xl\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .xl\:grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
     .xl\:grid-cols-4 {
       grid-template-columns: repeat(4, minmax(0, 1fr));

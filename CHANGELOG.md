@@ -2,6 +2,20 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.1] - 2026-08-18
+
+### Documentation and site navigation
+
+- Added tab-style secondary navigation with scoped sidebars for Core, AI Agents, Icons, Charts, App Shells, and Examples.
+- Migrated the Goshtoso Charts documentation into the site, including scoped routes, examples, and the theme playground.
+- Added dedicated Icon Catalog, Icon Packs, App Shells, and Examples navigation while streamlining the AI Agents guidance.
+- Added global search coverage across components, icons, charts, app shells, and examples, with contextual ranking.
+- Added generated sitemap XML and `llms.txt` endpoints and linked them from the site footer.
+
+### Component API
+
+- Added the consumer-owned secondary-row contract to Navbar, including arbitrary templ content, links, actions, and menu composition.
+
 ## [v0.2.0] - 2026-08-16
 
 ### New composition primitives
@@ -410,6 +424,7 @@ before upgrading.
   complete component catalog plus a representative light/dark Goshtoso/Minimal
   theme matrix.
 
+[v0.2.1]: https://github.com/araihu/goshtoso/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/araihu/goshtoso/compare/v0.1.16...v0.2.0
 [v0.1.9]: https://github.com/araihu/goshtoso/compare/v0.1.8...v0.1.9
 [v0.1.3]: https://github.com/araihu/goshtoso/compare/v0.1.2...v0.1.3
