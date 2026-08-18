@@ -779,6 +779,13 @@ func TestSecondaryConfigValidateRejectsLinkAttributeDuplicateByCanonicalLowercas
 	require.EqualError(t, err, `navbar: invalid Secondary.Links[0].LinkAttrs["data-track"]: duplicate case-insensitive attribute keys`)
 }
 
+func TestCanonicalAttrKeyUsesASCIILowercase(t *testing.T) {
+	t.Parallel()
+
+	assert.Equal(t, "aria-label", canonicalAttrKey("ARIA-LABEL"))
+	assert.Equal(t, "İd", canonicalAttrKey("İD"))
+}
+
 func TestSecondaryRenderErrorsProduceNoBytesInHelpers(t *testing.T) {
 	t.Parallel()
 

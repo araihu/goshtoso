@@ -233,7 +233,7 @@ func navbarSecondaryConfig(view string, scrollable bool) navbar.SecondaryConfig 
 			{Label: leadingLabel, Href: "#" + strings.ToLower(leadingLabel), LinkAttrs: leadingAttrs},
 			{Label: "Overview", Href: navbarOverviewURL, Current: currentForView(view, "overview"), LinkAttrs: navbarHTMXAttrs("overview")},
 			{Label: "Details", Href: navbarDetailsURL, Current: currentForView(view, "details"), LinkAttrs: navbarHTMXAttrs("details")},
-			{Label: "A long secondary navigation label for overflow", Href: "/components/navbar?view=long", LinkAttrs: navbarHTMXAttrs("overview")},
+			{Label: "A long secondary navigation label", Href: "/components/navbar?view=long", LinkAttrs: navbarHTMXAttrs("overview")},
 			{Label: "More", Href: "/components/navbar?view=more", LinkAttrs: navbarHTMXAttrs("overview")},
 		},
 		Actions: []templ.Component{popover.Popover(popover.Config{
@@ -441,18 +441,24 @@ func assertNavbarVisualMatrix(t *testing.T, fixture *navbarCurrentSourceFixture)
 
 func assertNavbarUnmodifiedPopoverGeometry(t *testing.T, fixture *navbarCurrentSourceFixture) {
 	t.Helper()
-	page := newNavbarPage(t, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 1280, Height: 800}})
-	navbarPageFailures(t, page)
-	navigateNavbarFixture(t, page, fixture, navbarOverviewURL+"&unmodified-popover=true")
-	require.LessOrEqual(t, mustEvaluateFloat(t, page, "() => document.documentElement.scrollWidth"), mustEvaluateFloat(t, page, "() => document.documentElement.clientWidth"))
-	trigger := page.Locator("#navbar-secondary-row [data-navbar-actions='true'] button").First()
-	panel := page.Locator("#navbar-secondary-row [role='menu']").First()
-	require.NoError(t, trigger.Click())
-	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
-	require.Equal(t, "192px", mustEvaluateString(t, panel, "element => getComputedStyle(element).minWidth"), "the unmodified Popover keeps its shipped min-w-48 panel geometry")
-	assertElementWithinVisualViewport(t, page, panel)
-	require.NoError(t, page.Keyboard().Press("Escape"))
-	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	for _, scrollable := range []bool{false, true} {
+		scrollable := scrollable
+		t.Run(fmt.Sprintf("scrollable=%t", scrollable), func(t *testing.T) {
+			page := newNavbarPage(t, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 1280, Height: 800}})
+			navbarPageFailures(t, page)
+			path := navbarOverviewURL + "&scrollable=" + strconv.FormatBool(scrollable) + "&unmodified-popover=true"
+			navigateNavbarFixture(t, page, fixture, path)
+			require.LessOrEqual(t, mustEvaluateFloat(t, page, "() => document.documentElement.scrollWidth"), mustEvaluateFloat(t, page, "() => document.documentElement.clientWidth"))
+			trigger := page.Locator("#navbar-secondary-row [data-navbar-actions='true'] button").First()
+			panel := page.Locator("#navbar-secondary-row [role='menu']").First()
+			require.NoError(t, trigger.Click())
+			require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+			require.Equal(t, "192px", mustEvaluateString(t, panel, "element => getComputedStyle(element).minWidth"), "the unmodified Popover keeps its shipped min-w-48 panel geometry")
+			assertElementWithinVisualViewport(t, page, panel)
+			require.NoError(t, page.Keyboard().Press("Escape"))
+			require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+		})
+	}
 }
 
 func assertNavbarCurrentState(t *testing.T, page playwright.Page, label string) {
