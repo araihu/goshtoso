@@ -9,40 +9,8 @@ import (
 )
 
 const (
-	interactiveFunnelUpstreamPath     = "examples/funnel.go"
-	interactiveFunnelUpstreamRevision = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-	interactiveFunnelUpstreamSHA256   = "c532e6490bad284b4b6a5dec20825359abc795a8ee9f3bb5febbcfb4e0cd2d55"
-	interactiveFunnelSeed             = int64(1)
+	interactiveFunnelSeed = int64(1)
 )
-
-type interactiveFunnelCoverageEntry struct {
-	Name      string
-	Treatment string
-}
-
-func interactiveFunnelUpstreamCoverage() []interactiveFunnelCoverageEntry {
-	return []interactiveFunnelCoverageEntry{
-		{Name: "funnelBase", Treatment: "basic five-stage funnel"},
-		{Name: "funnelShowLabel", Treatment: "visible stage labels positioned left"},
-	}
-}
-
-type interactiveFunnelSourceSpan struct {
-	Name   string
-	Lines  string
-	SHA256 string
-	Role   string
-}
-
-func interactiveFunnelSourceSpans() []interactiveFunnelSourceSpan {
-	return []interactiveFunnelSourceSpan{
-		{Name: "dimensions", Lines: "13", SHA256: "bd5b4e6a9c429f461f802686cfe0539b660b85c12fc382656d0097d07d1f7e83", Role: "ordered stage labels"},
-		{Name: "genFunnelKvItems", Lines: "15–21", SHA256: "9bf2059b03ae41f499ad99ac7ece0ac9deec70fe0fc3df8052310b1f8a64ac1c", Role: "random data helper adapted to a local fixed seed"},
-		{Name: "funnelBase", Lines: "22–30", SHA256: "88c9efbc1bdda11af5c7cbad673b7cd568941ed9248a6428ec5ea5c45184fd45", Role: "basic example"},
-		{Name: "funnelShowLabel", Lines: "33–47", SHA256: "ed198502f5b56653897070b7ba9b7fb862a8ceb4255ac4242cd817d0be0e23d7", Role: "left-label example"},
-		{Name: "FunnelExamples.Examples", Lines: "51–63", SHA256: "6c55c7a63e033a5b0f6de045c16c31d16eee67a134000a1e240da88ffbb1ca97", Role: "page composition only"},
-	}
-}
 
 var interactiveFunnelDimensions = []string{"Visit", "Add", "Order", "Payment", "Deal"}
 

@@ -1,9 +1,6 @@
 package charts
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"encoding/json"
 	"math"
 
 	"github.com/araihu/goshtoso-charts/components/chartcontrol"
@@ -11,10 +8,6 @@ import (
 )
 
 const (
-	interactiveSurface3DUpstreamPath     = "examples/surface3d.go"
-	interactiveSurface3DUpstreamRevision = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-	interactiveSurface3DUpstreamSHA256   = "51ffdac86403c0e6430c0134d1062e5fda9865b7d88061ce4f38129113c455d9"
-
 	interactiveSurface3DBaseFormula  = "y = i / 60, x = j / 60, z = sin(x × π) × sin(y × π), with i and j from -60 through 59"
 	interactiveSurface3DRoseFormula  = "y = i / 10, x = j / 10, z = sin(x² + y²) × x / π, with i and j from -30 through 29"
 	interactiveSurface3DHeartFormula = "θ ∈ [0, 2π], φ ∈ [0, π]; hx = 13.5 × sin³(θ); c = 0.56 × ((1 + cos(θ)) / 2)²⁴; hz = 0.92 × (13cos(θ) − 5cos(2θ) − 2cos(3θ) − cos(4θ)) + c; s = sin(φ); x = s × hx; y = 5.2 × cos(φ); z = −1.5 + s × (hz + 1.5)"
@@ -78,16 +71,6 @@ func generateInteractiveSurface3DHeartPoints() []interactive.Point3D {
 		}
 	}
 	return points
-}
-
-func interactiveSurface3DDataHash(points []interactive.Point3D) string {
-	values := make([][3]float64, len(points))
-	for index, point := range points {
-		values[index] = [3]float64{point.X, point.Y, point.Z}
-	}
-	encoded, _ := json.Marshal(values)
-	sum := sha256.Sum256(encoded)
-	return hex.EncodeToString(sum[:])
 }
 
 func sampleInteractiveSurface3D(label, formula, filename string, points []interactive.Point3D) interactive.Instance {

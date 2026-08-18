@@ -5,40 +5,6 @@ import (
 	interactiveline "github.com/araihu/goshtoso-charts/components/interactive/line"
 )
 
-const (
-	interactiveLineUpstreamPath     = "examples/line.go"
-	interactiveLineUpstreamRevision = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-	interactiveLineUpstreamSHA256   = "1f36444bd373eafde876af19746d6b0115a776fd7c019e5996bdf2d00ecd7b1c"
-
-	lineCoverageExample     = "example"
-	lineCoverageUnsupported = "unsupported"
-)
-
-type interactiveLineCoverageEntry struct {
-	Name   string
-	Status string
-	Reason string
-}
-
-func interactiveLineUpstreamCoverage() []interactiveLineCoverageEntry {
-	return []interactiveLineCoverageEntry{
-		{Name: "lineBase", Status: lineCoverageExample},
-		{Name: "lineShowLabel", Status: lineCoverageExample},
-		{Name: "lineMarkPoint", Status: lineCoverageExample},
-		{Name: "lineSplitLine", Status: lineCoverageExample},
-		{Name: "lineNumerical", Status: lineCoverageExample},
-		{Name: "lineTime", Status: lineCoverageExample},
-		{Name: "lineStep", Status: lineCoverageExample},
-		{Name: "lineSmooth", Status: lineCoverageExample},
-		{Name: "lineArea", Status: lineCoverageExample},
-		{Name: "lineSmoothArea", Status: lineCoverageExample},
-		{Name: "lineOverlap", Status: lineCoverageUnsupported, Reason: "mixed-series composition requires a renderer-neutral composite chart API"},
-		{Name: "lineMulti", Status: lineCoverageExample},
-		{Name: "lineDemo", Status: lineCoverageExample},
-		{Name: "lineSymbols", Status: lineCoverageExample},
-	}
-}
-
 func interactiveLineCategories() []string {
 	// Upstream includes a trailing space in Peach. Correct the obvious label typo.
 	return []string{"Apple", "Banana", "Peach", "Lemon", "Pear", "Cherry"}

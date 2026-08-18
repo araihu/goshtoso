@@ -5,24 +5,6 @@ import (
 	"github.com/araihu/goshtoso-charts/components/scatter"
 )
 
-const staticScatterUpstreamRevision = "1fe31b06b8a82e00df877ff4417a75858547c1c2"
-
-type staticScatterCoverageEntry struct {
-	Path      string
-	SHA256    string
-	Treatment string
-}
-
-func staticScatterUpstreamCoverage() []staticScatterCoverageEntry {
-	return []staticScatterCoverageEntry{
-		{Path: "examples/1-Painter/scatter_chart-1-basic/main.go", SHA256: "6bd838c49fc38d6b50be1b2c26e1845348de6a5bce3a4a7e637497b78ad61818", Treatment: "Basic categorical scatter with a missing observation"},
-		{Path: "examples/1-Painter/scatter_chart-2-symbols/main.go", SHA256: "2667f6f260c63d56dcc22cb036b6b0408ea9da0f943757909d1436be7b9ad515", Treatment: "Per-series circle, diamond, square, and dot symbols"},
-		{Path: "examples/1-Painter/scatter_chart-3-dense_data/main.go", SHA256: "0a50b43ccad6a96b3248d3e45e83add46e33b8b6ff98133e1f2597bdd46f49bb", Treatment: "Dense multi-value random walks with trends and maximum references"},
-		{Path: "examples/1-Painter/scatter_chart-4-top_n_labels/main.go", SHA256: "cf92798819fbc010f44eaa406acabd337f16b52eec00793a10679e9c3b7cda81", Treatment: "Top-five value labels"},
-		{Path: "examples/2-OptionFunc/scatter_chart-1-basic/main.go", SHA256: "a4528b8943edac99ab99f1632d328a34c64013e7551e3c13f61d1aa45844afd1", Treatment: "Basic data with circle symbols and integer formatting"},
-	}
-}
-
 var staticScatterWeekLabels = []string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}
 
 func staticScatterBasicSeries() []scatter.Series {

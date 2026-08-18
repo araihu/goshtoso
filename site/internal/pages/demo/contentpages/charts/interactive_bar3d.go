@@ -1,18 +1,8 @@
 package charts
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"encoding/json"
-
 	"github.com/araihu/goshtoso-charts/components/chartcontrol"
 	"github.com/araihu/goshtoso-charts/components/interactive"
-)
-
-const (
-	interactiveBar3DUpstreamPath     = "examples/bar3d.go"
-	interactiveBar3DUpstreamRevision = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-	interactiveBar3DUpstreamSHA256   = "110b3b85f2528d76eb8271b64f1facd81a974e30ecc0dd77319d5a409ff64275"
 )
 
 var (
@@ -61,16 +51,6 @@ func interactiveBar3DCells() []interactive.Bar3DCell {
 		cells[index] = interactive.Bar3DCell{XIndex: source[1], YIndex: source[0], Value: float64(source[2])}
 	}
 	return cells
-}
-
-func interactiveBar3DDataHash(cells []interactive.Bar3DCell) string {
-	values := make([][3]float64, len(cells))
-	for index, cell := range cells {
-		values[index] = [3]float64{float64(cell.XIndex), float64(cell.YIndex), cell.Value}
-	}
-	encoded, _ := json.Marshal(values)
-	sum := sha256.Sum256(encoded)
-	return hex.EncodeToString(sum[:])
 }
 
 func sampleInteractiveBar3D(label string, grid interactive.Bar3DGridSize, view *interactive.Bar3DView, shading interactive.Bar3DShading) interactive.Instance {

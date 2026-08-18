@@ -8,27 +8,6 @@ import (
 	interactivecandlestick "github.com/araihu/goshtoso-charts/components/interactive/candlestick"
 )
 
-const (
-	interactiveCandlestickUpstreamPath     = "examples/kline.go"
-	interactiveCandlestickUpstreamRevision = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-	interactiveCandlestickUpstreamSHA256   = "712b738662e87ceaab96fe9a3b39cc2591184db4de519a34f628ccee067f0489"
-)
-
-type candlestickUpstreamSpan struct {
-	Name, Kind, Lines, SHA256 string
-}
-
-var interactiveCandlestickUpstreamInventory = []candlestickUpstreamSpan{
-	{Name: "klineData", Kind: "data helper", Lines: "12-15", SHA256: "844d53233a5d826fdde0d8286bc328d24c1a89066507a30d9505e124f9dc67bc"},
-	{Name: "kd", Kind: "dataset", Lines: "17-106", SHA256: "94baedf445f705b38028f2b9f91997d924be7ed7eac046a25cba1d1bb20e4143"},
-	{Name: "klineBase", Kind: "behavior", Lines: "108-137", SHA256: "83380beaca22d81cce6a0d38facb27ae206d96ccc715b48c647460ad4ac026da"},
-	{Name: "klineDataZoomInside", Kind: "behavior", Lines: "139-169", SHA256: "d8197311ea2164c43384921c37b0a60a4e7860c1c81489f2c6b16b8a3808325d"},
-	{Name: "klineDataZoomBoth", Kind: "behavior", Lines: "171-207", SHA256: "a8291af22b113f59db07c8d09b81fe4ba3e8b5f5914e0769d3fb2a3efecf5fab"},
-	{Name: "klineDataZoomYAxis", Kind: "behavior", Lines: "209-239", SHA256: "c60b43ac2b542c04cb041bba90c7cc980e484c06bb6e297dcc0663174f160db3"},
-	{Name: "klineStyle", Kind: "behavior", Lines: "241-293", SHA256: "671aa66b391c119d3b8c3e8bd5da4f064bdb0341c1e4882ab57988b2138574c9"},
-	{Name: "KlineExamples.Examples", Kind: "page aggregation", Lines: "295-313", SHA256: "d32f020d851c51f971b46e4cd9fa04cb1c76b12e392b2f18df18d28191d3255a"},
-}
-
 type candlestickSampleDatum struct {
 	Category string
 	Candle   interactivecandlestick.Candle

@@ -9,63 +9,6 @@ import (
 	interactivebar "github.com/araihu/goshtoso-charts/components/interactive/bar"
 )
 
-const (
-	interactiveBarUpstreamPath     = "examples/bar.go"
-	interactiveBarUpstreamRevision = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-	interactiveBarUpstreamSHA256   = "dcda545f978fdd055ecff5a6050b2ad9dc8cf9fe350bd7e4768952e8068fc9f9"
-
-	barCoverageExample     = "example"
-	barCoverageUnsupported = "unsupported"
-)
-
-type interactiveBarCoverageEntry struct {
-	Name      string
-	Status    string
-	Treatment string
-	Reason    string
-}
-
-func interactiveBarUpstreamCoverage() []interactiveBarCoverageEntry {
-	return []interactiveBarCoverageEntry{
-		{Name: "barBasic", Status: barCoverageExample, Treatment: "basic presentation"},
-		{Name: "barTitle", Status: barCoverageExample, Treatment: "basic presentation"},
-		{Name: "barTooltip", Status: barCoverageExample, Treatment: "basic presentation"},
-		{Name: "barSetToolbox", Status: barCoverageExample, Treatment: "shared controls, PNG export, and exact-value disclosure"},
-		{Name: "barShowLabel", Status: barCoverageExample, Treatment: "visible value labels"},
-		{Name: "barXYName", Status: barCoverageExample, Treatment: "axis names and units"},
-		{Name: "barXYFormatter", Status: barCoverageExample, Treatment: "literal axis units"},
-		{Name: "barColor", Status: barCoverageExample, Treatment: "explicit color override"},
-		{Name: "barSplitLine", Status: barCoverageExample, Treatment: "axis names and units"},
-		{Name: "barGap", Status: barCoverageExample, Treatment: "bar width and gap"},
-		{Name: "barDataZoomInside", Status: barCoverageExample, Treatment: "inside category zoom"},
-		{Name: "barDataZoomSlider", Status: barCoverageExample, Treatment: "slider category zoom"},
-		{Name: "barReverse", Status: barCoverageExample, Treatment: "horizontal orientation"},
-		{Name: "barStack", Status: barCoverageExample, Treatment: "stacked series"},
-		{Name: "barMarkPoints", Status: barCoverageExample, Treatment: "point references"},
-		{Name: "barMarkLines", Status: barCoverageExample, Treatment: "guide references"},
-		{Name: "barOverlap", Status: barCoverageUnsupported, Reason: "mixed Bar, Line, and Scatter composition requires a renderer-neutral composite chart API"},
-		{Name: "barSize", Status: barCoverageExample, Treatment: "large responsive canvas"},
-		{Name: "barWidth", Status: barCoverageExample, Treatment: "bar width and gap"},
-	}
-}
-
-type interactiveBarSource struct {
-	Path   string
-	SHA256 string
-	Scope  string
-}
-
-func interactiveBarSupplementarySources() []interactiveBarSource {
-	return []interactiveBarSource{
-		{Path: "examples/page_center_layout.go", SHA256: "106456904719dfacfb13adcc1b9e66df83cf28a5a801539bad4d1958554166c9", Scope: "page layout reference"},
-		{Path: "examples/page_flex_layout.go", SHA256: "3113b7bdf78a2365ae62502fe86ab001f3ff3034b1d77752c693e95b28a0fd68", Scope: "page layout reference"},
-		{Path: "examples/page_none_layout.go", SHA256: "ce38424de2ffeb919661e536c7f44921de098ae14643d4f2975d8e72296c32f8", Scope: "page layout reference"},
-		{Path: "examples/themes.go", SHA256: "843c478c63b9cf3ab13b1e13518ea98912332bb34caf0dae5d48343fabd121a0", Scope: "site theme and chart-token reference"},
-		{Path: "examples/renderer.go", SHA256: "c4956db261f554c6a161c0d25baa7dbd7c2c179523997d297020cd55916e6a3f", Scope: "private renderer integration; not a chart option"},
-		{Path: "examples/bar3d.go", SHA256: "110b3b85f2528d76eb8271b64f1facd81a974e30ecc0dd77319d5a409ff64275", Scope: "separate existing Bar 3D component"},
-	}
-}
-
 func interactiveBarCategories() []string {
 	return []string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}
 }

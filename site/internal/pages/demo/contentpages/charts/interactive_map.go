@@ -7,14 +7,6 @@ import (
 	"github.com/araihu/goshtoso-charts/components/interactive"
 )
 
-const (
-	interactiveMapUpstreamPath     = "examples/map.go"
-	interactiveMapUpstreamRevision = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-	interactiveMapUpstreamSHA256   = "3b59b5cb7ed392f3fa436d51fd420704ab2e82e439c95b226d35d12b913cf9da"
-	interactiveMapGeometryRevision = "IBGE-MMD-2025"
-	interactiveMapGeometrySHA256   = "1b3719c82f6e2278a3e6ea8b7fc2e195460ee6a7de1546d0a8e05e6d0174bb3d"
-)
-
 type interactiveMapVariant struct {
 	variant interactive.MapVariant
 	chart   interactive.Instance

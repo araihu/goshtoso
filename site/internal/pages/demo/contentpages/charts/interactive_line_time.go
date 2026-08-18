@@ -8,11 +8,6 @@ import (
 	interactiveline "github.com/araihu/goshtoso-charts/components/interactive/line"
 )
 
-const (
-	interactiveLineTimeUpstreamPath     = "examples/line.go (lineTime and generateLineItemsTwoAxis)"
-	interactiveLineTimeUpstreamRevision = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-)
-
 func sampleInteractiveLineTime() interactiveline.Config {
 	axis := make([]time.Time, 0, 50)
 	for offset := range 50 {

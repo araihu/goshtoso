@@ -7,67 +7,6 @@ import (
 	interactivescatter "github.com/araihu/goshtoso-charts/components/interactive/scatter"
 )
 
-const (
-	interactiveScatterUpstreamRevision     = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-	interactiveScatterUpstreamPath         = "examples/scatter.go"
-	interactiveScatterUpstreamSHA256       = "a77ddbf7580210a842a3e1d3966ab62c3f229fdb1a33df8f319ef029bd4188b5"
-	interactiveEffectScatterUpstreamPath   = "examples/effectscatter.go"
-	interactiveEffectScatterUpstreamSHA256 = "1bf49dc5fb02b248ff6794aa549836b4c8fa02ddb89be6adc0c4574327673f1a"
-)
-
-type interactiveScatterCoverageEntry struct {
-	Name      string
-	Treatment string
-}
-
-func interactiveScatterUpstreamCoverage() []interactiveScatterCoverageEntry {
-	return []interactiveScatterCoverageEntry{
-		{Name: "scatterBase", Treatment: "basic two-series categorical scatter with round-rectangle symbols"},
-		{Name: "scatterShowLabel", Treatment: "visible right-positioned point labels"},
-		{Name: "scatterSplitLine", Treatment: "named axes with visible split lines"},
-		{Name: "esBase", Treatment: "basic animated effect variant"},
-		{Name: "esEffectStyle", Treatment: "per-series period, scale, and stroke/fill ripple styles"},
-	}
-}
-
-type interactiveScatterSourceFunction struct {
-	Path   string
-	Name   string
-	SHA256 string
-	Role   string
-}
-
-// interactiveScatterSourceFunctions inventories every function and method in
-// the two authoritative files. Hashes cover exact source spans from the func
-// declaration through its closing brace at the pinned revision.
-func interactiveScatterSourceFunctions() []interactiveScatterSourceFunction {
-	return []interactiveScatterSourceFunction{
-		{Path: interactiveScatterUpstreamPath, Name: "generateScatterItems", SHA256: "2cfe0abcb152c7020f5da65f8e22e616e665263a8e31918edc636499e08d4bb6", Role: "deterministic data generator adaptation"},
-		{Path: interactiveScatterUpstreamPath, Name: "scatterBase", SHA256: "08faff249e4c7eaa65b602662f01896f4d745fda2c131526b3ac01b5354723b5", Role: "example"},
-		{Path: interactiveScatterUpstreamPath, Name: "scatterShowLabel", SHA256: "99ead467aac7ae752e29e2912a3a7f3657c62fc05e0e0685074e1f2db5bc3623", Role: "example"},
-		{Path: interactiveScatterUpstreamPath, Name: "scatterSplitLine", SHA256: "55d2f4d9d6e87a356894fcd71320c94a2ccc40abe4ba616587a759aa9f53acb7", Role: "example"},
-		{Path: interactiveScatterUpstreamPath, Name: "ScatterExamples.Examples", SHA256: "39e747d19ef16f9ac2d20191242e80bf4bcb278d3db3c8f08f3e8891ad231ac9", Role: "page composition only"},
-		{Path: interactiveEffectScatterUpstreamPath, Name: "generateEffectScatterItems", SHA256: "0f295b3eef4924158ea1b39bc0fc60ecc3b86afd61cf694943e9ebca4899a399", Role: "deterministic data generator adaptation"},
-		{Path: interactiveEffectScatterUpstreamPath, Name: "esBase", SHA256: "c2cfce12547c08c27942e5aa51df2fd6a332a9ec9e9db092bdbbe60a6ba3bf69", Role: "example"},
-		{Path: interactiveEffectScatterUpstreamPath, Name: "esEffectStyle", SHA256: "0fa720ed3f610334a6bf0cb8c4bcf8f33c79167f7f9033b2ced0996751316888", Role: "example"},
-		{Path: interactiveEffectScatterUpstreamPath, Name: "EffectscatterExamples.Examples", SHA256: "844e71f0cb14680df92458b561662a41e4cb2ed3cbb83fdbdca9d3c9c376c19d", Role: "page composition only"},
-	}
-}
-
-type interactiveScatterSource struct {
-	Path   string
-	SHA256 string
-	Scope  string
-}
-
-func interactiveScatterSupplementarySources() []interactiveScatterSource {
-	return []interactiveScatterSource{
-		{Path: "examples/page_center_layout.go", SHA256: "106456904719dfacfb13adcc1b9e66df83cf28a5a801539bad4d1958554166c9", Scope: "centered page-layout reference"},
-		{Path: "examples/page_flex_layout.go", SHA256: "3113b7bdf78a2365ae62502fe86ab001f3ff3034b1d77752c693e95b28a0fd68", Scope: "flex page-layout reference"},
-		{Path: "examples/page_none_layout.go", SHA256: "ce38424de2ffeb919661e536c7f44921de098ae14643d4f2975d8e72296c32f8", Scope: "unmanaged page-layout reference"},
-	}
-}
-
 var (
 	interactiveScatterSports  = []string{"Swimming", "Surfing", "Shooting", "Skating", "Wrestling", "Diving"}
 	interactiveScatterPlayers = []string{"Kobe", "Jordan", "Iverson", "LeBron", "Wade", "McGrady"}

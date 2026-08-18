@@ -9,43 +9,6 @@ import (
 	interactiveradar "github.com/araihu/goshtoso-charts/components/interactive/radar"
 )
 
-const (
-	interactiveRadarUpstreamRevision = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-	interactiveRadarUpstreamPath     = "examples/radar.go"
-	interactiveRadarUpstreamSHA256   = "f6b8e26399826e7f979717fbb4a30b48a8c8d10e8f496da60c430aaadc0e8ffb"
-)
-
-type interactiveRadarCoverageEntry struct {
-	Name      string
-	Treatment string
-}
-
-func interactiveRadarUpstreamCoverage() []interactiveRadarCoverageEntry {
-	return []interactiveRadarCoverageEntry{
-		{Name: "radarBase", Treatment: "daily Beijing pollutant profiles on the default polygon coordinate"},
-		{Name: "radarStyle", Treatment: "circular coordinate, five splits, subtle split lines, and translucent lines and areas"},
-		{Name: "radarLegendMulti", Treatment: "three-city profiles with independent multiple legend selection"},
-		{Name: "radarLegendSingle", Treatment: "three-city profiles with exclusive single legend selection and stronger areas"},
-	}
-}
-
-type interactiveRadarSourceFunction struct {
-	Name   string
-	SHA256 string
-	Role   string
-}
-
-func interactiveRadarSourceFunctions() []interactiveRadarSourceFunction {
-	return []interactiveRadarSourceFunction{
-		{Name: "generateRadarItems", SHA256: "f906e8292d6830bb7983f954d67de496fd21b78dc709dbc86633f1f38d6435ae", Role: "data adaptation"},
-		{Name: "radarBase", SHA256: "e897284229b2e8a01ac1a57a65a4e779c9375083bb6fad2899ab785ce7e808d7", Role: "example"},
-		{Name: "radarStyle", SHA256: "45738725345bf456020df60ea819afbb8931d079cfba95153dd9cfb77b529eaa", Role: "example"},
-		{Name: "radarLegendMulti", SHA256: "692e14a0b753d77b4ea4bf47aa95192d69d42ebc82319e2e47378406b507cb59", Role: "example"},
-		{Name: "radarLegendSingle", SHA256: "503fc8e155fc5a43597ed9fa8a015be1f743ffb865e94fb705f4eb9b2d48a528", Role: "example"},
-		{Name: "RadarExamples.Examples", SHA256: "e5c8ddab877b5227eec0975bcdf4b36531b5212b20d058e4d785d6f99b5e91d8", Role: "page composition only"},
-	}
-}
-
 var interactiveRadarIndicators = []interactiveradar.Indicator{
 	{Name: "AQI", Max: 300}, {Name: "PM2.5", Max: 250}, {Name: "PM10", Max: 300},
 	{Name: "CO", Max: 5}, {Name: "NO2", Max: 200}, {Name: "SO2", Max: 100},

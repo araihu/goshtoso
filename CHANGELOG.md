@@ -2,6 +2,13 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.3] - 2026-08-18
+
+### Release integrity
+
+- Removed unused chart migration metadata and stale route code so the standalone site passes the release lint gate.
+- Preserved rendered chart examples while keeping provenance documentation in the published attribution text.
+
 ## [v0.2.2] - 2026-08-18
 
 ### Release integrity

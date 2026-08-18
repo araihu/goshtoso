@@ -1,9 +1,6 @@
 package charts
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"math/rand"
 
@@ -11,12 +8,7 @@ import (
 	"github.com/araihu/goshtoso-charts/components/interactive"
 )
 
-const (
-	interactiveScatter3DUpstreamPath     = "examples/scatter3d.go"
-	interactiveScatter3DUpstreamRevision = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-	interactiveScatter3DUpstreamSHA256   = "cf654926b96edca762bd3d1280d0ce6ef7a7affc8a63dcaf2f5207b09b216d8c"
-	interactiveScatter3DSeed             = int64(20260728)
-)
+const interactiveScatter3DSeed = int64(20260728)
 
 var interactiveScatter3DBasicPoints = deterministicScatter3DPoints()
 
@@ -32,16 +24,6 @@ func deterministicScatter3DPoints() []interactive.Point3D {
 		}
 	}
 	return points
-}
-
-func interactiveScatter3DPointHash(points []interactive.Point3D) string {
-	values := make([][]float64, len(points))
-	for index, point := range points {
-		values[index] = []float64{point.X, point.Y, point.Z}
-	}
-	encoded, _ := json.Marshal(values)
-	sum := sha256.Sum256(encoded)
-	return hex.EncodeToString(sum[:])
 }
 
 func sampleInteractiveScatter3DBasic() interactive.Instance {

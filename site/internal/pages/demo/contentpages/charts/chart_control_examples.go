@@ -53,10 +53,6 @@ func ParseChartControlExamples(values url.Values) ChartControlExamples {
 	}
 }
 
-func defaultChartControlExamples() ChartControlExamples {
-	return ParseChartControlExamples(nil)
-}
-
 // ChartControlExampleForTarget returns one swap-safe example fragment for a
 // recognized HTMX target. Full guide and navigation requests return false.
 func ChartControlExampleForTarget(examples ChartControlExamples, target string) (templ.Component, bool) {

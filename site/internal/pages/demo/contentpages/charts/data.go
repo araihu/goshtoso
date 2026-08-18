@@ -21,21 +21,6 @@ import (
 	"github.com/araihu/goshtoso/components/codeblock"
 )
 
-const (
-	horizontalBarUpstreamPath     = "examples/1-Painter/horizontal_bar_chart-1-basic/main.go"
-	horizontalBarUpstreamRevision = "1fe31b06b8a82e00df877ff4417a75858547c1c2"
-	horizontalBarUpstreamSHA256   = "735240dd8433bd2494ae019f272840a8ff2fcf5572166b78269e23cbff7111a0"
-	barReferencesUpstreamPath     = "examples/1-Painter/bar_chart-4-mark/main.go"
-	barReferencesUpstreamRevision = "1fe31b06b8a82e00df877ff4417a75858547c1c2"
-	barReferencesUpstreamSHA256   = "544fea22c29db4225c7b10bb6d12137d484a4ca9b6c647dc29730a61ce4ced4c"
-	dualAxisLineUpstreamPath      = "examples/1-Painter/line_chart-8-dual_y_axis/main.go"
-	dualAxisLineUpstreamRevision  = "1fe31b06b8a82e00df877ff4417a75858547c1c2"
-	dualAxisLineUpstreamSHA256    = "78a3edd9aa356dc798c367b40cc5abecdb765b634795c38767f34bf266b805af"
-	areaLineUpstreamPath          = "examples/1-Painter/line_chart-5-area/main.go"
-	areaLineUpstreamRevision      = "1fe31b06b8a82e00df877ff4417a75858547c1c2"
-	areaLineUpstreamSHA256        = "b2d7b87ff675f437dbc95f2d7a0447c2040e18c5b873256a5808987dfc6131d0"
-)
-
 type deterministicLCG struct{ state uint64 }
 
 func (generator *deterministicLCG) next() float64 {
@@ -241,31 +226,6 @@ func sampleCandlestickOptionFuncBasic() candlestick.Config {
 	cfg.Export = &chartcontrol.ExportOptions{Filename: "basic-candlestick-eight-days"}
 	return cfg
 }
-
-const (
-	staticCandlestickUpstreamRevision          = "1fe31b06b8a82e00df877ff4417a75858547c1c2"
-	staticCandlestickBasicUpstreamPath         = "examples/1-Painter/candlestick_chart-1-basic/main.go"
-	staticCandlestickBasicUpstreamSHA256       = "44c216955ae850b824a0e3f3ee2bbaf67a23ca185d8faea77335d048cd19c26b"
-	staticCandlestickMultipleUpstreamPath      = "examples/1-Painter/candlestick_chart-2-multiple_series/main.go"
-	staticCandlestickMultipleUpstreamSHA256    = "f132f40ac3e920a891782c5ab6f80e681f8e7ee87a0a05405bad75ee161e964f"
-	staticCandlestickOptionFuncUpstreamPath    = "examples/2-OptionFunc/candlestick_chart-1-basic/main.go"
-	staticCandlestickOptionFuncUpstreamSHA256  = "aad7ab0297061baac358b63b19b15e6dca48734d2be607d11679bd284263423c"
-	staticCandlestickBollingerUpstreamPath     = "examples/1-Painter/candlestick_chart-3-bollinger_bands/main.go"
-	staticCandlestickBollingerUpstreamRevision = staticCandlestickUpstreamRevision
-	staticCandlestickBollingerUpstreamSHA256   = "cc3b347d5faea1a15ca22554dcc46a35beed74e49da56701659a1a7d1f000202"
-)
-
-const (
-	staticCandlestickPatternsUpstreamPath     = "examples/1-Painter/candlestick_chart-4-patterns/main.go"
-	staticCandlestickPatternsUpstreamRevision = staticCandlestickUpstreamRevision
-	staticCandlestickPatternsUpstreamSHA256   = "ab5891e744bc8ec40fbead6b16af5642ea94c738369469b392ac7acf1e0055ec"
-)
-
-const (
-	staticCandlestickAggregationUpstreamPath     = "examples/1-Painter/candlestick_chart-5-aggregation/main.go"
-	staticCandlestickAggregationUpstreamRevision = staticCandlestickUpstreamRevision
-	staticCandlestickAggregationUpstreamSHA256   = "ba7d1d31fef54f792e53840d969c4a3d791309a6059b2c5997dd2e509e1cbde1"
-)
 
 func sampleCandlestickMultipleSeries() candlestick.Config {
 	seriesData := func(base float64) []candlestick.Datum {

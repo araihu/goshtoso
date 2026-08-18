@@ -6,26 +6,6 @@ import (
 	"github.com/araihu/goshtoso-charts/components/pie"
 )
 
-const staticPieUpstreamRevision = "1fe31b06b8a82e00df877ff4417a75858547c1c2"
-
-type staticPieCoverageEntry struct {
-	Path      string
-	SHA256    string
-	Treatment string
-}
-
-func staticPieUpstreamCoverage() []staticPieCoverageEntry {
-	return []staticPieCoverageEntry{
-		{Path: "examples/1-Painter/doughnut_chart-1-basic/main.go", SHA256: "b97bca2322e90e2f03ab49aa77f683d0c58e027846b939e5a61100602dad1ebf", Treatment: "Basic doughnut presentation"},
-		{Path: "examples/1-Painter/doughnut_chart-2-styles/main.go", SHA256: "5816db5dd035c8607b2929779353c32d2bca78ed5f6244b3fc04e65292ac3610", Treatment: "Outside labels, inside labels, and center total"},
-		{Path: "examples/1-Painter/pie_chart-1-basic/main.go", SHA256: "06183e92e75445d89917af5dfd318c8b45f624c4efa6565b626a6aff6b3b128f", Treatment: "Basic pie presentation"},
-		{Path: "examples/1-Painter/pie_chart-2-series_radius/main.go", SHA256: "54d85c6420a5e8f4fca7691c4969be80cc6bc52f8d4f10cbe5e499715875cbf6", Treatment: "Area-scaled slice radii"},
-		{Path: "examples/1-Painter/pie_chart-3-gap/main.go", SHA256: "2392d1fd1a7644158626a261344e79b18bef2c3d802fa1cea8c3add413b980f6", Treatment: "Segment gap and hidden legend"},
-		{Path: "examples/2-OptionFunc/doughnut_chart-1-basic/main.go", SHA256: "1936ff4508d6ef3967185e4076804bf53dc0bf8c64a254a569081fb1d399b453", Treatment: "Duplicate basic doughnut through option functions"},
-		{Path: "examples/2-OptionFunc/pie_chart-1-basic/main.go", SHA256: "d09222d5febf104f07a81e05a4235d96004b61e5c032dd3513a501a840bbe9b7", Treatment: "Duplicate basic pie through option functions"},
-	}
-}
-
 func upstreamBasicPieSlices() []pie.Slice {
 	return []pie.Slice{
 		{Name: "Search Engine", Value: 1048},

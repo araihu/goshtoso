@@ -14,7 +14,6 @@ import (
 	interactivegauge "github.com/araihu/goshtoso-charts/components/interactive/gauge"
 	interactivegraph "github.com/araihu/goshtoso-charts/components/interactive/graph"
 	interactiveheatmap "github.com/araihu/goshtoso-charts/components/interactive/heatmap"
-	interactiveline "github.com/araihu/goshtoso-charts/components/interactive/line"
 	interactiveparallel "github.com/araihu/goshtoso-charts/components/interactive/parallel"
 	interactivesankey "github.com/araihu/goshtoso-charts/components/interactive/sankey"
 	interactivesunburst "github.com/araihu/goshtoso-charts/components/interactive/sunburst"
@@ -29,15 +28,6 @@ func controlledOptions(title, filename string) chart.ChartOptions {
 		Title:    &chart.TitleOptions{Text: title},
 		Controls: chartcontrol.Options{Fullscreen: true},
 		Export:   &chartcontrol.ExportOptions{Filename: filename},
-	}
-}
-
-func sampleInteractiveLine() interactiveline.Config {
-	return interactiveline.Config{
-		Label: "Weekly latency trend", Caption: "Interactive line component.",
-		XAxis:   []string{"Mon", "Tue", "Wed", "Thu", "Fri"},
-		Series:  []interactiveline.Series{{Name: "Latency (ms)", Data: []interactiveline.Data{{Value: 42}, {Value: 47}, {Value: 45}, {Value: 51}, {Value: 44}}}},
-		Options: controlledOptions("Latency", "interactive-latency"),
 	}
 }
 

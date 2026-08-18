@@ -7,48 +7,6 @@ import (
 	interactivepie "github.com/araihu/goshtoso-charts/components/interactive/pie"
 )
 
-const (
-	interactivePieUpstreamPath     = "examples/pie.go"
-	interactivePieUpstreamRevision = "bda428480a82d6d77ebb9fa939cf8d52528453dd"
-	interactivePieUpstreamSHA256   = "a59bb6f11818d4175d033f025f00a58e6a191eff5acf30f0e0cd5f98cd493ada"
-
-	pieCoverageExample = "example"
-)
-
-type interactivePieCoverageEntry struct {
-	Name      string
-	Status    string
-	Treatment string
-}
-
-func interactivePieUpstreamCoverage() []interactivePieCoverageEntry {
-	return []interactivePieCoverageEntry{
-		{Name: "pieBase", Status: pieCoverageExample, Treatment: "basic seasonal distribution"},
-		{Name: "pieShowLabel", Status: pieCoverageExample, Treatment: "visible name and value labels"},
-		{Name: "pieRadius", Status: pieCoverageExample, Treatment: "donut radii"},
-		{Name: "pieRadiusWithPadAngle", Status: pieCoverageExample, Treatment: "sector padding, offset center, vertical legend, hidden labels, and share tooltip"},
-		{Name: "pieRoseArea", Status: pieCoverageExample, Treatment: "area rose"},
-		{Name: "pieRoseRadius", Status: pieCoverageExample, Treatment: "radius rose"},
-		{Name: "pieRoseAreaRadius", Status: pieCoverageExample, Treatment: "side-by-side area and radius roses"},
-		{Name: "pieInPie", Status: pieCoverageExample, Treatment: "nested non-overlapping roses"},
-		{Name: "pieWithDispatchAction", Status: pieCoverageExample, Treatment: "typed rotating emphasis and item tooltip"},
-	}
-}
-
-type interactivePieSource struct {
-	Path   string
-	SHA256 string
-	Scope  string
-}
-
-func interactivePieSupplementarySources() []interactivePieSource {
-	return []interactivePieSource{
-		{Path: "examples/page_center_layout.go", SHA256: "106456904719dfacfb13adcc1b9e66df83cf28a5a801539bad4d1958554166c9", Scope: "centered page-layout reference"},
-		{Path: "examples/page_flex_layout.go", SHA256: "3113b7bdf78a2365ae62502fe86ab001f3ff3034b1d77752c693e95b28a0fd68", Scope: "flex page-layout reference"},
-		{Path: "examples/page_none_layout.go", SHA256: "ce38424de2ffeb919661e536c7f44921de098ae14643d4f2975d8e72296c32f8", Scope: "unmanaged page-layout reference"},
-	}
-}
-
 var interactivePieSeasons = []string{"Spring", "Summer", "Autumn", "Winter"}
 
 // interactivePieData replaces upstream ambient randomness with fixed values

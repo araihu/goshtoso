@@ -223,9 +223,6 @@ func sampleGradientLabelLine() line.Config {
 	}
 }
 
-//go:fix inline
-func boolRef(value bool) *bool { return new(value) }
-
 func basicLineCode() string {
 	return `@line.Line(line.Config{
   Label: "Basic line chart with one missing Email observation",

@@ -348,10 +348,6 @@ func (s *Server) handleThemePage(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "docs/theme")
 }
 
-func (s *Server) handleChartsModulePage(w http.ResponseWriter, r *http.Request) {
-	s.renderDemo(w, r, "modules/charts")
-}
-
 func (s *Server) handleAppShellsModulePage(w http.ResponseWriter, r *http.Request) {
 	s.renderDemo(w, r, "modules/app-shells")
 }
