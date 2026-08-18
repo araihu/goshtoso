@@ -155,6 +155,7 @@ func navbarCurrentSourcePage(t *testing.T, view string, scrollable bool) string 
 <body class="min-h-[1200px] bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
 <main class="mx-auto w-full max-w-[1280px] overflow-x-hidden">
 <button id="outside-focus" type="button" class="m-2 min-h-11 min-w-11 px-3 py-2" hx-get="/api/navbar/unrelated" hx-target="#unrelated-content" hx-swap="innerHTML" hx-push-url="/other">Outside focus</button>
+<button id="navbar-popover-dismiss-outside" type="button" class="m-2 min-h-11 min-w-11 px-3 py-2">Dismiss popover</button>
 <div id="navbar-visual-spacer" aria-hidden="true" style="height:256px;pointer-events:none"></div>
 <div id="navbar-secondary-host">%s</div>
 <div id="unrelated-content" class="p-4">Initial unrelated content</div>
@@ -498,22 +499,40 @@ func assertNavbarKeyboardInteractions(t *testing.T, fixture *navbarCurrentSource
 	trigger := page.Locator("#navbar-secondary-row [data-navbar-actions='true'] button").First()
 	panel := page.Locator("#navbar-secondary-row [role='menu']").First()
 	firstItem := panel.Locator("[role='menuitem']").First()
+	dismissOutside := page.Locator("#navbar-popover-dismiss-outside")
+
+	// Each keyboard activation starts from a closed popover so the test proves
+	// the trigger's own key bindings rather than retaining state from another
+	// activation path.
 	require.NoError(t, trigger.Focus())
-	require.NoError(t, page.Keyboard().Press("Space"))
-	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
 	require.NoError(t, page.Keyboard().Press("ArrowDown"))
-	require.NoError(t, firstItem.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
-	require.True(t, mustEvaluateBool(t, firstItem, "element => element === document.activeElement"), "ArrowDown should focus the first menu item")
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+	require.True(t, mustEvaluateBool(t, firstItem, "element => element === document.activeElement"), "ArrowDown should open and focus the first menu item")
 	require.NoError(t, page.Keyboard().Press("Escape"))
 	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
 	require.True(t, mustEvaluateBool(t, trigger, "element => element === document.activeElement"), "Escape should restore trigger focus")
 
 	require.NoError(t, trigger.Focus())
+	require.NoError(t, page.Keyboard().Press("Space"))
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+	require.True(t, mustEvaluateBool(t, firstItem, "element => element === document.activeElement"), "Space should focus the first menu item")
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	require.True(t, mustEvaluateBool(t, trigger, "element => element === document.activeElement"), "Space/Escape should restore trigger focus")
+
+	require.NoError(t, trigger.Focus())
 	require.NoError(t, page.Keyboard().Press("Enter"))
 	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+	require.True(t, mustEvaluateBool(t, firstItem, "element => element === document.activeElement"), "Enter should focus the first menu item")
 	require.NoError(t, page.Keyboard().Press("Escape"))
 	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
 	require.True(t, mustEvaluateBool(t, trigger, "element => element === document.activeElement"), "Enter/Escape should restore trigger focus")
+
+	require.NoError(t, trigger.Click())
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+	require.NoError(t, dismissOutside.Click())
+	require.NoError(t, panel.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	require.True(t, mustEvaluateBool(t, dismissOutside, "element => element === document.activeElement"), "click outside should dismiss the popover and retain outside focus")
 }
 
 func assertNavbarVisualGeometry(t *testing.T, page playwright.Page, scrollable, scale2 bool) {
