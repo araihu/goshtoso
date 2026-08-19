@@ -1,0 +1,36 @@
+name: Reviewdog smoke
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  annotate:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Prepare synthetic Dagger-compatible reports
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .reviewdog
+          printf '%s\n' '{"schema":1,"reports":[{"name":"reviewdog-smoke","path":"diagnostics.rdjsonl","format":"rdjsonl","level":"info","filter_mode":"nofilter"}]}' > .reviewdog/manifest.json
+          printf '%s\n' '{"message":"Arai Hû Reviewdog smoke annotation","location":{"path":"README.md","range":{"start":{"line":1,"column":1}}},"severity":"INFO","code":{"value":"reviewdog-smoke"}}' > .reviewdog/diagnostics.rdjsonl
+          printf '0\n' > .reviewdog/status
+
+      - name: Publish smoke annotation
+        uses: araihu/dagger/actions/reviewdog@2513b9f8f9afc7e5166fc695f5d2a8be4f955d5f
+        with:
+          manifest: .reviewdog/manifest.json
+          token: ${{ github.token }}
+
+      - name: Preserve producer gate
+        run: test "$(cat .reviewdog/status)" = 0
