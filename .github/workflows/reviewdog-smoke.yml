@@ -27,7 +27,7 @@ jobs:
           printf '0\n' > .reviewdog/status
 
       - name: Publish smoke annotation
-        uses: araihu/dagger/actions/reviewdog@e17a36dea4d92ec9f1e8498d4281f5ab7de6e535
+        uses: araihu/dagger/actions/reviewdog@2513b9f8f9afc7e5166fc695f5d2a8be4f955d5f
         with:
           manifest: .reviewdog/manifest.json
           token: ${{ github.token }}
