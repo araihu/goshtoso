@@ -19,6 +19,8 @@ All notable changes to Goshtoso are documented in this file.
   verified coverage handoff reaches the publishing job.
 - Installed Playwright's system dependencies in every Dagger browser container
   so a warm browser cache cannot omit required shared libraries.
+- Raised the shared E2E action and navigation budgets to tolerate observed
+  self-hosted runner latency without retrying assertions.
 
 ### Upgrade note
 

@@ -28,15 +28,15 @@ func newIsolatedPage(t *testing.T) playwright.Page {
 
 	page, err := ctx.NewPage()
 	require.NoError(t, err)
-	page.SetDefaultTimeout(3000)
-	page.SetDefaultNavigationTimeout(5000)
+	page.SetDefaultTimeout(defaultActionTimeoutMilliseconds)
+	page.SetDefaultNavigationTimeout(defaultNavigationTimeoutMilliseconds)
 	t.Cleanup(func() { _ = page.Close() })
 	return page
 }
 
 func waitForAlpine(page playwright.Page) error {
 	_, err := page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil, playwright.PageWaitForFunctionOptions{
-		Timeout: playwright.Float(3000),
+		Timeout: playwright.Float(defaultActionTimeoutMilliseconds),
 	})
 	return err
 }
