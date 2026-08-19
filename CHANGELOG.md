@@ -2,6 +2,28 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.6] - 2026-08-19
+
+### Consumer-agent guidance
+
+- Reconciled the `using-goshtoso` ecosystem baseline with Goshtoso `v0.2.5`,
+  Goshtoso Charts `v0.0.2`, Goshtoso App Shells `v0.1.6`, and Margo `v0.0.6`.
+- Added selection guidance for Dropdown, Popover, Split Button, Action Group,
+  and Navbar secondary navigation.
+- Documented the current focused Charts APIs and Margo's layout-neutral `ssg`
+  package.
+
+### Release integrity
+
+- Preserved hidden `.coverage/` files when uploading release artifacts so the
+  verified coverage handoff reaches the publishing job.
+
+### Upgrade note
+
+- No Go API or runtime changes are required. Consumer agents should reinstall
+  the released `using-goshtoso` skill to receive the updated guidance and API
+  reference.
+
 ## [v0.2.5] - 2026-08-18
 
 ### Site navigation and module showcases

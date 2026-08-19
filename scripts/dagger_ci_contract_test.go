@@ -67,6 +67,36 @@ func TestDaggerWorkflowSecurityAndArtifactContracts(t *testing.T) {
 	}
 }
 
+func TestReleaseCoverageHandoffIncludesHiddenFiles(t *testing.T) {
+	t.Parallel()
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, ".github/workflows/release.yml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	release := string(data)
+	if count := strings.Count(release, "include-hidden-files: true"); count != 2 {
+		t.Fatalf("release hidden-artifact inclusions = %d, want 2", count)
+	}
+	for _, artifact := range []string{"release-e2e-results", "release-coverage"} {
+		name := strings.Index(release, "name: "+artifact)
+		if name < 0 {
+			t.Fatalf("release workflow missing artifact %q", artifact)
+		}
+		block := release[name:]
+		nextStep := strings.Index(block, "\n      - name:")
+		if nextStep >= 0 {
+			block = block[:nextStep]
+		}
+		if !strings.Contains(block, "include-hidden-files: true") {
+			t.Fatalf("release artifact %q excludes hidden files", artifact)
+		}
+	}
+}
+
 func TestAssetsHandoffSurvivesCheckoutAndPrecedesWriteToken(t *testing.T) {
 	t.Parallel()
 	root, err := filepath.Abs("..")

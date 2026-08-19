@@ -56,6 +56,57 @@ func TestAgentSkillDiscoveryPassIsStreamingSafe(t *testing.T) {
 	}
 }
 
+func TestAgentSkillChoosesCurrentNavigationAndActionPrimitives(t *testing.T) {
+	skill := readDoc(t, "../.agents/skills/using-goshtoso/SKILL.md")
+	for _, want := range []string{
+		"Use `dropdown` for a menu",
+		"Use `popover` for arbitrary consumer-owned content",
+		"Use `splitbutton` for one always-visible dominant action",
+		"Use `actiongroup` for one required primary action",
+		"`navbar.Config.Secondary`",
+		"`navbar.SecondaryRow`",
+		"keep responsive substitution consumer-owned",
+	} {
+		if !strings.Contains(skill, want) {
+			t.Errorf("agent skill missing component-selection guidance %q", want)
+		}
+	}
+}
+
+func TestEcosystemDiscoveryRecordsCurrentPublicBaseline(t *testing.T) {
+	discovery := readDoc(t, "../.agents/skills/using-goshtoso/references/ecosystem-discovery.md")
+	for _, want := range []string{
+		"Goshtoso `v0.2.5`",
+		"Goshtoso App Shells `v0.1.6`",
+		"Margo `v0.0.6`",
+		"Goshtoso Charts `v0.0.2`",
+		"`components/interactive/<type>`",
+		"`margo/ssg`",
+	} {
+		if !strings.Contains(discovery, want) {
+			t.Errorf("ecosystem discovery missing current public baseline %q", want)
+		}
+	}
+
+	for _, stale := range []string{
+		"Goshtoso `v0.1.13`",
+		"Goshtoso App Shells `v0.1.4`",
+		"Margo `v0.0.5`",
+		"Goshtoso Charts `v0.0.1`",
+	} {
+		if strings.Contains(discovery, stale) {
+			t.Errorf("ecosystem discovery retains stale baseline %q", stale)
+		}
+	}
+}
+
+func TestAgentSkillInstallExampleTargetsCurrentRelease(t *testing.T) {
+	skill := readDoc(t, "../.agents/skills/using-goshtoso/SKILL.md")
+	if !strings.Contains(skill, "go get github.com/araihu/goshtoso@v0.2.6") {
+		t.Error("agent skill install example must target v0.2.6")
+	}
+}
+
 func TestAgentSkillDistributionCLI(t *testing.T) {
 	npx, err := exec.LookPath("npx")
 	if err != nil {
