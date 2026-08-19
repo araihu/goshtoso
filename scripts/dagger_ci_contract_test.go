@@ -364,8 +364,8 @@ func TestDaggerCachesMatchingPlaywrightDriverAndBrowsers(t *testing.T) {
 	}
 	module := string(data)
 	for _, expected := range []string{
-		`const PLAYWRIGHT_VERSION = "v0.6100.0"`,
-		`const PLAYWRIGHT_DRIVER_VERSION = "1.61.1"`,
+		`const PLAYWRIGHT_VERSION = "v0.6201.0"`,
+		`const PLAYWRIGHT_DRIVER_VERSION = "1.62.1"`,
 		`.withEnvVariable("PLAYWRIGHT_DRIVER_PATH", "/playwright/driver")`,
 		`ready=/playwright/.chromium-${PLAYWRIGHT_DRIVER_VERSION}-ready`,
 		`! test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"`,
@@ -386,7 +386,7 @@ func TestPlaywrightWarmMarkerWithoutDriverReinstalls(t *testing.T) {
 	root := t.TempDir()
 	bin := filepath.Join(root, "bin")
 	driver := filepath.Join(root, "playwright", "driver")
-	ready := filepath.Join(root, "playwright", ".chromium-1.61.1-ready")
+	ready := filepath.Join(root, "playwright", ".chromium-1.62.1-ready")
 	installLog := filepath.Join(root, "install.log")
 	if err := os.MkdirAll(bin, 0o755); err != nil {
 		t.Fatal(err)

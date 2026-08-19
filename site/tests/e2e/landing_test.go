@@ -276,11 +276,12 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		parentTheme, err := page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
 		require.NoError(t, err)
 
-		require.NoError(t, playground.Locator("#home-theme-picker label:has(input[data-theme-key='dracula'])").Click())
+		dracula := playground.Locator("#home-theme-picker input[data-theme-key='dracula']")
+		require.NoError(t, dracula.Press("Space"))
 		got, err := playground.Locator("html").GetAttribute("data-theme")
 		require.NoError(t, err)
-		require.Equal(t, "dracula", got, "clicking a segment should set data-theme on <html>")
-		checked, err := playground.Locator("#home-theme-picker input[data-theme-key='dracula']").IsChecked()
+		require.Equal(t, "dracula", got, "activating a segment should set data-theme on <html>")
+		checked, err := dracula.IsChecked()
 		require.NoError(t, err)
 		require.True(t, checked, "selected theme segment should be checked")
 
