@@ -326,7 +326,7 @@ echo "published $TAG and badge documents"`
       project = project.withMountedCache("/playwright", dag.cacheVolume(`goshtoso-${cacheNamespace}-playwright-${PLAYWRIGHT_VERSION}`), { sharing: CacheSharingMode.Locked })
     }
     return project
-      .withExec(["bash", "-euo", "pipefail", "-c", `test -x /tools/bin/playwright || go install github.com/mxschmitt/playwright-go/cmd/playwright@${PLAYWRIGHT_VERSION}; ready=/playwright/.chromium-${PLAYWRIGHT_DRIVER_VERSION}-ready; if ! test -f "$ready" || ! test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js" || ! test -x "$PLAYWRIGHT_DRIVER_PATH/node"; then rm -rf -- "$PLAYWRIGHT_DRIVER_PATH"; rm -f -- "$ready"; playwright install --with-deps chromium; test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"; test -x "$PLAYWRIGHT_DRIVER_PATH/node"; marker_tmp="$ready.tmp.$$"; : > "$marker_tmp"; mv -f -- "$marker_tmp" "$ready"; fi`])
+      .withExec(["bash", "-euo", "pipefail", "-c", `test -x /tools/bin/playwright || go install github.com/mxschmitt/playwright-go/cmd/playwright@${PLAYWRIGHT_VERSION}; playwright install-deps chromium; ready=/playwright/.chromium-${PLAYWRIGHT_DRIVER_VERSION}-ready; if ! test -f "$ready" || ! test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js" || ! test -x "$PLAYWRIGHT_DRIVER_PATH/node"; then rm -rf -- "$PLAYWRIGHT_DRIVER_PATH"; rm -f -- "$ready"; playwright install chromium; test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"; test -x "$PLAYWRIGHT_DRIVER_PATH/node"; marker_tmp="$ready.tmp.$$"; : > "$marker_tmp"; mv -f -- "$marker_tmp" "$ready"; fi`])
   }
 
   private partition(value: string): string {

@@ -17,6 +17,8 @@ All notable changes to Goshtoso are documented in this file.
 
 - Preserved hidden `.coverage/` files when uploading release artifacts so the
   verified coverage handoff reaches the publishing job.
+- Installed Playwright's system dependencies in every Dagger browser container
+  so a warm browser cache cannot omit required shared libraries.
 
 ### Upgrade note
 
