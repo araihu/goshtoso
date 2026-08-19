@@ -370,9 +370,19 @@ func (failures *pageFailures) RequireEmpty(t *testing.T) {
 func clickUntil(t *testing.T, page playwright.Page, loc playwright.Locator, jsCondition string) {
 	t.Helper()
 	for attempt := 1; attempt <= 5; attempt++ {
-		require.NoError(t, loc.Click())
+		if err := loc.Click(); err != nil {
+			current, currentErr := loc.GetAttribute("aria-current")
+			if currentErr == nil && current == "page" {
+				if _, waitErr := page.WaitForFunction(jsCondition, nil, playwright.PageWaitForFunctionOptions{
+					Timeout: playwright.Float(defaultActionTimeoutMilliseconds),
+				}); waitErr == nil {
+					return
+				}
+			}
+			require.NoError(t, err)
+		}
 		if _, err := page.WaitForFunction(jsCondition, nil, playwright.PageWaitForFunctionOptions{
-			Timeout: playwright.Float(2000),
+			Timeout: playwright.Float(defaultActionTimeoutMilliseconds),
 		}); err == nil {
 			return
 		}
