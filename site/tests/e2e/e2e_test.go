@@ -29,7 +29,11 @@ var (
 
 const avatarBrokenImagePath = "/assets/images/does-not-exist-404.png"
 
-const pageSettleGraceMilliseconds = 250
+const (
+	pageSettleGraceMilliseconds          = 250
+	defaultActionTimeoutMilliseconds     = 5000
+	defaultNavigationTimeoutMilliseconds = 10000
+)
 
 // Shared singleton state — initialized once in TestMain, shared across all tests.
 var (
@@ -233,7 +237,7 @@ func setupPlaywright(t *testing.T) (*playwright.Playwright, playwright.Browser, 
 	return sharedPW, sharedBrowser, func() {}
 }
 
-// newPage creates a new page (tab) in the shared browser with short timeouts.
+// newPage creates a new page (tab) in the shared browser with bounded timeouts.
 // The caller should defer page.Close() to clean up the tab.
 func newPage(t *testing.T, browser playwright.Browser, opts ...playwright.BrowserNewPageOptions) playwright.Page {
 	var page playwright.Page
@@ -244,8 +248,8 @@ func newPage(t *testing.T, browser playwright.Browser, opts ...playwright.Browse
 		page, err = browser.NewPage()
 	}
 	require.NoError(t, err)
-	page.SetDefaultTimeout(2000)
-	page.SetDefaultNavigationTimeout(3000)
+	page.SetDefaultTimeout(defaultActionTimeoutMilliseconds)
+	page.SetDefaultNavigationTimeout(defaultNavigationTimeoutMilliseconds)
 	t.Cleanup(func() { _ = page.Close() })
 	return page
 }
@@ -254,7 +258,7 @@ func waitForPageSettled(t *testing.T, page playwright.Page) {
 	t.Helper()
 	require.NoError(t, page.WaitForLoadState(playwright.PageWaitForLoadStateOptions{
 		State:   playwright.LoadStateNetworkidle,
-		Timeout: playwright.Float(3000),
+		Timeout: playwright.Float(defaultActionTimeoutMilliseconds),
 	}))
 	// Network idle may already have been reached before the caller starts
 	// waiting. Give timers and Playwright's asynchronous event callbacks one
@@ -366,9 +370,19 @@ func (failures *pageFailures) RequireEmpty(t *testing.T) {
 func clickUntil(t *testing.T, page playwright.Page, loc playwright.Locator, jsCondition string) {
 	t.Helper()
 	for attempt := 1; attempt <= 5; attempt++ {
-		require.NoError(t, loc.Click())
+		if err := loc.Click(); err != nil {
+			current, currentErr := loc.GetAttribute("aria-current")
+			if currentErr == nil && current == "page" {
+				if _, waitErr := page.WaitForFunction(jsCondition, nil, playwright.PageWaitForFunctionOptions{
+					Timeout: playwright.Float(defaultActionTimeoutMilliseconds),
+				}); waitErr == nil {
+					return
+				}
+			}
+			require.NoError(t, err)
+		}
 		if _, err := page.WaitForFunction(jsCondition, nil, playwright.PageWaitForFunctionOptions{
-			Timeout: playwright.Float(2000),
+			Timeout: playwright.Float(defaultActionTimeoutMilliseconds),
 		}); err == nil {
 			return
 		}

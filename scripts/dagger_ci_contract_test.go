@@ -67,6 +67,36 @@ func TestDaggerWorkflowSecurityAndArtifactContracts(t *testing.T) {
 	}
 }
 
+func TestReleaseCoverageHandoffIncludesHiddenFiles(t *testing.T) {
+	t.Parallel()
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, ".github/workflows/release.yml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	release := string(data)
+	if count := strings.Count(release, "include-hidden-files: true"); count != 2 {
+		t.Fatalf("release hidden-artifact inclusions = %d, want 2", count)
+	}
+	for _, artifact := range []string{"release-e2e-results", "release-coverage"} {
+		name := strings.Index(release, "name: "+artifact)
+		if name < 0 {
+			t.Fatalf("release workflow missing artifact %q", artifact)
+		}
+		block := release[name:]
+		nextStep := strings.Index(block, "\n      - name:")
+		if nextStep >= 0 {
+			block = block[:nextStep]
+		}
+		if !strings.Contains(block, "include-hidden-files: true") {
+			t.Fatalf("release artifact %q excludes hidden files", artifact)
+		}
+	}
+}
+
 func TestAssetsHandoffSurvivesCheckoutAndPrecedesWriteToken(t *testing.T) {
 	t.Parallel()
 	root, err := filepath.Abs("..")
@@ -371,7 +401,8 @@ func TestDaggerCachesMatchingPlaywrightDriverAndBrowsers(t *testing.T) {
 		`! test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"`,
 		`! test -x "$PLAYWRIGHT_DRIVER_PATH/node"`,
 		`rm -rf -- "$PLAYWRIGHT_DRIVER_PATH"; rm -f -- "$ready"`,
-		`playwright install --with-deps chromium; test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"; test -x "$PLAYWRIGHT_DRIVER_PATH/node"`,
+		`playwright install-deps chromium; ready=/playwright/.chromium-${PLAYWRIGHT_DRIVER_VERSION}-ready`,
+		`playwright install chromium; test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"; test -x "$PLAYWRIGHT_DRIVER_PATH/node"`,
 		`marker_tmp="$ready.tmp.$$"; : > "$marker_tmp"; mv -f -- "$marker_tmp" "$ready"`,
 		`goshtoso-${cacheNamespace}-playwright-${PLAYWRIGHT_VERSION}`,
 	} {
@@ -388,6 +419,7 @@ func TestPlaywrightWarmMarkerWithoutDriverReinstalls(t *testing.T) {
 	driver := filepath.Join(root, "playwright", "driver")
 	ready := filepath.Join(root, "playwright", ".chromium-1.62.1-ready")
 	installLog := filepath.Join(root, "install.log")
+	depsLog := filepath.Join(root, "deps.log")
 	if err := os.MkdirAll(bin, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -405,7 +437,11 @@ func TestPlaywrightWarmMarkerWithoutDriverReinstalls(t *testing.T) {
 	}
 	fake := `#!/bin/sh
 set -eu
-test "$*" = "install --with-deps chromium"
+if test "$*" = "install-deps chromium"; then
+  : > "$PLAYWRIGHT_DEPS_LOG"
+  exit 0
+fi
+test "$*" = "install chromium"
 test ! -e "$PLAYWRIGHT_DRIVER_PATH"
 test ! -e "$PLAYWRIGHT_READY"
 mkdir -p "$PLAYWRIGHT_DRIVER_PATH/package"
@@ -419,11 +455,12 @@ chmod +x "$PLAYWRIGHT_DRIVER_PATH/node"
 	}
 
 	script := `set -euo pipefail
+playwright install-deps chromium
 ready="$PLAYWRIGHT_READY"
 if ! test -f "$ready" || ! test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js" || ! test -x "$PLAYWRIGHT_DRIVER_PATH/node"; then
   rm -rf -- "$PLAYWRIGHT_DRIVER_PATH"
   rm -f -- "$ready"
-  playwright install --with-deps chromium
+  playwright install chromium
   test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"
   test -x "$PLAYWRIGHT_DRIVER_PATH/node"
   marker_tmp="$ready.tmp.$$"
@@ -436,11 +473,12 @@ fi`
 		"PLAYWRIGHT_DRIVER_PATH="+driver,
 		"PLAYWRIGHT_READY="+ready,
 		"PLAYWRIGHT_INSTALL_LOG="+installLog,
+		"PLAYWRIGHT_DEPS_LOG="+depsLog,
 	)
 	if output, err := cmd.CombinedOutput(); err != nil {
 		t.Fatalf("warm marker recovery failed: %v\n%s", err, output)
 	}
-	for _, path := range []string{installLog, filepath.Join(driver, "package", "cli.js"), filepath.Join(driver, "node"), ready} {
+	for _, path := range []string{depsLog, installLog, filepath.Join(driver, "package", "cli.js"), filepath.Join(driver, "node"), ready} {
 		if _, err := os.Stat(path); err != nil {
 			t.Fatalf("expected recovered Playwright artifact %s: %v", path, err)
 		}

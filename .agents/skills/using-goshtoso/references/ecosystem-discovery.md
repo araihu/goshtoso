@@ -4,10 +4,21 @@ Run this pass before implementing custom HTML, CSS, JavaScript, or a new templ
 primitive. Search the consumer's selected versions, not an unrelated checkout
 or an unreleased `main` branch.
 
+## Contents
+
+- [Verified public baseline](#verified-public-baseline)
+- [Evidence order](#evidence-order)
+- [Goshtoso components and patterns](#1-goshtoso-components-and-patterns)
+- [Goshtoso Charts](#2-goshtoso-charts)
+- [Margo](#3-margo)
+- [Goshtoso App Shells](#4-goshtoso-app-shells)
+- [Icons and Iconpack](#5-icons-and-iconpack)
+- [Fallback boundary](#fallback-boundary)
+
 ## Verified Public Baseline
 
-This reference was reconciled on 2026-08-11 against Goshtoso `v0.1.13`,
-Goshtoso App Shells `v0.1.4`, Margo `v0.0.5`, and the Goshtoso Charts `v0.0.1`
+This reference was reconciled on 2026-08-19 against Goshtoso `v0.2.5`,
+Goshtoso App Shells `v0.1.6`, Margo `v0.0.6`, and Goshtoso Charts `v0.0.2`
 module tag. These versions describe the review baseline, not a command to
 downgrade or upgrade. Recheck public versions and honor the consumer's `go.mod`
 before using an API.
@@ -66,8 +77,8 @@ Check core surfaces before creating equivalents:
 
 - structure and navigation: `appshell`, `navbar`, `sidebar`, `breadcrumbs`,
   `pageheader`, `tabs`, `steps`, and `pagination`;
-- actions and overlays: `actiongroup`, `button`, `link`, `dropdown`, `drawer`,
-  `modal`, `toast`, and `tooltip`;
+- actions and overlays: `actiongroup`, `button`, `link`, `dropdown`, `popover`,
+  `splitbutton`, `drawer`, `modal`, `toast`, and `tooltip`;
 - data and state: `table`, `toolbar`, `search`, `emptystate`, `skeleton`,
   `spinner`, `badge`, `alert`, and `panel`;
 - forms: `form`, `textinput`, `textarea`, `select`, `combobox`, `checkbox`,
@@ -89,12 +100,12 @@ render accessible server-side SVG and still need adjacent exact data when users
 must read precise values.
 
 Use the selected release's interactive API only for real browser exploration,
-large interactive surfaces, 3D, maps, graphs, or live data. Charts `v0.0.1`
-exposes constructors in `components/interactive`; later releases may expose
-chart-specific subpackages. Inspect the selected release before importing.
-Mount the Charts asset handler separately from Goshtoso. Interactive charts also
-render `components/dependencies.Dependencies()`; local vendored runtime is the
-default and CDN delivery is explicit.
+large interactive surfaces, 3D, maps, graphs, or live data. Charts `v0.0.2`
+exposes convenience constructors in `components/interactive` and focused APIs
+under `components/interactive/<type>`. Inspect the selected release before
+importing. Mount the Charts asset handler separately from Goshtoso. Interactive
+charts also render `components/dependencies.Dependencies()`; local vendored
+runtime is the default and CDN delivery is explicit.
 
 Use `chartcontrol` and `charttheme` instead of custom expand, fullscreen,
 export, or palette code. Keep renderer types out of application contracts.
@@ -107,6 +118,8 @@ link validator.
 
 - root `margo`: compile, check, render, and produce standalone HTML;
 - `margo/site`: deterministic linked multi-page sites;
+- `margo/ssg`: layout-neutral frame, shell, binding, and resource contracts for
+  extensible static sites;
 - `margo/deck`: accessible HTML presentation decks;
 - `margo/pdf` plus an explicit engine: PDF contracts and export;
 - `margo/charts`: optional static Goshtoso chart fences;

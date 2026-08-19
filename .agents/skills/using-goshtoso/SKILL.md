@@ -68,7 +68,7 @@ Use this path unless the app deliberately owns a custom Tailwind build.
 Goshtoso requires **Go 1.26.5 or newer**.
 
 ```bash
-GOSHTOSO_VERSION="${GOSHTOSO_VERSION:?set a release such as v0.1.13}"
+GOSHTOSO_VERSION="${GOSHTOSO_VERSION:?set an explicit Goshtoso release}"
 go get github.com/araihu/goshtoso@"$GOSHTOSO_VERSION"
 go get github.com/a-h/templ
 TEMPL_VERSION="$(go list -m -f '{{.Version}}' github.com/a-h/templ)"
@@ -178,6 +178,23 @@ between constructors or configuration fields. It documents the common
 component interface, concrete return values, constructor styles, stable Kind
 identity, and rendered defaults.
 
+Choose action and overlay primitives by behavior:
+
+- Use `button` or `link` for one action or destination.
+- Use `dropdown` for a menu of actions or destinations.
+- Use `popover` for arbitrary consumer-owned content anchored to one trigger;
+  do not rebuild a menu with it when `dropdown` already supplies menu semantics.
+- Use `splitbutton` for one always-visible dominant action plus a related
+  `dropdown` menu.
+- Use `actiongroup` for one required primary action plus prioritized secondary
+  actions that may move into overflow.
+
+For two-level navigation, use `navbar.Config.Secondary` when the row belongs to
+the Navbar, or `navbar.SecondaryRow` when an App Shell owns the primary frame.
+Use primitive `SecondaryConfig.Links` for ordinary navigation and `Content`
+only for a consumer-owned replacement. Give the secondary landmark a distinct
+accessible name and keep responsive substitution consumer-owned.
+
 For short install and command snippets, use the component-owned compact
 density. Keep multiline manifests and source examples at default density:
 
@@ -185,7 +202,7 @@ density. Keep multiline manifests and source examples at default density:
 @codeblock.CodeBlock(codeblock.Config{
 	Language: "bash",
 	Label: "Install",
-	Code: "go get github.com/araihu/goshtoso@v0.1.5",
+	Code: "go get github.com/araihu/goshtoso@v0.2.6",
 	Density: codeblock.DensityCompact,
 })
 
