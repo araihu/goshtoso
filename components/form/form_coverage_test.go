@@ -165,14 +165,14 @@ func TestCoverageFormFooterCancelHTMX(t *testing.T) {
 
 func TestCoverageReducedMotionTransitionContract(t *testing.T) {
 	collapsible := render(t, CollapsibleSection(CollapsibleSectionConfig{
-		SectionConfig: SectionConfig{Title: "Advanced"},
+		Title: "Advanced",
 	}))
 	mustContain(t, collapsible,
 		"transition-colors motion-reduce:transition-none",
 		"transition-transform motion-reduce:transition-none",
 	)
 
-	flip := render(t, FlipSection(FlipSectionConfig{SectionConfig: SectionConfig{Title: "Network"}}, textinput.TextInput(textinput.Config{ID: "network", Name: "network"})))
+	flip := render(t, FlipSection(FlipSectionConfig{Title: "Network"}, textinput.TextInput(textinput.Config{ID: "network", Name: "network"})))
 	mustContain(t, flip, "transition motion-reduce:transition-none")
 
 	footer := render(t, Form(Config{Footer: &FooterConfig{
@@ -216,8 +216,8 @@ func TestCoverageSectionSingleColumnOOB(t *testing.T) {
 
 func TestCoverageCollapsibleExpanded(t *testing.T) {
 	html := render(t, CollapsibleSection(CollapsibleSectionConfig{
-		SectionConfig: SectionConfig{ID: "col1", Title: "Advanced"},
-		Summary:       "Using defaults",
+		ID: "col1", Title: "Advanced",
+		Summary: "Using defaults",
 	}))
 	mustContain(t, html,
 		`id="col1"`,
@@ -232,8 +232,8 @@ func TestCoverageCollapsibleExpanded(t *testing.T) {
 
 func TestCoverageCollapsibleCollapsed(t *testing.T) {
 	html := render(t, CollapsibleSection(CollapsibleSectionConfig{
-		SectionConfig: SectionConfig{Title: "Advanced"},
-		Collapsed:     true,
+		Title:     "Advanced",
+		Collapsed: true,
 	}))
 	mustContain(t, html, `x-data="{ isExpanded: false }"`)
 	// no summary => no summary span text region for it
@@ -245,7 +245,7 @@ func TestCoverageCollapsibleCollapsed(t *testing.T) {
 func TestCoverageFlipSectionReadOnly(t *testing.T) {
 	read := textinput.TextInput(textinput.Config{ID: "ro", Name: "ro"})
 	html := render(t, FlipSection(FlipSectionConfig{
-		SectionConfig: SectionConfig{ID: "flip1", Title: "Profile"},
+		ID: "flip1", Title: "Profile",
 	}, read))
 	mustContain(t, html,
 		`id="flip1"`,
@@ -262,10 +262,10 @@ func TestCoverageFlipSectionReadOnly(t *testing.T) {
 func TestCoverageFlipSectionEditingCustomLabels(t *testing.T) {
 	read := textinput.TextInput(textinput.Config{ID: "ro", Name: "ro"})
 	html := render(t, FlipSection(FlipSectionConfig{
-		SectionConfig: SectionConfig{Title: "Profile"},
-		Flipped:       true,
-		EditLabel:     "Modify",
-		DoneLabel:     "Save",
+		Title:     "Profile",
+		Flipped:   true,
+		EditLabel: "Modify",
+		DoneLabel: "Save",
 	}, read))
 	mustContain(t, html,
 		`x-data="{ isEditing: true }"`,

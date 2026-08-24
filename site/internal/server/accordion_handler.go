@@ -12,7 +12,7 @@ func (s *Server) handleAccordionContent(w http.ResponseWriter, r *http.Request) 
 
 	// Extract the content ID from the URL path
 	path := strings.TrimPrefix(r.URL.Path, "/api/components/accordion-content/")
-	contentID := strings.Split(path, "/")[0]
+	contentID, _, _ := strings.Cut(path, "/")
 
 	// Simulate server processing delay
 	time.Sleep(500 * time.Millisecond)

@@ -338,8 +338,8 @@ func failedTransaction(repo *os.Root, staged []stagedWrite, failedIndex int, app
 
 func rollbackApplied(repo *os.Root, applied []stagedWrite) []string {
 	problems := []string{}
-	for index := len(applied) - 1; index >= 0; index-- {
-		write := applied[index]
+	for _, write := range slices.Backward(applied) {
+
 		if !write.existed {
 			if err := repo.Remove(write.path); err != nil && !errors.Is(err, fs.ErrNotExist) {
 				problems = append(problems, fmt.Sprintf("remove new %q: %v", write.path, err))
