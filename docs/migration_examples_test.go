@@ -419,7 +419,7 @@ func TestCurrentMigrationGuideSnippetsCompileExternally(t *testing.T) {
 	tempModule := t.TempDir()
 	goMod := fmt.Sprintf(`module example.com/goshtoso-migration-guide
 
-go 1.26.5
+go 1.27.0
 
 require github.com/araihu/goshtoso v0.0.0
 

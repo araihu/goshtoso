@@ -42,7 +42,7 @@ dependencies and render most HTML on the server.
 
 ## Quick Start
 
-Goshtoso requires **Go 1.26.5 or newer**.
+Goshtoso requires **Go 1.27.0 or newer**.
 
 Install the library:
 

@@ -389,7 +389,7 @@ func TestGeneratedEmbeddedCSSContainsAuditedApplicationSelectors(t *testing.T) {
 func TestRoundTwoConsumerGuidancePublishesRecoveredContracts(t *testing.T) {
 	skill := readDoc(t, "../.agents/skills/using-goshtoso/SKILL.md")
 	for _, want := range []string{
-		"Go 1.26.5 or newer",
+		"Go 1.27.0 or newer",
 		"go mod tidy",
 		"link.AppearanceButton",
 		"htmx:beforeSwap",

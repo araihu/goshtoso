@@ -2,6 +2,18 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.7] - 2026-08-24
+
+### Go toolchain
+
+- Raised the module, workspace, CI, and container toolchain baseline to Go
+  1.27.0.
+- Refreshed module metadata with Go 1.27.0.
+
+### Upgrade note
+
+- Consumers building Goshtoso from this release need Go 1.27.0 or newer.
+
 ## [v0.2.6] - 2026-08-19
 
 ### Consumer-agent guidance

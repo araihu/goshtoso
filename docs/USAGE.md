@@ -11,7 +11,7 @@ identity, constructor styles, and rendered defaults.
 
 ## Installation
 
-Goshtoso requires **Go 1.26.5 or newer**. Use the same or a newer Go toolchain
+Goshtoso requires **Go 1.27.0 or newer**. Use the same or a newer Go toolchain
 for the consumer module so module resolution does not fail late in setup.
 
 ### 1. Add the dependency

@@ -65,7 +65,7 @@ remains complete when a streaming `skills use` client provides only this file.
 ## Default Integration
 
 Use this path unless the app deliberately owns a custom Tailwind build.
-Goshtoso requires **Go 1.26.5 or newer**.
+Goshtoso requires **Go 1.27.0 or newer**.
 
 ```bash
 GOSHTOSO_VERSION="${GOSHTOSO_VERSION:?set an explicit Goshtoso release}"
