@@ -26,7 +26,7 @@ jobs:
           - language: actions
             build_mode: none
           - language: go
-            build_mode: autobuild
+            build_mode: manual
           - language: javascript-typescript
             build_mode: none
     steps:
@@ -48,12 +48,16 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build_mode }}
 
-      - name: Autobuild
-        if: matrix.build_mode == 'autobuild'
-        uses: github/codeql-action/autobuild@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
+      - name: Build Go modules
+        if: matrix.build_mode == 'manual'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for module in . examples/application-patterns examples/brand-site examples/getting-started site tests/external/runtime-manifest; do
+            (cd "$module" && GOWORK=off go build ./...)
+          done
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
         with:
           category: "/language:${{ matrix.language }}"
-
