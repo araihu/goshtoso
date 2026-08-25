@@ -28,9 +28,9 @@ func TestSiteModuleContractsSeparateCurrentSourceFromPinnedDependency(t *testing
 	modulePath := "example.com/library"
 	version := "v0.0.1"
 
-	writeFile(t, filepath.Join(rootDir, "go.mod"), "module "+modulePath+"\n\ngo 1.26.5\n")
+	writeFile(t, filepath.Join(rootDir, "go.mod"), "module "+modulePath+"\n\ngo 1.27.0\n")
 	writeFile(t, filepath.Join(rootDir, "library.go"), "package library\n\nfunc NewAPI() string { return \"current\" }\n")
-	writeFile(t, filepath.Join(siteDir, "go.mod"), fmt.Sprintf("module example.com/site\n\ngo 1.26.5\n\nrequire %s %s\n", modulePath, version))
+	writeFile(t, filepath.Join(siteDir, "go.mod"), fmt.Sprintf("module example.com/site\n\ngo 1.27.0\n\nrequire %s %s\n", modulePath, version))
 	writeFile(t, filepath.Join(siteDir, "cmd", "server", "main.go"), `package main
 
 import (
@@ -110,9 +110,9 @@ func TestSiteModuleContractsRunCurrentSourceOnlyThemeFixture(t *testing.T) {
 	modulePath := "example.com/library"
 	version := "v0.0.1"
 
-	writeFile(t, filepath.Join(rootDir, "go.mod"), "module "+modulePath+"\n\ngo 1.26.5\n")
+	writeFile(t, filepath.Join(rootDir, "go.mod"), "module "+modulePath+"\n\ngo 1.27.0\n")
 	writeFile(t, filepath.Join(rootDir, "library.go"), "package library\n\nfunc SharedAPI() string { return \"shared\" }\nfunc ThemeKey() string { return \"shared\" }\nfunc NewAPI() string { return \"current\" }\n")
-	writeFile(t, filepath.Join(siteDir, "go.mod"), fmt.Sprintf("module example.com/site\n\ngo 1.26.5\n\nrequire %s %s\n", modulePath, version))
+	writeFile(t, filepath.Join(siteDir, "go.mod"), fmt.Sprintf("module example.com/site\n\ngo 1.27.0\n\nrequire %s %s\n", modulePath, version))
 	writeFile(t, filepath.Join(siteDir, "cmd", "server", "main.go"), `package main
 
 import (
@@ -294,7 +294,7 @@ func writeProxyModule(t *testing.T, proxyDir, modulePath, version, source string
 		version,
 		time.Date(2026, time.January, 1, 0, 0, 0, 0, time.UTC).Format(time.RFC3339),
 	))
-	moduleFile := "module " + modulePath + "\n\ngo 1.26.5\n"
+	moduleFile := "module " + modulePath + "\n\ngo 1.27.0\n"
 	writeFile(t, filepath.Join(versionDir, version+".mod"), moduleFile)
 
 	if err := os.MkdirAll(versionDir, 0o755); err != nil {

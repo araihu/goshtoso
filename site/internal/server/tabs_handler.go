@@ -11,7 +11,7 @@ func (s *Server) handleTabContent(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
 	path := strings.TrimPrefix(r.URL.Path, "/api/components/tab-content/")
-	tabID := strings.Split(path, "/")[0]
+	tabID, _, _ := strings.Cut(path, "/")
 
 	// Simulate server processing delay
 	time.Sleep(500 * time.Millisecond)

@@ -157,7 +157,7 @@ sources:
 	consumerDir := filepath.Dir(output)
 	goMod := fmt.Sprintf(`module example.com/goshtoso-iconpack-config-e2e
 
-go 1.26.5
+go 1.27.0
 
 require github.com/araihu/goshtoso v0.0.0
 
@@ -289,7 +289,7 @@ func startIconpackConsumer(t *testing.T) string {
 	consumerDir := filepath.Dir(output)
 	goMod := fmt.Sprintf(`module example.com/goshtoso-iconpack-e2e
 
-go 1.26.5
+go 1.27.0
 
 require github.com/araihu/goshtoso v0.0.0
 

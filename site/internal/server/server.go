@@ -249,7 +249,7 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/components/accordion", http.StatusMovedPermanently)
 		return
 	}
-	componentName := strings.Split(path, "/")[0]
+	componentName, _, _ := strings.Cut(path, "/")
 	if componentName == "form-validation" {
 		http.Redirect(w, r, "/form#server-side-validation", http.StatusMovedPermanently)
 		return

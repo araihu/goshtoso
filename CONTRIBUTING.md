@@ -16,7 +16,7 @@ agree to uphold it.
 
 | Tool | Version | Install |
 |------|---------|---------|
-| Go | 1.26+ | https://go.dev/dl |
+| Go | 1.27+ | https://go.dev/dl |
 | templ | v0.3.x | `go install github.com/a-h/templ/cmd/templ@latest` |
 | Tailwind CSS | v4 | standalone CLI or `npm i` |
 | golangci-lint | latest | https://golangci-lint.run |

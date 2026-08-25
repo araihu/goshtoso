@@ -12,7 +12,7 @@ import {
 } from "@dagger.io/dagger"
 
 const GO_IMAGE =
-  "golang:1.26.5-bookworm@sha256:53eeac89074db483fdf0ab3be1df32bf6e47562263d2d0d6baa7f26acb4957dd"
+  "golang:1.27.0-bookworm@sha256:484ef6066fa69acb059fdfeda7ba2b8f7391f2ef6abc6f9b8411e669ebd56466"
 const JQ_IMAGE =
   "ghcr.io/jqlang/jq:1.8.2@sha256:b9c68867e5766576263a222e91db3de422d802069c7af70440e667a95344e486"
 const NODE_IMAGE =
@@ -20,9 +20,9 @@ const NODE_IMAGE =
 const TEMPL_VERSION = "v0.3.1020"
 const PLAYWRIGHT_VERSION = "v0.6201.0"
 const PLAYWRIGHT_DRIVER_VERSION = "1.62.1"
-const GOLANGCI_LINT_VERSION = "v2.12.2"
-const GOLANGCI_LINT_AMD64_SHA256 = "8df580d2670fed8fa984aac0507099af8df275e665215f5c7a2ae3943893a553"
-const GOLANGCI_LINT_ARM64_SHA256 = "44cd40a8c76c86755375adfeea52cfd3533cb43d7bd647771e0ae065e166df3a"
+const GOLANGCI_LINT_VERSION = "v2.13.1"
+const GOLANGCI_LINT_AMD64_SHA256 = "b17bfbc9d4aaa48be7f4f1ce3240bc3d8200c870c072bacf15c26219e2cfb9cc"
+const GOLANGCI_LINT_ARM64_SHA256 = "908317c23db18448f924e853b3d8a659fd919614cd438f224810a4053daa2607"
 const LYCHEE_VERSION = "v0.24.2"
 const LYCHEE_X86_64_SHA256 = "73657a111819a30c47c08352896796f23d64e4eb2b3ed39b6d32149241566fc5"
 const LYCHEE_AARCH64_SHA256 = "5d0b0e3aeab240f41920c633a6eaf97599be6eedda034b36e858ede7dba5e535"
@@ -312,7 +312,7 @@ echo "published $TAG and badge documents"`
       project = project.withMountedCache("/tools", dag.cacheVolume(`goshtoso-${cacheNamespace}-go-tools-${TEMPL_VERSION}-${GOLANGCI_LINT_VERSION}-${PLAYWRIGHT_VERSION}`), { sharing: CacheSharingMode.Locked })
     }
     return project
-      .withExec(["bash", "-euo", "pipefail", "-c", `test -x /tools/bin/templ || go install github.com/a-h/templ/cmd/templ@${TEMPL_VERSION}; test -x /tools/bin/golangci-lint || { case "$(uname -m)" in x86_64) arch=amd64; sha=${GOLANGCI_LINT_AMD64_SHA256};; aarch64|arm64) arch=arm64; sha=${GOLANGCI_LINT_ARM64_SHA256};; *) echo unsupported architecture >&2; exit 1;; esac; file=golangci-lint-2.12.2-linux-$arch.tar.gz; dir=\${file%.tar.gz}; curl -fsSL --retry 3 -o /tmp/golangci-lint.tgz https://github.com/golangci/golangci-lint/releases/download/${GOLANGCI_LINT_VERSION}/$file; echo "$sha  /tmp/golangci-lint.tgz" | sha256sum -c -; tar -xzf /tmp/golangci-lint.tgz -C /tools/bin --strip-components=1 "$dir/golangci-lint"; }`])
+      .withExec(["bash", "-euo", "pipefail", "-c", `test -x /tools/bin/templ || go install github.com/a-h/templ/cmd/templ@${TEMPL_VERSION}; test -x /tools/bin/golangci-lint || { case "$(uname -m)" in x86_64) arch=amd64; sha=${GOLANGCI_LINT_AMD64_SHA256};; aarch64|arm64) arch=arm64; sha=${GOLANGCI_LINT_ARM64_SHA256};; *) echo unsupported architecture >&2; exit 1;; esac; file=golangci-lint-2.13.1-linux-$arch.tar.gz; dir=\${file%.tar.gz}; curl -fsSL --retry 3 -o /tmp/golangci-lint.tgz https://github.com/golangci/golangci-lint/releases/download/${GOLANGCI_LINT_VERSION}/$file; echo "$sha  /tmp/golangci-lint.tgz" | sha256sum -c -; tar -xzf /tmp/golangci-lint.tgz -C /tools/bin --strip-components=1 "$dir/golangci-lint"; }`])
   }
 
   private browserProject(source: Directory, partition: string): Container {

@@ -13,8 +13,6 @@ import (
 	"sort"
 	"strings"
 	"testing"
-
-	"github.com/araihu/goshtoso/internal/iconcatalog"
 )
 
 func TestGenerateFromVerifiedRootPreservesLiteralIdentityAndOwnership(t *testing.T) {
@@ -205,8 +203,8 @@ func TestGeneratedDeclarationNamespaceReservesFixedNames(t *testing.T) {
 	for _, name := range []string{"Name", "Glyph", "Config", "SpriteURL", "Glyphs", "Lookup", "Icon"} {
 		t.Run(name, func(t *testing.T) {
 			selected := []selectedAsset{{
-				Asset:  iconcatalog.Asset{CanonicalName: "brand-example"},
-				goName: name,
+				CanonicalName: "brand-example",
+				goName:        name,
 			}}
 			err := validateGeneratedNamespace(selected)
 			if err == nil || !strings.Contains(err.Error(), `go declaration collision "`+name+`"`) {

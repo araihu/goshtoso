@@ -557,8 +557,8 @@ func liveAvailabilityBar(label, caption string, states []int) interactive.BarCon
 			Export:    &chartcontrol.ExportOptions{Filename: "live-availability"},
 		},
 		SeriesOptions: interactive.SeriesOptions{Stack: "availability", BarWidth: "70%", BarGap: "0%"},
-	}
-	config.Live = &interactive.LiveData{URL: "/modules/charts/examples/live-availability/events", Event: "chart"}
+
+		Live: &interactive.LiveData{URL: "/modules/charts/examples/live-availability/events", Event: "chart"}}
 	return config
 }
 

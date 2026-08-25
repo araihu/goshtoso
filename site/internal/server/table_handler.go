@@ -224,8 +224,8 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 		Rows:    rows,
 		SortBy:  orderBy,
 		SortDir: table.SortDir(orderDir),
-	}
-	cfg.ExtraQueryParams = activeTableFilterQuery(search, membership)
+
+		ExtraQueryParams: activeTableFilterQuery(search, membership)}
 
 	// For infinite scroll, render rows without tbody wrapper (appended to existing tbody)
 	if variant == "infinite" {

@@ -67,6 +67,32 @@ func TestDaggerWorkflowSecurityAndArtifactContracts(t *testing.T) {
 	}
 }
 
+func TestCodeQLBuildsEveryGoModule(t *testing.T) {
+	t.Parallel()
+	root, err := filepath.Abs("..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, ".github/workflows/codeql.yml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	workflow := string(data)
+	for _, expected := range []string{
+		"build_mode: manual",
+		"if: matrix.build_mode == 'manual'",
+		"for module in . examples/application-patterns examples/brand-site examples/getting-started site tests/external/runtime-manifest",
+		"GOWORK=off go build ./...",
+	} {
+		if !strings.Contains(workflow, expected) {
+			t.Fatalf("missing CodeQL multi-module build contract %q", expected)
+		}
+	}
+	if strings.Contains(workflow, "github/codeql-action/autobuild@") {
+		t.Fatal("CodeQL must use the explicit multi-module build")
+	}
+}
+
 func TestReleaseCoverageHandoffIncludesHiddenFiles(t *testing.T) {
 	t.Parallel()
 	root, err := filepath.Abs("..")
@@ -500,9 +526,11 @@ func TestDaggerInstallsVerifiedGolangCILintArchives(t *testing.T) {
 		t.Fatal("golangci-lint must not execute a remote installer script")
 	}
 	for _, expected := range []string{
-		`const GOLANGCI_LINT_AMD64_SHA256 = "8df580d2670fed8fa984aac0507099af8df275e665215f5c7a2ae3943893a553"`,
-		`const GOLANGCI_LINT_ARM64_SHA256 = "44cd40a8c76c86755375adfeea52cfd3533cb43d7bd647771e0ae065e166df3a"`,
-		`file=golangci-lint-2.12.2-linux-$arch.tar.gz`,
+		`const GOLANGCI_LINT_VERSION = "v2.13.1"`,
+		`const GOLANGCI_LINT_AMD64_SHA256 = "b17bfbc9d4aaa48be7f4f1ce3240bc3d8200c870c072bacf15c26219e2cfb9cc"`,
+		`const GOLANGCI_LINT_ARM64_SHA256 = "908317c23db18448f924e853b3d8a659fd919614cd438f224810a4053daa2607"`,
+		`file=golangci-lint-2.13.1-linux-$arch.tar.gz`,
+		`releases/download/${GOLANGCI_LINT_VERSION}/$file`,
 		`dir=\${file%.tar.gz}`,
 		`echo "$sha  /tmp/golangci-lint.tgz" | sha256sum -c -`,
 		`--strip-components=1 "$dir/golangci-lint"`,
