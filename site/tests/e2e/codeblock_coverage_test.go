@@ -53,7 +53,7 @@ func TestCodeBlockStandaloneRuntimeWithoutAlpineOrHTMX(t *testing.T) {
 	status, err = button.Locator("[data-code-block-copy-status]").TextContent()
 	require.NoError(t, err)
 	require.Equal(t, "Unable to copy", status)
-	require.Equal(t, "Unable to copy code", mustAttribute(t, button, "aria-label"))
+	require.Equal(t, "Copy example code", mustAttribute(t, button, "aria-label"))
 
 	_, err = page.Evaluate(`() => {
 		const fragment = document.createElement("div");

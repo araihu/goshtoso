@@ -17,10 +17,7 @@
     if (status) status.textContent = successful ? "Copied!" : state === "error" ? "Unable to copy" : "Copy";
     if (copyIcon) copyIcon.hidden = successful;
     if (successIcon) successIcon.hidden = !successful;
-    button.setAttribute(
-      "aria-label",
-      successful ? "Copied code" : state === "error" ? "Unable to copy code" : initialLabel,
-    );
+    button.setAttribute("aria-label", initialLabel);
     button.dataset.codeBlockCopyState = state;
   }
 
