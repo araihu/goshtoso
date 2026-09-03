@@ -173,24 +173,6 @@ func TestSlugPart(t *testing.T) {
 	}
 }
 
-// TestJSStringSingle covers every escape branch of jsStringSingle: backslash,
-// single quote, newline, carriage return, U+2028, U+2029, and the default
-// passthrough for ordinary runes.
-func TestJSStringSingle(t *testing.T) {
-	ls := string(rune(0x2028)) // line separator
-	ps := string(rune(0x2029)) // paragraph separator
-
-	in := "a'b\\c\nd\re" + ls + "f" + ps + "g中"
-	want := "a\\'b\\\\c\\nd\\re\\u2028f\\u2029g中"
-	if got := jsStringSingle(in); got != want {
-		t.Fatalf("jsStringSingle(%q) = %q; want %q", in, got, want)
-	}
-
-	if got := jsStringSingle("plain"); got != "plain" {
-		t.Fatalf("jsStringSingle(plain) = %q; want unchanged", got)
-	}
-}
-
 // TestPickLexerSelection covers the templ alias, the empty fallback, a known
 // language, and an unknown language (which falls back, not nil).
 func TestPickLexerSelection(t *testing.T) {

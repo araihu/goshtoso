@@ -76,18 +76,33 @@ func TestCodeBlockCopyButtonHasDistinctAccessibleName(t *testing.T) {
 	}
 }
 
-func TestCodeBlockEscapesIDInAlpineExpression(t *testing.T) {
+func TestCodeBlockUsesSemanticCopyHooksWithoutInlineAlpine(t *testing.T) {
 	html := renderCodeBlock(t, Config{
 		ID:   "code'block",
 		Code: "x",
 	})
 
-	if strings.Contains(html, `document.getElementById('code'block')`) {
-		t.Fatalf("raw ID leaked into JS string:\n%s", html)
+	for _, unwanted := range []string{"x-data=", "@click=", "x-show=", "x-text="} {
+		if strings.Contains(html, unwanted) {
+			t.Fatalf("CodeBlock contains inline Alpine hook %q:\n%s", unwanted, html)
+		}
 	}
-	if !strings.Contains(html, `document.getElementById(&#39;code\&#39;block&#39;)`) &&
-		!strings.Contains(html, `document.getElementById('code\'block')`) {
-		t.Fatalf("escaped ID not found in Alpine expression:\n%s", html)
+	for _, wanted := range []string{`data-code-block-copy`, `data-code-block-target="code&#39;block"`, `aria-controls="code&#39;block"`, `role="status"`, `hidden`} {
+		if !strings.Contains(html, wanted) {
+			t.Fatalf("CodeBlock missing copy hook %q:\n%s", wanted, html)
+		}
+	}
+}
+
+func TestCodeBlockCanOmitCopyControl(t *testing.T) {
+	html := renderCodeBlock(t, Config{ID: "plain-code", Code: "x", DisableCopyButton: true})
+	for _, marker := range []string{"data-code-block-copy", "data-code-block-target", "data-code-block-copy-status", "Copy plain-code code"} {
+		if strings.Contains(html, marker) {
+			t.Fatalf("disabled CodeBlock contains copy marker %q:\n%s", marker, html)
+		}
+	}
+	if !strings.Contains(html, `id="plain-code"`) || !strings.Contains(html, `data-code-block`) {
+		t.Fatalf("disabled CodeBlock lost normal output:\n%s", html)
 	}
 }
 

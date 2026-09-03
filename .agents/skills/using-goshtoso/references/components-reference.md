@@ -524,6 +524,7 @@ import "github.com/araihu/goshtoso/components/codeblock"  // package codeblock
 | `MaxHeight` | `string` | MaxHeight is an optional CSS max-height for scrollable long code (e.g. "400px") |
 | `Density` | `Density` | Density controls spacing in the header and highlighted code body. |
 | `ID` | `string` | ID overrides the auto-generated element ID |
+| `DisableCopyButton` | `bool` | DisableCopyButton omits the copy control and all copy-runtime hooks. The zero value preserves the default copy control. |
 
 ## combobox
 

@@ -60,7 +60,7 @@ func TestCodeBlock_ChromaHighlighting(t *testing.T) {
 	})
 
 	t.Run("copy button preserves original source", func(t *testing.T) {
-		// The textContent of the highlighted block (= the value the Alpine
+		// The textContent of the highlighted block (= the value the CodeBlock
 		// handler copies) must match the original source character-for-char.
 		got, err := page.Evaluate(`() => {
 			const el = document.querySelector('.codeblock');
@@ -89,7 +89,7 @@ func TestCodeBlock_ChromaHighlighting(t *testing.T) {
 		}`, nil)
 		require.NoError(t, err)
 
-		// The copy button sits inside the outer x-data wrapper that also
+		// The copy button sits inside the outer component wrapper that also
 		// contains the .codeblock div. Walk up one level.
 		copyBtn := page.Locator(".codeblock").First().
 			Locator("xpath=..").Locator("button").First()
@@ -158,8 +158,7 @@ func TestCodeBlock_DirectDemoPage(t *testing.T) {
 	copyButton := firstBlock.Locator("xpath=..").Locator("button[aria-label='Copy main.go code']").First()
 	require.NoError(t, copyButton.WaitFor())
 
-	_, err = firstBlock.Evaluate(`el => Alpine.$data(el.parentElement).copyCode()`, nil)
-	require.NoError(t, err)
+	require.NoError(t, copyButton.Click())
 
 	copied, err := page.Evaluate("() => window.__copied", nil)
 	require.NoError(t, err)

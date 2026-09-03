@@ -64,6 +64,19 @@ func main() {
 		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
+				Title:       "Without copy control",
+				Description: "Set DisableCopyButton when the document should display code without loading or exposing copy behavior.",
+			},
+			codeBlockWithoutCopyPreview(),
+			`@codeblock.CodeBlock(codeblock.Config{
+    Language:          "text",
+    Label:             "Read only",
+    Code:              "This snippet has no copy control.",
+    DisableCopyButton: true,
+})`,
+		)
+		@demo.DemoSection(
+			demo.DemoSectionProps{
 				Title:       "Scrollable",
 				Description: "Set MaxHeight for long snippets that should scroll inside the code panel instead of pushing the page apart.",
 			},
@@ -74,6 +87,17 @@ func main() {
     Code:      longGoSnippet,
 })`,
 		)
+	</div>
+}
+
+templ codeBlockWithoutCopyPreview() {
+	<div id="codeblock-without-copy" class="w-full max-w-3xl mx-auto">
+		@codeblock.CodeBlock(codeblock.Config{
+			Language:          "text",
+			Label:             "Read only",
+			Code:              "This snippet has no copy control.",
+			DisableCopyButton: true,
+		})
 	</div>
 }
 

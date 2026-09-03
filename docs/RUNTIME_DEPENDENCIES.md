@@ -22,5 +22,6 @@ Pinned versions are the tested combination. Replacing URLs or versions configure
 | 9 | htmx WebSocket extension | `2.0.3` | `htmx-ext-ws` | false | true | `/assets/js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js` | `https://unpkg.com/htmx-ext-ws@2.0.3/ws.js` | [Zero-Clause BSD](../assets/js/runtime/htmx-ext-ws/2.0.3/LICENSE.txt) |
 | 10 | Goshtoso combobox compatibility runtime | `Goshtoso release` | `combobox` | false | true | `/assets/js/combobox.js` | `/assets/js/combobox.js` | Goshtoso |
 | 11 | Goshtoso action-group runtime | `Goshtoso release` | `action-group` | false | true | `/assets/js/action-group.js` | `/assets/js/action-group.js` | Goshtoso |
+| 12 | Goshtoso CodeBlock runtime | `Goshtoso release` | `code-block` | false | true | `/assets/js/code-block.js` | `/assets/js/code-block.js` | Goshtoso |
 
 Regenerate all consumers with `go run ./cmd/runtimegen`; verify acquisition integrity and generated drift with `go tool muamba verify --strict`, `go tool muamba generate-go --strict --check --dir assets --output muamba_gen.go`, and `go run ./cmd/runtimegen -check`.

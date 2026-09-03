@@ -47,6 +47,7 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 		RuntimeRoleHTMXExtWS,
 		RuntimeRoleCombobox,
 		RuntimeRoleActionGroup,
+		RuntimeRoleCodeBlock,
 	}
 	gotRoles := make([]RuntimeAssetRole, 0, len(manifest.Dependencies))
 	for _, dependency := range manifest.Dependencies {
@@ -61,8 +62,8 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	if !reflect.DeepEqual(gotRoles, wantRoles) {
 		t.Fatalf("dependency roles = %v, want %v", gotRoles, wantRoles)
 	}
-	wantMinimal := []bool{false, false, false, true, true, true, true, true, true, true, true}
-	wantEnabled := []bool{true, true, true, true, false, true, true, false, false, false, false}
+	wantMinimal := []bool{false, false, false, true, true, true, true, true, true, true, true, true}
+	wantEnabled := []bool{true, true, true, true, false, true, true, false, false, false, false, false}
 	for index, dependency := range manifest.Dependencies {
 		if dependency.IncludeInMinimal != wantMinimal[index] {
 			t.Errorf("%s IncludeInMinimal = %t, want %t", dependency.Role, dependency.IncludeInMinimal, wantMinimal[index])
@@ -83,6 +84,7 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	assertRuntimeAsset(t, manifest.Dependencies[8], HTMXExtWSCDNURL, HTMXExtWSURL, true, false)
 	assertRuntimeAsset(t, manifest.Dependencies[9], ComboboxURL, ComboboxURL, true, false)
 	assertRuntimeAsset(t, manifest.Dependencies[10], ActionGroupURL, ActionGroupURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[11], CodeBlockURL, CodeBlockURL, true, false)
 }
 
 func TestDefaultRuntimeManifestIsCallerOwned(t *testing.T) {
@@ -102,8 +104,8 @@ func TestDefaultRuntimeManifestIsCallerOwned(t *testing.T) {
 	if fresh.Dependencies[0].LocalURL != AlpineCollapseURL {
 		t.Fatalf("fresh collapse URL = %q", fresh.Dependencies[0].LocalURL)
 	}
-	if len(fresh.Dependencies) != 11 {
-		t.Fatalf("fresh dependency count = %d, want 11", len(fresh.Dependencies))
+	if len(fresh.Dependencies) != 12 {
+		t.Fatalf("fresh dependency count = %d, want 12", len(fresh.Dependencies))
 	}
 }
 
