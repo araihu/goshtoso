@@ -2,6 +2,24 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.8] - 2026-09-03
+
+### CodeBlock runtime and API
+
+- Moved CodeBlock copying from inline Alpine expressions into Goshtoso's
+  first-party progressive-enhancement bundle and a standalone
+  `/assets/js/code-block.js` runtime.
+- Added stable semantic hooks, delegated fragment handling, accessible success
+  and error feedback, and hidden-by-default controls when no runtime is loaded.
+- Added `codeblock.Config.DisableCopyButton` so consumers can omit the complete
+  copy control while preserving syntax highlighting and layout.
+
+### Upgrade note
+
+- The zero-value CodeBlock configuration remains compatible and keeps the copy
+  control. Consumers loading `head.Dependencies()` receive the new behavior
+  automatically; selective consumers may load the standalone CodeBlock runtime.
+
 ## [v0.2.7] - 2026-08-24
 
 ### Go toolchain
