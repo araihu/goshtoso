@@ -91,13 +91,8 @@ func main() {
 }
 
 templ codeBlockWithoutCopyPreview() {
-	<div id="codeblock-without-copy" class="w-full max-w-3xl mx-auto">
-		@codeblock.CodeBlock(codeblock.Config{
-			Language:          "text",
-			Label:             "Read only",
-			Code:              "This snippet has no copy control.",
-			DisableCopyButton: true,
-		})
+	<div id="codeblock-without-copy" class="w-full max-w-3xl mx-auto rounded-radius border border-outline bg-surface-alt p-4 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark">
+		The rendered example uses <code>DisableCopyButton: true</code> and omits the complete copy control.
 	</div>
 }
 
