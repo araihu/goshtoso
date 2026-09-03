@@ -14,6 +14,7 @@ func TestAuthoredComponentRuntimeSourcesParse(t *testing.T) {
 	paths := map[string]string{
 		"../action-group.js": "assets/js/src/action-group.js",
 		"combobox-client.js": "assets/js/src/components/combobox-client.js",
+		"code-block.js":      "assets/js/src/components/code-block.js",
 		"carousel.js":        "assets/js/src/components/carousel.js",
 		"dropdown.js":        "assets/js/src/components/dropdown.js",
 		"navigation.js":      "assets/js/src/components/navigation.js",
@@ -33,6 +34,25 @@ func TestAuthoredComponentRuntimeSourcesParse(t *testing.T) {
 	}
 	if err := jstooling.ValidateJavaScript(sources); err != nil {
 		t.Fatalf("validate component runtime JavaScript: %v", err)
+	}
+}
+
+func TestCodeBlockRuntimeDeclaresProgressiveEnhancementContract(t *testing.T) {
+	t.Parallel()
+
+	source := readRuntimeSource(t, "code-block.js")
+	for _, want := range []string{
+		`var buttonSelector = "[data-code-block-copy]"`,
+		`button.hidden = false`,
+		`navigator.clipboard.writeText(target.textContent)`,
+		`document.addEventListener("click"`,
+		`document.addEventListener("htmx:afterSwap"`,
+		`setState(button, "error")`,
+		`status.textContent = successful ? "Copied!"`,
+	} {
+		if !strings.Contains(source, want) {
+			t.Fatalf("CodeBlock runtime missing progressive enhancement contract %q", want)
+		}
 	}
 }
 

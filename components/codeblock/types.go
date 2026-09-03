@@ -32,6 +32,9 @@ type Config struct {
 	Density Density
 	// ID overrides the auto-generated element ID
 	ID string
+	// DisableCopyButton omits the copy control and all copy-runtime hooks.
+	// The zero value preserves the default copy control.
+	DisableCopyButton bool
 }
 
 func (cfg Config) headerClasses() string {
@@ -105,27 +108,4 @@ func slugPart(s string) string {
 		}
 	}
 	return strings.Trim(b.String(), "-")
-}
-
-func jsStringSingle(s string) string {
-	var b strings.Builder
-	for _, r := range s {
-		switch r {
-		case '\\':
-			b.WriteString(`\\`)
-		case '\'':
-			b.WriteString(`\'`)
-		case '\n':
-			b.WriteString(`\n`)
-		case '\r':
-			b.WriteString(`\r`)
-		case '\u2028':
-			b.WriteString(`\u2028`)
-		case '\u2029':
-			b.WriteString(`\u2029`)
-		default:
-			b.WriteRune(r)
-		}
-	}
-	return b.String()
 }

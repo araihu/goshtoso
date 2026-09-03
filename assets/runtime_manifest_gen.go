@@ -28,6 +28,8 @@ const (
 	RuntimeRoleCombobox RuntimeAssetRole = "combobox"
 	// RuntimeRoleActionGroup identifies Goshtoso action-group runtime.
 	RuntimeRoleActionGroup RuntimeAssetRole = "action-group"
+	// RuntimeRoleCodeBlock identifies Goshtoso CodeBlock runtime.
+	RuntimeRoleCodeBlock RuntimeAssetRole = "code-block"
 )
 
 func defaultRuntimeLoader() RuntimeAsset {
@@ -47,6 +49,7 @@ func defaultRuntimeDependencies() []RuntimeAsset {
 		RuntimeAsset{Role: RuntimeRoleHTMXExtWS, Kind: RuntimeAssetScript, PrimaryURL: HTMXExtWSCDNURL, LocalURL: HTMXExtWSURL, Integrity: HTMXExtWSIntegrity, IncludeInMinimal: true, Defer: true},
 		RuntimeAsset{Role: RuntimeRoleCombobox, Kind: RuntimeAssetScript, PrimaryURL: ComboboxURL, LocalURL: ComboboxURL, IncludeInMinimal: true, Defer: true},
 		RuntimeAsset{Role: RuntimeRoleActionGroup, Kind: RuntimeAssetScript, PrimaryURL: ActionGroupURL, LocalURL: ActionGroupURL, IncludeInMinimal: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleCodeBlock, Kind: RuntimeAssetScript, PrimaryURL: CodeBlockURL, LocalURL: CodeBlockURL, IncludeInMinimal: true, Defer: true},
 	}
 }
 
@@ -64,5 +67,6 @@ func defaultRuntimeMetadata() []RuntimeAssetMetadata {
 		{Role: RuntimeRoleHTMXExtWS, Name: "htmx WebSocket extension", Version: "2.0.3", PackageName: "htmx-ext-ws", ProvenanceURL: "https://unpkg.com/htmx-ext-ws@2.0.3/package.json", Homepage: "https://htmx.org/extensions/ws/", License: "Zero-Clause BSD", LicenseURL: "/assets/js/runtime/htmx-ext-ws/2.0.3/LICENSE.txt", Purpose: "WebSocket integration"},
 		{Role: RuntimeRoleCombobox, Name: "Goshtoso combobox compatibility runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Standalone compatibility build for combobox behavior"},
 		{Role: RuntimeRoleActionGroup, Name: "Goshtoso action-group runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Responsive action-group measurement"},
+		{Role: RuntimeRoleCodeBlock, Name: "Goshtoso CodeBlock runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Progressive copy behavior for CodeBlock"},
 	}
 }

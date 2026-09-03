@@ -3,6 +3,7 @@
 package e2e
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -11,10 +12,65 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestCodeBlockStandaloneRuntimeWithoutAlpineOrHTMX(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newIsolatedPage(t)
+	require.NoError(t, page.SetContent(`<main id="mount">
+<div data-code-block><button hidden data-code-block-copy data-code-block-target="source" aria-label="Copy example code"><span data-code-block-copy-status role="status" aria-live="polite">Copy</span></button><div id="source">hello standalone</div></div>
+</main>`))
+
+	initiallyHidden, err := page.Locator("[data-code-block-copy]").IsHidden()
+	require.NoError(t, err)
+	require.True(t, initiallyHidden, "copy control must remain hidden without runtime")
+
+	source, err := os.ReadFile("../../../assets/js/code-block.js")
+	require.NoError(t, err)
+	_, err = page.AddScriptTag(playwright.PageAddScriptTagOptions{Content: new(string(source))})
+	require.NoError(t, err)
+
+	runtimes, err := page.Evaluate(`() => ({ alpine: typeof Alpine, htmx: typeof htmx })`, nil)
+	require.NoError(t, err)
+	require.Equal(t, map[string]any{"alpine": "undefined", "htmx": "undefined"}, runtimes)
+
+	button := page.Locator("[data-code-block-copy]")
+	require.NoError(t, button.WaitFor())
+	_, err = page.Evaluate(`() => Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: text => { window.__copied = text; return Promise.resolve(); } } })`, nil)
+	require.NoError(t, err)
+	require.NoError(t, button.Click())
+	status, err := button.Locator("[data-code-block-copy-status]").TextContent()
+	require.NoError(t, err)
+	require.Equal(t, "Copied!", status)
+	copied, err := page.Evaluate(`() => window.__copied`, nil)
+	require.NoError(t, err)
+	require.Equal(t, "hello standalone", copied)
+
+	_, err = page.Evaluate(`() => Object.defineProperty(navigator, "clipboard", { configurable: true, value: undefined })`, nil)
+	require.NoError(t, err)
+	require.NoError(t, button.Click())
+	status, err = button.Locator("[data-code-block-copy-status]").TextContent()
+	require.NoError(t, err)
+	require.Equal(t, "Unable to copy", status)
+	require.Equal(t, "Copy example code", mustAttribute(t, button, "aria-label"))
+
+	_, err = page.Evaluate(`() => {
+		const fragment = document.createElement("div");
+		fragment.innerHTML = '<button hidden data-code-block-copy data-code-block-target="late"><span data-code-block-copy-status>Copy</span></button><div id="late">late fragment</div>';
+		document.querySelector("#mount").append(fragment);
+		fragment.dispatchEvent(new CustomEvent("htmx:afterSwap", { bubbles: true }));
+	}`, nil)
+	require.NoError(t, err)
+	lateHidden, err := page.Locator("#mount > div:last-child [data-code-block-copy]").IsHidden()
+	require.NoError(t, err)
+	require.False(t, lateHidden, "fragment-inserted copy control should be enabled")
+}
+
 // TestCodeblockCoverageDemo loads the codeblock demo directly and confirms the
 // page renders multiple highlighted blocks, that clicking the copy button (the
-// @click="copyCode()" path) writes the original source to the clipboard and
-// flips the Alpine "copied" label, and that the page produces no uncaught JS
+// delegated runtime path) writes the original source to the clipboard and
+// flips the accessible status label, and that the page produces no uncaught JS
 // exceptions or console errors.
 func TestCodeblockCoverageDemo(t *testing.T) {
 	if testing.Short() {
@@ -66,7 +122,7 @@ func TestCodeblockCoverageDemo(t *testing.T) {
 	require.NoError(t, err)
 
 	// Target the labeled "main.go" block and click its real copy button so the
-	// @click="copyCode()" handler runs end to end.
+	// delegated CodeBlock handler runs end to end.
 	codeEl := page.Locator(".codeblock").Filter(playwright.LocatorFilterOptions{
 		HasText: `fmt.Println("hello, world")`,
 	}).First()

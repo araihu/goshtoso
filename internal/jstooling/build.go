@@ -34,6 +34,7 @@ var defaultArtifacts = []artifact{
 		},
 	},
 	{output: "assets/js/action-group.js", inputs: []string{"assets/js/src/action-group.js"}},
+	{output: "assets/js/code-block.js", inputs: []string{"assets/js/src/components/code-block.js"}},
 	{output: "assets/js/darkmode.js", inputs: []string{"assets/js/src/darkmode.js"}},
 	{output: "assets/js/dependency-loader.js", inputs: []string{"assets/js/src/dependency-loader.js"}},
 	{
@@ -42,6 +43,7 @@ var defaultArtifacts = []artifact{
 			"assets/js/src/combobox.js",
 			"assets/js/src/components/combobox-client.js",
 			"assets/js/src/action-group.js",
+			"assets/js/src/components/code-block.js",
 			"assets/js/src/components/structured-input.js",
 			"assets/js/src/components/tooltip.js",
 			"assets/js/src/components/popover.js",

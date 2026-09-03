@@ -143,6 +143,7 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 		"assets/js/src/combobox.js":                    `(() => { window.comboboxFixture = true })();`,
 		"assets/js/src/components/combobox-client.js":  `(() => { window.comboboxClientFixture = true })();`,
 		"assets/js/src/action-group.js":                `(() => { window.actionGroupFixture = true })();`,
+		"assets/js/src/components/code-block.js":       `(() => { window.codeBlockFixture = true })();`,
 		"assets/js/src/components/structured-input.js": `(() => { window.structuredInputFixture = true })();`,
 		"assets/js/src/components/tooltip.js":          `(() => { window.tooltipFixture = true })();`,
 		"assets/js/src/components/popover.js":          `(() => { window.popoverFixture = true })();`,
@@ -188,8 +189,8 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 	if err != nil {
 		t.Fatalf("Build: %v", err)
 	}
-	if len(results) != 8 {
-		t.Fatalf("artifact count = %d, want 8", len(results))
+	if len(results) != 9 {
+		t.Fatalf("artifact count = %d, want 9", len(results))
 	}
 	bundle, err := os.ReadFile(filepath.Join(root, "assets", "js", "goshtoso.min.js"))
 	if err != nil {
@@ -244,7 +245,7 @@ func assertSplitBundleContents(t *testing.T, componentBundle, siteBundle []byte)
 	t.Helper()
 
 	componentFixtures := []string{
-		"comboboxFixture", "comboboxClientFixture", "actionGroupFixture", "structuredInputFixture", "tooltipFixture", "popoverFixture",
+		"comboboxFixture", "comboboxClientFixture", "actionGroupFixture", "codeBlockFixture", "structuredInputFixture", "tooltipFixture", "popoverFixture",
 		"dataFixture", "navigationFixture", "sidebarFixture", "searchFixture", "tableFixture", "carouselFixture", "dropdownFixture",
 		"paletteFixture", "selectFixture", "tabsFixture",
 	}

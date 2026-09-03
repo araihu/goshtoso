@@ -17,7 +17,7 @@ func TestLoadPreservesApprovedRuntimeOrder(t *testing.T) {
 	want := []string{
 		"alpine-collapse", "alpine-focus", "alpine-mask", "first-party",
 		"dark-mode", "alpine", "htmx", "htmx-ext-sse", "htmx-ext-ws",
-		"combobox", "action-group",
+		"combobox", "action-group", "code-block",
 	}
 	got := make([]string, len(model.Dependencies))
 	for i, dependency := range model.Dependencies {

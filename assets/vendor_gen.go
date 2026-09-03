@@ -37,6 +37,7 @@ const (
 	HTMXExtWSIntegrity           = "sha384-IeVkDiDIU+Zsabm4HnVf7ifa7LYLSoUCAYrFIjsn+0voIDaflLAalBqJ4CeEZodl"
 	ComboboxURL                  = "/assets/js/combobox.js"
 	ActionGroupURL               = "/assets/js/action-group.js"
+	CodeBlockURL                 = "/assets/js/code-block.js"
 )
 
 // RuntimeHash returns the normalized Muamba content hash for a vendored runtime role.

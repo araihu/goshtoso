@@ -15,7 +15,7 @@ type classification struct {
 }
 
 var componentJavaScript = map[string]string{
-	"action-group.js": "actiongroup", "carousel.js": "carousel", "combobox-client.js": "combobox",
+	"action-group.js": "actiongroup", "carousel.js": "carousel", "code-block.js": "codeblock", "combobox-client.js": "combobox",
 	"combobox.js": "combobox", "dropdown.js": "dropdown", "palette.js": "palette",
 	"search.js": "search", "select.js": "select", "popover.js": "popover", "structured-input.js": "structuredinput",
 	"table.js": "table", "tabs.js": "tabs", "tooltip.js": "tooltip",
@@ -125,7 +125,7 @@ func classifyJavaScriptPath(path string, result *classification) {
 func derivedPath(path string) bool {
 	return strings.HasSuffix(path, "_templ.go") || path == "assets/styles.css" ||
 		path == "assets/goshtoso-theme.css" || path == "assets/js/goshtoso.min.js" ||
-		path == "assets/js/action-group.js" || path == "assets/js/combobox.js"
+		path == "assets/js/action-group.js" || path == "assets/js/code-block.js" || path == "assets/js/combobox.js"
 }
 
 func derivedExplained(path string, changes []Change, authoredTempl, authoredJS bool) bool {

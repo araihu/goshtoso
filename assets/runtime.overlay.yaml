@@ -21,6 +21,7 @@ metadata:
     - download: htmx-ext-ws/runtime-js
     - local: combobox
     - local: action-group
+    - local: code-block
   first_party:
     first-party:
       role: first-party
@@ -56,6 +57,15 @@ metadata:
       name: Goshtoso action-group runtime
       local_url: /assets/js/action-group.js
       purpose: Responsive action-group measurement
+      enabled: false
+      include_in_minimal: true
+      defer: true
+    code-block:
+      role: code-block
+      go_name: CodeBlock
+      name: Goshtoso CodeBlock runtime
+      local_url: /assets/js/code-block.js
+      purpose: Progressive copy behavior for CodeBlock
       enabled: false
       include_in_minimal: true
       defer: true
