@@ -39,11 +39,14 @@ func TestExternalConsumerCanBindManifestAndReplacementIdentity(t *testing.T) {
 	}
 
 	manifest := assets.DefaultRuntimeManifest()
-	if len(manifest.Dependencies) != 11 {
-		t.Fatalf("dependency count = %d, want 11", len(manifest.Dependencies))
+	if len(manifest.Dependencies) != 12 {
+		t.Fatalf("dependency count = %d, want 12", len(manifest.Dependencies))
 	}
 	if manifest.Dependencies[0].Role != assets.RuntimeRoleAlpineCollapse {
 		t.Fatalf("first dependency = %q, want %q", manifest.Dependencies[0].Role, assets.RuntimeRoleAlpineCollapse)
+	}
+	if manifest.Dependencies[11].Role != assets.RuntimeRoleCodeBlock {
+		t.Fatalf("last dependency = %q, want %q", manifest.Dependencies[11].Role, assets.RuntimeRoleCodeBlock)
 	}
 
 	server := httptest.NewServer(assets.Handler())
