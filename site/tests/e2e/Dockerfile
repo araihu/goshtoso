@@ -1,4 +1,4 @@
-FROM golang:1.27.0-bookworm
+FROM golang:1.27.1-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH="/usr/local/go/bin:/go/bin:${PATH}"
