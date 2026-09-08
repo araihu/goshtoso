@@ -387,7 +387,7 @@ coverage, generated templ output, CSS output, and usage reference in sync.
 ## Credits
 
 Goshtoso began as a hard fork of [PenguinUI](https://www.penguinui.com) by
-[Salar Houshvand](https://x.com/salar_houshvand), transformed from static
+[Salar Houshvand](https://github.com/SalarHoushvand), transformed from static
 HTML/Alpine.js examples into an importable Go component library.
 
 ## License
