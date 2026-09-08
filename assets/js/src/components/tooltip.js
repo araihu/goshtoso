@@ -229,7 +229,7 @@
     root.dataset.tooltipPortalReady = "true";
     panel.setAttribute("popover", "manual");
     Object.assign(panel.style, {
-      position: "fixed", inset: "auto", margin: "0", transform: "none",
+      position: "fixed", inset: "auto", margin: "0", transform: "none", translate: "none",
       maxWidth: "calc(100vw - 16px)", fontWeight: "normal",
     });
     function show() {

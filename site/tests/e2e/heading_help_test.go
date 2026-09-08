@@ -27,7 +27,7 @@ func TestHeadingHelpSupportsKeyboardFocus(t *testing.T) {
 			}, 5*time.Second, 50*time.Millisecond)
 			bounds, err := page.Locator("#"+fixture.id).Evaluate(`el => {
                 const r = el.getBoundingClientRect();
-                return el.matches(':popover-open') && r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight;
+                return el.matches(':popover-open') && getComputedStyle(el).translate === 'none' && r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight;
             }`, nil)
 			require.NoError(t, err)
 			debug, _ := page.Locator("#"+fixture.id).Evaluate(`el => ({open: el.matches(':popover-open'), rect: el.getBoundingClientRect().toJSON(), attrs: el.outerHTML.slice(0, 700)})`, nil)
