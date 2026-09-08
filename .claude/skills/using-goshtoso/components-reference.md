@@ -2211,7 +2211,7 @@ import "github.com/araihu/goshtoso/components/tooltip"  // package tooltip
 
 **Entry points:** `Help(id string, label string, description string)` · `Tooltip(id string, label string, options ...Option)`
 
-**Options:** `WithActivation(activation Activation)` · `WithDescription(description string)` · `WithPosition(position Position)` · `WithTrigger(trigger templ.Component)` · `WithTriggerLabel(label string)`
+**Options:** `WithActivation(activation Activation)` · `WithDescription(description string)` · `WithPortal(enabled bool)` · `WithPosition(position Position)` · `WithTrigger(trigger templ.Component)` · `WithTriggerLabel(label string)`
 
 - **Activation** — ActivationHover = "hover", ActivationClick = "click"
 - **Position** — PositionTop = "top", PositionBottom = "bottom", PositionLeft = "left", PositionRight = "right"

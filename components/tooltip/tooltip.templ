@@ -40,7 +40,11 @@ templ tooltipTemplate(id, label string, options ...Option) {
 
 // defaultTooltip renders a simple hover tooltip
 templ defaultTooltip(cfg config) {
-	<div class="relative w-fit">
+	<div class="relative w-fit"
+		if cfg.portal {
+			x-data="{}" x-init="goshtosoInitTooltipPortal($el)" data-tooltip-position={ string(cfg.position) }
+		}
+	>
 		if cfg.trigger != nil {
 			<span
 				class="peer"
@@ -60,7 +64,11 @@ templ defaultTooltip(cfg config) {
 
 // richTooltip renders a tooltip with title and description
 templ richTooltip(cfg config) {
-	<div class="relative w-fit">
+	<div class="relative w-fit"
+		if cfg.portal {
+			x-data="{}" x-init="goshtosoInitTooltipPortal($el)" data-tooltip-position={ string(cfg.position) }
+		}
+	>
 		if cfg.trigger != nil {
 			<span
 				class="peer"

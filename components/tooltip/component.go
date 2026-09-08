@@ -22,7 +22,7 @@ func Tooltip(id, label string, options ...Option) Instance {
 // Help renders a compact question-mark button with explanatory text on hover
 // or keyboard focus. The label names the button and the tooltip heading.
 func Help(id, label, description string) Instance {
-	return Tooltip(id, label, WithDescription(description), WithPosition(PositionRight), WithTrigger(helpTrigger(label)))
+	return Tooltip(id, label, WithDescription(description), WithPosition(PositionRight), WithPortal(true), WithTrigger(helpTrigger(label)))
 }
 
 // Kind identifies the component as a tooltip.
