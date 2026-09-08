@@ -42,7 +42,7 @@ func helpTrigger(label string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-current text-xs font-medium text-on-surface-muted hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark dark:focus-visible:outline-primary-dark\">?</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"inline-flex size-6 shrink-0 items-center justify-center text-xs font-medium text-on-surface-muted hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark dark:focus-visible:outline-primary-dark\"><span aria-hidden=\"true\" class=\"inline-flex size-4 items-center justify-center rounded-full border border-current text-[10px]\">?</span></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -492,38 +492,61 @@ func clickTooltip(cfg config) templ.Component {
 			templ_7745c5c3_Var25 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<div x-data=\"{ showTooltip: false }\" x-on:keydown.escape.stop=\"showTooltip = false\" class=\"relative w-fit\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<div x-data=\"{ showTooltip: false }\" x-on:keydown.escape.window=\"showTooltip = false\" x-on:click.outside=\"showTooltip = false\" class=\"relative w-fit\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if cfg.trigger != nil {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<span x-on:click=\"showTooltip = !showTooltip\" x-data data-tooltip-content-id=\"")
+		if cfg.portal {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, " x-init=\"goshtosoInitTooltipPortal($el)\" x-effect=\"const open = showTooltip; $nextTick(() => goshtosoSetTooltipPortal($el, open))\" data-tooltip-position=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var26 string
-			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.id)
+			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(string(cfg.position))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 99, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 96, Col: 186}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var26)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\" data-tooltip-activation=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\" data-tooltip-portal-activation=\"click\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, ">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if cfg.trigger != nil {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<span x-on:click=\"showTooltip = !showTooltip\" x-data data-tooltip-content-id=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var27 string
-			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.ResolveAttributeValue(string(cfg.activation))
+			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.id)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 100, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 103, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var27)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "\" x-init=\"goshtosoInitTooltipTrigger($el, showTooltip)\" x-effect=\"goshtosoSetTooltipExpanded($el, showTooltip)\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "\" data-tooltip-activation=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var28 string
+			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.ResolveAttributeValue(string(cfg.activation))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 104, Col: 52}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var28)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "\" x-init=\"goshtosoInitTooltipTrigger($el, showTooltip)\" x-effect=\"goshtosoSetTooltipExpanded($el, showTooltip)\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -531,100 +554,133 @@ func clickTooltip(cfg config) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<button x-on:click=\"showTooltip = !showTooltip\" type=\"button\" class=\"rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark\" aria-describedby=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var28 string
-			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.id)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 107, Col: 411}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var28)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "\" aria-controls=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<button x-on:click=\"showTooltip = !showTooltip\" type=\"button\" class=\"rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark\" aria-describedby=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.id)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 107, Col: 436}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 111, Col: 411}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "\" x-bind:aria-expanded=\"showTooltip\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\" aria-controls=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var30 string
-			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.triggerLabel)
+			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.id)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 107, Col: 492}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 111, Col: 436}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</button>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var30)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "\" x-bind:aria-expanded=\"showTooltip\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var31 string
+			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.triggerLabel)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 111, Col: 492}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</button>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		var templ_7745c5c3_Var31 = []any{cfg.positionClasses() + " z-10 whitespace-nowrap rounded-radius bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong dark:bg-surface dark:text-on-surface-strong"}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var31...)
+		var templ_7745c5c3_Var32 = []any{cfg.positionClasses() + " z-10 whitespace-nowrap rounded-radius bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong dark:bg-surface dark:text-on-surface-strong"}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var32...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<div x-cloak x-show=\"showTooltip\" x-on:click.outside=\"showTooltip = false\" id=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var32 string
-		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.id)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 109, Col: 88}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var32)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div x-cloak x-show=\"showTooltip\" id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var33 string
-		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var31).String())
+		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 1, Col: 0}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 113, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var33)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\" role=\"tooltip\" x-transition:enter=\"transition ease-out motion-reduce:transition-none\" x-transition:enter-start=\"opacity-0 motion-reduce:opacity-100\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition ease-in motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0 motion-reduce:opacity-100\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var34 string
-		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.label)
+		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var32).String())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 109, Col: 651}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 1, Col: 0}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var34)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "\" role=\"tooltip\" x-transition:enter=\"transition ease-out motion-reduce:transition-none\" x-transition:enter-start=\"opacity-0 motion-reduce:opacity-100\" x-transition:enter-end=\"opacity-100\" x-transition:leave=\"transition ease-in motion-reduce:transition-none\" x-transition:leave-start=\"opacity-100\" x-transition:leave-end=\"opacity-0 motion-reduce:opacity-100\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if cfg.isRich() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<div class=\"flex w-64 max-w-full flex-col gap-1 text-left whitespace-normal text-xs\"><span class=\"text-sm font-medium\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var35 string
+			templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 116, Col: 65}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</span><p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var36 string
+			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.description)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 117, Col: 40}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</p></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			var templ_7745c5c3_Var37 string
+			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tooltip/tooltip.templ`, Line: 120, Col: 27}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

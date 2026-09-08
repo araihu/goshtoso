@@ -12,7 +12,7 @@ func TestHelpUsesNamedCompactButton(t *testing.T) {
 		t.Fatal(err)
 	}
 	html := output.String()
-	for _, want := range []string{`aria-label="How pinning works"`, `type="button"`, `size-6`, `data-tooltip-content-id="pin-help"`, `role="tooltip"`, `Check to pin. Uncheck to remove.`} {
+	for _, want := range []string{`aria-label="How pinning works"`, `type="button"`, `size-4`, `data-tooltip-activation="click"`, `data-tooltip-content-id="pin-help"`, `role="tooltip"`, `Check to pin. Uncheck to remove.`} {
 		if !strings.Contains(html, want) {
 			t.Errorf("missing %q", want)
 		}

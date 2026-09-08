@@ -212,7 +212,7 @@
   };
 })();
 
-// Optional hover-tooltip portal. Native popovers escape scroll-container clipping.
+// Optional tooltip portal. Native popovers escape scroll-container clipping.
 (function () {
   if (window.goshtosoInitTooltipPortal) return;
   function hide(panel) {
@@ -222,6 +222,9 @@
   function hideAll() {
     document.querySelectorAll("[data-tooltip-portal-open]").forEach(hide);
   }
+  window.goshtosoSetTooltipPortal = function (root, open) {
+    root.dispatchEvent(new CustomEvent("goshtoso:tooltip-toggle", { detail: open }));
+  };
   window.goshtosoInitTooltipPortal = function (root) {
     if (root.dataset.tooltipPortalReady) return;
     var panel = root.querySelector('[role="tooltip"]');
@@ -253,6 +256,13 @@
       panel.setAttribute("data-tooltip-portal-open", "");
     }
     root.addEventListener("goshtoso:tooltip-position", show);
+    if (root.dataset.tooltipPortalActivation === "click") {
+      root.addEventListener("goshtoso:tooltip-toggle", function (event) {
+        if (event.detail) show();
+        else hide(panel);
+      });
+      return;
+    }
     root.addEventListener("mouseenter", show);
     root.addEventListener("focusin", show);
     root.addEventListener("mouseleave", function () {
@@ -268,7 +278,7 @@
   function repositionOpen() {
     document.querySelectorAll("[data-tooltip-portal-open]").forEach(function (panel) {
       var root = panel.closest("[data-tooltip-portal-ready]");
-      if (root && root.contains(document.activeElement)) root.dispatchEvent(new Event("goshtoso:tooltip-position"));
+      if (root && (root.dataset.tooltipPortalActivation === "click" || root.contains(document.activeElement))) root.dispatchEvent(new Event("goshtoso:tooltip-position"));
       else hide(panel);
     });
   }

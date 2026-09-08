@@ -929,7 +929,7 @@ table.Column{
 
 Give each help badge a unique ID within the document.
 
-Help tooltips use the native popover top layer to avoid clipping inside tables
-and clamp their position to the viewport. Escape dismisses them. Scrolling and
-resizing reposition focused tooltips and dismiss hover-only tooltips. Other hover
-tooltips can opt in with `tooltip.WithPortal(true)`.
+Help badges show a 16px question mark inside a 24px hit target. Click, Enter, or
+Space toggles the explanation. Click outside or press Escape to dismiss it.
+Tooltips use the native popover top layer to avoid table clipping and keep the
+panel inside the viewport. Other tooltips can opt in with `tooltip.WithPortal(true)`.

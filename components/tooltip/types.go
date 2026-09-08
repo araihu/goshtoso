@@ -35,7 +35,7 @@ type config struct {
 	portal       bool
 }
 
-// WithPortal keeps hover tooltips outside ancestor overflow clipping using the
+// WithPortal keeps tooltips outside ancestor overflow clipping using the
 // native popover top layer. Position is clamped to the viewport. Browsers without
 // the Popover API retain the normal inline tooltip behavior.
 func WithPortal(enabled bool) Option {
