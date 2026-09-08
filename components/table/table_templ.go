@@ -2314,7 +2314,7 @@ func sortableHeader(cfg Config, col Column) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if col.HeaderSuffix != nil {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 152, "<div hx-disinherit=\"*\" x-on:click.stop x-on:keydown.stop>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 152, "<div x-data hx-disinherit=\"*\" x-on:click.stop x-on:keydown.stop>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

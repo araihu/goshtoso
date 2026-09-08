@@ -8,6 +8,8 @@ github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs
 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
 github.com/araihu/goshtoso v0.2.7 h1:9XBxBUYKrTbyIQ3K9fbCqGDT+61RMsYQZ2tseR98C+Y=
 github.com/araihu/goshtoso v0.2.7/go.mod h1:G/6KrWIXUC33KMlo0u/rt9Grd5erMh9ozpm0gPg1Tc4=
+github.com/araihu/goshtoso v0.2.9-0.20260908210005-fde381afe781 h1:YUMMp3n66+Jkh1FoVGtW8Wg3/0vysLUWGU4RNEUz8kY=
+github.com/araihu/goshtoso v0.2.9-0.20260908210005-fde381afe781/go.mod h1:89Lnpi2fnm8ZTgiitQStCfKt2FMpMq9trbssPOvLhO0=
 github.com/araihu/goshtoso-app-shells v0.1.7 h1:zonGfSiVFrGyJPDd4/yXCcEFhiO7W6aHIlHY2DRcc9Q=
 github.com/araihu/goshtoso-app-shells v0.1.7/go.mod h1:Us/2onRiBR84jl0jfWX/M7Fmuwornlf+2WMECoMlRLM=
 github.com/araihu/goshtoso-charts v0.0.2 h1:IfcatIJ1GariJhFy6wzSfCW4tERxBaCHvNqHy7yy6xc=

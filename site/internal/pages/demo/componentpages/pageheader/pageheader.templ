@@ -4,6 +4,7 @@ import (
 	"github.com/araihu/goshtoso/components/breadcrumbs"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/pageheader"
+"github.com/araihu/goshtoso/components/tooltip"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -55,6 +56,11 @@ templ pageHeaderDemoContent() {
     TitleAttrs:  templ.Attributes{"data-heading-voice": "editorial"},
 })`,
 		)
+        @demo.DemoSection(demo.DemoSectionProps{Title: "Heading help", Description: "Keep optional guidance beside the title in a keyboard-focusable help badge."}, pageHeaderHelpPreview(), `@pageheader.PageHeader(pageheader.Config{
+    Title: "Staging",
+    TitleSuffix: tooltip.Help("staging-help", "About staging", "Review discovered services before pinning them."),
+})`)
+
 	</div>
 }
 
@@ -106,4 +112,11 @@ templ pageHeaderClusterActions() {
 	@button.Button() {
 		Deploy
 	}
+}
+
+
+templ pageHeaderHelpPreview() {
+ <div id="page-header-help" class="w-full p-5">
+  @pageheader.PageHeader(pageheader.Config{Title: "Staging", TitleSuffix: tooltip.Help("staging-help", "About staging", "Review discovered services before pinning them.")})
+ </div>
 }
