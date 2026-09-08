@@ -113,7 +113,7 @@ func libraryOutputs(sources []resolvedConfigSource, files map[string][]byte) (ma
 	for _, s := range sources {
 		fmt.Fprintf(&notice, "%s: %s\nSource: %s\nLicense: LICENSES/%s.txt\n\n", s.ID, s.License, s.URL, s.ID)
 	}
-	out["NOTICE"] = []byte(notice.String())
+	out["NOTICE"] = []byte(strings.TrimSpace(notice.String()) + "\n")
 	return out, catalog, nil
 }
 
