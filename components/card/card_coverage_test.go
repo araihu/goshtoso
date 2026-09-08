@@ -239,3 +239,14 @@ func TestCardRenderEscaping(t *testing.T) {
 		t.Errorf("title not escaped: %s", html)
 	}
 }
+
+func TestCardTitlePrefix(t *testing.T) {
+	html := render(t, Card(Config{Title: "Service", TitlePrefix: templ.Raw(`<svg aria-hidden="true"></svg>`)}))
+	heading := html[strings.Index(html, "<h3"):strings.Index(html, "</h3>")]
+	if !strings.Contains(heading, "flex items-center gap-3") || strings.Index(heading, "<svg") > strings.Index(heading, ">Service<") {
+		t.Fatalf("prefix must share the title row: %s", heading)
+	}
+	if strings.Contains(heading, "aria-describedby") {
+		t.Fatalf("missing description must not be referenced: %s", heading)
+	}
+}

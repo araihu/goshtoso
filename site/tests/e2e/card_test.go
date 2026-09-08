@@ -22,6 +22,11 @@ func TestCardComponentDemo(t *testing.T) {
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
+	prefixTitle := page.Locator("#card-title-prefix h3")
+	require.NoError(t, prefixTitle.Locator("svg").WaitFor())
+	prefixLayout, err := prefixTitle.Evaluate(`el => getComputedStyle(el).display`, nil)
+	require.NoError(t, err)
+	assert.Equal(t, "flex", prefixLayout)
 
 	defaultCard := page.Locator("#card-default article")
 	require.NoError(t, defaultCard.WaitFor())

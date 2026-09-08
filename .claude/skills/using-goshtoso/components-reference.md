@@ -372,6 +372,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 | `MediaClass` | `string` | MediaClass allows additional CSS classes on the media container. |
 | `Tag` | `string` | Tag is an optional category/tag (shown above title) |
 | `Title` | `string` | Title is the card title |
+| `TitlePrefix` | `templ.Component` | TitlePrefix renders non-interactive content, such as an icon, before Title on the same row. The title text can wrap while the prefix keeps its size. |
 | `Description` | `string` | Description is the card body text |
 | `Body` | `templ.Component` | Body renders arbitrary content between Description and Footer. |
 | `Footer` | `templ.Component` | Footer is optional footer content (buttons, links, etc.) |

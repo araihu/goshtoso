@@ -41,6 +41,9 @@ type Config struct {
 	Tag string
 	// Title is the card title
 	Title string
+	// TitlePrefix renders non-interactive content, such as an icon, before Title
+	// on the same row. The title text can wrap while the prefix keeps its size.
+	TitlePrefix templ.Component
 	// Description is the card body text
 	Description string
 	// Body renders arbitrary content between Description and Footer.
