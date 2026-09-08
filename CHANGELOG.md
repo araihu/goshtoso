@@ -21,6 +21,8 @@ All notable changes to Goshtoso are documented in this file.
 
 - Import `github.com/araihu/goshtoso/components/schematree`; callers retain
   schema parsing, reference resolution, cycle limits, and HTML sanitization.
+- Includes the dependency refresh from `main`: Arai Hû Assets `v0.2.3` and
+  `gofrs/flock` `v0.13.1`. Bundled Alpine.js and HTMX versions are unchanged.
 - The documentation site adopts this API in the follow-up dependency-pin change.
 
 ## [v0.2.8] - 2026-09-03
