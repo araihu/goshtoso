@@ -12,11 +12,13 @@ func TestGenerateTheme(t *testing.T) {
 @source inline("md:w-64");
 @import "../all-themes.css";
 @import "./codeblock.css";
+@import "./schematree.css";
 @theme { --font-body: x; }`
 
 	imports := map[string]string{
 		"all-themes.css": "@theme { --color-primary: red; }",
 		"codeblock.css":  ".ch-x { color: red; }",
+		"schematree.css": ".gs-schema-tree { color: inherit; }",
 	}
 	out := generateTheme(mainCSS, imports)
 
@@ -41,7 +43,10 @@ func TestGenerateTheme(t *testing.T) {
 	if !strings.Contains(out, "--font-body: x") {
 		t.Error("@theme blocks must be preserved")
 	}
-	if strings.Contains(out, `@import "../all-themes.css"`) || strings.Contains(out, `@import "./codeblock.css"`) {
+	if strings.Contains(out, `@import "`) {
 		t.Error("relative @imports must be replaced, not left in place")
+	}
+	if !strings.Contains(out, ".gs-schema-tree") {
+		t.Error("schematree.css must be inlined")
 	}
 }

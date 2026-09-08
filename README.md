@@ -27,7 +27,7 @@ dependencies and render most HTML on the server.
 
 ## Highlights
 
-- **56 public component packages**, **52 documentation pages**, and **85 renderable primitives**
+- **57 public component packages**, **52 documentation pages**, and **86 renderable primitives**
   for composition, forms, navigation, overlays, data
   display, feedback, layout, and richer inputs.
 - **Server-rendered by default** with HTMX-friendly markup and Alpine.js where
@@ -387,7 +387,7 @@ coverage, generated templ output, CSS output, and usage reference in sync.
 ## Credits
 
 Goshtoso began as a hard fork of [PenguinUI](https://www.penguinui.com) by
-[Salar Houshvand](https://x.com/salar_houshvand), transformed from static
+[Salar Houshvand](https://github.com/SalarHoushvand), transformed from static
 HTML/Alpine.js examples into an importable Go component library.
 
 ## License

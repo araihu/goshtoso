@@ -5,7 +5,7 @@ import "strings"
 // generateTheme produces the consumer-importable Goshtoso theme source from the
 // contents of css/main.css. It removes the Tailwind import (the consumer's own
 // build provides it) and the repo-relative @source scan globs (meaningless
-// outside this repo), and inlines the two relative @imports from imports[name]
+// outside this repo), and inlines relative @imports from imports[name]
 // so the output is a single self-contained file. @source inline(...) safelists,
 // @custom-variant, @theme, @layer, and @font-face are preserved verbatim.
 func generateTheme(mainCSS string, imports map[string]string) string {
@@ -28,6 +28,9 @@ func generateTheme(mainCSS string, imports map[string]string) string {
 			b.WriteByte('\n')
 		case trimmed == `@import "./codeblock.css";`:
 			b.WriteString(imports["codeblock.css"])
+			b.WriteByte('\n')
+		case trimmed == `@import "./schematree.css";`:
+			b.WriteString(imports["schematree.css"])
 			b.WriteByte('\n')
 		default:
 			b.WriteString(line)

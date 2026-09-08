@@ -67,6 +67,7 @@ const (
 	KindRating                 Kind = "rating"
 	KindRatingDisplay          Kind = "rating-display"
 	KindSchemaFormFields       Kind = "schema-form-fields"
+	KindSchemaTree             Kind = "schema-tree"
 	KindSearch                 Kind = "search"
 	KindSearchField            Kind = "search-field"
 	KindSearchModal            Kind = "search-modal"
@@ -155,6 +156,7 @@ var allKinds = []Kind{
 	KindRating,
 	KindRatingDisplay,
 	KindSchemaFormFields,
+	KindSchemaTree,
 	KindSearch,
 	KindSearchField,
 	KindSearchModal,
