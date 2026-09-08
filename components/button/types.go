@@ -241,7 +241,7 @@ func fontSizeClasses(size Size) string {
 
 func buttonClasses(cfg config) string {
 	if cfg.appearance == AppearancePlain {
-		return "inline-flex items-center justify-center gap-2 min-h-6 min-w-6 px-1 whitespace-nowrap bg-transparent border-0 font-medium text-inherit hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-75 disabled:cursor-not-allowed " + fontSizeClasses(cfg.size) + " " + cfg.rootClass
+		return "inline-flex items-center justify-center gap-2 min-h-6 min-w-6 px-1 whitespace-nowrap cursor-pointer bg-transparent border-0 font-medium text-inherit hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-75 disabled:cursor-not-allowed " + fontSizeClasses(cfg.size) + " " + cfg.rootClass
 	}
 	base := "inline-flex items-center justify-center gap-2 min-h-11 min-w-11 whitespace-nowrap rounded-2xl font-medium tracking-wide transition motion-reduce:transition-none hover:contrast-125 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:contrast-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border"
 	outline := focusOutlineClasses(cfg.tone)
