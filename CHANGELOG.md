@@ -2,6 +2,27 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.9] - 2026-09-08
+
+### SchemaTree
+
+- Added the format-neutral `schematree.SchemaTree` component for read-only
+  schema documentation, with native expandable branches and caller-owned lazy children.
+- Descriptions accept escaped plain text or arbitrary `templ.Component` content,
+  including caller-rendered and sanitized Markdown. Rich content takes precedence.
+- Added field types, constraints, reference/component slots, and required,
+  nullable, and deprecated annotations. Optional labels are opt-in.
+- Uses italic monospace types, theme-aware danger-colored required labels,
+  vertical nesting guides, and responsive layouts without horizontal dividers.
+- Includes shared styles in both published CSS assets; no new browser runtime
+  or external dependency is required. Existing component APIs are unchanged.
+
+### Upgrade note
+
+- Import `github.com/araihu/goshtoso/components/schematree`; callers retain
+  schema parsing, reference resolution, cycle limits, and HTML sanitization.
+- The documentation site adopts this API in the follow-up dependency-pin change.
+
 ## [v0.2.8] - 2026-09-03
 
 ### CodeBlock runtime and API

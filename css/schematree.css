@@ -1,0 +1,92 @@
+/* Format-neutral schema documentation. Explicit selectors keep host prose
+   styles from changing the tree's spacing, markers, or identifier treatment. */
+.gs-schema-tree {
+  --gs-tree-ink: var(--color-on-surface);
+  --gs-tree-strong: var(--color-on-surface-strong);
+  --gs-tree-muted: var(--color-on-surface-muted);
+  --gs-tree-outline: var(--color-outline);
+  --gs-tree-hover: var(--color-surface-alt);
+  --gs-tree-focus: var(--color-primary);
+  --gs-tree-required: var(--color-danger-action);
+  container-type: inline-size;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  color: var(--gs-tree-ink);
+  font-family: var(--font-body, sans-serif);
+  font-size: .875rem;
+  line-height: 1.6;
+}
+.dark .gs-schema-tree {
+  --gs-tree-ink: var(--color-on-surface-dark);
+  --gs-tree-strong: var(--color-on-surface-dark-strong);
+  --gs-tree-muted: var(--color-on-surface-dark-muted);
+  --gs-tree-outline: var(--color-outline-dark);
+  --gs-tree-hover: var(--color-surface-dark-alt);
+  --gs-tree-focus: var(--color-primary-dark);
+  --gs-tree-required: var(--color-danger-action-dark);
+}
+.gs-schema-tree .gs-schema-tree-header { margin-block-end: .75rem; }
+.gs-schema-tree .gs-schema-tree-list { list-style: none; margin: 0; padding: 0; }
+.gs-schema-tree .gs-schema-tree-item { list-style: none; margin: 0; padding: 0; border-block: 0; }
+.gs-schema-tree .gs-schema-tree-node { min-inline-size: 0; margin: 0; padding-block: .5rem; border: 0; }
+.gs-schema-tree .gs-schema-tree-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: .5rem 1rem;
+  min-block-size: 2.75rem;
+  margin: 0;
+  padding: .625rem .5rem .625rem 1.75rem;
+  border-radius: var(--radius-radius);
+  list-style: none;
+}
+.gs-schema-tree summary.gs-schema-tree-row { cursor: pointer; }
+.gs-schema-tree summary.gs-schema-tree-row:hover { background: var(--gs-tree-hover); }
+.gs-schema-tree summary.gs-schema-tree-row:focus-visible { outline: 2px solid var(--gs-tree-focus); outline-offset: 2px; }
+.gs-schema-tree summary.gs-schema-tree-row::-webkit-details-marker { display: none; }
+.gs-schema-tree summary.gs-schema-tree-row::marker { content: ""; }
+.gs-schema-tree summary.gs-schema-tree-row::before {
+  content: ""; position: absolute; inset-inline-start: .625rem; top: 1rem;
+  inline-size: .375rem; block-size: .375rem;
+  border-inline-end: 1.5px solid currentColor; border-block-end: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+}
+.gs-schema-tree details[open] > summary.gs-schema-tree-row::before { transform: rotate(45deg); }
+.gs-schema-tree .gs-schema-tree-identity { display: flex; flex-wrap: wrap; align-items: baseline; min-inline-size: 0; gap: .125rem .625rem; }
+.gs-schema-tree code.gs-schema-tree-name {
+  font-family: var(--font-mono, monospace); font-size: .875rem; font-weight: 600;
+  color: var(--gs-tree-strong); background: none; padding: 0; border: 0; border-radius: 0;
+  white-space: normal; overflow-wrap: anywhere;
+}
+.gs-schema-tree .gs-schema-tree-type { font-family: var(--font-mono, monospace); font-size: .875rem; font-style: italic; font-weight: 400; color: var(--gs-tree-muted); overflow-wrap: anywhere; }
+.gs-schema-tree .gs-schema-tree-states { display: flex; justify-content: end; flex-wrap: wrap; gap: .375rem; }
+.gs-schema-tree .gs-schema-tree-state { font-size: .875rem; font-weight: 500; color: var(--gs-tree-muted); }
+.gs-schema-tree .gs-schema-tree-state[data-required="true"] { font-weight: 650; color: var(--gs-tree-required); }
+.gs-schema-tree .gs-schema-tree-state[data-deprecated="true"] { text-decoration: line-through; }
+.gs-schema-tree .gs-schema-tree-body { padding-inline: 1.75rem .5rem; }
+.gs-schema-tree .gs-schema-tree-body:empty { display: none; }
+.gs-schema-tree .gs-schema-tree-description { margin: 0 0 .75rem; max-inline-size: 72ch; color: var(--gs-tree-ink); overflow-wrap: anywhere; }
+.gs-schema-tree .gs-schema-tree-plain { white-space: pre-wrap; }
+.gs-schema-tree .gs-schema-tree-description :where(p, ul, ol, pre, blockquote) { margin-block: .5rem; }
+.gs-schema-tree .gs-schema-tree-description :where(ul, ol) { padding-inline-start: 1.5rem; }
+.gs-schema-tree .gs-schema-tree-description :where(ul) { list-style: disc; }
+.gs-schema-tree .gs-schema-tree-description :where(ol) { list-style: decimal; }
+.gs-schema-tree .gs-schema-tree-description :where(a) { text-decoration: underline; text-underline-offset: .2em; }
+.gs-schema-tree .gs-schema-tree-description :where(pre) { max-inline-size: 100%; overflow: auto; }
+.gs-schema-tree .gs-schema-tree-constraints { margin: 0 0 .5rem; color: var(--gs-tree-muted); font-size: .875rem; }
+.gs-schema-tree .gs-schema-tree-constraints > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .625rem; margin-block: .25rem; }
+.gs-schema-tree .gs-schema-tree-constraints dt { font-weight: 500; }
+.gs-schema-tree .gs-schema-tree-constraints dd { margin: 0; min-inline-size: 0; max-inline-size: 100%; }
+.gs-schema-tree .gs-schema-tree-constraints pre { margin: .25rem 0; padding: .75rem; background: var(--gs-tree-hover); border-radius: var(--radius-radius); max-inline-size: 100%; overflow: auto; }
+.gs-schema-tree .gs-schema-tree-constraints code { font-family: var(--font-mono, monospace); font-size: inherit; color: inherit; background: none; padding: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.gs-schema-tree .gs-schema-tree-children { margin-inline-start: .8125rem; padding-inline-start: .9375rem; border-inline-start: 1px solid var(--gs-tree-outline); }
+.gs-schema-tree .gs-schema-tree-empty { color: var(--gs-tree-muted); margin-block: .75rem; }
+@container (max-width: 28rem) {
+  .gs-schema-tree .gs-schema-tree-row { column-gap: .5rem; }
+  .gs-schema-tree .gs-schema-tree-children { margin-inline-start: .375rem; padding-inline-start: .375rem; }
+}
+@media print {
+  .gs-schema-tree details > :not(summary) { display: block !important; }
+  .gs-schema-tree .gs-schema-tree-node { break-inside: avoid; }
+}

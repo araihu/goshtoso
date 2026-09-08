@@ -597,7 +597,7 @@ so trailing buttons are never nested inside a clickable row. Avoid adding
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The public surface has 56 public component packages and 85 renderable primitives;
+The public surface has 57 public component packages and 86 renderable primitives;
 the demo catalog has 52 documentation pages.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
@@ -639,6 +639,7 @@ configuration previews, and API tables.
 | `range` | `components/range` | Range sliders with labels, helper text, and icon slots |
 | `rating` | `components/rating` | Rating controls and display states |
 | `schemaform` | `components/schemaform` | Schema Form: generate form controls from JSON Schema, defaults, current values, and allow-list rules |
+| `schematree` | `components/schematree` | Read-only nested schema fields with plain or component descriptions, constraints, native disclosure, and lazy child slots |
 | `search` | `components/search` | Search input and command-palette style result lists |
 | `select` | `components/select` | HTML select dropdown with validation states, readonly mode |
 | `sidebar` | `components/sidebar` | Collapsible sidebar with sections, nested items, badges |
