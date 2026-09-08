@@ -137,6 +137,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"toggle.Toggle":                   {},
 		"toolbar.Toolbar":                 {},
 		"tooltip.Tooltip":                 {},
+		"tooltip.Help":                    {},
 
 		"button.WithTone":        {},
 		"button.WithSize":        {},

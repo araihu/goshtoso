@@ -1170,6 +1170,7 @@ import "github.com/araihu/goshtoso/components/pageheader"  // package pageheader
 | Field | Type | Description |
 |-------|------|-------------|
 | `Title` | `string` | Title is the page's primary heading. |
+| `TitleSuffix` | `templ.Component` | TitleSuffix renders optional content, such as a help badge, beside the h1. It stays outside the heading so controls do not become part of its name. |
 | `Description` | `string` | Description is optional supporting copy below the title. |
 | `Breadcrumbs` | `templ.Component` | Breadcrumbs renders navigation context above the title. |
 | `Actions` | `templ.Component` | Actions renders page-level controls beside the title group. |
@@ -1857,6 +1858,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 |-------|------|-------------|
 | `Key` | `string` | Key is the column identifier used to look up cell values in Row.Cells |
 | `Label` | `string` | Label is the display text for the column header |
+| `HeaderSuffix` | `templ.Component` | HeaderSuffix renders optional content beside the column label. Interactions within it do not trigger column sorting. |
 | `Sortable` | `bool` | Sortable marks this column as sortable (renders clickable header) |
 | `Width` | `string` | Width is an optional Tailwind width class (e.g. "w-32", "min-w-[200px]") |
 | `Align` | `string` | Align is "left" (default), "center", or "right" |
@@ -2207,7 +2209,7 @@ import "github.com/araihu/goshtoso/components/toolbar"  // package toolbar
 import "github.com/araihu/goshtoso/components/tooltip"  // package tooltip
 ```
 
-**Entry points:** `Tooltip(id string, label string, options ...Option)`
+**Entry points:** `Help(id string, label string, description string)` · `Tooltip(id string, label string, options ...Option)`
 
 **Options:** `WithActivation(activation Activation)` · `WithDescription(description string)` · `WithPosition(position Position)` · `WithTrigger(trigger templ.Component)` · `WithTriggerLabel(label string)`
 

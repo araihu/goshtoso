@@ -2024,6 +2024,9 @@
   .border-control-outline {
     border-color: var(--color-control-outline);
   }
+  .border-current {
+    border-color: currentcolor;
+  }
   .border-danger {
     border-color: var(--color-danger);
   }

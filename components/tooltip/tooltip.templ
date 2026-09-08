@@ -1,5 +1,11 @@
 package tooltip
 
+templ helpTrigger(label string) {
+ <button type="button" aria-label={ label } class="inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-current text-xs font-medium text-on-surface-muted hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark dark:focus-visible:outline-primary-dark">
+  ?
+ </button>
+}
+
 // Tooltip renders a tooltip component based on PenguinUI
 // Usage:
 //

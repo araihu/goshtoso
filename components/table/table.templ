@@ -286,7 +286,13 @@ templ tableHeadRow(cfg Config) {
 			if col.Sortable && cfg.htmxEndpointValue() != "" {
 				@sortableHeader(cfg, col)
 			} else {
-				<th scope="col" class={ columnHeaderClasses(col) }>{ col.Label }</th>
+				<th scope="col" class={ columnHeaderClasses(col) }>
+					if col.HeaderSuffix != nil {
+						<div class="flex items-center gap-2"><span>{ col.Label }</span>@col.HeaderSuffix</div>
+					} else {
+						{ col.Label }
+					}
+				</th>
 			}
 		}
 		if cfg.hasActions() || cfg.hasExpandableRows() {
@@ -623,6 +629,11 @@ templ sortableHeader(cfg Config, col Column) {
 		<div class="flex items-center gap-1">
 			<span>{ col.Label }</span>
 			@sortIcon(cfg, col.Key)
+			if col.HeaderSuffix != nil {
+				<div hx-disinherit="*" x-on:click.stop x-on:keydown.stop>
+					@col.HeaderSuffix
+				</div>
+			}
 		</div>
 	</th>
 }
