@@ -168,12 +168,6 @@ func validateConfigSource(index int, source ConfigSource) error {
 	if err := validateLibrarySource(source); err != nil {
 		return err
 	}
-	if source.StripComponents < 0 {
-		return fmt.Errorf("iconpack source %q stripComponents must not be negative", source.ID)
-	}
-	if source.MaxFiles < 0 || source.MaxFiles > maxArchiveFiles {
-		return fmt.Errorf("iconpack source %q maxFiles must be between 0 and %d", source.ID, maxArchiveFiles)
-	}
 	for _, item := range source.Paths {
 		if err := safeRelativePath(item); err != nil {
 			return fmt.Errorf("iconpack source %q path %q: %w", source.ID, item, err)
@@ -363,6 +357,13 @@ func sortedConfigSources(sources []resolvedConfigSource) []resolvedConfigSource 
 }
 
 func validateLibrarySource(source ConfigSource) error {
+	if source.StripComponents < 0 {
+		return fmt.Errorf("iconpack source %q stripComponents must not be negative", source.ID)
+	}
+	if source.MaxFiles < 0 || source.MaxFiles > maxArchiveFiles {
+		return fmt.Errorf("iconpack source %q maxFiles must be between 0 and %d", source.ID, maxArchiveFiles)
+	}
+
 	if source.MetadataPath != "" {
 		if err := safeRelativePath(source.MetadataPath); err != nil {
 			return err

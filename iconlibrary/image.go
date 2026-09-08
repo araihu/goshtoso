@@ -57,8 +57,8 @@ func validateSVG(data []byte) error {
 		case xml.StartElement:
 			if depth == 0 {
 				roots++
-				if roots != 1 || t.Name.Local != "svg" || t.Name.Space != "http://www.w3.org/2000/svg" {
-					return errors.New("expected SVG root")
+				if err := validateSVGRoot(t, roots); err != nil {
+					return err
 				}
 			}
 			if !allowed[t.Name.Local] || t.Name.Space != "http://www.w3.org/2000/svg" {
@@ -97,6 +97,13 @@ func validateSVGImageAttributes(t xml.StartElement) error {
 		if (name == "href" || name == "src") && !strings.HasPrefix(value, "#") {
 			return errors.New("external SVG references are not allowed")
 		}
+	}
+	return nil
+}
+
+func validateSVGRoot(t xml.StartElement, roots int) error {
+	if roots != 1 || t.Name.Local != "svg" || t.Name.Space != "http://www.w3.org/2000/svg" {
+		return errors.New("expected SVG root")
 	}
 	return nil
 }
