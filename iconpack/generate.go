@@ -90,6 +90,9 @@ type provenanceAsset struct {
 }
 
 func generate(ctx context.Context, opts Options) (Result, error) {
+	if opts.Library {
+		return generateLibrary(ctx, opts)
+	}
 	if err := validateGenerationOptions(opts); err != nil {
 		return Result{}, err
 	}

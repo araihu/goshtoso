@@ -298,3 +298,27 @@ The temporary consumer replaces Goshtoso only as its Go dependency so an
 uncommitted producer can be tested. All icon inputs still come exclusively from
 the verified candidate archive; no Goshtoso checkout or vendored asset tree is an
 icon source.
+
+## File-based libraries
+
+Use `-library -config .iconpack.yaml -out ./icons` to generate standalone images
+and `catalog.json`, instead of Go bindings and a sprite. The same explicit
+`-trust`, lockfile, attribution, atomic output, and `-check` rules apply.
+`github.com/araihu/goshtoso/iconlibrary` exposes the catalog types and bounded
+image validation used by this output. SVG, PNG, and JPEG are supported. SVG
+accepts passive vector elements only, without CSS, scripts, or external references.
+
+Sources accept `formats` and archive `include` patterns. A selfh.st source can
+set `metadataFormat: selfhst` and `metadataPath: index.json`; this imports friendly
+names, tags, and default/light/dark variant relationships. Pin a commit, retain
+`LICENSE` and `index.json`, and include `png/**` with `formats: [png]` for full
+catalog coverage. `formats` gives preference order when multiple formats exist.
+Missing declared variants fail generation, rather than silently omitting icons.
+Other sources produce one catalog entry per selected image file.
+
+Catalog IDs are namespaced by source ID. Images use content-hashed filenames;
+consumers serve them locally and can load one thumbnail at a time. `NOTICE`,
+`LICENSES`, and `PROVENANCE` retain attribution and locked source identities.
+Uploaded images and service assignments belong to the application, not this
+build-time generator. Applications may reuse `iconlibrary.ValidateImage`; serve
+SVG as an image with a restrictive content policy, never as uploaded inline HTML.

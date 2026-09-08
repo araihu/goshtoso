@@ -17,6 +17,7 @@ const (
 type Options struct {
 	// ConfigPath selects the Muamba-backed .iconpack.yaml contract. It is
 	// mutually exclusive with the legacy release/source flags below.
+	Library             bool
 	ConfigPath          string
 	IconpackLockPath    string
 	Trust               bool
