@@ -28,6 +28,11 @@ func TestButton_GoshtosoComponent(t *testing.T) {
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
+	plain := page.Locator("#button-plain button")
+	require.NoError(t, plain.WaitFor())
+	style, err := plain.Evaluate(`el => {const s=getComputedStyle(el); return s.backgroundColor + '/' + s.borderTopWidth}`, nil)
+	require.NoError(t, err)
+	require.Equal(t, "rgba(0, 0, 0, 0)/0px", style)
 
 	t.Run("PageLoads", func(t *testing.T) {
 		title, err := page.Title()

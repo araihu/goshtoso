@@ -235,3 +235,15 @@ func TestLoadingTextRendersIndicatorSpans(t *testing.T) {
 		}
 	}
 }
+
+func TestPlainAppearance(t *testing.T) {
+	html := render(t, "+2", WithAppearance(AppearancePlain), Disabled())
+	for _, want := range []string{"bg-transparent", "border-0", "min-h-6", "min-w-6", "focus-visible:outline-2", "disabled", "+2"} {
+		if !strings.Contains(html, want) {
+			t.Errorf("plain button missing %s", want)
+		}
+	}
+	if strings.Contains(html, "bg-primary ") {
+		t.Fatal("plain button has filled tone")
+	}
+}

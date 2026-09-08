@@ -18,6 +18,11 @@ templ ButtonDemoPage() {
 // the e2e suite and the HTMX fragment endpoint target).
 templ buttonDemoContent() {
 	<div id="button-docs-fragment" x-data="{ selected: 'md' }">
+		@demo.DemoSection(
+			demo.DemoSectionProps{Title: "Plain text", Description: "A compact action without a fill or border. Inherits text color and keeps keyboard focus visible."},
+			buttonPlainPreview(),
+			`@button.Button(button.WithAppearance(button.AppearancePlain)) { +2 }`,
+		)
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Button",
@@ -102,6 +107,12 @@ templ buttonDemoContent() {
     ) { Save }
 </form>`,
 		)
+	</div>
+}
+
+templ buttonPlainPreview() {
+	<div id="button-plain">
+		@button.Button(button.WithAppearance(button.AppearancePlain)) { +2 }
 	</div>
 }
 

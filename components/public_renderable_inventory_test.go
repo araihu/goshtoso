@@ -141,6 +141,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"tooltip.WithPortal":              {},
 
 		"button.WithTone":        {},
+		"button.WithAppearance":  {},
 		"button.WithSize":        {},
 		"button.WithType":        {},
 		"button.Disabled":        {},
