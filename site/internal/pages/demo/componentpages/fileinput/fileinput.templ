@@ -107,7 +107,7 @@ templ fileInputDefaultPreview() {
 
 // fileInputUploadPreview renders the compact upload input.
 templ fileInputUploadPreview() {
-	<div id="fileinput-upload" class="w-full max-w-md mx-auto">
+	<div id="fileinput-upload" class="grid w-full max-w-md mx-auto">
 		@fileinput.FileInput(fileinput.Config{
 			Appearance: fileinput.AppearanceUpload,
 			ID:         "demoUpload",
