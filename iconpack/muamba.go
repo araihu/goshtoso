@@ -37,6 +37,21 @@ func openMuambaPack(ctx context.Context, opts Options) (releaseBoundary, error) 
 	if err != nil {
 		return releaseBoundary{}, err
 	}
+	for _, source := range input.sources {
+		if source.MetadataFormat != "" {
+			return releaseBoundary{}, fmt.Errorf("metadata sources require -library")
+		}
+		for _, format := range source.Formats {
+			if format != "svg" {
+				return releaseBoundary{}, fmt.Errorf("raster sources require -library")
+			}
+		}
+		for _, path := range append(append([]string{}, source.Paths...), source.Path) {
+			if path != "" && !strings.EqualFold(filepath.Ext(path), ".svg") {
+				return releaseBoundary{}, fmt.Errorf("raster sources require -library")
+			}
+		}
+	}
 	engine, err := openMuambaEngine(ctx, input, opts)
 	if err != nil {
 		return releaseBoundary{}, err

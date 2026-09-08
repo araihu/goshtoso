@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	_ "golang.org/x/image/webp"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
@@ -63,14 +64,8 @@ func validateSVG(data []byte) error {
 			if !allowed[t.Name.Local] || t.Name.Space != "http://www.w3.org/2000/svg" {
 				return fmt.Errorf("unsupported SVG element %q", t.Name.Local)
 			}
-			for _, a := range t.Attr {
-				name, value := strings.ToLower(a.Name.Local), strings.ToLower(strings.TrimSpace(a.Value))
-				if strings.HasPrefix(name, "on") || name == "style" || name == "base" || strings.Contains(value, "url(") || strings.Contains(value, "javascript:") {
-					return errors.New("active SVG content is not allowed")
-				}
-				if (name == "href" || name == "src") && !strings.HasPrefix(value, "#") {
-					return errors.New("external SVG references are not allowed")
-				}
+			if err := validateSVGImageAttributes(t); err != nil {
+				return err
 			}
 			depth++
 		case xml.EndElement:
@@ -89,6 +84,19 @@ func validateSVG(data []byte) error {
 	}
 	if roots != 1 || depth != 0 {
 		return errors.New("incomplete SVG")
+	}
+	return nil
+}
+
+func validateSVGImageAttributes(t xml.StartElement) error {
+	for _, a := range t.Attr {
+		name, value := strings.ToLower(a.Name.Local), strings.ToLower(strings.TrimSpace(a.Value))
+		if strings.HasPrefix(name, "on") || name == "style" || name == "base" || strings.Contains(value, "url(") || strings.Contains(value, "javascript:") {
+			return errors.New("active SVG content is not allowed")
+		}
+		if (name == "href" || name == "src") && !strings.HasPrefix(value, "#") {
+			return errors.New("external SVG references are not allowed")
+		}
 	}
 	return nil
 }

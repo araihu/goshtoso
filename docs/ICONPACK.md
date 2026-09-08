@@ -305,10 +305,10 @@ Use `-library -config .iconpack.yaml -out ./icons` to generate standalone images
 and `catalog.json`, instead of Go bindings and a sprite. The same explicit
 `-trust`, lockfile, attribution, atomic output, and `-check` rules apply.
 `github.com/araihu/goshtoso/iconlibrary` exposes the catalog types and bounded
-image validation used by this output. SVG, PNG, and JPEG are supported. SVG
+image validation used by this output. SVG, PNG, JPEG, and WebP are supported. SVG
 accepts passive vector elements only, without CSS, scripts, or external references.
 
-Sources accept `formats` and archive `include` patterns. A selfh.st source can
+Sources accept `formats` and archive `include` patterns. `maxDownloadSize` can raise the default 256 MiB archive download limit for large collections, without changing the default for other sources. A selfh.st source can
 set `metadataFormat: selfhst` and `metadataPath: index.json`; this imports friendly
 names, tags, and default/light/dark variant relationships. Pin a commit, retain
 `LICENSE` and `index.json`, and include `png/**` with `formats: [png]` for full

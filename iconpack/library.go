@@ -14,7 +14,7 @@ import (
 )
 
 func libraryExtension(path string) bool {
-	return slices.Contains([]string{".svg", ".png", ".jpg", ".jpeg"}, strings.ToLower(filepath.Ext(path)))
+	return slices.Contains([]string{".svg", ".png", ".jpg", ".jpeg", ".webp"}, strings.ToLower(filepath.Ext(path)))
 }
 
 func generateLibrary(ctx context.Context, opts Options) (Result, error) {
@@ -60,7 +60,7 @@ func generateLibrary(ctx context.Context, opts Options) (Result, error) {
 		return Result{}, err
 	}
 	published, path, err := publishOutput(ctx, opts.OutputDir, output, opts.Check)
-	return Result{OutputDir: path, Published: published, SelectedCount: len(catalog.Icons), CatalogSHA256: hashBytes(output["catalog.json"])}, err
+	return Result{Release: "iconpack-" + hashBytes(input.configBytes)[:12], OutputDir: path, Published: published, SelectedCount: len(catalog.Icons), CatalogSHA256: hashBytes(output["catalog.json"])}, err
 }
 
 func libraryOutputs(sources []resolvedConfigSource, files map[string][]byte) (map[string][]byte, iconlibrary.Catalog, error) {
@@ -93,7 +93,7 @@ func libraryOutputs(sources []resolvedConfigSource, files map[string][]byte) (ma
 					return nil, catalog, fmt.Errorf("%s: %w", v.Path, err)
 				}
 				v.MIME, v.Width, v.Height, v.SHA256 = mime, w, h, hashBytes(raw)
-				ext := map[string]string{"image/png": ".png", "image/jpeg": ".jpg", "image/svg+xml": ".svg"}[mime]
+				ext := map[string]string{"image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp", "image/svg+xml": ".svg"}[mime]
 				v.Path = "images/" + v.SHA256 + ext
 				out[v.Path] = raw
 			}

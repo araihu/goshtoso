@@ -162,23 +162,11 @@ func validateConfigSource(index int, source ConfigSource) error {
 			return fmt.Errorf("iconpack source %q path: %w", source.ID, err)
 		}
 		if !libraryExtension(source.Path) {
-			return fmt.Errorf("iconpack source %q path %q is not an SVG", source.ID, source.Path)
+			return fmt.Errorf("iconpack source %q path %q is not a supported image", source.ID, source.Path)
 		}
 	}
-	if source.MetadataPath != "" {
-		if err := safeRelativePath(source.MetadataPath); err != nil {
-			return err
-		}
-		if source.MetadataFormat != "selfhst" {
-			return fmt.Errorf("unsupported metadataFormat %q", source.MetadataFormat)
-		}
-	} else if source.MetadataFormat != "" {
-		return fmt.Errorf("metadataPath is required")
-	}
-	for _, format := range source.Formats {
-		if format != "svg" && format != "png" && format != "jpeg" {
-			return fmt.Errorf("unsupported image format %q", format)
-		}
+	if err := validateLibrarySource(source); err != nil {
+		return err
 	}
 	if source.StripComponents < 0 {
 		return fmt.Errorf("iconpack source %q stripComponents must not be negative", source.ID)
@@ -191,7 +179,7 @@ func validateConfigSource(index int, source ConfigSource) error {
 			return fmt.Errorf("iconpack source %q path %q: %w", source.ID, item, err)
 		}
 		if !libraryExtension(item) {
-			return fmt.Errorf("iconpack source %q selected path %q is not an SVG", source.ID, item)
+			return fmt.Errorf("iconpack source %q selected path %q is not a supported image", source.ID, item)
 		}
 	}
 	return nil
@@ -372,4 +360,24 @@ func sortedConfigSources(sources []resolvedConfigSource) []resolvedConfigSource 
 	result := append([]resolvedConfigSource(nil), sources...)
 	sort.Slice(result, func(i, j int) bool { return result[i].ID < result[j].ID })
 	return result
+}
+
+func validateLibrarySource(source ConfigSource) error {
+	if source.MetadataPath != "" {
+		if err := safeRelativePath(source.MetadataPath); err != nil {
+			return err
+		}
+		if source.MetadataFormat != "selfhst" {
+			return fmt.Errorf("unsupported metadataFormat %q", source.MetadataFormat)
+		}
+	} else if source.MetadataFormat != "" {
+		return fmt.Errorf("metadataPath is required")
+	}
+	for _, format := range source.Formats {
+		if format != "svg" && format != "png" && format != "jpeg" && format != "webp" {
+			return fmt.Errorf("unsupported image format %q", format)
+		}
+	}
+
+	return nil
 }
