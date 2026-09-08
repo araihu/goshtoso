@@ -318,8 +318,9 @@ import "github.com/araihu/goshtoso/components/button"  // package button
 
 **Entry points:** `Button(options ...Option)`
 
-**Options:** `Disabled()` · `WithAlpine(alpine *AlpineConfig)` · `WithAttrs(attrs templ.Attributes)` · `WithHTMX(htmx *HTMXConfig)` · `WithID(id string)` · `WithLoadingText(text string)` · `WithRootClass(class string)` · `WithSize(size Size)` · `WithTone(tone Tone)` · `WithType(buttonType string)`
+**Options:** `Disabled()` · `WithAlpine(alpine *AlpineConfig)` · `WithAppearance(appearance Appearance)` · `WithAttrs(attrs templ.Attributes)` · `WithHTMX(htmx *HTMXConfig)` · `WithID(id string)` · `WithLoadingText(text string)` · `WithRootClass(class string)` · `WithSize(size Size)` · `WithTone(tone Tone)` · `WithType(buttonType string)`
 
+- **Appearance** — AppearanceSolid = "solid", AppearancePlain = "plain"
 - **Size** — SizeSmall = "sm", SizeMedium = "md", SizeLarge = "lg", SizeXLarge = "xl"
 - **Tone** — TonePrimary = "primary", ToneSecondary = "secondary", ToneAlternate = "alternate", ToneInverse = "inverse", ToneInfo = "info", ToneDanger = "danger", ToneWarning = "warning", ToneSuccess = "success"
 
@@ -372,6 +373,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 | `MediaClass` | `string` | MediaClass allows additional CSS classes on the media container. |
 | `Tag` | `string` | Tag is an optional category/tag (shown above title) |
 | `Title` | `string` | Title is the card title |
+| `TitlePrefix` | `templ.Component` | TitlePrefix renders non-interactive content, such as an icon, before Title on the same row. The title text can wrap while the prefix keeps its size. |
 | `Description` | `string` | Description is the card body text |
 | `Body` | `templ.Component` | Body renders arbitrary content between Description and Footer. |
 | `Footer` | `templ.Component` | Footer is optional footer content (buttons, links, etc.) |
@@ -1170,6 +1172,7 @@ import "github.com/araihu/goshtoso/components/pageheader"  // package pageheader
 | Field | Type | Description |
 |-------|------|-------------|
 | `Title` | `string` | Title is the page's primary heading. |
+| `TitleSuffix` | `templ.Component` | TitleSuffix renders optional content, such as a help badge, beside the h1. It stays outside the heading so controls do not become part of its name. |
 | `Description` | `string` | Description is optional supporting copy below the title. |
 | `Breadcrumbs` | `templ.Component` | Breadcrumbs renders navigation context above the title. |
 | `Actions` | `templ.Component` | Actions renders page-level controls beside the title group. |
@@ -1857,6 +1860,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 |-------|------|-------------|
 | `Key` | `string` | Key is the column identifier used to look up cell values in Row.Cells |
 | `Label` | `string` | Label is the display text for the column header |
+| `HeaderSuffix` | `templ.Component` | HeaderSuffix renders optional content beside the column label. Interactions within it do not trigger column sorting. |
 | `Sortable` | `bool` | Sortable marks this column as sortable (renders clickable header) |
 | `Width` | `string` | Width is an optional Tailwind width class (e.g. "w-32", "min-w-[200px]") |
 | `Align` | `string` | Align is "left" (default), "center", or "right" |
@@ -2207,9 +2211,9 @@ import "github.com/araihu/goshtoso/components/toolbar"  // package toolbar
 import "github.com/araihu/goshtoso/components/tooltip"  // package tooltip
 ```
 
-**Entry points:** `Tooltip(id string, label string, options ...Option)`
+**Entry points:** `Help(id string, label string, description string)` · `Tooltip(id string, label string, options ...Option)`
 
-**Options:** `WithActivation(activation Activation)` · `WithDescription(description string)` · `WithPosition(position Position)` · `WithTrigger(trigger templ.Component)` · `WithTriggerLabel(label string)`
+**Options:** `WithActivation(activation Activation)` · `WithDescription(description string)` · `WithPortal(enabled bool)` · `WithPosition(position Position)` · `WithTrigger(trigger templ.Component)` · `WithTriggerLabel(label string)`
 
 - **Activation** — ActivationHover = "hover", ActivationClick = "click"
 - **Position** — PositionTop = "top", PositionBottom = "bottom", PositionLeft = "left", PositionRight = "right"

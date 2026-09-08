@@ -2024,6 +2024,9 @@
   .border-control-outline {
     border-color: var(--color-control-outline);
   }
+  .border-current {
+    border-color: currentcolor;
+  }
   .border-danger {
     border-color: var(--color-danger);
   }
@@ -3653,6 +3656,9 @@
   .text-info-text {
     color: var(--color-info-text);
   }
+  .text-inherit {
+    color: inherit;
+  }
   .text-on-danger {
     color: var(--color-on-danger);
   }
@@ -4883,6 +4889,9 @@
   }
   .focus-visible\:outline-offset-2:focus-visible {
     outline-offset: 2px;
+  }
+  .focus-visible\:outline-current:focus-visible {
+    outline-color: currentcolor;
   }
   .focus-visible\:outline-danger:focus-visible {
     outline-color: var(--color-danger);

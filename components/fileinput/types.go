@@ -67,7 +67,7 @@ func mergeAttributeTokens(values ...string) string {
 
 // ContainerClasses returns CSS classes for the outermost wrapper div
 func (cfg Config) containerClasses() string {
-	base := "flex w-full max-w-xl flex-col gap-1 text-center"
+	base := "flex min-w-0 w-full max-w-xl flex-col gap-1 text-center"
 	if cfg.RootClass != "" {
 		return base + " " + cfg.RootClass
 	}
@@ -76,7 +76,7 @@ func (cfg Config) containerClasses() string {
 
 // UploadContainerClasses returns classes for the compact upload wrapper.
 func (cfg Config) uploadContainerClasses() string {
-	base := "flex w-full max-w-xl flex-col gap-1 text-left text-on-surface dark:text-on-surface-dark"
+	base := "flex min-w-0 w-full max-w-xl flex-col gap-1 text-left text-on-surface dark:text-on-surface-dark"
 	if cfg.RootClass != "" {
 		return base + " " + cfg.RootClass
 	}

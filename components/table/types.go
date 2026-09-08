@@ -31,6 +31,9 @@ type Column struct {
 	Key string
 	// Label is the display text for the column header
 	Label string
+	// HeaderSuffix renders optional content beside the column label.
+	// Interactions within it do not trigger column sorting.
+	HeaderSuffix templ.Component
 	// Sortable marks this column as sortable (renders clickable header)
 	Sortable bool
 	// Width is an optional Tailwind width class (e.g. "w-32", "min-w-[200px]")

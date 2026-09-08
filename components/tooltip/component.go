@@ -19,6 +19,12 @@ func Tooltip(id, label string, options ...Option) Instance {
 	return Instance{id: id, label: label, options: options}
 }
 
+// Help renders a compact question-mark button with explanatory text on click.
+// Click again, click outside, or press Escape to dismiss. The label names the button and the tooltip heading.
+func Help(id, label, description string) Instance {
+	return Tooltip(id, label, WithDescription(description), WithActivation(ActivationClick), WithPosition(PositionRight), WithPortal(true), WithTrigger(helpTrigger(label)))
+}
+
 // Kind identifies the component as a tooltip.
 func (Instance) Kind() components.Kind {
 	return components.KindTooltip

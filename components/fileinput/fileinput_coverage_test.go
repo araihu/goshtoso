@@ -155,7 +155,7 @@ func TestCoverageIsUpload(t *testing.T) {
 
 func TestCoverageContainerClasses(t *testing.T) {
 	base := Config{}.containerClasses()
-	if !strings.Contains(base, "flex w-full") {
+	if !strings.Contains(base, "flex min-w-0 w-full") {
 		t.Fatalf("unexpected container base: %q", base)
 	}
 	withRoot := Config{RootClass: "mt-4"}.containerClasses()
