@@ -62,7 +62,12 @@ type Config struct {
 
 // ContainerClasses returns the container CSS classes
 func (cfg Config) containerClasses() string {
-	base := "group flex rounded-radius overflow-hidden border bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"
+	base := "group flex rounded-radius border bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"
+	// Media needs rounded-corner clipping; content-only cards must allow menus
+	// and other positioned content to extend beyond their bounds.
+	if cfg.hasMedia() {
+		base += " overflow-hidden"
+	}
 
 	// Appearance
 	if cfg.Appearance == AppearancePrimary {

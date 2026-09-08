@@ -29,7 +29,12 @@ func TestContainerClasses(t *testing.T) {
 			name:     "default vertical",
 			cfg:      Config{},
 			contains: []string{"flex-col", "max-w-sm", "border-outline", "bg-surface-alt"},
-			absent:   []string{"border-primary", "md:grid-cols-8"},
+			absent:   []string{"border-primary", "md:grid-cols-8", "overflow-hidden"},
+		},
+		{
+			name:     "media clips at rounded corners",
+			cfg:      Config{Image: "preview.png"},
+			contains: []string{"overflow-hidden"},
 		},
 		{
 			name:     "primary appearance",

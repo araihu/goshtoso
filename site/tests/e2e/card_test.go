@@ -27,6 +27,9 @@ func TestCardComponentDemo(t *testing.T) {
 	prefixLayout, err := prefixTitle.Evaluate(`el => getComputedStyle(el).display`, nil)
 	require.NoError(t, err)
 	assert.Equal(t, "flex", prefixLayout)
+	cardOverflow, err := page.Locator("#card-title-prefix article").Evaluate(`el => getComputedStyle(el).overflow`, nil)
+	require.NoError(t, err)
+	assert.Equal(t, "visible", cardOverflow)
 
 	defaultCard := page.Locator("#card-default article")
 	require.NoError(t, defaultCard.WaitFor())
