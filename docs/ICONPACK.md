@@ -314,7 +314,8 @@ names, tags, and default/light/dark variant relationships. Pin a commit, retain
 `LICENSE` and `index.json`, and include `png/**` with `formats: [png]` for full
 catalog coverage. `formats` gives preference order when multiple formats exist.
 Missing declared variants fail generation, rather than silently omitting icons.
-Other sources produce one catalog entry per selected image file.
+Other sources group selected image formats with the same extensionless path into
+one catalog entry, with variants ordered by format preference and then file path.
 
 Catalog IDs are namespaced by source ID. Images use content-hashed filenames;
 consumers serve them locally and can load one thumbnail at a time. `NOTICE`,

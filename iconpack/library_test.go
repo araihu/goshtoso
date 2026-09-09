@@ -45,6 +45,13 @@ func TestLibraryLockedCatalogWithRasterAndVariants(t *testing.T) {
 	if icon.ID != "selfhst:demo" || icon.Name != "Demo App" || len(icon.Variants) != 2 || len(icon.Tags) != 3 || icon.Variants[0].MIME != "image/png" {
 		t.Fatalf("catalog: %+v", icon)
 	}
+	var manifest outputManifest
+	if err := json.Unmarshal(mustReadFile(t, filepath.Join(result.OutputDir, "manifest.json")), &manifest); err != nil {
+		t.Fatal(err)
+	}
+	if manifest.Release != result.Release || manifest.CatalogSchemaVersion != catalog.SchemaVersion || manifest.CatalogSHA256 != result.CatalogSHA256 {
+		t.Fatalf("manifest does not identify its catalog: %+v", manifest)
+	}
 	opts.Trust = false
 	opts.Check = true
 	if _, err := Generate(t.Context(), opts); err != nil {
@@ -55,5 +62,46 @@ func TestLibraryLockedCatalogWithRasterAndVariants(t *testing.T) {
 	}
 	if _, err := Generate(t.Context(), opts); err == nil {
 		t.Fatal("accepted modified output")
+	}
+}
+
+func TestLibraryGroupsFormatsDeterministically(t *testing.T) {
+	source := resolvedConfigSource{ID: "local", Formats: []string{"svg", "png"}}
+	files := map[string][]byte{"local/foo.png": {}, "local/foo.svg": {}, "local/bar.svg": {}}
+	icons, err := sourceLibraryIcons(source, files)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(icons) != 2 || icons[0].ID != "local:bar" || icons[1].ID != "local:foo" || len(icons[1].Variants) != 2 {
+		t.Fatalf("expected one icon per reference: %+v", icons)
+	}
+	if icons[1].Variants[0].Path != "foo.svg" || icons[1].Variants[1].Path != "foo.png" {
+		t.Fatalf("format preference not preserved: %+v", icons[1].Variants)
+	}
+}
+
+func TestSelfhstAvailabilityStillRequiresDeclaredFiles(t *testing.T) {
+	for _, tc := range []struct {
+		name, png, light string
+		files            map[string][]byte
+		wantIcons        int
+		wantError        bool
+	}{
+		{name: "unavailable format", png: "No", light: "Yes"},
+		{name: "declared default missing", png: "Yes", wantError: true},
+		{name: "declared light missing", png: "Yes", light: "Yes", files: map[string][]byte{"selfhst/png/demo.png": {}}, wantError: true},
+		{name: "available default", png: "Yes", files: map[string][]byte{"selfhst/png/demo.png": {}}, wantIcons: 1},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			files := tc.files
+			if files == nil {
+				files = map[string][]byte{}
+			}
+			files["selfhst/index.json"] = []byte(fmt.Sprintf(`[{"Name":"Demo","Reference":"demo","SVG":"Yes","PNG":%q,"Light":%q}]`, tc.png, tc.light))
+			icons, err := selfhstIcons(resolvedConfigSource{ID: "selfhst", MetadataPath: "index.json"}, files)
+			if (err != nil) != tc.wantError || len(icons) != tc.wantIcons {
+				t.Fatalf("icons=%+v, err=%v", icons, err)
+			}
+		})
 	}
 }

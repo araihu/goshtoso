@@ -1,9 +1,11 @@
 package iconpack
 
 import (
+	"cmp"
 	"context"
 	"encoding/json"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"slices"
@@ -50,7 +52,9 @@ func generateLibrary(ctx context.Context, opts Options) (Result, error) {
 	}
 	output["PROVENANCE/config.yaml"] = input.configBytes
 	output["PROVENANCE/lock.yaml"] = lock
-	manifest := outputManifest{SchemaVersion: OutputSchemaVersion, Tool: toolName, SourceKind: "muamba-snapshot", SourceConfigSHA256: hashBytes(input.configBytes), SourceLockSHA256: hashBytes(lock)}
+	release := "iconpack-" + hashBytes(input.configBytes)[:12]
+	catalogHash := hashBytes(output["catalog.json"])
+	manifest := outputManifest{SchemaVersion: OutputSchemaVersion, Tool: toolName, Release: release, CatalogSchemaVersion: catalog.SchemaVersion, CatalogSHA256: catalogHash, SourceKind: "muamba-snapshot", SourceConfigSHA256: hashBytes(input.configBytes), SourceLockSHA256: hashBytes(lock)}
 	for name, data := range output {
 		manifest.Files = append(manifest.Files, outputFile{Path: name, Mode: "0644", Bytes: len(data), SHA256: hashBytes(data)})
 	}
@@ -60,7 +64,7 @@ func generateLibrary(ctx context.Context, opts Options) (Result, error) {
 		return Result{}, err
 	}
 	published, path, err := publishOutput(ctx, opts.OutputDir, output, opts.Check)
-	return Result{Release: "iconpack-" + hashBytes(input.configBytes)[:12], OutputDir: path, Published: published, SelectedCount: len(catalog.Icons), CatalogSHA256: hashBytes(output["catalog.json"])}, err
+	return Result{Release: release, OutputDir: path, Published: published, SelectedCount: len(catalog.Icons), CatalogSHA256: catalogHash}, err
 }
 
 func libraryOutputs(sources []resolvedConfigSource, files map[string][]byte) (map[string][]byte, iconlibrary.Catalog, error) {
@@ -122,15 +126,13 @@ func sourceLibraryIcons(s resolvedConfigSource, files map[string][]byte) ([]icon
 		return selfhstIcons(s, files)
 	}
 	var result []iconlibrary.Icon
-	for key := range files {
+	byReference := map[string]int{}
+	for _, key := range slices.Sorted(maps.Keys(files)) {
 		relative, ok := strings.CutPrefix(key, s.ID+"/")
 		if !ok || !libraryExtension(relative) || relative == s.LicensePath {
 			continue
 		}
-		format := strings.TrimPrefix(strings.ToLower(filepath.Ext(relative)), ".")
-		if format == "jpg" {
-			format = "jpeg"
-		}
+		format := libraryFormat(relative)
 		if len(s.Formats) > 0 && !slices.Contains(s.Formats, format) {
 			continue
 		}
@@ -138,9 +140,28 @@ func sourceLibraryIcons(s resolvedConfigSource, files map[string][]byte) ([]icon
 			continue
 		}
 		ref := normalizeWebPath(relative)
-		result = append(result, iconlibrary.Icon{ID: s.ID + ":" + ref, Name: ref, Source: s.ID, Reference: ref, License: s.License, SourceURL: s.URL, Variants: []iconlibrary.Variant{{Appearance: "default", Path: relative}}})
+		index, exists := byReference[ref]
+		if !exists {
+			index = len(result)
+			byReference[ref] = index
+			result = append(result, iconlibrary.Icon{ID: s.ID + ":" + ref, Name: ref, Source: s.ID, Reference: ref, License: s.License, SourceURL: s.URL})
+		}
+		result[index].Variants = append(result[index].Variants, iconlibrary.Variant{Appearance: "default", Path: relative})
+	}
+	for i := range result {
+		slices.SortStableFunc(result[i].Variants, func(a, b iconlibrary.Variant) int {
+			return cmp.Compare(slices.Index(s.Formats, libraryFormat(a.Path)), slices.Index(s.Formats, libraryFormat(b.Path)))
+		})
 	}
 	return result, nil
+}
+
+func libraryFormat(path string) string {
+	format := strings.TrimPrefix(strings.ToLower(filepath.Ext(path)), ".")
+	if format == "jpg" {
+		return "jpeg"
+	}
+	return format
 }
 
 func selfhstIcons(s resolvedConfigSource, files map[string][]byte) ([]iconlibrary.Icon, error) {
@@ -157,6 +178,10 @@ func selfhstIcons(s resolvedConfigSource, files map[string][]byte) ([]iconlibrar
 		if row.Reference == "" || normalizeWebPath(row.Reference) != row.Reference || row.Name == "" {
 			return nil, fmt.Errorf("invalid selfhst reference %q", row.Reference)
 		}
+		availableFormats := selfhstAvailableFormats(formats, row.SVG, row.PNG)
+		if len(availableFormats) == 0 {
+			continue
+		}
 		entry := iconlibrary.Icon{ID: s.ID + ":" + row.Reference, Reference: row.Reference, Name: row.Name, Source: s.ID, SourceURL: s.URL, License: s.License}
 		for _, tag := range strings.FieldsFunc(row.Category+","+row.Tags, func(r rune) bool { return r == ',' || r == ';' }) {
 			if tag = strings.TrimSpace(tag); tag != "" {
@@ -172,7 +197,7 @@ func selfhstIcons(s resolvedConfigSource, files map[string][]byte) ([]iconlibrar
 				ref += "-" + appearance
 			}
 			found := false
-			for _, format := range formats {
+			for _, format := range availableFormats {
 				p := format + "/" + ref + "." + format
 				if _, ok := files[s.ID+"/"+p]; ok {
 					entry.Variants = append(entry.Variants, iconlibrary.Variant{Appearance: appearance, Path: p})
@@ -187,4 +212,10 @@ func selfhstIcons(s resolvedConfigSource, files map[string][]byte) ([]iconlibrar
 		result = append(result, entry)
 	}
 	return result, nil
+}
+
+func selfhstAvailableFormats(formats []string, svg, png string) []string {
+	return slices.DeleteFunc(slices.Clone(formats), func(format string) bool {
+		return format == "svg" && svg != "Yes" || format == "png" && png != "Yes"
+	})
 }
