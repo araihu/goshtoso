@@ -3,7 +3,7 @@
 package e2e
 
 import (
-	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/mxschmitt/playwright-go"
@@ -154,27 +154,33 @@ func TestTableCoverageDemo(t *testing.T) {
 	})
 
 	t.Run("infinite scroll sentinel appends rows", func(t *testing.T) {
-		container := page.Locator("#table-infinite")
-		require.NoError(t, container.WaitFor())
-
-		sentinel := page.Locator("#infinite-table-sentinel")
-		require.NoError(t, sentinel.WaitFor())
-		// Sentinel carries the next-page URL for the IntersectionObserver script.
-		hxGet, err := sentinel.Evaluate("el => el.getAttribute('data-hx-get')", nil)
+		// Earlier subtests can scroll past this demo and exhaust its pages. Also,
+		// the observer prefetches within 400px, so the sentinel may disappear
+		// before any locator wait. Observe the request from a fresh page instead.
+		page := newIsolatedPage(t)
+		response, err := page.ExpectResponse(func(response playwright.Response) bool {
+			return strings.Contains(response.URL(), "/api/components/table/rows?") &&
+				strings.Contains(response.URL(), "variant=infinite")
+		}, func() error {
+			if _, err := page.Goto(baseURL+"/components/table", playwright.PageGotoOptions{
+				WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+			}); err != nil {
+				return err
+			}
+			return page.Locator("#table-infinite").ScrollIntoViewIfNeeded()
+		})
 		require.NoError(t, err)
-		assert.Contains(t, hxGet, "variant=infinite")
-
-		initial, err := page.Locator("#infinite-table-tbody tr").Count()
-		require.NoError(t, err)
-
-		// Reveal the sentinel inside its capped 300px scroller to trip the
-		// IntersectionObserver and append the next page.
-		require.NoError(t, sentinel.ScrollIntoViewIfNeeded())
+		require.Equal(t, 200, response.Status())
+		// The fixture starts with three data rows. Exclude the loading sentinel
+		// and require appended data, not merely a successful network response.
 		_, err = page.WaitForFunction(
-			fmt.Sprintf("() => document.querySelectorAll('#infinite-table-tbody tr').length > %d", initial),
+			`() => document.querySelectorAll('#infinite-table-tbody tr:not([data-table-scroll-sentinel])').length > 3`,
 			nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(4000)},
 		)
 		require.NoError(t, err, "infinite scroll should append more rows past the sentinel")
+		firstID, err := page.Locator("#infinite-table-tbody tr:first-child td:first-child").InnerText()
+		require.NoError(t, err)
+		require.Equal(t, "2335", strings.TrimSpace(firstID), "appending must preserve the initial rows")
 	})
 
 	t.Run("sortable header carries an HTMX sort URL", func(t *testing.T) {

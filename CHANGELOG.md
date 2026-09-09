@@ -2,6 +2,17 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.2.10] - 2026-09-09
+
+### SchemaTree fixes
+
+- Keep constraint code borderless when embedded in prose-styled pages, without
+  resetting caller-owned rich description styling.
+- Anchor nesting guides below disclosure chevrons independently of descriptions,
+  constraints, and other branch content, preserving the original disclosure gap.
+- Verify guide placement and code styling across mobile and desktop layouts,
+  light and dark modes, and the Goshtoso and Minimal themes.
+
 ## [v0.2.9] - 2026-09-08
 
 ### SchemaTree

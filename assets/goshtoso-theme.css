@@ -978,6 +978,13 @@
 .gs-schema-tree .gs-schema-tree-list { list-style: none; margin: 0; padding: 0; }
 .gs-schema-tree .gs-schema-tree-item { list-style: none; margin: 0; padding: 0; border-block: 0; }
 .gs-schema-tree .gs-schema-tree-node { min-inline-size: 0; margin: 0; padding-block: .5rem; border: 0; }
+.gs-schema-tree details.gs-schema-tree-node { position: relative; }
+/* Anchor the guide below the disclosure marker, across all branch content. */
+.gs-schema-tree details[open].gs-schema-tree-node::before {
+  content: ""; position: absolute; pointer-events: none;
+  inset-inline-start: .8125rem; inset-block-start: 3.25rem; inset-block-end: .5rem;
+  border-inline-start: 1px solid var(--gs-tree-outline);
+}
 .gs-schema-tree .gs-schema-tree-row {
   position: relative;
   display: grid;
@@ -1028,12 +1035,12 @@
 .gs-schema-tree .gs-schema-tree-constraints dt { font-weight: 500; }
 .gs-schema-tree .gs-schema-tree-constraints dd { margin: 0; min-inline-size: 0; max-inline-size: 100%; }
 .gs-schema-tree .gs-schema-tree-constraints pre { margin: .25rem 0; padding: .75rem; background: var(--gs-tree-hover); border-radius: var(--radius-radius); max-inline-size: 100%; overflow: auto; }
-.gs-schema-tree .gs-schema-tree-constraints code { font-family: var(--font-mono, monospace); font-size: inherit; color: inherit; background: none; padding: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-.gs-schema-tree .gs-schema-tree-children { margin-inline-start: .8125rem; padding-inline-start: .9375rem; border-inline-start: 1px solid var(--gs-tree-outline); }
+.gs-schema-tree .gs-schema-tree-constraints code { font-family: var(--font-mono, monospace); font-size: inherit; color: inherit; background: none; border: 0; border-radius: 0; padding: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.gs-schema-tree .gs-schema-tree-children { margin-inline-start: .8125rem; padding-inline-start: 1rem; }
 .gs-schema-tree .gs-schema-tree-empty { color: var(--gs-tree-muted); margin-block: .75rem; }
 @container (max-width: 28rem) {
   .gs-schema-tree .gs-schema-tree-row { column-gap: .5rem; }
-  .gs-schema-tree .gs-schema-tree-children { margin-inline-start: .375rem; padding-inline-start: .375rem; }
+  .gs-schema-tree .gs-schema-tree-children { margin-inline-start: .375rem; padding-inline-start: .4375rem; }
 }
 @media print {
   .gs-schema-tree details > :not(summary) { display: block !important; }
