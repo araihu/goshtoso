@@ -18,6 +18,12 @@ github.com/araihu/goshtoso-app-shells v0.1.7 h1:zonGfSiVFrGyJPDd4/yXCcEFhiO7W6aH
 github.com/araihu/goshtoso-app-shells v0.1.7/go.mod h1:Us/2onRiBR84jl0jfWX/M7Fmuwornlf+2WMECoMlRLM=
 github.com/araihu/goshtoso-charts v0.0.2 h1:IfcatIJ1GariJhFy6wzSfCW4tERxBaCHvNqHy7yy6xc=
 github.com/araihu/goshtoso-charts v0.0.2/go.mod h1:Fh256bSOgTexH2SYgC28dHNblZtwq4mw7UfryXvLdQs=
+github.com/araihu/goshtoso v0.2.9 h1:S5qdMtQiiffmMoO1Uo4l8gRqZ7Hqj9RSGG1vxvsr3IM=
+github.com/araihu/goshtoso v0.2.9/go.mod h1:n+Jlx+WLx81gk2fq0nhgt1PhtdltbQrmv07mJx1aNQM=
+github.com/araihu/goshtoso-app-shells v0.1.8 h1:ItAgoO7AqMQ51nbhLFLCtNQzukK07/T3n7Fn6e5R0gs=
+github.com/araihu/goshtoso-app-shells v0.1.8/go.mod h1:vLzFYLXBpGuKYUjjkPsTlSksxSxwj9ZhJmwDpafqmv0=
+github.com/araihu/goshtoso-charts v0.0.3 h1:dWWAyLCAkgHZET+HOXwOuD02H+je16xJY4LjhH9bQKQ=
+github.com/araihu/goshtoso-charts v0.0.3/go.mod h1:ZyuqIfYasKRnMUohpRdUEIcAlePJAgsSIHdQp3msNqM=
 github.com/coder/websocket v1.8.15 h1:6B2JPeOGlpff2Uz6vOEH1Vzpi0iUz20A+lPVhPHtNUA=
 github.com/coder/websocket v1.8.15/go.mod h1:NX3SzP+inril6yawo5CQXx8+fk145lPDC6pumgx0mVg=
 github.com/deckarep/golang-set/v2 v2.8.0 h1:swm0rlPCmdWn9mESxKOjWk8hXSqoxOp+ZlfuyaAdFlQ=

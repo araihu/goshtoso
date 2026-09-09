@@ -23,10 +23,15 @@ func Run(stdout io.Writer) error {
 	if err != nil {
 		return err
 	}
+	schemaTree, err := os.ReadFile("css/schematree.css")
+	if err != nil {
+		return err
+	}
 
 	out := generateTheme(string(mainCSS), map[string]string{
 		"all-themes.css": string(allThemes),
 		"codeblock.css":  string(codeblock),
+		"schematree.css": string(schemaTree),
 	})
 
 	if err := os.WriteFile("assets/goshtoso-theme.css", []byte(out), 0o644); err != nil {

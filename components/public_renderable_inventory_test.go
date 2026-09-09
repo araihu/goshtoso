@@ -27,7 +27,7 @@ func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
 	}
 
 	require.ElementsMatch(t, components.AllKinds(), got)
-	require.Len(t, got, 85)
+	require.Len(t, got, 86)
 	require.Len(t, got, len(components.AllKinds()))
 }
 
@@ -107,6 +107,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"rating.Rating":                   {},
 		"rating.RatingDisplay":            {},
 		"schemaform.Fields":               {},
+		"schematree.SchemaTree":           {},
 		"scrollregion.ScrollRegion":       {},
 		"search.Search":                   {},
 		"search.SearchField":              {},
@@ -389,7 +390,7 @@ func allowedRenderableMethods(t *testing.T) map[string]struct{} {
 			methods[receiver+".Render"] = struct{}{}
 		}
 	}
-	require.Len(t, methods, 170)
+	require.Len(t, methods, 172)
 	return methods
 }
 

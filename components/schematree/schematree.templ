@@ -1,0 +1,109 @@
+package schematree
+
+import "strings"
+
+templ treeTemplate(cfg Config) {
+	<div class={ "gs-schema-tree " + cfg.RootClass } if cfg.ID != "" { id={ cfg.ID } } if cfg.AriaLabel != "" { role="group" aria-label={ cfg.AriaLabel } } { cfg.RootAttrs... }>
+		if cfg.Header != nil {
+			<div class="gs-schema-tree-header">
+				@cfg.Header
+			</div>
+		}
+		@description(cfg.Description, cfg.DescriptionContent)
+		if len(cfg.Nodes) > 0 {
+			@nodes(cfg.Nodes)
+		} else if cfg.EmptyLabel != "" {
+			<p class="gs-schema-tree-empty">{ cfg.EmptyLabel }</p>
+		}
+	</div>
+}
+
+templ nodes(items []Node) {
+	<ul class="gs-schema-tree-list">
+		for _, node := range items {
+			<li class="gs-schema-tree-item">
+				if len(node.Children) > 0 || node.ChildrenContent != nil {
+					<details open?={ !node.Collapsed } class={ "gs-schema-tree-node " + node.RootClass } { node.RootAttrs... }>
+						<summary class="gs-schema-tree-row">
+							@identity(node)
+						</summary>
+						@body(node)
+						<div class="gs-schema-tree-children">
+							if len(node.Children) > 0 {
+								@nodes(node.Children)
+							}
+							if node.ChildrenContent != nil {
+								@node.ChildrenContent
+							}
+						</div>
+					</details>
+				} else {
+					<div class={ "gs-schema-tree-node " + node.RootClass } { node.RootAttrs... }>
+						<div class="gs-schema-tree-row">
+							@identity(node)
+						</div>
+						@body(node)
+					</div>
+				}
+			</li>
+		}
+	</ul>
+}
+
+templ identity(node Node) {
+	<span class="gs-schema-tree-identity">
+		<code class="gs-schema-tree-name" if node.Path != "" { title={ node.Path } }>{ node.Name }</code>
+		if node.TypeContent != nil {
+			<span class="gs-schema-tree-type">
+				@node.TypeContent
+			</span>
+		} else if node.Type != "" {
+			<span class="gs-schema-tree-type">{ node.Type }</span>
+		}
+	</span>
+	<span class="gs-schema-tree-states">
+		if node.Required {
+			<span class="gs-schema-tree-state" data-required="true">required</span>
+		} else if node.ShowOptional {
+			<span class="gs-schema-tree-state" data-required="false">optional</span>
+		}
+		if node.Nullable {
+			<span class="gs-schema-tree-state">nullable</span>
+		}
+		if node.Deprecated {
+			<span class="gs-schema-tree-state" data-deprecated="true">deprecated</span>
+		}
+	</span>
+}
+
+templ description(text string, content templ.Component) {
+	if content != nil {
+		<div class="gs-schema-tree-description">
+			@content
+		</div>
+	} else if text != "" {
+		<p class="gs-schema-tree-description gs-schema-tree-plain">{ text }</p>
+	}
+}
+
+templ body(node Node) {
+	<div class="gs-schema-tree-body">
+		@description(node.Description, node.DescriptionContent)
+		if len(node.Constraints) > 0 {
+			<dl class="gs-schema-tree-constraints">
+				for _, constraint := range node.Constraints {
+					<div><dt>{ constraint.Name }</dt><dd>
+						if strings.Contains(constraint.Value, "\n") || len(constraint.Value) > 96 {
+							<pre><code>{ constraint.Value }</code></pre>
+						} else {
+							<code>{ constraint.Value }</code>
+						}
+					</dd></div>
+				}
+			</dl>
+		}
+		if node.MetadataContent != nil {
+			@node.MetadataContent
+		}
+	</div>
+}
