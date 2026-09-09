@@ -3,6 +3,8 @@ package cardpage
 import (
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/card"
+	"github.com/araihu/goshtoso/components/icon"
+	"github.com/araihu/goshtoso/components/icon/heroicons"
 	"github.com/araihu/goshtoso/components/rating"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -16,6 +18,15 @@ templ CardDemoPage() {
 // frame followed by its own code block (mirrors penguinui.com/components/card).
 templ cardDemoContent() {
 	<div id="card-fragment">
+		@demo.DemoSection(
+			demo.DemoSectionProps{Title: "Title icon", Description: "TitlePrefix places an icon beside a wrapping title."},
+			cardTitlePrefixPreview(),
+			`@card.Card(card.Config{
+    Title: "Application",
+    TitlePrefix: icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidCube, Decorative: true}),
+    Description: "Your application description.",
+})`,
+		)
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Card",
@@ -150,6 +161,16 @@ templ bookNowButton() {
     </div>
 </article>`,
 		)
+	</div>
+}
+
+templ cardTitlePrefixPreview() {
+	<div id="card-title-prefix">
+		@card.Card(card.Config{
+			Title: "Application",
+			TitlePrefix: icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidCube, Decorative: true}),
+			Description: "Your application description.",
+		})
 	</div>
 }
 

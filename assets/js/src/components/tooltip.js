@@ -211,3 +211,77 @@
     snapshot.appliedValue = value;
   };
 })();
+
+// Optional tooltip portal. Native popovers escape scroll-container clipping.
+(function () {
+  if (window.goshtosoInitTooltipPortal) return;
+  function hide(panel) {
+    if (panel.matches(":popover-open")) panel.hidePopover();
+    panel.removeAttribute("data-tooltip-portal-open");
+  }
+  function hideAll() {
+    document.querySelectorAll("[data-tooltip-portal-open]").forEach(hide);
+  }
+  window.goshtosoSetTooltipPortal = function (root, open) {
+    root.dispatchEvent(new CustomEvent("goshtoso:tooltip-toggle", { detail: open }));
+  };
+  window.goshtosoInitTooltipPortal = function (root) {
+    if (root.dataset.tooltipPortalReady) return;
+    var panel = root.querySelector('[role="tooltip"]');
+    if (!panel || typeof panel.showPopover !== "function") return;
+    root.dataset.tooltipPortalReady = "true";
+    panel.setAttribute("popover", "manual");
+    Object.assign(panel.style, {
+      position: "fixed", inset: "auto", margin: "0", transform: "none", translate: "none",
+      maxWidth: "calc(100vw - 16px)", fontWeight: "normal",
+    });
+    function show() {
+      if (!root.isConnected) return;
+      var anchor = root.getBoundingClientRect();
+      if (!panel.matches(":popover-open")) panel.showPopover();
+      var size = panel.getBoundingClientRect();
+      var position = root.dataset.tooltipPosition;
+      var left = anchor.left + (anchor.width - size.width) / 2;
+      var top = anchor.bottom + 8;
+      if (position === "top") top = anchor.top - size.height - 8;
+      if (position === "left" || position === "right") {
+        left = position === "left" ? anchor.left - size.width - 8 : anchor.right + 8;
+        top = anchor.top + (anchor.height - size.height) / 2;
+      }
+      left = Math.max(8, Math.min(left, window.innerWidth - size.width - 8));
+      top = Math.max(8, Math.min(top, window.innerHeight - size.height - 8));
+      panel.style.left = left + "px";
+      panel.style.top = top + "px";
+      panel.style.opacity = "1";
+      panel.setAttribute("data-tooltip-portal-open", "");
+    }
+    root.addEventListener("goshtoso:tooltip-position", show);
+    if (root.dataset.tooltipPortalActivation === "click") {
+      root.addEventListener("goshtoso:tooltip-toggle", function (event) {
+        if (event.detail) show();
+        else hide(panel);
+      });
+      return;
+    }
+    root.addEventListener("mouseenter", show);
+    root.addEventListener("focusin", show);
+    root.addEventListener("mouseleave", function () {
+      if (!root.contains(document.activeElement)) hide(panel);
+    });
+    root.addEventListener("focusout", function (event) {
+      if (!root.contains(event.relatedTarget) && !root.matches(":hover")) hide(panel);
+    });
+  };
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") hideAll();
+  });
+  function repositionOpen() {
+    document.querySelectorAll("[data-tooltip-portal-open]").forEach(function (panel) {
+      var root = panel.closest("[data-tooltip-portal-ready]");
+      if (root && (root.dataset.tooltipPortalActivation === "click" || root.contains(document.activeElement))) root.dispatchEvent(new Event("goshtoso:tooltip-position"));
+      else hide(panel);
+    });
+  }
+  document.addEventListener("scroll", repositionOpen, true);
+  window.addEventListener("resize", repositionOpen);
+})();

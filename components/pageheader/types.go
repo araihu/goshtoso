@@ -10,6 +10,9 @@ import (
 type Config struct {
 	// Title is the page's primary heading.
 	Title string
+	// TitleSuffix renders optional content, such as a help badge, beside the h1.
+	// It stays outside the heading so controls do not become part of its name.
+	TitleSuffix templ.Component
 	// Description is optional supporting copy below the title.
 	Description string
 	// Breadcrumbs renders navigation context above the title.

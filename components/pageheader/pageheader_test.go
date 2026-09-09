@@ -34,6 +34,11 @@ func TestPageHeaderRendersPageHierarchy(t *testing.T) {
 	require.Equal(t, components.KindPageHeader, PageHeader(Config{}).Kind())
 }
 
+func TestTitleSuffixIsOutsideHeading(t *testing.T) {
+	html := renderHTML(t, PageHeader(Config{Title: "Staging", TitleSuffix: templ.Raw(`<button aria-label="About staging">?</button>`)}))
+	require.Contains(t, html, `Staging</h1><button aria-label="About staging">?</button>`)
+}
+
 func TestPageHeaderCanHideSeparator(t *testing.T) {
 	html := renderHTML(t, PageHeader(Config{Title: "Staging", HideSeparator: true}))
 	require.NotContains(t, html, "border-b")

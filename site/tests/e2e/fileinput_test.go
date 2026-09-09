@@ -113,6 +113,26 @@ func TestFileInputVariants(t *testing.T) {
 		require.NoError(t, err)
 	})
 
+	t.Run("LongFileNameStaysInsideGrid", func(t *testing.T) {
+		require.NoError(t, page.SetViewportSize(390, 844))
+		defer func() { require.NoError(t, page.SetViewportSize(1280, 720)); setThemeMode(t, page, "default", false) }()
+		require.NoError(t, page.Locator("#demoUpload").SetInputFiles(playwright.InputFile{Name: "Imagem do Codex 3 de set. de 2026, 17_42_56.pdf", MimeType: "application/pdf", Buffer: []byte("%PDF-1.4\n")}))
+		_, err := page.WaitForFunction(`() => document.querySelector('#fileinput-upload [x-text]').textContent.startsWith('Imagem do Codex')`, nil)
+		require.NoError(t, err)
+		for _, mode := range []struct {
+			theme string
+			dark  bool
+		}{{"default", false}, {"default", true}, {"minimal", false}} {
+			setThemeMode(t, page, mode.theme, mode.dark)
+			fits, err := page.Locator("#fileinput-upload").Evaluate(`el => {
+			const box=el.getBoundingClientRect(), control=el.querySelector('[data-fileinput-variant]').getBoundingClientRect();
+			return control.right <= box.right + 1 && control.width <= box.width + 1;
+		}`, nil)
+			require.NoError(t, err)
+			require.Equal(t, true, fits)
+		}
+	})
+
 	t.Run("DropZoneStatesKeepNativeAttributes", func(t *testing.T) {
 		required := page.Locator("#demoDocument")
 		requiredAttr, err := required.GetAttribute("required")

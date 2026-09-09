@@ -1,5 +1,11 @@
 package tooltip
 
+templ helpTrigger(label string) {
+ <button type="button" aria-label={ label } class="inline-flex size-6 shrink-0 items-center justify-center text-xs font-medium text-on-surface-muted hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark dark:focus-visible:outline-primary-dark">
+  <span aria-hidden="true" class="inline-flex size-4 items-center justify-center rounded-full border border-current text-[10px]">?</span>
+ </button>
+}
+
 // Tooltip renders a tooltip component based on PenguinUI
 // Usage:
 //
@@ -34,7 +40,11 @@ templ tooltipTemplate(id, label string, options ...Option) {
 
 // defaultTooltip renders a simple hover tooltip
 templ defaultTooltip(cfg config) {
-	<div class="relative w-fit">
+	<div class="relative w-fit"
+		if cfg.portal {
+			x-data="{}" x-init="goshtosoInitTooltipPortal($el)" data-tooltip-position={ string(cfg.position) }
+		}
+	>
 		if cfg.trigger != nil {
 			<span
 				class="peer"
@@ -54,7 +64,11 @@ templ defaultTooltip(cfg config) {
 
 // richTooltip renders a tooltip with title and description
 templ richTooltip(cfg config) {
-	<div class="relative w-fit">
+	<div class="relative w-fit"
+		if cfg.portal {
+			x-data="{}" x-init="goshtosoInitTooltipPortal($el)" data-tooltip-position={ string(cfg.position) }
+		}
+	>
 		if cfg.trigger != nil {
 			<span
 				class="peer"
@@ -77,7 +91,11 @@ templ richTooltip(cfg config) {
 
 // clickTooltip renders a persistent click-triggered tooltip using Alpine.js.
 templ clickTooltip(cfg config) {
-	<div x-data="{ showTooltip: false }" x-on:keydown.escape.stop="showTooltip = false" class="relative w-fit">
+	<div x-data="{ showTooltip: false }" x-on:keydown.escape.window="showTooltip = false" x-on:click.outside="showTooltip = false" class="relative w-fit"
+        if cfg.portal {
+            x-init="goshtosoInitTooltipPortal($el)" x-effect="const open = showTooltip; $nextTick(() => goshtosoSetTooltipPortal($el, open))" data-tooltip-position={ string(cfg.position) } data-tooltip-portal-activation="click"
+        }
+    >
 		if cfg.trigger != nil {
 			<span
 				x-on:click="showTooltip = !showTooltip"
@@ -92,6 +110,15 @@ templ clickTooltip(cfg config) {
 		} else {
 			<button x-on:click="showTooltip = !showTooltip" type="button" class="rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id } aria-controls={ cfg.id } x-bind:aria-expanded="showTooltip">{ cfg.triggerLabel }</button>
 		}
-		<div x-cloak x-show="showTooltip" x-on:click.outside="showTooltip = false" id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-radius bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong dark:bg-surface dark:text-on-surface-strong" } role="tooltip" x-transition:enter="transition ease-out motion-reduce:transition-none" x-transition:enter-start="opacity-0 motion-reduce:opacity-100" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in motion-reduce:transition-none" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 motion-reduce:opacity-100">{ cfg.label }</div>
+		<div x-cloak x-show="showTooltip" id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-radius bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong dark:bg-surface dark:text-on-surface-strong" } role="tooltip" x-transition:enter="transition ease-out motion-reduce:transition-none" x-transition:enter-start="opacity-0 motion-reduce:opacity-100" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in motion-reduce:transition-none" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 motion-reduce:opacity-100">
+            if cfg.isRich() {
+                <div class="flex w-64 max-w-full flex-col gap-1 text-left whitespace-normal text-xs">
+                    <span class="text-sm font-medium">{ cfg.label }</span>
+                    <p>{ cfg.description }</p>
+                </div>
+            } else {
+                { cfg.label }
+            }
+        </div>
 	</div>
 }

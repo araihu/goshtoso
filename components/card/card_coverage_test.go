@@ -29,7 +29,12 @@ func TestContainerClasses(t *testing.T) {
 			name:     "default vertical",
 			cfg:      Config{},
 			contains: []string{"flex-col", "max-w-sm", "border-outline", "bg-surface-alt"},
-			absent:   []string{"border-primary", "md:grid-cols-8"},
+			absent:   []string{"border-primary", "md:grid-cols-8", "overflow-hidden"},
+		},
+		{
+			name:     "media clips at rounded corners",
+			cfg:      Config{Image: "preview.png"},
+			contains: []string{"overflow-hidden"},
 		},
 		{
 			name:     "primary appearance",
@@ -237,5 +242,16 @@ func TestCardRenderEscaping(t *testing.T) {
 	html := render(t, Card(Config{Title: "<script>", Description: `"quote"`}))
 	if strings.Contains(html, "<script>") {
 		t.Errorf("title not escaped: %s", html)
+	}
+}
+
+func TestCardTitlePrefix(t *testing.T) {
+	html := render(t, Card(Config{Title: "Service", TitlePrefix: templ.Raw(`<svg aria-hidden="true"></svg>`)}))
+	heading := html[strings.Index(html, "<h3"):strings.Index(html, "</h3>")]
+	if !strings.Contains(heading, "flex items-center gap-3") || strings.Index(heading, "<svg") > strings.Index(heading, ">Service<") {
+		t.Fatalf("prefix must share the title row: %s", heading)
+	}
+	if strings.Contains(heading, "aria-describedby") {
+		t.Fatalf("missing description must not be referenced: %s", heading)
 	}
 }

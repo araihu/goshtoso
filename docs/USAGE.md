@@ -909,3 +909,28 @@ For contribution workflow, generated-file rules, and local quality gates, see
 ## License
 
 MIT. See [`LICENSE`](../LICENSE).
+
+## Help beside headings
+
+Use `tooltip.Help` for a compact, keyboard-focusable question-mark badge.
+`pageheader.Config.TitleSuffix` places it beside the heading, outside the h1.
+`table.Column.HeaderSuffix` places it beside the column label and keeps its
+interactions separate from sorting, including after header fragment updates.
+
+```go
+pageheader.PageHeader(pageheader.Config{
+    Title: "Staging",
+    TitleSuffix: tooltip.Help("staging-help", "About staging", "Review discovered services."),
+})
+table.Column{
+    Key: "pinned", Label: "Pinned",
+    HeaderSuffix: tooltip.Help("pinned-help", "How pinning works", "Check to pin. Uncheck to remove."),
+}
+```
+
+Give each help badge a unique ID within the document.
+
+Help badges show a 16px question mark inside a 24px hit target. Click, Enter, or
+Space toggles the explanation. Click outside or press Escape to dismiss it.
+Tooltips use the native popover top layer to avoid table clipping and keep the
+panel inside the viewport. Other tooltips can opt in with `tooltip.WithPortal(true)`.

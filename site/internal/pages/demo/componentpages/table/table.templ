@@ -4,6 +4,7 @@ import (
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/table"
+"github.com/araihu/goshtoso/components/tooltip"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -34,6 +35,11 @@ templ tableDemoContent() {
     Rows: rows,
 })`,
 		)
+        @demo.DemoSection(demo.DemoSectionProps{Title: "Column help", Description: "Explain a column with HeaderSuffix and a compact help tooltip."}, tableHeaderHelpPreview(), `table.Column{
+    Key: "name", Label: "Service",
+    HeaderSuffix: tooltip.Help("service-help", "About services", "Discovered services appear here."),
+}`)
+
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Striped Table",
@@ -726,4 +732,11 @@ func allSampleRows() []table.Row {
 			"email": {Text: "emma.harris@penguinui.com"}, "membership": {Text: "Gold"},
 		}},
 	}
+}
+
+
+templ tableHeaderHelpPreview() {
+ <div id="table-header-help" class="w-full">
+  @table.Table(table.Config{ID: "header-help-services", Columns: []table.Column{{Key: "name", Label: "Service", HeaderSuffix: tooltip.Help("service-help", "About services", "Discovered services appear here.")}}, Rows: []table.Row{{ID: "example", Cells: map[string]table.Cell{"name": {Text: "Example service"}}}}})
+ </div>
 }

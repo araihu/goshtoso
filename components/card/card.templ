@@ -39,7 +39,20 @@ templ cardTemplate(cfg Config) {
 			if cfg.Tag != "" {
 				<span class={ cfg.tagClasses() }>{ cfg.Tag }</span>
 			}
-			<h3 class={ cfg.titleClasses() } aria-describedby={ cfg.Title + "-desc" }>{ cfg.Title }</h3>
+			<h3 class={ cfg.titleClasses(), templ.KV("flex items-center gap-3", cfg.TitlePrefix != nil) }
+				if cfg.Description != "" {
+					aria-describedby={ cfg.Title + "-desc" }
+				}
+			>
+				if cfg.TitlePrefix != nil {
+					<span class="shrink-0">
+						@cfg.TitlePrefix
+					</span>
+					<span class="min-w-0">{ cfg.Title }</span>
+				} else {
+					{ cfg.Title }
+				}
+			</h3>
 			if cfg.Description != "" {
 				<p id={ cfg.Title + "-desc" } class={ cfg.descriptionClasses() }>{ cfg.Description }</p>
 			}
