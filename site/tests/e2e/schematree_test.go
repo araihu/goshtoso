@@ -65,10 +65,34 @@ func TestSchemaTreeThemesResponsiveAndNativeDisclosure(t *testing.T) {
 						return [...tree.querySelectorAll('.gs-schema-tree-item')].every(item => {
 							const style = getComputedStyle(item);
 							return style.borderBlockStartWidth === '0px' && style.borderBlockEndWidth === '0px';
-						}) && getComputedStyle(tree.querySelector('.gs-schema-tree-children')).borderInlineStartWidth === '1px';
+						}) && [...tree.querySelectorAll('details[open]')].every(branch => {
+							const guide = getComputedStyle(branch, '::before');
+							const marker = getComputedStyle(branch.querySelector(':scope > summary'), '::before');
+							const gap = parseFloat(guide.top) - parseFloat(getComputedStyle(branch).paddingTop) - parseFloat(marker.top) - parseFloat(marker.height);
+							return guide.borderInlineStartWidth === '1px' && Math.abs(gap - 22) <= 1 &&
+								getComputedStyle(branch.querySelector(':scope > .gs-schema-tree-children')).borderInlineStartWidth === '0px';
+						});
 					}`)
 					require.NoError(t, err)
 					require.Equal(t, true, rails, "only vertical nesting guides should remain")
+					codeOwnership, err := page.Evaluate(`() => {
+						const host = document.querySelector('#schema-tree-response');
+						host.classList.add('schema-prose-host');
+						const style = document.createElement('style');
+						style.textContent = '.schema-prose-host code { border: 2px solid red; border-radius: 8px; }';
+						document.head.append(style);
+						const owned = [...host.querySelectorAll('.gs-schema-tree-name, .gs-schema-tree-constraints code')];
+						const description = host.querySelector('.gs-schema-tree-description code');
+						const valid = owned.length > 0 && !!description && owned.every(node => {
+							const computed = getComputedStyle(node);
+							return computed.borderTopWidth === '0px' && computed.borderTopLeftRadius === '0px';
+						}) && getComputedStyle(description).borderTopWidth === '2px';
+						style.remove();
+						host.classList.remove('schema-prose-host');
+						return valid;
+					}`)
+					require.NoError(t, err)
+					require.Equal(t, true, codeOwnership, "tree-owned code stays borderless while descriptions retain host prose styling")
 					if width == 1440 && theme == "goshtoso" {
 						_, err = page.Locator("#schema-tree-response").Screenshot(playwright.LocatorScreenshotOptions{Path: playwright.String(fmt.Sprintf("/tmp/schema-tree-dark-%t.png", dark))})
 						require.NoError(t, err)
