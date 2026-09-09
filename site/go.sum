@@ -8,12 +8,14 @@ github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs
 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
 github.com/araihu/goshtoso v0.2.7 h1:9XBxBUYKrTbyIQ3K9fbCqGDT+61RMsYQZ2tseR98C+Y=
 github.com/araihu/goshtoso v0.2.7/go.mod h1:G/6KrWIXUC33KMlo0u/rt9Grd5erMh9ozpm0gPg1Tc4=
-github.com/araihu/goshtoso v0.2.10-0.20260909001420-11595506d89a h1:4bMeojX2lZbJQqotf66ME6ydk/XLtMqYj0/nZdc4Df0=
-github.com/araihu/goshtoso v0.2.10-0.20260909001420-11595506d89a/go.mod h1:n+Jlx+WLx81gk2fq0nhgt1PhtdltbQrmv07mJx1aNQM=
 github.com/araihu/goshtoso v0.2.9 h1:S5qdMtQiiffmMoO1Uo4l8gRqZ7Hqj9RSGG1vxvsr3IM=
 github.com/araihu/goshtoso v0.2.9/go.mod h1:n+Jlx+WLx81gk2fq0nhgt1PhtdltbQrmv07mJx1aNQM=
+github.com/araihu/goshtoso v0.2.10-0.20260909001420-11595506d89a h1:4bMeojX2lZbJQqotf66ME6ydk/XLtMqYj0/nZdc4Df0=
+github.com/araihu/goshtoso v0.2.10-0.20260909001420-11595506d89a/go.mod h1:n+Jlx+WLx81gk2fq0nhgt1PhtdltbQrmv07mJx1aNQM=
 github.com/araihu/goshtoso v0.2.10 h1:3yGxwRlyvf858ppVfX+XRsQcGevoK/Cd99lojBcTMpI=
 github.com/araihu/goshtoso v0.2.10/go.mod h1:n+Jlx+WLx81gk2fq0nhgt1PhtdltbQrmv07mJx1aNQM=
+github.com/araihu/goshtoso v0.2.11-0.20260909051755-67ed4c5a70b7 h1:FgM9KV/uM1jxq1q9RwEhJ2HAjWYXXXBsjnbJKZO3vbY=
+github.com/araihu/goshtoso v0.2.11-0.20260909051755-67ed4c5a70b7/go.mod h1:7LEyqS/Uuqt/en4wWV7py6um3CR4rH/HVrtBupZzNsI=
 github.com/araihu/goshtoso-app-shells v0.1.8 h1:ItAgoO7AqMQ51nbhLFLCtNQzukK07/T3n7Fn6e5R0gs=
 github.com/araihu/goshtoso-app-shells v0.1.8/go.mod h1:vLzFYLXBpGuKYUjjkPsTlSksxSxwj9ZhJmwDpafqmv0=
 github.com/araihu/goshtoso-charts v0.0.3 h1:dWWAyLCAkgHZET+HOXwOuD02H+je16xJY4LjhH9bQKQ=
