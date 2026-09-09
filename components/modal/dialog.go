@@ -15,6 +15,9 @@ type DialogConfig struct {
 	Title string
 	// Content is the dialog body, including any application-owned controls.
 	Content templ.Component
+	// Compact renders a headerless, unpadded dialog near the top of the viewport.
+	// Title remains available to assistive technology. Compact overrides FullscreenMobile.
+	Compact bool
 	// FullscreenMobile fills the viewport below the sm breakpoint.
 	FullscreenMobile bool
 }

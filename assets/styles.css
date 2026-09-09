@@ -879,6 +879,9 @@
   .mt-16 {
     margin-top: calc(var(--spacing) * 16);
   }
+  .mt-\[5dvh\] {
+    margin-top: 5dvh;
+  }
   .mt-auto {
     margin-top: auto;
   }
@@ -1176,6 +1179,9 @@
   .max-h-52 {
     max-height: calc(var(--spacing) * 52);
   }
+  .max-h-\[85dvh\] {
+    max-height: 85dvh;
+  }
   .max-h-\[90dvh\] {
     max-height: 90dvh;
   }
@@ -1349,6 +1355,9 @@
   }
   .w-\[33\%\] {
     width: 33%;
+  }
+  .w-\[40rem\] {
+    width: 40rem;
   }
   .w-\[45\%\] {
     width: 45%;
