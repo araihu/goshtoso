@@ -27,6 +27,11 @@ type Config struct {
 // ConfigSource describes a GitHub tree/archive, a single remote file, or a
 // source that is resolved by the iconpack acquisition adapter.
 type ConfigSource struct {
+	MaxDownloadSize string   `json:"maxDownloadSize,omitempty" yaml:"maxDownloadSize,omitempty"`
+	MetadataPath    string   `json:"metadataPath,omitempty" yaml:"metadataPath,omitempty"`
+	MetadataFormat  string   `json:"metadataFormat,omitempty" yaml:"metadataFormat,omitempty"`
+	Include         []string `json:"include,omitempty" yaml:"include,omitempty"`
+	Formats         []string `json:"formats,omitempty" yaml:"formats,omitempty"`
 	ID              string   `json:"id" yaml:"id"`
 	URL             string   `json:"url" yaml:"url"`
 	Kind            string   `json:"kind,omitempty" yaml:"kind,omitempty"`
@@ -156,22 +161,19 @@ func validateConfigSource(index int, source ConfigSource) error {
 		if err := safeRelativePath(source.Path); err != nil {
 			return fmt.Errorf("iconpack source %q path: %w", source.ID, err)
 		}
-		if !strings.EqualFold(filepath.Ext(source.Path), ".svg") {
-			return fmt.Errorf("iconpack source %q path %q is not an SVG", source.ID, source.Path)
+		if !libraryExtension(source.Path) {
+			return fmt.Errorf("iconpack source %q path %q is not a supported image", source.ID, source.Path)
 		}
 	}
-	if source.StripComponents < 0 {
-		return fmt.Errorf("iconpack source %q stripComponents must not be negative", source.ID)
-	}
-	if source.MaxFiles < 0 || source.MaxFiles > maxArchiveFiles {
-		return fmt.Errorf("iconpack source %q maxFiles must be between 0 and %d", source.ID, maxArchiveFiles)
+	if err := validateLibrarySource(source); err != nil {
+		return err
 	}
 	for _, item := range source.Paths {
 		if err := safeRelativePath(item); err != nil {
 			return fmt.Errorf("iconpack source %q path %q: %w", source.ID, item, err)
 		}
-		if !strings.EqualFold(filepath.Ext(item), ".svg") {
-			return fmt.Errorf("iconpack source %q selected path %q is not an SVG", source.ID, item)
+		if !libraryExtension(item) {
+			return fmt.Errorf("iconpack source %q selected path %q is not a supported image", source.ID, item)
 		}
 	}
 	return nil
@@ -313,8 +315,16 @@ func backendForConfig(config Config) (backendManifest, []resolvedConfigSource, e
 			if maxUnpacked == "" {
 				maxUnpacked = "1GiB"
 			}
+			downloadSize := source.MaxDownloadSize
+			if downloadSize == "" {
+				downloadSize = "256MiB"
+			}
+			include := source.Include
+			if len(include) == 0 {
+				include = []string{"**"}
+			}
 			resource.Directories = map[string]backendDirectory{
-				"tree": {URL: source.ArchiveURL, Archive: source.Archive, Path: base, Include: []string{"**"}, StripComponents: strip, MaxSize: "256MiB", MaxFiles: maxFiles, MaxUnpackedSize: maxUnpacked},
+				"tree": {URL: source.ArchiveURL, Archive: source.Archive, Path: base, Include: include, StripComponents: strip, MaxSize: downloadSize, MaxFiles: maxFiles, MaxUnpackedSize: maxUnpacked},
 			}
 			if source.LicenseURL != "" {
 				resource.Downloads = map[string]backendDownload{
@@ -344,4 +354,31 @@ func sortedConfigSources(sources []resolvedConfigSource) []resolvedConfigSource 
 	result := append([]resolvedConfigSource(nil), sources...)
 	sort.Slice(result, func(i, j int) bool { return result[i].ID < result[j].ID })
 	return result
+}
+
+func validateLibrarySource(source ConfigSource) error {
+	if source.StripComponents < 0 {
+		return fmt.Errorf("iconpack source %q stripComponents must not be negative", source.ID)
+	}
+	if source.MaxFiles < 0 || source.MaxFiles > maxArchiveFiles {
+		return fmt.Errorf("iconpack source %q maxFiles must be between 0 and %d", source.ID, maxArchiveFiles)
+	}
+
+	if source.MetadataPath != "" {
+		if err := safeRelativePath(source.MetadataPath); err != nil {
+			return err
+		}
+		if source.MetadataFormat != "selfhst" {
+			return fmt.Errorf("unsupported metadataFormat %q", source.MetadataFormat)
+		}
+	} else if source.MetadataFormat != "" {
+		return fmt.Errorf("metadataPath is required")
+	}
+	for _, format := range source.Formats {
+		if format != "svg" && format != "png" && format != "jpeg" && format != "webp" {
+			return fmt.Errorf("unsupported image format %q", format)
+		}
+	}
+
+	return nil
 }

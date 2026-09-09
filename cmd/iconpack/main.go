@@ -32,6 +32,7 @@ func run(ctx context.Context, args []string) error {
 	fs.SetOutput(os.Stderr)
 	var opts iconpack.Options
 	var names stringList
+	fs.BoolVar(&opts.Library, "library", false, "emit standalone images and searchable catalog instead of SVG bindings")
 	fs.StringVar(&opts.ConfigPath, "config", "", "Goshtoso-owned .iconpack.yaml source configuration")
 	fs.StringVar(&opts.IconpackLockPath, "lock", "", "Goshtoso-owned .iconpack.lock.yaml path")
 	fs.BoolVar(&opts.Trust, "trust", false, "explicitly first-trust unlocked iconpack sources")
