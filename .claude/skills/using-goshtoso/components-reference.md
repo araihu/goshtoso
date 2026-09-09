@@ -549,6 +549,7 @@ import "github.com/araihu/goshtoso/components/combobox"  // package combobox
 | `Selected` | `[]string` |  |
 | `EnableSearch` | `bool` |  |
 | `EnableClearAll` | `bool` |  |
+| `DisablePersistence` | `bool` | DisablePersistence keeps client selection in the current DOM only. Use it when URL parameters or server-rendered state own the selection. |
 | `Required` | `bool` |  |
 | `DependsOn` | `[]string` |  |
 | `ToggleEndpoint` | `string` |  |
