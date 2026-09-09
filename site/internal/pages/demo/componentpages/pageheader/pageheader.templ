@@ -45,11 +45,12 @@ templ pageHeaderDemoContent() {
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Custom title voice",
-				Description: "TitleClass and TitleAttrs customize the h1 without replacing PageHeader's hierarchy and action layout.",
+				Description: "Customize the heading with TitleClass and TitleAttrs. HideSeparator removes the bottom border while keeping the spacing.",
 			},
 			pageHeaderCustomTitlePreview(),
 			`@pageheader.PageHeader(pageheader.Config{
     Title:       "Autumn journal",
+    HideSeparator: true,
     Description: "Editorial decisions for Issue 14.",
     TitleClass:  "font-mono tracking-tight",
     TitleAttrs:  templ.Attributes{"data-heading-voice": "editorial"},
@@ -62,6 +63,7 @@ templ pageHeaderCustomTitlePreview() {
 	<div id="page-header-custom-title" class="w-full rounded-radius border border-outline bg-surface p-5 dark:border-outline-dark dark:bg-surface-dark">
 		@pageheader.PageHeader(pageheader.Config{
 			Title:       "Autumn journal",
+			HideSeparator: true,
 			Description: "Editorial decisions for Issue 14.",
 			TitleClass:  "font-mono tracking-tight",
 			TitleAttrs:  templ.Attributes{"data-heading-voice": "editorial"},

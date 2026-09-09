@@ -107,11 +107,12 @@ func pageHeaderDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Custom title voice",
-				Description: "TitleClass and TitleAttrs customize the h1 without replacing PageHeader's hierarchy and action layout.",
+				Description: "Customize the heading with TitleClass and TitleAttrs. HideSeparator removes the bottom border while keeping the spacing.",
 			},
 			pageHeaderCustomTitlePreview(),
 			`@pageheader.PageHeader(pageheader.Config{
     Title:       "Autumn journal",
+    HideSeparator: true,
     Description: "Editorial decisions for Issue 14.",
     TitleClass:  "font-mono tracking-tight",
     TitleAttrs:  templ.Attributes{"data-heading-voice": "editorial"},
@@ -154,10 +155,11 @@ func pageHeaderCustomTitlePreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = pageheader.PageHeader(pageheader.Config{
-			Title:       "Autumn journal",
-			Description: "Editorial decisions for Issue 14.",
-			TitleClass:  "font-mono tracking-tight",
-			TitleAttrs:  templ.Attributes{"data-heading-voice": "editorial"},
+			Title:         "Autumn journal",
+			HideSeparator: true,
+			Description:   "Editorial decisions for Issue 14.",
+			TitleClass:    "font-mono tracking-tight",
+			TitleAttrs:    templ.Attributes{"data-heading-voice": "editorial"},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

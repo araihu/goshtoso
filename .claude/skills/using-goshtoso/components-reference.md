@@ -1173,6 +1173,7 @@ import "github.com/araihu/goshtoso/components/pageheader"  // package pageheader
 | `Description` | `string` | Description is optional supporting copy below the title. |
 | `Breadcrumbs` | `templ.Component` | Breadcrumbs renders navigation context above the title. |
 | `Actions` | `templ.Component` | Actions renders page-level controls beside the title group. |
+| `HideSeparator` | `bool` | HideSeparator removes the bottom border while preserving header spacing. The separator is visible by default. |
 | `RootClass` | `string` | RootClass appends CSS classes to the header root. |
 | `RootAttrs` | `templ.Attributes` | RootAttrs appends arbitrary HTML attributes to the header root. |
 | `BreadcrumbsClass` | `string` | BreadcrumbsClass appends CSS classes to the breadcrumbs wrapper. |

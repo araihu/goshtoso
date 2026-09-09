@@ -28,4 +28,7 @@ func TestPageHeaderTitleHooksStayOnTheHeading(t *testing.T) {
 	assert.Contains(t, classes, "font-mono")
 	assert.Contains(t, classes, "tracking-tight")
 	assert.Equal(t, 0, mustCount(t, page.Locator(`#page-header-custom-title header[data-heading-voice]`)))
+	border, err := page.Locator("#page-header-custom-title header").Evaluate("el => getComputedStyle(el).borderBottomWidth", nil)
+	require.NoError(t, err)
+	assert.Equal(t, "0px", border)
 }
