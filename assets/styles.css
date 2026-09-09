@@ -7609,6 +7609,18 @@
   padding-block: .5rem;
   border: 0;
 }
+.gs-schema-tree details.gs-schema-tree-node {
+  position: relative;
+}
+.gs-schema-tree details[open].gs-schema-tree-node::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset-inline-start: .8125rem;
+  inset-block-start: 3.25rem;
+  inset-block-end: .5rem;
+  border-inline-start: 1px solid var(--gs-tree-outline);
+}
 .gs-schema-tree .gs-schema-tree-row {
   position: relative;
   display: grid;
@@ -7764,14 +7776,15 @@
   font-size: inherit;
   color: inherit;
   background: none;
+  border: 0;
+  border-radius: 0;
   padding: 0;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 .gs-schema-tree .gs-schema-tree-children {
   margin-inline-start: .8125rem;
-  padding-inline-start: .9375rem;
-  border-inline-start: 1px solid var(--gs-tree-outline);
+  padding-inline-start: 1rem;
 }
 .gs-schema-tree .gs-schema-tree-empty {
   color: var(--gs-tree-muted);
@@ -7783,7 +7796,7 @@
   }
   .gs-schema-tree .gs-schema-tree-children {
     margin-inline-start: .375rem;
-    padding-inline-start: .375rem;
+    padding-inline-start: .4375rem;
   }
 }
 @media print {
