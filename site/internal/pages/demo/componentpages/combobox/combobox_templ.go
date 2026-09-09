@@ -31,12 +31,13 @@ var IndustryCfg = combobox.Config{
 
 // SkillsCfg: client-mode multi-select with clear-all.
 var SkillsCfg = combobox.Config{
-	ID:             "skills",
-	Name:           "skills",
-	Label:          "Skills (client mode)",
-	Placeholder:    "Pick some skills",
-	Mode:           combobox.ModeMultiple,
-	EnableClearAll: true,
+	ID:                 "skills",
+	Name:               "skills",
+	Label:              "Skills (client mode)",
+	Placeholder:        "Pick some skills",
+	Mode:               combobox.ModeMultiple,
+	EnableClearAll:     true,
+	DisablePersistence: true,
 	Source: combobox.Source{Static: []combobox.Option{
 		{Value: "go", Label: "Go"},
 		{Value: "rust", Label: "Rust"},
@@ -200,11 +201,11 @@ var IndustryCfg = combobox.Config{
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Client Multi-Select",
-				Description: "Mode: combobox.ModeMultiple with EnableClearAll — still fully client-side.",
+				Description: "Checkbox selection with Clear all. DisablePersistence lets server-rendered state own the selection after navigation.",
 			},
 			comboboxSkillsPreview(),
 			`var SkillsCfg = combobox.Config{
-    ID: "skills", Name: "skills", Mode: combobox.ModeMultiple, EnableClearAll: true,
+    ID: "skills", Name: "skills", Mode: combobox.ModeMultiple, EnableClearAll: true, DisablePersistence: true,
     Source: combobox.Source{Static: skillOptions},
 }
 @combobox.Combobox(SkillsCfg, combobox.State{Options: SkillsCfg.Source.Static})`,
@@ -475,7 +476,7 @@ func comboboxClusterPreview() templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(ClusterCfg.OptionsEndpoint)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/combobox/combobox.templ`, Line: 236, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/combobox/combobox.templ`, Line: 237, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {

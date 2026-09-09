@@ -29,6 +29,7 @@ var SkillsCfg = combobox.Config{
 	Placeholder:    "Pick some skills",
 	Mode:           combobox.ModeMultiple,
 	EnableClearAll: true,
+	DisablePersistence: true,
 	Source: combobox.Source{Static: []combobox.Option{
 		{Value: "go", Label: "Go"},
 		{Value: "rust", Label: "Rust"},
@@ -117,11 +118,11 @@ var IndustryCfg = combobox.Config{
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Client Multi-Select",
-				Description: "Mode: combobox.ModeMultiple with EnableClearAll — still fully client-side.",
+				Description: "Checkbox selection with Clear all. DisablePersistence lets server-rendered state own the selection after navigation.",
 			},
 			comboboxSkillsPreview(),
 			`var SkillsCfg = combobox.Config{
-    ID: "skills", Name: "skills", Mode: combobox.ModeMultiple, EnableClearAll: true,
+    ID: "skills", Name: "skills", Mode: combobox.ModeMultiple, EnableClearAll: true, DisablePersistence: true,
     Source: combobox.Source{Static: skillOptions},
 }
 @combobox.Combobox(SkillsCfg, combobox.State{Options: SkillsCfg.Source.Static})`,

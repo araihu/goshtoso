@@ -15,6 +15,7 @@
       id: root.getAttribute("id"),
       name: root.getAttribute("data-combobox-name") || root.getAttribute("id"),
       multi: root.getAttribute("data-combobox-multi") === "true",
+      persist: root.getAttribute("data-combobox-persist") !== "false",
       closeOnSelect: root.getAttribute("data-combobox-close-on-select") === "true",
       placeholder: root.getAttribute("data-combobox-placeholder") || "",
     };
@@ -37,6 +38,7 @@
   }
 
   function saveSelected(config, selected) {
+    if (!config.persist) return;
     try {
       window.sessionStorage.setItem(storageKey(config), JSON.stringify(selected));
     } catch (error) {
@@ -196,6 +198,7 @@
 
   function restoreSelected(root) {
     var config = readConfig(root);
+    if (!config.persist) return;
     try {
       var raw = window.sessionStorage.getItem(storageKey(config));
       if (!raw) return;
