@@ -12,6 +12,9 @@ templ dialogTemplate(cfg DialogConfig) {
   x-effect="if (open && !$el.open) $el.showModal(); if (!open && $el.open) $el.close()"
   x-on:cancel.prevent="open=false"
   x-on:close="open=false"
+  if cfg.Compact {
+   x-on:click.self="open=false"
+  }
   x-on:keydown.escape.stop
   x-trap.noreturn.noscroll="open"
   class={"fixed inset-0 m-auto p-0 open:flex open:flex-col overflow-hidden border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark backdrop:bg-black/50",templ.KV("h-dvh max-h-dvh w-screen max-w-none rounded-none sm:h-auto sm:max-h-[90dvh] sm:w-[48rem] sm:max-w-[calc(100vw-2rem)] sm:rounded-radius",cfg.FullscreenMobile && !cfg.Compact),templ.KV("max-h-[90dvh] w-[48rem] max-w-[calc(100vw-2rem)] rounded-radius",!cfg.FullscreenMobile && !cfg.Compact),templ.KV("mt-[5dvh] max-h-[85dvh] w-[40rem] max-w-[calc(100vw-2rem)] rounded-radius",cfg.Compact)}

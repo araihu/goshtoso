@@ -8,6 +8,8 @@ github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs
 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
 github.com/araihu/goshtoso v0.2.9 h1:S5qdMtQiiffmMoO1Uo4l8gRqZ7Hqj9RSGG1vxvsr3IM=
 github.com/araihu/goshtoso v0.2.9/go.mod h1:n+Jlx+WLx81gk2fq0nhgt1PhtdltbQrmv07mJx1aNQM=
+github.com/araihu/goshtoso v0.2.10-0.20260909032832-0324915bb61b h1:q/JWn1FNug70Ai4xye+9K1KYn2K13lVTp8QxrTcz1IQ=
+github.com/araihu/goshtoso v0.2.10-0.20260909032832-0324915bb61b/go.mod h1:n+Jlx+WLx81gk2fq0nhgt1PhtdltbQrmv07mJx1aNQM=
 github.com/araihu/goshtoso-app-shells v0.1.8 h1:ItAgoO7AqMQ51nbhLFLCtNQzukK07/T3n7Fn6e5R0gs=
 github.com/araihu/goshtoso-app-shells v0.1.8/go.mod h1:vLzFYLXBpGuKYUjjkPsTlSksxSxwj9ZhJmwDpafqmv0=
 github.com/araihu/goshtoso-charts v0.0.3 h1:dWWAyLCAkgHZET+HOXwOuD02H+je16xJY4LjhH9bQKQ=
