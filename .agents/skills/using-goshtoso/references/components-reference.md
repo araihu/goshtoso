@@ -1068,6 +1068,7 @@ import "github.com/araihu/goshtoso/components/modal"  // package modal
 | `ID` | `string` | ID identifies modal:open and modal:close events through their detail.id. |
 | `Title` | `string` | Title labels the dialog for assistive technology. |
 | `Content` | `templ.Component` | Content is the dialog body, including any application-owned controls. |
+| `Compact` | `bool` | Compact renders a headerless, unpadded dialog near the top of the viewport. Title remains available to assistive technology. Compact overrides FullscreenMobile. |
 | `FullscreenMobile` | `bool` | FullscreenMobile fills the viewport below the sm breakpoint. |
 
 **HTMXConfig**
