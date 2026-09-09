@@ -9,7 +9,7 @@ or store mixed values through the common interface and inspect their stable
 `Kind()`. Constructor signatures, config fields, options, and rendered defaults are
 listed below. See the selected Goshtoso tag's `docs/COMPONENT_MODEL.md`.
 
-56 component packages. Each is imported by its directory path; note the
+57 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -1501,6 +1501,57 @@ import "github.com/araihu/goshtoso/components/schemaform"  // package schemaform
 |-------|------|-------------|
 | `Fields` | `[]Field` | Fields is the ordered form control list produced by Walk / FallbackFromDefaults. |
 | `NamePrefix` | `string` | NamePrefix prefixes every input name (so the server sees `values.&lt;path&gt;`). Default: "values". |
+
+## schematree
+
+```go
+import "github.com/araihu/goshtoso/components/schematree"  // package schematree
+```
+
+**Entry points:** `SchemaTree(cfg Config)`
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` |  |
+| `AriaLabel` | `string` |  |
+| `Header` | `templ.Component` |  |
+| `Description` | `string` |  |
+| `DescriptionContent` | `templ.Component` | DescriptionContent replaces Description when non-nil. |
+| `Nodes` | `[]Node` |  |
+| `EmptyLabel` | `string` |  |
+| `RootClass` | `string` |  |
+| `RootAttrs` | `templ.Attributes` |  |
+
+**Constraint**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Name` | `string` |  |
+| `Value` | `string` |  |
+
+**Node**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Name` | `string` |  |
+| `Path` | `string` | Path is an optional full property path, exposed as the name's tooltip. |
+| `Type` | `string` |  |
+| `TypeContent` | `templ.Component` | TypeContent replaces Type, for example with a linked named type. |
+| `Description` | `string` |  |
+| `DescriptionContent` | `templ.Component` | DescriptionContent replaces Description when non-nil. It accepts block content, including styled Markdown. The caller owns HTML sanitization. |
+| `Required` | `bool` |  |
+| `ShowOptional` | `bool` | ShowOptional also labels fields that are not required. Default is false. |
+| `Nullable` | `bool` |  |
+| `Deprecated` | `bool` |  |
+| `Constraints` | `[]Constraint` |  |
+| `MetadataContent` | `templ.Component` | MetadataContent follows Constraints and can contain examples or actions. |
+| `Children` | `[]Node` |  |
+| `ChildrenContent` | `templ.Component` | ChildrenContent follows Children, supporting caller-owned lazy fragments. |
+| `Collapsed` | `bool` | Collapsed initially closes a branch. Native disclosure works without JS. |
+| `RootClass` | `string` |  |
+| `RootAttrs` | `templ.Attributes` |  |
 
 ## scrollregion
 

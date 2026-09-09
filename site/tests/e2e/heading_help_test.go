@@ -3,6 +3,7 @@
 package e2e
 
 import (
+	"fmt"
 	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -16,9 +17,19 @@ func TestHeadingHelpClickDismissal(t *testing.T) {
 	} {
 		t.Run(fixture.id, func(t *testing.T) {
 			page := newPage(t, sharedBrowser)
-			require.NoError(t, page.SetViewportSize(390, 900))
-			_, err := page.Goto(baseURL+fixture.route, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateNetworkidle})
+			failures := watchPageFailures(page)
+			_, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateNetworkidle})
 			require.NoError(t, err)
+			_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined' && typeof htmx !== 'undefined'", nil)
+			require.NoError(t, err)
+			_, err = page.Evaluate("() => window.__headingHelpNavigation = true", nil)
+			require.NoError(t, err)
+			link := page.Locator(fmt.Sprintf(`#componentdocshell-sidebar-content a[href=%q]`, fixture.route))
+			clickUntil(t, page, link, fmt.Sprintf("!!document.getElementById(%q)", fixture.id))
+			survived, err := page.Evaluate("() => window.__headingHelpNavigation === true", nil)
+			require.NoError(t, err)
+			require.Equal(t, true, survived, "navigation must preserve the document through HTMX")
+			require.NoError(t, page.SetViewportSize(390, 900))
 			button := page.GetByRole("button", playwright.PageGetByRoleOptions{Name: fixture.label, Exact: playwright.Bool(true)})
 			require.NoError(t, button.Focus())
 			open, err := page.Locator("#"+fixture.id).Evaluate("el => el.matches(':popover-open')", nil)
@@ -41,17 +52,26 @@ func TestHeadingHelpClickDismissal(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, false, open)
 			require.NoError(t, button.Click())
+			require.Eventually(t, func() bool {
+				open, err := page.Locator("#"+fixture.id).Evaluate("el => el.matches(':popover-open')", nil)
+				return err == nil && open == true
+			}, time.Second, 20*time.Millisecond)
 			require.NoError(t, page.Locator("body").Click(playwright.LocatorClickOptions{Position: &playwright.Position{X: 380, Y: 5}}))
 			require.Eventually(t, func() bool {
 				v, _ := page.Locator("#"+fixture.id).Evaluate("el => el.matches(':popover-open')", nil)
 				return v == false
 			}, time.Second, 20*time.Millisecond)
 			require.NoError(t, button.Click())
+			require.Eventually(t, func() bool {
+				open, err := page.Locator("#"+fixture.id).Evaluate("el => el.matches(':popover-open')", nil)
+				return err == nil && open == true
+			}, time.Second, 20*time.Millisecond)
 			require.NoError(t, button.Click())
 			require.Eventually(t, func() bool {
 				v, _ := page.Locator("#"+fixture.id).Evaluate("el => el.matches(':popover-open')", nil)
 				return v == false
 			}, time.Second, 20*time.Millisecond)
+			failures.RequireEmpty(t)
 		})
 	}
 }

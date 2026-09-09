@@ -39,6 +39,7 @@ import (
 	rangepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/range"
 	ratingpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/rating"
 	schemaformpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/schemaform"
+	schematreepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/schematree"
 	searchpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/search"
 	selectpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/select"
 	sidebarpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/sidebar"
@@ -108,6 +109,7 @@ func mustDefault() *Registry {
 		rangepage.Definition,
 		ratingpage.Definition,
 		schemaformpage.Definition,
+		schematreepage.Definition,
 		searchpage.Definition,
 		selectpage.Definition,
 		sidebarpage.Definition,

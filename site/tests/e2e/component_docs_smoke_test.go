@@ -98,7 +98,7 @@ func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 		// covered by icon_test.go rather than this core-family traversal.
 		return entry.Active == "app-shell" || entry.Active == "icon"
 	})
-	require.Len(t, entries, 50)
+	require.Len(t, entries, 51)
 
 	page := newPage(t, sharedBrowser)
 	failures := watchPageFailures(page)

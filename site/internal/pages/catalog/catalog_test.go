@@ -34,6 +34,7 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		{"/components/dependencies", "Display"},
 		{"/components/icon", "Display"},
 		{"/components/kbd", "Display"},
+		{"/components/schema-tree", "Display"},
 		{"/components/table", "Display"},
 		{"/components/button", "Input"},
 		{"/components/checkbox", "Input"},
