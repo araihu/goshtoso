@@ -92,6 +92,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"icon.Icon":                       {},
 		"kbd.Kbd":                         {},
 		"link.Link":                       {},
+		"modal.Dialog":                    {},
 		"modal.Modal":                     {},
 		"modal.AlertDialog":               {},
 		"navbar.Navbar":                   {},
@@ -187,6 +188,8 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 	}
 
 	allowedMethods := map[string]struct{}{
+		"modal.DialogInstance.Kind":              {},
+		"modal.DialogInstance.Render":            {},
 		"head.metadataComponent.Render":          {},
 		"combobox.Config.Validate":               {},
 		"combobox.Config.InitialState":           {},
