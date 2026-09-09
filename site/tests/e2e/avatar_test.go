@@ -396,3 +396,22 @@ func TestAvatar_ImageError_FallsBackToInitials(t *testing.T) {
 	assert.False(t, avatarIsImageVisible(t, page, errorAvatarSelector),
 		"image should be hidden after load error")
 }
+
+func TestAvatarIconCentered(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	failures := watchPageFailures(page)
+	_, err := page.Goto(baseURL + "/components/avatar")
+	require.NoError(t, err)
+	glyph := page.Locator("#avatar-icon svg").First()
+	require.NoError(t, glyph.WaitFor())
+	for _, theme := range []string{"goshtoso", "minimal"} {
+		for _, dark := range []bool{false, true} {
+			_, err = page.Evaluate(`state => { document.documentElement.dataset.theme = state.theme; document.documentElement.classList.toggle('dark', state.dark); }`, map[string]any{"theme": theme, "dark": dark})
+			require.NoError(t, err)
+			centered, err := glyph.Evaluate(`el => { const icon = el.getBoundingClientRect(); const box = el.parentElement.getBoundingClientRect(); return icon.width > 0 && Math.abs(icon.x + icon.width/2 - box.x - box.width/2) < 1 && Math.abs(icon.y + icon.height/2 - box.y - box.height/2) < 1; }`, nil)
+			require.NoError(t, err)
+			require.Equal(t, true, centered, "icon must stay centered for %s dark=%t", theme, dark)
+		}
+	}
+	failures.RequireEmpty(t)
+}
