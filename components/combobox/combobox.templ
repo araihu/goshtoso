@@ -180,6 +180,7 @@ templ comboboxTemplate(cfg Config, state State) {
 	<div
 		data-combobox
 		data-combobox-mode={ comboboxModeAttr(cfg) }
+		data-combobox-persist={ strconv.FormatBool(!cfg.DisablePersistence) }
 		data-combobox-name={ cfg.Name }
 		data-combobox-multi={ comboboxMultiAttr(cfg) }
 		data-combobox-close-on-select={ comboboxCloseOnSelectAttr(cfg) }
