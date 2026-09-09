@@ -498,6 +498,7 @@ func rowLinkAttrs(row Row) templ.Attributes {
 	attrs := templ.Attributes{
 		"data-table-row-link": row.Link,
 		"hx-get":              row.Link,
+		"hx-trigger":          "click[goshtosoTableRowLinkEvent(event)]",
 		"hx-push-url":         "true",
 	}
 	if row.LinkMode == LinkBoost {
@@ -601,7 +602,7 @@ func rowA11yAttrs(row Row) templ.Attributes {
 		// Enter and Space trigger a native click, which HTMX and onclick
 		// handlers both pick up. Guard against repeat firings from a focused
 		// nested input accepting space as a character.
-		"onkeydown": "if((event.key==='Enter'||event.key===' ')&&!event.target.closest('input,textarea,select,button,a')){event.preventDefault();event.currentTarget.click();}",
+		"onkeydown": "if((event.key==='Enter'||event.key===' ')&&event.target===event.currentTarget){event.preventDefault();event.currentTarget.click();}",
 	}
 }
 

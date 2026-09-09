@@ -100,9 +100,20 @@
     return event.target.closest("[data-table-row-link]");
   }
 
+  // Shared by native navigation and HTMX's row click filter. Nested controls
+  // retain their own default actions and event handlers.
+  window.goshtosoTableRowLinkEvent = function (event) {
+    var row = linkedRow(event);
+    if (!row || event.defaultPrevented) return false;
+    var control = event.target.closest("a,button,input,label,select,textarea,summary,[contenteditable]:not([contenteditable='false']),[role='button'],[role='link'],[role='checkbox'],[role='switch'],[role='combobox']");
+    return !control || control === row || !row.contains(control);
+  };
+
   document.addEventListener("click", function (event) {
     var row = linkedRow(event);
-    if (!row || row.dataset.tableRowLinkMode !== "full" || event.defaultPrevented) return;
+    if (!window.goshtosoTableRowLinkEvent(event)) return;
+
+    if (!row || row.dataset.tableRowLinkMode !== "full") return;
     var target = window.goshtosoSafeNavigationTarget(row.dataset.tableRowLink);
     if (target) window.location.href = target;
   });
@@ -110,7 +121,7 @@
   document.addEventListener("auxclick", function (event) {
     if (event.button !== 1) return;
     var row = linkedRow(event);
-    if (!row) return;
+    if (!row || !window.goshtosoTableRowLinkEvent(event)) return;
     var target = window.goshtosoSafeNavigationTarget(row.dataset.tableRowLink);
     if (!target) return;
     event.preventDefault();

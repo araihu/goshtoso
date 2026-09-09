@@ -93,6 +93,11 @@ templ tableDemoContent() {
 })`,
 		)
 		@demo.DemoSection(
+			demo.DemoSectionProps{Title: "Linked Rows with Checkboxes", Description: "Click the row to navigate. Checkboxes, labels, and nested controls keep their own actions without opening the row."},
+			tableLinkedCheckboxPreview(),
+			`@table.Table(table.Config{ShowCheckbox: true, Columns: columns, Rows: []table.Row{{ID: "customer", Link: "/customers/customer", LinkMode: table.LinkFull, Cells: cells}}})`,
+		)
+		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Selectable Rows",
 				Description: "Set ShowCheckbox: true to add row-selection controls with a header check-all toggle.",
@@ -739,4 +744,8 @@ templ tableHeaderHelpPreview() {
  <div id="table-header-help" class="w-full">
   @table.Table(table.Config{ID: "header-help-services", Columns: []table.Column{{Key: "name", Label: "Service", HeaderSuffix: tooltip.Help("service-help", "About services", "Discovered services appear here.")}}, Rows: []table.Row{{ID: "example", Cells: map[string]table.Cell{"name": {Text: "Example service"}}}}})
  </div>
+}
+
+templ tableLinkedCheckboxPreview() {
+ @table.Table(table.Config{ID:"table-linked-checkbox-demo",ShowCheckbox:true,Columns:[]table.Column{{Key:"name",Label:"Customer"}},Rows:[]table.Row{{ID:"customer",Link:"/components/table",LinkMode:table.LinkFull,Cells:map[string]table.Cell{"name":{Text:"Open customer"}}}}})
 }

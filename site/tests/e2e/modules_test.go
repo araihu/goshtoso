@@ -33,7 +33,7 @@ func TestModulesSidebarAndAppShellsShowcase(t *testing.T) {
 	require.Less(t, framesBox.Y, shellsBox.Y, "Frames must precede Shells in the sidebar")
 }
 
-func TestChartsModuleLazyLoadsStaticInteractiveAndThreeD(t *testing.T) {
+func TestChartsModuleLoadsStaticInteractiveAndThreeD(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -45,8 +45,6 @@ func TestChartsModuleLazyLoadsStaticInteractiveAndThreeD(t *testing.T) {
 	require.NoError(t, page.Locator(`a[href="/modules/charts"][aria-current="page"]`).WaitFor())
 
 	for _, kind := range []string{"static", "interactive", "line-3d"} {
-		section := page.Locator(`[data-chart-module-showcase="` + kind + `"]`)
-		require.NoError(t, section.ScrollIntoViewIfNeeded())
 		frameElement := page.Locator(`iframe[data-charts-showcase-frame="` + kind + `"]`)
 		require.NoError(t, frameElement.WaitFor(playwright.LocatorWaitForOptions{Timeout: playwright.Float(10_000)}))
 		frame := page.FrameLocator(`iframe[data-charts-showcase-frame="` + kind + `"]`)
