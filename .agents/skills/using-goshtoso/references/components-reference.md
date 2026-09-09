@@ -1026,7 +1026,7 @@ import "github.com/araihu/goshtoso/components/link"  // package link
 import "github.com/araihu/goshtoso/components/modal"  // package modal
 ```
 
-**Entry points:** `AlertDialog(cfg AlertDialogConfig)` · `Modal(cfg Config)`
+**Entry points:** `AlertDialog(cfg AlertDialogConfig)` · `Dialog(cfg DialogConfig)` · `Modal(cfg Config)`
 
 - **Tone** — ToneDefault = "default", ToneSuccess = "success", ToneInfo = "info", ToneWarning = "warning", ToneDanger = "danger"
 
@@ -1063,6 +1063,15 @@ import "github.com/araihu/goshtoso/components/modal"  // package modal
 | `SecondaryLabel` | `string` | SecondaryLabel is the secondary/dismiss button label. |
 | `SecondaryAction` | `*ButtonAction` | SecondaryAction holds optional HTMX/JS actions for the secondary button |
 | `PanelClass` | `string` | PanelClass allows additional CSS classes on the dialog. |
+
+**DialogConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` | ID identifies modal:open and modal:close events through their detail.id. |
+| `Title` | `string` | Title labels the dialog for assistive technology. |
+| `Content` | `templ.Component` | Content is the dialog body, including any application-owned controls. |
+| `FullscreenMobile` | `bool` | FullscreenMobile fills the viewport below the sm breakpoint. |
 
 **HTMXConfig**
 
