@@ -4301,10 +4301,10 @@
       color: color-mix(in oklab, var(--color-on-surface) 40%, transparent);
     }
   }
-  .backdrop\:bg-black\/50::backdrop {
+  .backdrop\:bg-backdrop\/50::backdrop {
     background-color: color-mix(in srgb, #000 50%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-black) 50%, transparent);
+      background-color: color-mix(in oklab, var(--color-backdrop) 50%, transparent);
     }
   }
   .before\:absolute::before {
