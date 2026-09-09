@@ -10,6 +10,8 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/araihu/goshtoso/components/avatar"
+	"github.com/araihu/goshtoso/components/icon"
+	"github.com/araihu/goshtoso/components/icon/heroicons"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -117,7 +119,7 @@ func avatarDemoContent() templ.Component {
 				Description: "An avatar in various colors with an icon placeholder.",
 			},
 			avatarIconPreview(),
-			`@avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true})
+			`@avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true, Icon: icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidUser, Decorative: true})})
 @avatar.Avatar(avatar.Config{Tone: avatar.ToneInverse, Reactive: true})
 @avatar.Avatar(avatar.Config{Tone: avatar.TonePrimary, Reactive: true})
 @avatar.Avatar(avatar.Config{Tone: avatar.ToneSecondary, Reactive: true})
@@ -616,7 +618,7 @@ func avatarIconPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true, Icon: icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidUser, Decorative: true})}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
