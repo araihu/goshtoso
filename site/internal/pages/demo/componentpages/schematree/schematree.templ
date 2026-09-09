@@ -1,0 +1,88 @@
+package schematreepage
+
+import (
+	"github.com/araihu/goshtoso/components/schematree"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+templ schemaTreeDemoContent() {
+	<div id="schema-tree-fragment">
+		@demo.ComponentDemo(demo.ComponentDemoProps{
+			Title: "Schema Tree",
+			Description: "Read fields, types, constraints, and descriptions in a shared schema hierarchy. Branches expand with native browser controls, including when JavaScript is unavailable.",
+		}, schemaTreePreview(), `@schematree.SchemaTree(schematree.Config{
+    AriaLabel: "Response schema",
+    Nodes: []schematree.Node{{
+        Name: "data", Type: "object",
+        DescriptionContent: responseDescription(),
+        Children: []schematree.Node{{
+            Name: "error_type", Type: "string", Required: true,
+            Description: "Identifies the kind of failure.",
+        }},
+    }},
+})`)
+		@demo.DemoSection(demo.DemoSectionProps{
+			Title: "Configuration schema",
+			Description: "The same component accepts a JSON Schema adapter. Full property paths remain available on field names, and required state is expressed in words.",
+		}, configurationPreview(), `schematree.Node{
+    Name: "custom_css", Path: "/custom_css", Type: "array",
+    Description: "Additional stylesheets for this site.",
+    Constraints: []schematree.Constraint{{Name: "Default", Value: "[]"}},
+    Children: []schematree.Node{{
+        Name: "items", Type: "object",
+        Children: []schematree.Node{{
+            Name: "css_url", Type: "string", Required: true,
+            Constraints: []schematree.Constraint{{Name: "minLength", Value: "1"}},
+        }},
+    }},
+}`)
+		@demo.DemoSection(demo.DemoSectionProps{
+			Title: "Component descriptions",
+			Description: "DescriptionContent overrides plain Description. Supply a rendered Markdown component, links, lists, or other block content; parse and sanitize external content in the caller.",
+		}, descriptionPreview(), `schematree.Node{
+    Name: "description", Type: "string",
+    Description: "Plain text fallback",
+    DescriptionContent: markdownDescription(),
+}`)
+	</div>
+}
+
+templ schemaTreePreview() {
+	<div id="schema-tree-response" class="w-full">
+		@schematree.SchemaTree(schematree.Config{AriaLabel: "Response schema", Nodes: []schematree.Node{
+			{Name: "data", Type: "object", DescriptionContent: responseDescription(), Children: []schematree.Node{
+				{Name: "message", Type: "string", Description: "A human-readable explanation of the failure."},
+				{Name: "error_type", Type: "string", Required: true, Description: "Identifies the kind of failure.", Constraints: []schematree.Constraint{{Name: "Allowed", Value: "ERROR, ALREADY_EXISTS, NOT_FOUND"}}},
+			}},
+			{Name: "request_id", Type: "string", Required: true, Description: "Include this identifier when asking for support."},
+		}})
+	</div>
+}
+
+templ responseDescription() {
+	<p>Data that helps a client respond to an operation failure. The fields depend on the <strong>type of error</strong>.</p>
+	<ul><li>Inspect <code>error_type</code> before handling the response.</li><li>See the <a href="#schema-tree-config">configuration example</a><span>{ " for a nested tree." }</span></li></ul>
+}
+
+templ configurationPreview() {
+	<div id="schema-tree-config" class="w-full">
+		@schematree.SchemaTree(schematree.Config{AriaLabel: "Site configuration", Nodes: []schematree.Node{
+			{Name: "assets", Path: "/assets", Type: "string", Description: "Whether generated pages reference copied assets or embed supported assets.", Constraints: []schematree.Constraint{{Name: "Allowed", Value: "local, inline"}, {Name: "Default", Value: "local"}}},
+			{Name: "base_path", Path: "/base_path", Type: "string", Description: "Normalized public path prefix used by links and canonical URLs.", Constraints: []schematree.Constraint{{Name: "Default", Value: "/"}}},
+			{Name: "custom_css", Path: "/custom_css", Type: "array", Description: "Additional stylesheets for this site.", Constraints: []schematree.Constraint{{Name: "Default", Value: "[]"}}, Children: []schematree.Node{
+				{Name: "items", Type: "object", Children: []schematree.Node{{Name: "css_url", Path: "/custom_css/*/css_url", Type: "string", Required: true, Constraints: []schematree.Constraint{{Name: "minLength", Value: "1"}}}}},
+			}},
+			{Name: "frame", Type: "object", Collapsed: true, Description: "Frame settings for the generated site.", Children: []schematree.Node{{Name: "builtin", Type: "string"}, {Name: "command", Type: "string"}}},
+		}})
+	</div>
+}
+
+templ descriptionPreview() {
+	<div id="schema-tree-rich" class="w-full">
+		@schematree.SchemaTree(schematree.Config{AriaLabel: "Rich descriptions", Nodes: []schematree.Node{
+			{Name: "plain", Type: "string", Description: "Text such as <strong> is escaped and displayed literally."},
+			{Name: "rich", Type: "string", Description: "Fallback is not rendered", DescriptionContent: responseDescription()},
+			{Name: "a_very_long_property_name_that_must_remain_readable_on_a_narrow_mobile_screen", Type: "array<string>", Required: true, Description: "Field names wrap inside their column while state labels stay visible."},
+		}})
+	</div>
+}
