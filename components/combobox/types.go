@@ -33,21 +33,24 @@ type Option struct {
 
 // Config holds the combobox configuration. ID must be globally unique per page.
 type Config struct {
-	ID              string
-	Name            string
-	Label           string
-	Placeholder     string
-	Mode            Mode
-	Source          Source
-	Selected        []string
-	EnableSearch    bool
-	EnableClearAll  bool
-	Required        bool
-	DependsOn       []string
-	ToggleEndpoint  string
-	OptionsEndpoint string
-	ClearEndpoint   string
-	RootClass       string
+	ID             string
+	Name           string
+	Label          string
+	Placeholder    string
+	Mode           Mode
+	Source         Source
+	Selected       []string
+	EnableSearch   bool
+	EnableClearAll bool
+	// DisablePersistence keeps client selection in the current DOM only.
+	// Use it when URL parameters or server-rendered state own the selection.
+	DisablePersistence bool
+	Required           bool
+	DependsOn          []string
+	ToggleEndpoint     string
+	OptionsEndpoint    string
+	ClearEndpoint      string
+	RootClass          string
 	// TriggerAttrs appends non-conflicting HTML attributes to the combobox trigger.
 	TriggerAttrs templ.Attributes
 	Disabled     bool
