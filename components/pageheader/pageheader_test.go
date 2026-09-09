@@ -30,12 +30,20 @@ func TestPageHeaderRendersPageHierarchy(t *testing.T) {
 	require.Contains(t, html, ">Operations</h1>")
 	require.Contains(t, html, "Review and act on current incidents.")
 	require.Contains(t, html, "max-w-3xl")
+	require.Contains(t, html, "border-b")
 	require.Equal(t, components.KindPageHeader, PageHeader(Config{}).Kind())
 }
 
 func TestTitleSuffixIsOutsideHeading(t *testing.T) {
 	html := renderHTML(t, PageHeader(Config{Title: "Staging", TitleSuffix: templ.Raw(`<button aria-label="About staging">?</button>`)}))
 	require.Contains(t, html, `Staging</h1><button aria-label="About staging">?</button>`)
+}
+
+func TestPageHeaderCanHideSeparator(t *testing.T) {
+	html := renderHTML(t, PageHeader(Config{Title: "Staging", HideSeparator: true}))
+	require.NotContains(t, html, "border-b")
+	require.Contains(t, html, "pb-6")
+	require.Contains(t, html, ">Staging</h1>")
 }
 
 func TestPageHeaderRendersBreadcrumbsBeforeTitleAndActionsAfterDescription(t *testing.T) {
