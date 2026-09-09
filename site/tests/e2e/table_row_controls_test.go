@@ -16,7 +16,7 @@ func TestTableLinkedRowNestedControls(t *testing.T) {
 		for _, theme := range []struct {
 			name string
 			dark bool
-		}{{"goshtoso", false}, {"goshtoso", true}, {"minimal", false}} {
+		}{{"goshtoso", false}, {"goshtoso", true}, {"minimal", false}, {"minimal", true}} {
 			t.Run(string(mode)+"/"+theme.name+map[bool]string{true: "-dark", false: "-light"}[theme.dark], func(t *testing.T) {
 				page := newPage(t, sharedBrowser)
 				require.NoError(t, page.Route("**/row-destination", func(route playwright.Route) {
