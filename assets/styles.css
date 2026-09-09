@@ -822,6 +822,9 @@
   .m-0 {
     margin: 0px;
   }
+  .m-auto {
+    margin: auto;
+  }
   .-mx-4 {
     margin-inline: calc(var(--spacing) * -4);
   }
@@ -1155,6 +1158,9 @@
   .h-\[calc\(100vh-4rem\)\] {
     height: calc(100vh - 4rem);
   }
+  .h-dvh {
+    height: 100dvh;
+  }
   .h-full {
     height: 100%;
   }
@@ -1170,6 +1176,9 @@
   .max-h-52 {
     max-height: calc(var(--spacing) * 52);
   }
+  .max-h-\[90dvh\] {
+    max-height: 90dvh;
+  }
   .max-h-\[320px\] {
     max-height: 320px;
   }
@@ -1184,6 +1193,9 @@
   }
   .max-h-\[min\(28rem\,calc\(100vh-12rem\)\)\] {
     max-height: min(28rem, calc(100vh - 12rem));
+  }
+  .max-h-dvh {
+    max-height: 100dvh;
   }
   .max-h-full {
     max-height: 100%;
@@ -1341,6 +1353,9 @@
   .w-\[45\%\] {
     width: 45%;
   }
+  .w-\[48rem\] {
+    width: 48rem;
+  }
   .w-\[55\%\] {
     width: 55%;
   }
@@ -1367,6 +1382,9 @@
   }
   .w-px {
     width: 1px;
+  }
+  .w-screen {
+    width: 100vw;
   }
   .max-w-2xl {
     max-width: var(--container-2xl);
@@ -1409,6 +1427,9 @@
   }
   .max-w-\[720px\] {
     max-width: 720px;
+  }
+  .max-w-\[calc\(100vw-2rem\)\] {
+    max-width: calc(100vw - 2rem);
   }
   .max-w-full {
     max-width: 100%;
@@ -4265,6 +4286,12 @@
       color: color-mix(in oklab, var(--color-on-surface) 40%, transparent);
     }
   }
+  .backdrop\:bg-black\/50::backdrop {
+    background-color: color-mix(in srgb, #000 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-black) 50%, transparent);
+    }
+  }
   .before\:absolute::before {
     content: var(--tw-content);
     position: absolute;
@@ -4432,6 +4459,12 @@
   }
   .odd\:bg-surface-alt:nth-child(odd) {
     background-color: var(--color-surface-alt);
+  }
+  .open\:flex:is([open], :popover-open, :open) {
+    display: flex;
+  }
+  .open\:flex-col:is([open], :popover-open, :open) {
+    flex-direction: column;
   }
   .checked\:border-danger:checked {
     border-color: var(--color-danger);
@@ -5229,6 +5262,12 @@
     .sm\:h-\[28rem\] {
       height: 28rem;
     }
+    .sm\:h-auto {
+      height: auto;
+    }
+    .sm\:max-h-\[90dvh\] {
+      max-height: 90dvh;
+    }
     .sm\:w-8 {
       width: calc(var(--spacing) * 8);
     }
@@ -5247,8 +5286,14 @@
     .sm\:w-64 {
       width: calc(var(--spacing) * 64);
     }
+    .sm\:w-\[48rem\] {
+      width: 48rem;
+    }
     .sm\:w-auto {
       width: auto;
+    }
+    .sm\:max-w-\[calc\(100vw-2rem\)\] {
+      max-width: calc(100vw - 2rem);
     }
     .sm\:max-w-md {
       max-width: var(--container-md);
@@ -5312,6 +5357,9 @@
     }
     .sm\:gap-8 {
       gap: calc(var(--spacing) * 8);
+    }
+    .sm\:rounded-radius {
+      border-radius: var(--radius-radius);
     }
     .sm\:p-5 {
       padding: calc(var(--spacing) * 5);

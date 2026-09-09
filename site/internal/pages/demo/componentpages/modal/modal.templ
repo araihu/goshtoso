@@ -2,6 +2,8 @@ package modalpage
 
 import (
 	"github.com/araihu/goshtoso/components/modal"
+"github.com/araihu/goshtoso/components/drawer"
+"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -30,6 +32,8 @@ templ modalDemoContent() {
     SecondaryLabel: "Remind me later",
 })`,
 		)
+
+ @demo.DemoSection(demo.DemoSectionProps{Title:"Content dialog above a drawer",Description:"Native dialog layering keeps the editor open. Escape dismisses only the picker; focus returns to its trigger."},modalContentPreview(),`@modal.Dialog(modal.DialogConfig{ID:"contentPicker",Title:"Choose item",FullscreenMobile:true,Content:pickerContent()})`)
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -174,4 +178,21 @@ templ modalJSPreview() {
 				},
 			})
 	</div>
+}
+
+templ modalContentPreview() {
+ <div id="modal-content-dialog" class="w-full max-w-2xl mx-auto">
+ @button.Button(button.WithType("button"),button.WithAttrs(templ.Attributes{"x-data":"{}","x-on:click":"$dispatch('drawer:open', {id:'contentEditor'})"})) { Open content editor }
+ @drawer.Drawer(drawer.Config{ID:"contentEditor",Title:"Content editor"}) {
+  <div x-data="{}">
+   <label>Draft<input aria-label="Draft" value="Unsaved draft"/></label>
+   @button.Button(button.WithType("button"),button.WithAttrs(templ.Attributes{"x-on:click":"$dispatch('modal:open', {id:'contentPicker'})"})) { Choose item }
+   @modal.Dialog(modal.DialogConfig{ID:"contentPicker",Title:"Choose item",FullscreenMobile:true,Content:pickerContent()})
+  </div>
+ }
+ </div>
+}
+templ pickerContent() {
+ <label>Search<input aria-label="Search items" autofocus/></label>
+ @button.Button(button.WithType("button"),button.WithAttrs(templ.Attributes{"x-on:click":"$dispatch('modal:close', {id:'contentPicker'})"})) { Select item }
 }
