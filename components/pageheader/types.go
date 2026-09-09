@@ -16,6 +16,9 @@ type Config struct {
 	Breadcrumbs templ.Component
 	// Actions renders page-level controls beside the title group.
 	Actions templ.Component
+	// HideSeparator removes the bottom border while preserving header spacing.
+	// The separator is visible by default.
+	HideSeparator bool
 	// RootClass appends CSS classes to the header root.
 	RootClass string
 	// RootAttrs appends arbitrary HTML attributes to the header root.
@@ -35,10 +38,11 @@ type Config struct {
 }
 
 func (cfg Config) rootClasses() string {
-	return appendClass(
-		"flex flex-col gap-4 border-b border-outline pb-6 dark:border-outline-dark",
-		cfg.RootClass,
-	)
+	base := "flex flex-col gap-4 pb-6"
+	if !cfg.HideSeparator {
+		base += " border-b border-outline dark:border-outline-dark"
+	}
+	return appendClass(base, cfg.RootClass)
 }
 
 func (cfg Config) breadcrumbsClasses() string {
