@@ -74,14 +74,6 @@ func buttonDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.DemoSection(
-			demo.DemoSectionProps{Title: "Plain text", Description: "A compact action without a fill or border. Inherits text color and keeps keyboard focus visible."},
-			buttonPlainPreview(),
-			`@button.Button(button.WithAppearance(button.AppearancePlain)) { +2 }`,
-		).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Button",
@@ -92,6 +84,14 @@ func buttonDemoContent() templ.Component {
 @button.Button(button.WithTone(button.ToneSecondary)) { Secondary }
 @button.Button(button.WithTone(button.ToneDanger)) { Danger }
 @button.Button(button.WithTone(button.ToneSuccess)) { Success }`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{Title: "Plain text", Description: "A compact action without a fill or border. Inherits text color and keeps keyboard focus visible."},
+			buttonPlainPreview(),
+			`@button.Button(button.WithAppearance(button.AppearancePlain)) { +2 }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
