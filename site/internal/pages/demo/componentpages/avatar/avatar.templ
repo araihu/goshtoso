@@ -2,6 +2,8 @@ package avatarpage
 
 import (
 	"github.com/araihu/goshtoso/components/avatar"
+"github.com/araihu/goshtoso/components/icon"
+"github.com/araihu/goshtoso/components/icon/heroicons"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -58,7 +60,7 @@ templ avatarDemoContent() {
 					Description: "An avatar in various colors with an icon placeholder.",
 				},
 				avatarIconPreview(),
-				`@avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true})
+				`@avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true, Icon: icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidUser, Decorative: true})})
 @avatar.Avatar(avatar.Config{Tone: avatar.ToneInverse, Reactive: true})
 @avatar.Avatar(avatar.Config{Tone: avatar.TonePrimary, Reactive: true})
 @avatar.Avatar(avatar.Config{Tone: avatar.ToneSecondary, Reactive: true})
@@ -240,7 +242,7 @@ templ avatarInitialsPreview() {
 templ avatarIconPreview() {
 	<div id="avatar-icon" class="w-full max-w-2xl mx-auto">
 		<div class="flex flex-wrap items-center justify-center gap-4" data-testid="avatar-section-icon">
-			@avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true})
+			@avatar.Avatar(avatar.Config{Tone: avatar.ToneDefault, Reactive: true, Icon: icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidUser, Decorative: true})})
 			@avatar.Avatar(avatar.Config{Tone: avatar.ToneInverse, Reactive: true})
 			@avatar.Avatar(avatar.Config{Tone: avatar.TonePrimary, Reactive: true})
 			@avatar.Avatar(avatar.Config{Tone: avatar.ToneSecondary, Reactive: true})
