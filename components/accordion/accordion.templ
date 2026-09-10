@@ -14,7 +14,7 @@ import "fmt"
 //	})
 templ accordionTemplate(cfg AccordionConfig) {
 	{{ containerID := cfg.ID }}
-	{{ if containerID == "" { containerID = "accordion" } }}
+	{{ if containerID == "" { containerID = implicitID() } }}
 	{{ alpineData := generateAlpineData(cfg) }}
 	
 	<div
@@ -59,7 +59,7 @@ templ accordionItem(data accordionItemData) {
 	{{ item := data.Item }}
 	{{ index := data.Index }}
 	{{ itemID := item.ID }}
-	{{ if itemID == "" { itemID = "accordion-item-" + fmt.Sprintf("%d", index) } }}
+	{{ if itemID == "" { itemID = data.ContainerID + "-item-" + fmt.Sprintf("%d", index) } }}
 	{{ controlID := "controls-" + itemID }}
 	{{ contentID := "content-" + itemID }}
 	{{ idx := fmt.Sprintf("%d", index) }}

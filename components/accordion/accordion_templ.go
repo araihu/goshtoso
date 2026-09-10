@@ -43,7 +43,7 @@ func accordionTemplate(cfg AccordionConfig) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		containerID := cfg.ID
 		if containerID == "" {
-			containerID = "accordion"
+			containerID = implicitID()
 		}
 		alpineData := generateAlpineData(cfg)
 		var templ_7745c5c3_Var2 = []any{cfg.containerClasses() + " " + cfg.RootClass}
@@ -160,7 +160,7 @@ func accordionItem(data accordionItemData) templ.Component {
 		index := data.Index
 		itemID := item.ID
 		if itemID == "" {
-			itemID = "accordion-item-" + fmt.Sprintf("%d", index)
+			itemID = data.ContainerID + "-item-" + fmt.Sprintf("%d", index)
 		}
 		controlID := "controls-" + itemID
 		contentID := "content-" + itemID

@@ -144,16 +144,20 @@ templ secondaryRowTemplate(cfg SecondaryConfig) {
 // avatarDropdown renders the user profile button with dropdown menu (desktop)
 templ avatarDropdown(cfg Config) {
 	<div
-		x-data="{ userDropDownIsOpen: false, openWithKeyboard: false }"
-		x-on:keydown.esc.window="userDropDownIsOpen = false, openWithKeyboard = false"
+		x-data="goshtosoPopover($el)"
+		data-popover-root
+		x-on:keydown.esc.window="closeAndFocus()"
 		class="relative flex items-center"
 	>
 		<button
-			x-on:click="userDropDownIsOpen = ! userDropDownIsOpen"
-			x-bind:aria-expanded="userDropDownIsOpen"
-			x-on:keydown.space.prevent="openWithKeyboard = true"
-			x-on:keydown.enter.prevent="openWithKeyboard = true"
-			x-on:keydown.down.prevent="openWithKeyboard = true"
+			x-on:click="toggle()"
+			x-ref="trigger"
+			data-popover-trigger
+			type="button"
+			x-bind:aria-expanded="isOpen || openedWithKeyboard"
+			x-on:keydown.space.prevent="openFromKeyboard()"
+			x-on:keydown.enter.prevent="openFromKeyboard()"
+			x-on:keydown.down.prevent="openFromKeyboard()"
 			class="cursor-pointer rounded-full transition-transform duration-150 motion-reduce:transition-none hover:scale-110 motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95 motion-reduce:active:scale-100 dark:focus-visible:outline-primary-dark"
 			aria-label="user menu"
 		>
@@ -166,17 +170,19 @@ templ avatarDropdown(cfg Config) {
 		<!-- User Dropdown -->
 		<ul
 			x-cloak
-			x-show="userDropDownIsOpen || openWithKeyboard"
+			x-show="isOpen || openedWithKeyboard"
 			x-transition:enter="transition-opacity ease-out duration-150 motion-reduce:transition-none"
 			x-transition:enter-start="opacity-0 motion-reduce:opacity-100"
 			x-transition:enter-end="opacity-100"
 			x-transition:leave="transition-opacity ease-in duration-100 motion-reduce:transition-none"
 			x-transition:leave-start="opacity-100"
 			x-transition:leave-end="opacity-0 motion-reduce:opacity-100"
-			x-trap="openWithKeyboard"
-			x-on:click.outside="userDropDownIsOpen = false, openWithKeyboard = false"
-			x-on:keydown.down.prevent="$focus.wrap().next()"
-			x-on:keydown.up.prevent="$focus.wrap().previous()"
+			x-trap.noreturn="openedWithKeyboard"
+			x-ref="panel"
+			data-popover-panel
+			x-on:click.outside="close()"
+			x-on:keydown.down.prevent="focusAdjacentItem(1)"
+			x-on:keydown.up.prevent="focusAdjacentItem(-1)"
 			class="absolute right-0 top-12 z-50 flex w-fit min-w-48 flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt py-1.5 shadow-md dark:border-outline-dark dark:bg-surface-dark-alt"
 			role="menu"
 		>

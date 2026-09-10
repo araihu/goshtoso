@@ -19,12 +19,21 @@
     if (!viewport || !start || !end) return;
 
     var frame = 0;
+    var disposed = false;
+    var observedChildren = new Set();
     var resizeObserver;
     var mutationObserver;
 
     function observeContent() {
       if (!resizeObserver) return;
+      observedChildren.forEach(function (child) {
+        if (child.parentElement !== viewport) {
+          resizeObserver.unobserve(child);
+          observedChildren.delete(child);
+        }
+      });
       Array.prototype.forEach.call(viewport.children, function (child) {
+        observedChildren.add(child);
         resizeObserver.observe(child);
       });
     }
@@ -41,7 +50,7 @@
     }
 
     function schedule() {
-      if (frame) return;
+      if (disposed || frame) return;
       frame = window.requestAnimationFrame(update);
     }
 
@@ -64,6 +73,8 @@
 
     regions.set(root, {
       disconnect: function () {
+        disposed = true;
+        observedChildren.clear();
         viewport.removeEventListener("scroll", schedule);
         if (resizeObserver) resizeObserver.disconnect();
         if (mutationObserver) mutationObserver.disconnect();
@@ -86,13 +97,23 @@
   }
 
   function scanHTMXTarget(event) {
-    var detail = event.detail || {};
-    scan((detail.ctx && detail.ctx.target) || event.target);
+    scan(event.target);
   }
 
+  function registerLifecycle() {
+    window.Alpine.directive("scroll-region", function (root, binding, utilities) {
+      connect(root);
+      utilities.cleanup(function () {
+        var state = regions.get(root);
+        if (state) state.disconnect();
+      });
+    });
+  }
+  if (window.Alpine) registerLifecycle();
+  else document.addEventListener("alpine:init", registerLifecycle, { once: true });
   document.addEventListener("DOMContentLoaded", refresh);
   document.addEventListener("htmx:after:process", scanHTMXTarget);
-  document.addEventListener("htmx:after:swap", scanHTMXTarget);
+
   document.addEventListener("htmx:before:cleanup", function (event) {
     var element = event.target;
     if (!element) return;

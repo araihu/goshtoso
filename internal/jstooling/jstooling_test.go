@@ -156,6 +156,7 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 		"assets/js/src/components/dropdown.js":         `(() => { window.dropdownFixture = true })();`,
 		"assets/js/src/components/palette.js":          `(() => { window.paletteFixture = true })();`,
 		"assets/js/src/components/select.js":           `(() => { window.selectFixture = true })();`,
+		"assets/js/src/components/toast.js":            `(() => { window.toastFixture = true })();`,
 		"assets/js/src/components/tabs.js":             `(() => { window.tabsFixture = true })();`,
 		"assets/js/src/components/scroll-region.js":    `(() => { window.scrollRegionFixture = true })();`,
 		"site/assets/js/src/site-bootstrap.js":         `(() => { window.siteBootstrapFixture = true })();`,

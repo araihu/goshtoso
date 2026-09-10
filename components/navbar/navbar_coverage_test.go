@@ -86,7 +86,7 @@ func TestCoverageRenderFullNavbarBranches(t *testing.T) {
 		`data-nav="home"`,
 		`aria-current="page"`,
 		`aria-label="user menu"`,
-		`x-bind:aria-expanded="userDropDownIsOpen"`,
+		`x-bind:aria-expanded="isOpen || openedWithKeyboard"`,
 		`role="menu"`,
 		`data-menu="profile"`,
 		`data-icon="profile"`,

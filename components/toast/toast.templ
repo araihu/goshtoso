@@ -18,11 +18,11 @@ templ toastContainerTemplate(cfg ContainerConfig) {
 		id={ cfg.effectiveID() }
 		x-data={ containerAlpineData(cfg) }
 		x-on:notify.window="addNotification($event.detail)"
-		x-on:toast-dismiss.window="removeNotification($event.detail.id)"
+		data-toast-container
 	>
 		<div
-			x-on:mouseenter="$dispatch('pause-auto-dismiss')"
-			x-on:mouseleave="$dispatch('resume-auto-dismiss')"
+			x-on:mouseenter="$dispatch('pause-auto-dismiss', { container: $el.closest('[data-toast-container]') })"
+			x-on:mouseleave="$dispatch('resume-auto-dismiss', { container: $el.closest('[data-toast-container]') })"
 			class="group pointer-events-none fixed inset-x-8 top-0 z-99 flex max-w-full flex-col gap-2 bg-transparent px-6 py-6 md:bottom-0 md:left-[unset] md:right-0 md:top-[unset] md:max-w-sm"
 		>
 			<template x-for="(notification, index) in notifications" x-bind:key="notification.id">
@@ -79,14 +79,14 @@ templ clientNotification(tone string) {
 			{{ titleClass = "text-danger" }}
 	}
 	<div
-		x-data="{ isVisible: false, timeout: null }"
+		x-data="goshtosoToast($el, displayDuration, false, () => removeNotification(notification.id))"
+		x-on:toast-dismiss.window="if ($event.detail.id === notification.id) dismiss()"
 		x-cloak
 		x-show="isVisible"
 		class={ "pointer-events-auto relative rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark", borderClass }
 		role="alert"
-		x-on:pause-auto-dismiss.window="clearTimeout(timeout)"
-		x-on:resume-auto-dismiss.window="timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)"
-		x-init="$nextTick(() => { isVisible = true }); timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)"
+		x-on:pause-auto-dismiss.window="pause($event)"
+		x-on:resume-auto-dismiss.window="resume($event)"
 		x-transition:enter="transition duration-300 ease-out motion-reduce:transition-none"
 		x-transition:enter-end="translate-y-0"
 		x-transition:enter-start="translate-y-8 motion-reduce:translate-y-0"
@@ -123,7 +123,7 @@ templ clientNotification(tone string) {
 				<p x-cloak x-show="notification.message" class="text-pretty text-sm" x-text="notification.message"></p>
 			</div>
 			<!-- Dismiss Button -->
-			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click="isVisible = false; removeNotification(notification.id)">
+			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click="dismiss()">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-5 shrink-0" aria-hidden="true">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
 				</svg>
@@ -135,14 +135,14 @@ templ clientNotification(tone string) {
 // clientMessageNotification renders the message notification template (used inside x-for)
 templ clientMessageNotification() {
 	<div
-		x-data="{ isVisible: false, timeout: null }"
+		x-data="goshtosoToast($el, displayDuration, false, () => removeNotification(notification.id))"
+		x-on:toast-dismiss.window="if ($event.detail.id === notification.id) dismiss()"
 		x-cloak
 		x-show="isVisible"
 		class="pointer-events-auto relative rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
 		role="alert"
-		x-on:pause-auto-dismiss.window="clearTimeout(timeout)"
-		x-on:resume-auto-dismiss.window="timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)"
-		x-init="$nextTick(() => { isVisible = true }); timeout = setTimeout(() => { isVisible = false; removeNotification(notification.id) }, displayDuration)"
+		x-on:pause-auto-dismiss.window="pause($event)"
+		x-on:resume-auto-dismiss.window="resume($event)"
 		x-transition:enter="transition duration-300 ease-out motion-reduce:transition-none"
 		x-transition:enter-end="translate-y-0"
 		x-transition:enter-start="translate-y-8 motion-reduce:translate-y-0"
@@ -161,12 +161,12 @@ templ clientMessageNotification() {
 					<p x-cloak x-show="notification.message" class="text-pretty text-sm" x-text="notification.message"></p>
 					<!-- Dismiss Action -->
 					<div class="flex items-center gap-4">
-						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click="isVisible = false; setTimeout(() => { removeNotification(notification.id) }, 400)">Dismiss</button>
+						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click="dismiss()">Dismiss</button>
 					</div>
 				</div>
 			</div>
 			<!-- Dismiss Button -->
-			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click="isVisible = false; removeNotification(notification.id)">
+			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click="dismiss()">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-5 shrink-0" aria-hidden="true">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
 				</svg>
@@ -230,7 +230,7 @@ templ serverToast(cfg Config) {
 		x-data={ singleToastAlpineData(cfg.effectiveDuration(), cfg.DisplayDuration < 0) }
 		x-cloak
 		x-show="isVisible"
-		x-on:toast-dismiss.window={ fmt.Sprintf("if ($event.detail.id === '%s') { $el.remove() }", jsEscapeSingle(toastID)) }
+		x-on:toast-dismiss.window={ fmt.Sprintf("if ($event.detail.id === '%s') dismiss()", jsEscapeSingle(toastID)) }
 		class={ "pointer-events-auto relative rounded-radius border bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark", cfg.borderClass() }
 		role="alert"
 		x-transition:enter="transition duration-300 ease-out motion-reduce:transition-none"
@@ -289,7 +289,7 @@ templ serverToast(cfg Config) {
 				}
 			</div>
 			<!-- Dismiss Button -->
-			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click={ fmt.Sprintf("isVisible = false; $dispatch('toast-dismiss', { id: '%s' })", jsEscapeSingle(toastID)) }>
+			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click="dismiss()">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-5 shrink-0" aria-hidden="true">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
 				</svg>
@@ -307,7 +307,7 @@ templ serverMessageToast(cfg MessageConfig) {
 		x-data={ singleToastAlpineData(cfg.effectiveDuration(), cfg.DisplayDuration < 0) }
 		x-cloak
 		x-show="isVisible"
-		x-on:toast-dismiss.window={ fmt.Sprintf("if ($event.detail.id === '%s') { $el.remove() }", jsEscapeSingle(toastID)) }
+		x-on:toast-dismiss.window={ fmt.Sprintf("if ($event.detail.id === '%s') dismiss()", jsEscapeSingle(toastID)) }
 		class="pointer-events-auto relative rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark"
 		role="alert"
 		x-transition:enter="transition duration-300 ease-out motion-reduce:transition-none"
@@ -348,12 +348,12 @@ templ serverMessageToast(cfg MessageConfig) {
 								}
 							>{ cfg.ActionLabel }</button>
 						}
-						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click={ fmt.Sprintf("isVisible = false; setTimeout(() => { $dispatch('toast-dismiss', { id: '%s' }) }, 400)", jsEscapeSingle(toastID)) }>{ cfg.effectiveDismissLabel() }</button>
+						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click="dismiss()">{ cfg.effectiveDismissLabel() }</button>
 					</div>
 				</div>
 			</div>
 			<!-- Dismiss Button -->
-			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click={ fmt.Sprintf("isVisible = false; $dispatch('toast-dismiss', { id: '%s' })", jsEscapeSingle(toastID)) }>
+			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click="dismiss()">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-5 shrink-0" aria-hidden="true">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
 				</svg>

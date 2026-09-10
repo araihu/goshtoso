@@ -145,13 +145,13 @@ func TestCoverageHTMXPanelDefaultSwap(t *testing.T) {
 	browser := html.UnescapeString(out)
 
 	assert.Contains(t, browser, `hx-get="/api/tabs/details"`)
-	assert.Contains(t, browser, `hx-trigger="intersect once"`)
+	assert.Contains(t, browser, `hx-trigger="goshtoso-tab-load"`)
 	assert.Contains(t, browser, `hx-swap="innerHTML"`)
 	assert.Contains(t, browser, "Loading...")
 	// x-effect lazy-load expression targets the panel id and uses default swap.
-	assert.Contains(t, browser, "htmx.ajax('GET', '/api/tabs/details'")
-	assert.Contains(t, browser, "target: '#tabpanellazydetails'")
-	assert.Contains(t, browser, "swap: 'innerHTML'")
+	assert.NotContains(t, browser, "htmx.ajax")
+	assert.Contains(t, browser, `hx-target="this"`)
+	assert.Contains(t, browser, "loadPanel($el)")
 	// No indicator attribute when unset.
 	assert.NotContains(t, browser, "hx-indicator")
 }
@@ -185,7 +185,7 @@ func TestCoverageHTMXPanelCustomSwapAndIndicator(t *testing.T) {
 
 	assert.Contains(t, browser, `hx-swap="outerHTML"`)
 	assert.Contains(t, browser, `hx-indicator="#spin"`)
-	assert.Contains(t, browser, "swap: 'outerHTML'")
+	assert.NotContains(t, browser, "htmx.ajax")
 }
 
 // TestCoverageMixedStaticAndHTMXPanels renders both panel kinds in one config so

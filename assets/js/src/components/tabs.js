@@ -16,6 +16,22 @@
           history.replaceState(null, "", "#" + tab);
         });
       },
+      loadPanel: function (panel) {
+        if (panel.dataset.loaded || panel.dataset.loading) return;
+        panel.dataset.loading = "true";
+        this.$nextTick(function () {
+          if (!panel.isConnected) return;
+          // Alpine may select an initial/hash panel before htmx's first scan.
+          htmx.process(panel);
+          panel.dispatchEvent(new CustomEvent("goshtoso-tab-load", { bubbles: true }));
+        });
+      },
+      finishPanel: function (panel, event) {
+        var ctx = event.detail && event.detail.ctx;
+        if (!ctx || ctx.sourceElement !== panel) return;
+        delete panel.dataset.loading;
+        if (ctx.response && ctx.response.status >= 200 && ctx.response.status < 400) panel.dataset.loaded = "true";
+      },
       moveFocus: function (event, direction) {
         var tabs = Array.from(event.currentTarget.querySelectorAll('[role="tab"]'));
         var index = tabs.indexOf(document.activeElement);

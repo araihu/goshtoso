@@ -3,6 +3,7 @@ package accordion
 import (
 	"bytes"
 	"context"
+	"golang.org/x/net/html"
 	"strings"
 	"testing"
 
@@ -53,8 +54,8 @@ func TestCoverageRenderConfiguredAccordion(t *testing.T) {
 		`role="region"`,
 		`aria-labelledby="controls-billing"`,
 		`data-testid="billing-icon"`,
-		`id="controls-accordion-item-1"`,
-		`aria-controls="content-accordion-item-1"`,
+		`id="controls-faq-item-1"`,
+		`aria-controls="content-faq-item-1"`,
 		`disabled`,
 		`Billing details`,
 		`Shipping details`,
@@ -81,11 +82,11 @@ func TestCoverageRenderDefaultAccordion(t *testing.T) {
 
 	html := buf.String()
 	for _, want := range []string{
-		`id="accordion"`,
+		`id="goshtoso-accordion-`,
 		`x-data="{ opened: [false,false], allowMultiple: false`,
 		`bg-surface-alt/40`,
-		`id="controls-accordion-item-0"`,
-		`id="content-accordion-item-1"`,
+		`id="controls-goshtoso-accordion-`,
+		`id="content-goshtoso-accordion-`,
 		`@click="toggle(1)"`,
 		`:class="isOpen(1) ? &#39;text-on-surface-strong`,
 		`x-collapse`,
@@ -168,6 +169,53 @@ func TestCoverageGenerateAlpineData(t *testing.T) {
 	} {
 		if !strings.Contains(got, want) {
 			t.Fatalf("generateAlpineData() missing %q in %q", want, got)
+		}
+	}
+}
+
+func TestRepeatedAccordionIdentityRelationships(t *testing.T) {
+	var buf bytes.Buffer
+	for _, id := range []string{"", "", "first", "second"} {
+		if err := Accordion(AccordionConfig{ID: id, Items: []AccordionItem{{Title: "A", Content: templ.Raw("A")}}}).Render(context.Background(), &buf); err != nil {
+			t.Fatal(err)
+		}
+	}
+	doc, err := html.Parse(strings.NewReader(buf.String()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	ids := map[string]bool{}
+	controls := map[string]string{}
+	labels := map[string]string{}
+	var walk func(*html.Node)
+	walk = func(n *html.Node) {
+		attrs := map[string]string{}
+		for _, a := range n.Attr {
+			attrs[a.Key] = a.Val
+		}
+		if id := attrs["id"]; id != "" {
+			if ids[id] {
+				t.Errorf("duplicate id %s", id)
+			}
+			ids[id] = true
+			if target := attrs["aria-controls"]; target != "" {
+				controls[id] = target
+			}
+			if label := attrs["aria-labelledby"]; label != "" {
+				labels[id] = label
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			walk(c)
+		}
+	}
+	walk(doc)
+	if len(controls) != 4 {
+		t.Fatalf("got %d controls", len(controls))
+	}
+	for control, target := range controls {
+		if labels[target] != control {
+			t.Errorf("broken relationship %s -> %s", control, target)
 		}
 	}
 }
