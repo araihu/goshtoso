@@ -2,6 +2,38 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.3.0] - 2026-09-10
+
+### Breaking runtime migration
+
+- Upgrade bundled HTMX to 4.0.0 and Alpine.js, collapse, focus, and mask to
+  3.17.2. Load the official HTMX Alpine compatibility extension before Alpine.
+- Drop HTMX 2 compatibility. Components, application examples, SSE/WebSocket
+  integrations, and app-shell navigation use the HTMX 4 contracts.
+- Consumers must migrate custom HTMX event listeners and attributes, return
+  fragments for `HX-Request-Type: partial`, and review explicit attribute
+  inheritance and field-validation request parameters. See the tracked
+  `.agents/skills/htmx/reference/migration.md` guide for the migration checklist.
+- Upgrade application runtime assets and server handlers together. Custom
+  runtime loaders must preserve the manifest's extension and Alpine load order.
+
+### Component modernization
+
+- Simplify request, streaming, and component lifecycle handling around native
+  HTMX 4 and Alpine behavior, including tables, forms, comboboxes, overlays,
+  and notifications.
+- Preserve sidebar position during navigation and reveal the active entry only
+  when it is outside the visible region.
+- Improve dialog sizing and editor examples, contain and center the cookie
+  banner preview, and correct Card example order and section spacing.
+
+### Documentation
+
+- Add interactive desktop and mobile app-shell examples on their dedicated pages.
+- Remove duplicate sidebar sections and scope AI Agents navigation to its page.
+- Update runtime manifests, generated assets, integration guidance, and browser
+  regression coverage for the new runtime baseline.
+
 ## [v0.2.10] - 2026-09-09
 
 ### SchemaTree fixes
