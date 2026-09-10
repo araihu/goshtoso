@@ -18,15 +18,6 @@ templ CardDemoPage() {
 // frame followed by its own code block (mirrors penguinui.com/components/card).
 templ cardDemoContent() {
 	<div id="card-fragment">
-		@demo.DemoSection(
-			demo.DemoSectionProps{Title: "Title icon", Description: "TitlePrefix places an icon beside a wrapping title."},
-			cardTitlePrefixPreview(),
-			`@card.Card(card.Config{
-    Title: "Application",
-    TitlePrefix: icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidCube, Decorative: true}),
-    Description: "Your application description.",
-})`,
-		)
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Card",
@@ -39,6 +30,20 @@ templ cardDemoContent() {
     Tag:         "Features",
     Title:       "Penguai can teach you Javascript",
     Description: "Learning JavaScript doesn't need to be difficult...",
+})`,
+		)
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{Title: "Title icon", Description: "TitlePrefix places an icon beside a wrapping title."},
+			cardTitlePrefixPreview(),
+			`@card.Card(card.Config{
+    Title: "Application",
+    TitlePrefix: icon.Icon(icon.Config{
+        SpriteURL:   heroicons.SpriteURL,
+        Symbol:      heroicons.Icon16SolidCube,
+        Decorative: true,
+    }),
+    Description: "Your application description.",
 })`,
 		)
 

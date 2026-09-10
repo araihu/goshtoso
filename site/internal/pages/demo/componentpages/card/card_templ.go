@@ -74,18 +74,6 @@ func cardDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.DemoSection(
-			demo.DemoSectionProps{Title: "Title icon", Description: "TitlePrefix places an icon beside a wrapping title."},
-			cardTitlePrefixPreview(),
-			`@card.Card(card.Config{
-    Title: "Application",
-    TitlePrefix: icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidCube, Decorative: true}),
-    Description: "Your application description.",
-})`,
-		).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Card",
@@ -98,6 +86,22 @@ func cardDemoContent() templ.Component {
     Tag:         "Features",
     Title:       "Penguai can teach you Javascript",
     Description: "Learning JavaScript doesn't need to be difficult...",
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{Title: "Title icon", Description: "TitlePrefix places an icon beside a wrapping title."},
+			cardTitlePrefixPreview(),
+			`@card.Card(card.Config{
+    Title: "Application",
+    TitlePrefix: icon.Icon(icon.Config{
+        SpriteURL:   heroicons.SpriteURL,
+        Symbol:      heroicons.Icon16SolidCube,
+        Decorative: true,
+    }),
+    Description: "Your application description.",
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
