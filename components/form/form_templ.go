@@ -1165,7 +1165,7 @@ func fieldGroupTemplate(cfg FieldGroupConfig) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 108, " hx-swap=\"outerHTML\" hx-include=\"closest form\" hx-vals='{\"X-Goshtoso-Validation\":\"field\"}'")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 108, " hx-swap=\"outerHTML\" hx-include=\"closest form\" hx-vals=\"js:{'X-Goshtoso-Validation':'field','X-Goshtoso-Field':this.getAttribute('name')}\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

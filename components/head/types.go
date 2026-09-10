@@ -197,6 +197,8 @@ const (
 	DependencyAlpineMask Dependency = "alpinejs-mask"
 	// DependencyHTMX identifies HTMX core.
 	DependencyHTMX Dependency = "htmx"
+	// DependencyHTMXAlpineCompat coordinates htmx swaps with Alpine state.
+	DependencyHTMXAlpineCompat Dependency = "htmx-alpine-compat"
 )
 
 type config struct {
@@ -451,6 +453,8 @@ func dependencyRole(dependency Dependency) (assets.RuntimeAssetRole, bool) {
 		return assets.RuntimeRoleAlpineMask, true
 	case DependencyHTMX:
 		return assets.RuntimeRoleHTMX, true
+	case DependencyHTMXAlpineCompat:
+		return assets.RuntimeRoleHTMXAlpineCompat, true
 	default:
 		return "", false
 	}
@@ -694,6 +698,8 @@ func (cfg config) validateKnownOrder() error {
 		{assets.RuntimeRoleAlpineMask, assets.RuntimeRoleAlpineJS},
 		{assets.RuntimeRoleFirstParty, assets.RuntimeRoleAlpineJS},
 		{assets.RuntimeRoleDarkMode, assets.RuntimeRoleAlpineJS},
+		{assets.RuntimeRoleHTMX, assets.RuntimeRoleHTMXAlpineCompat},
+		{assets.RuntimeRoleHTMXAlpineCompat, assets.RuntimeRoleAlpineJS},
 		{assets.RuntimeRoleHTMX, assets.RuntimeRoleHTMXExtSSE},
 		{assets.RuntimeRoleHTMX, assets.RuntimeRoleHTMXExtWS},
 	} {

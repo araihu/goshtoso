@@ -1,12 +1,12 @@
 {
-    "name": "@alpinejs/focus",
-    "version": "3.14.9",
-    "description": "Manage focus within a page",
-    "homepage": "https://alpinejs.dev/plugins/focus",
+    "name": "alpinejs",
+    "version": "3.17.2",
+    "description": "The rugged, minimal JavaScript framework",
+    "homepage": "https://alpinejs.dev",
     "repository": {
         "type": "git",
         "url": "https://github.com/alpinejs/alpine.git",
-        "directory": "packages/focus"
+        "directory": "packages/alpinejs"
     },
     "author": "Caleb Porzio",
     "license": "MIT",
@@ -14,7 +14,6 @@
     "module": "dist/module.esm.js",
     "unpkg": "dist/cdn.min.js",
     "dependencies": {
-        "focus-trap": "^6.9.4",
-        "tabbable": "^5.3.3"
+        "@vue/reactivity": "~3.5.40"
     }
 }

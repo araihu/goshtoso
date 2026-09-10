@@ -185,13 +185,12 @@ templ comboboxTemplate(cfg Config, state State) {
 		data-combobox-multi={ comboboxMultiAttr(cfg) }
 		data-combobox-close-on-select={ comboboxCloseOnSelectAttr(cfg) }
 		data-combobox-placeholder={ cfg.Placeholder }
-		hx-disinherit="hx-replace-url"
 		id={ cfg.ID }
 		class={ "relative " + cfg.RootClass }
 		x-data="{isOpen:false, openedWithKeyboard:false, focusIndex:-1}"
 		x-on:click.outside="isOpen=false; openedWithKeyboard=false"
 		x-on:keydown.esc.window="isOpen=false; openedWithKeyboard=false; focusIndex=-1"
-		x-on:htmx:after-swap="focusIndex=-1"
+		x-on:htmx:after:swap="focusIndex=-1"
 	>
 		if cfg.Label != "" {
 			<label for={ cfg.ID + "-trigger" } class="block pb-1 text-sm text-on-surface dark:text-on-surface-dark">{ cfg.Label }</label>

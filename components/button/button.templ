@@ -6,7 +6,6 @@ templ buttonTemplate(options ...Option) {
 	{{ classes := buttonClasses(cfg) }}
 	{{ hasHTMX := cfg.htmx != nil }}
 	{{ hasAlpine := cfg.alpine != nil }}
-	
 	<button
 		if cfg.id != "" {
 			id={ cfg.id }
@@ -19,7 +18,6 @@ templ buttonTemplate(options ...Option) {
 		if cfg.loadingText != "" {
 			data-goshtoso-loading
 		}
-		
 		if hasAlpine {
 			if cfg.alpine.OnClick != "" {
 				x-on:click={ cfg.alpine.OnClick }
@@ -42,10 +40,9 @@ templ buttonTemplate(options ...Option) {
 				x-data={ cfg.alpine.Data }
 			}
 		}
-		
 		if hasHTMX {
 			if cfg.loadingText != "" {
-				hx-disabled-elt="this"
+				hx-disable="this"
 			}
 			if cfg.htmx.Get != "" {
 				hx-get={ cfg.htmx.Get }
@@ -85,12 +82,13 @@ templ buttonTemplate(options ...Option) {
 			}
 		}
 		{ cfg.attrs... }
-		>
-			if cfg.loadingText != "" {
-				<span class="goshtoso-loading-content">{ children... }</span>
-				<span class="goshtoso-loading-label" aria-live="polite">{ cfg.loadingText }</span>
-			} else {
-				{ children... }
-			}
+	>
+		if cfg.loadingText != "" {
+			<span class="goshtoso-loading-content">{ children... }
+</span>
+			<span class="goshtoso-loading-label" aria-live="polite">{ cfg.loadingText }</span>
+		} else {
+			{ children... }
+		}
 	</button>
 }

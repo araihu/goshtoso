@@ -98,7 +98,7 @@ func TestOperationsStateMatrixSupportsFullAndHTMXRequests(t *testing.T) {
 			full := serve(t, http.MethodGet, path, nil, nil)
 			assertContains(t, full.Body.String(), "<!doctype html>", `data-state="`+string(state)+`"`)
 
-			fragment := serve(t, http.MethodGet, path, nil, map[string]string{"HX-Request": "true"})
+			fragment := serve(t, http.MethodGet, path, nil, map[string]string{"HX-Request-Type": "partial"})
 			assertContains(t, fragment.Body.String(), `id="operations-state"`, `data-state="`+string(state)+`"`)
 			if strings.Contains(strings.ToLower(fragment.Body.String()), "<!doctype html>") {
 				t.Fatalf("HTMX response unexpectedly contains a full document:\n%s", fragment.Body.String())

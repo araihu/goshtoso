@@ -1,6 +1,6 @@
 # Alpine.js Directives — full reference
 
-Every directive with syntax, modifiers, and gotchas. Crawled from alpinejs.dev (v3.x).
+Every directive with syntax, modifiers, and gotchas. Alpine 3 directive/lifecycle reference; target 3.17.2. Check current [official docs](https://alpinejs.dev) and [tagged release](https://github.com/alpinejs/alpine/releases/tag/v3.17.2) for version-sensitive behavior.
 Most directives require a parent `x-data`; exceptions noted.
 
 ## x-data

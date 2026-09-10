@@ -226,7 +226,7 @@ func TestLoadingTextRendersIndicatorSpans(t *testing.T) {
 
 	for _, want := range []string{
 		`data-goshtoso-loading`,
-		`hx-disabled-elt="this"`,
+		`hx-disable="this"`,
 		`<span class="goshtoso-loading-content">Save</span>`,
 		`<span class="goshtoso-loading-label" aria-live="polite">Saving...</span>`,
 	} {

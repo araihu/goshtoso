@@ -8,7 +8,7 @@ import (
 	"io/fs"
 )
 
-//go:embed js/runtime/alpinejs-collapse/3.14.9/LICENSE.txt js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js js/runtime/alpinejs-collapse/3.14.9/package.json js/runtime/alpinejs-focus/3.14.9/LICENSE.txt js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js js/runtime/alpinejs-focus/3.14.9/package.json js/runtime/alpinejs-mask/3.14.9/LICENSE.txt js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js js/runtime/alpinejs-mask/3.14.9/package.json js/runtime/alpinejs/3.14.9/LICENSE.txt js/runtime/alpinejs/3.14.9/alpine.min.js js/runtime/alpinejs/3.14.9/package.json js/runtime/htmx-ext-sse/2.2.3/LICENSE.txt js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js js/runtime/htmx-ext-sse/2.2.3/package.json js/runtime/htmx-ext-ws/2.0.3/LICENSE.txt js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js js/runtime/htmx-ext-ws/2.0.3/package.json js/runtime/htmx.org/2.0.8/LICENSE.txt js/runtime/htmx.org/2.0.8/htmx.min.js js/runtime/htmx.org/2.0.8/package.json licenses/tailwindcss/4.3.3/LICENSE.txt
+//go:embed js/runtime/alpinejs-collapse/3.17.2/LICENSE.txt js/runtime/alpinejs-collapse/3.17.2/alpine-collapse.min.js js/runtime/alpinejs-collapse/3.17.2/package.json js/runtime/alpinejs-focus/3.17.2/LICENSE.txt js/runtime/alpinejs-focus/3.17.2/alpine-focus.min.js js/runtime/alpinejs-focus/3.17.2/package.json js/runtime/alpinejs-mask/3.17.2/LICENSE.txt js/runtime/alpinejs-mask/3.17.2/alpine-mask.min.js js/runtime/alpinejs-mask/3.17.2/package.json js/runtime/alpinejs/3.17.2/LICENSE.txt js/runtime/alpinejs/3.17.2/alpine.min.js js/runtime/alpinejs/3.17.2/package.json js/runtime/htmx-ext-sse/4.0.0/LICENSE.txt js/runtime/htmx-ext-sse/4.0.0/htmx-ext-sse.min.js js/runtime/htmx-ext-sse/4.0.0/package.json js/runtime/htmx-ext-ws/4.0.0/LICENSE.txt js/runtime/htmx-ext-ws/4.0.0/htmx-ext-ws.js js/runtime/htmx-ext-ws/4.0.0/package.json js/runtime/htmx.org/4.0.0/LICENSE.txt js/runtime/htmx.org/4.0.0/htmx.min.js js/runtime/htmx.org/4.0.0/hx-alpine-compat.js js/runtime/htmx.org/4.0.0/package.json licenses/tailwindcss/4.3.3/LICENSE.txt
 var muambaFiles embed.FS
 
 const (
@@ -24,6 +24,7 @@ const (
 	muambaDownloadAlpinejsMaskJs          = "mask-js"
 	muambaDownloadAlpinejsMaskLicense     = "mask-license"
 	muambaDownloadAlpinejsMaskPackage     = "mask-package"
+	muambaDownloadHtmxAlpineCompatJs      = "alpine-compat-js"
 	muambaDownloadHtmxCoreJs              = "core-js"
 	muambaDownloadHtmxExtSseLicense       = "license"
 	muambaDownloadHtmxExtSsePackage       = "package"
@@ -56,34 +57,35 @@ type MuambaDownload struct {
 }
 
 var muambaResources = []MuambaResource{
-	{Name: "alpinejs", Version: "3.14.9", Downloads: []MuambaDownload{
-		{Name: "collapse-js", URL: "https://unpkg.com/@alpinejs/collapse@3.14.9/dist/cdn.min.js", Path: "assets/js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js", Integrity: "sha384-NArNwzWsUSF+kY2lgW4YriEkjLqi+J+za6HrENUn/3nZqkBnWbxV22kCJEK5Uu6n", Hash: "sha384:340acdc335ac51217e918da5816e18ae21248cbaa2f89fb36ba1eb10d527ff79d9aa406759bc55db69022442b952eea7"},
-		{Name: "collapse-license", URL: "https://raw.githubusercontent.com/alpinejs/alpine/v3.14.9/LICENSE.md", Path: "assets/js/runtime/alpinejs-collapse/3.14.9/LICENSE.txt", Integrity: "sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON", Hash: "sha384:63a7711c475d0471ec521260626b253423dd005b6a7fd592b95a5f68f61b9e1bfe03332f16f249c1169d359f7f99d38d"},
-		{Name: "collapse-package", URL: "https://unpkg.com/@alpinejs/collapse@3.14.9/package.json", Path: "assets/js/runtime/alpinejs-collapse/3.14.9/package.json", Integrity: "sha384-1QeOrgxq0AdAEwIpHTsM/omCCQOYObl0SIsQXuUpZ2rPIr6mj4J4p7nXpHNmeNWN", Hash: "sha384:d5078eae0c6ad007401302291d3b0cfe898209039839b974488b105ee529676acf22bea68f8278a7b9d7a4736678d58d"},
-		{Name: "core-js", URL: "https://unpkg.com/alpinejs@3.14.9/dist/cdn.min.js", Path: "assets/js/runtime/alpinejs/3.14.9/alpine.min.js", Integrity: "sha384-9Ax3MmS9AClxJyd5/zafcXXjxmwFhZCdsT6HJoJjarvCaAkJlk5QDzjLJm+Wdx5F", Hash: "sha384:f40c773264bd002971272779ff369f7175e3c66c0585909db13e872682636abbc2680909964e500f38cb266f96771e45"},
-		{Name: "core-license", URL: "https://raw.githubusercontent.com/alpinejs/alpine/v3.14.9/LICENSE.md", Path: "assets/js/runtime/alpinejs/3.14.9/LICENSE.txt", Integrity: "sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON", Hash: "sha384:63a7711c475d0471ec521260626b253423dd005b6a7fd592b95a5f68f61b9e1bfe03332f16f249c1169d359f7f99d38d"},
-		{Name: "core-package", URL: "https://unpkg.com/alpinejs@3.14.9/package.json", Path: "assets/js/runtime/alpinejs/3.14.9/package.json", Integrity: "sha384-93cBdHwIn/lWQdKuHyN3js4uXvOU8C8Do2CQ+gfDl6kroambz+tW/9LeskiFVusA", Hash: "sha384:f77701747c089ff95641d2ae1f23778ece2e5ef394f02f03a36090fa07c397a92ba1a99bcfeb56ffd2deb2488556eb00"},
-		{Name: "focus-js", URL: "https://unpkg.com/@alpinejs/focus@3.14.9/dist/cdn.min.js", Path: "assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js", Integrity: "sha384-bKXNU7o2Y3Uk/F2PB6U0bMyGZf6pLDnePM70U7sTE3cXUQ+JLgzrr/kwipEh0p23", Hash: "sha384:6ca5cd53ba36637524fc5d8f07a5346ccc8665fea92c39de3ccef453bb13137717510f892e0cebaff9308a9121d29db7"},
-		{Name: "focus-license", URL: "https://raw.githubusercontent.com/alpinejs/alpine/v3.14.9/LICENSE.md", Path: "assets/js/runtime/alpinejs-focus/3.14.9/LICENSE.txt", Integrity: "sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON", Hash: "sha384:63a7711c475d0471ec521260626b253423dd005b6a7fd592b95a5f68f61b9e1bfe03332f16f249c1169d359f7f99d38d"},
-		{Name: "focus-package", URL: "https://unpkg.com/@alpinejs/focus@3.14.9/package.json", Path: "assets/js/runtime/alpinejs-focus/3.14.9/package.json", Integrity: "sha384-5l2aWHtBPo/rrIxhZ8Im61JbiVF0FkgTYdulyz4trswjhER/MMGlw6xKn19ZajNv", Hash: "sha384:e65d9a587b413e8febac8c6167c226eb525b89517416481361dba5cb3e2daecc2384447f30c1a5c3ac4a9f5f596a336f"},
-		{Name: "mask-js", URL: "https://unpkg.com/@alpinejs/mask@3.14.9/dist/cdn.min.js", Path: "assets/js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js", Integrity: "sha384-SGhOy1rqh2lYeihPkBYcEUWXaDP+024QNlkQuAn11pcP3NQ2QAdI3zWIN1iAslFe", Hash: "sha384:48684ecb5aea8769587a284f90161c1145976833fed36e10365910b809f5d6970fdcd436400748df3588375880b2515e"},
-		{Name: "mask-license", URL: "https://raw.githubusercontent.com/alpinejs/alpine/v3.14.9/LICENSE.md", Path: "assets/js/runtime/alpinejs-mask/3.14.9/LICENSE.txt", Integrity: "sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON", Hash: "sha384:63a7711c475d0471ec521260626b253423dd005b6a7fd592b95a5f68f61b9e1bfe03332f16f249c1169d359f7f99d38d"},
-		{Name: "mask-package", URL: "https://unpkg.com/@alpinejs/mask@3.14.9/package.json", Path: "assets/js/runtime/alpinejs-mask/3.14.9/package.json", Integrity: "sha384-w+P3qD7IoaTS3qwShSIhDLOsSO54oguxDcOFG6fj4LgNT8MqMWEWD/RJNykq3c23", Hash: "sha384:c3e3f7a83ec8a1a4d2deac128522210cb3ac48ee78a20bb10dc3851ba7e3e0b80d4fc32a3161160ff44937292addcdb7"},
+	{Name: "alpinejs", Version: "3.17.2", Downloads: []MuambaDownload{
+		{Name: "collapse-js", URL: "https://unpkg.com/@alpinejs/collapse@3.17.2/dist/cdn.min.js", Path: "assets/js/runtime/alpinejs-collapse/3.17.2/alpine-collapse.min.js", Integrity: "sha384-NArNwzWsUSF+kY2lgW4YriEkjLqi+J+za6HrENUn/3nZqkBnWbxV22kCJEK5Uu6n", Hash: "sha384:340acdc335ac51217e918da5816e18ae21248cbaa2f89fb36ba1eb10d527ff79d9aa406759bc55db69022442b952eea7"},
+		{Name: "collapse-license", URL: "https://raw.githubusercontent.com/alpinejs/alpine/v3.17.2/LICENSE.md", Path: "assets/js/runtime/alpinejs-collapse/3.17.2/LICENSE.txt", Integrity: "sha384-mPDeTwJRT4aRsEPcFO8TKeh7q5BLRuVhTpyUvCHsKe5BZIXSpXRdyCVbkoZ2budt", Hash: "sha384:98f0de4f02514f8691b043dc14ef1329e87bab904b46e5614e9c94bc21ec29ee416485d2a5745dc8255b9286766ee76d"},
+		{Name: "collapse-package", URL: "https://unpkg.com/@alpinejs/collapse@3.17.2/package.json", Path: "assets/js/runtime/alpinejs-collapse/3.17.2/package.json", Integrity: "sha384-1lmQWRIGbzg5wsT5523R77NvpwEclnsGiA8jaZq+8qvOP9LGn8bnPLZY3AKQcTOt", Hash: "sha384:d659905912066f3839c2c4f9e76dd1efb36fa7011c967b06880f23699abef2abce3fd2c69fc6e73cb658dc02907133ad"},
+		{Name: "core-js", URL: "https://unpkg.com/alpinejs@3.17.2/dist/cdn.min.js", Path: "assets/js/runtime/alpinejs/3.17.2/alpine.min.js", Integrity: "sha384-lcaMFHdvRVsEXVuhit4fTnbxq6eTLm5HPdNzO7vXNZjr8HOCMouPmv4hSGF3PCJV", Hash: "sha384:95c68c14776f455b045d5ba18ade1f4e76f1aba7932e6e473dd3733bbbd73598ebf07382328b8f9afe214861773c2255"},
+		{Name: "core-license", URL: "https://raw.githubusercontent.com/alpinejs/alpine/v3.17.2/LICENSE.md", Path: "assets/js/runtime/alpinejs/3.17.2/LICENSE.txt", Integrity: "sha384-mPDeTwJRT4aRsEPcFO8TKeh7q5BLRuVhTpyUvCHsKe5BZIXSpXRdyCVbkoZ2budt", Hash: "sha384:98f0de4f02514f8691b043dc14ef1329e87bab904b46e5614e9c94bc21ec29ee416485d2a5745dc8255b9286766ee76d"},
+		{Name: "core-package", URL: "https://unpkg.com/alpinejs@3.17.2/package.json", Path: "assets/js/runtime/alpinejs/3.17.2/package.json", Integrity: "sha384-XGq88Emt85xGzErYAPZe8PFtG/NPjenEJZlu1cdlEwtiMTAyEIzzEdvAZlFS4BYz", Hash: "sha384:5c6abcf049adf39c46cc4ad800f65ef0f16d1bf34f8de9c425996ed5c765130b62313032108cf311dbc0665152e01633"},
+		{Name: "focus-js", URL: "https://unpkg.com/@alpinejs/focus@3.17.2/dist/cdn.min.js", Path: "assets/js/runtime/alpinejs-focus/3.17.2/alpine-focus.min.js", Integrity: "sha384-ysJcnHb6oCzqAGKdoTm+IqKqmPKgxHT+ApZCawkyWOJfMq15WvzW3RRmHl7tWpEY", Hash: "sha384:cac25c9c76faa02cea00629da139be22a2aa98f2a0c474fe0296426b093258e25f32ad795afcd6dd14661e5eed5a9118"},
+		{Name: "focus-license", URL: "https://raw.githubusercontent.com/alpinejs/alpine/v3.17.2/LICENSE.md", Path: "assets/js/runtime/alpinejs-focus/3.17.2/LICENSE.txt", Integrity: "sha384-mPDeTwJRT4aRsEPcFO8TKeh7q5BLRuVhTpyUvCHsKe5BZIXSpXRdyCVbkoZ2budt", Hash: "sha384:98f0de4f02514f8691b043dc14ef1329e87bab904b46e5614e9c94bc21ec29ee416485d2a5745dc8255b9286766ee76d"},
+		{Name: "focus-package", URL: "https://unpkg.com/@alpinejs/focus@3.17.2/package.json", Path: "assets/js/runtime/alpinejs-focus/3.17.2/package.json", Integrity: "sha384-uzydPcgv2swHp7TrvzjHW/2gYk4nfyX9tBBVPz26NfI/4ITRTnvBTSa/nu+0sHP4", Hash: "sha384:bb3c9d3dc82fdacc07a7b4ebbf38c75bfda0624e277f25fdb410553f3dba35f23fe084d14e7bc14d26bf9eefb4b073f8"},
+		{Name: "mask-js", URL: "https://unpkg.com/@alpinejs/mask@3.17.2/dist/cdn.min.js", Path: "assets/js/runtime/alpinejs-mask/3.17.2/alpine-mask.min.js", Integrity: "sha384-/KspnSacpGaqcz8joSHdVfpHZ88hbPkiK9WAHDalFjff9wBO4VQWravNauBX2g88", Hash: "sha384:fcab299d269ca466aa733f23a121dd55fa4767cf216cf9222bd5801c36a51637dff7004ee15416adabcd6ae057da0f3c"},
+		{Name: "mask-license", URL: "https://raw.githubusercontent.com/alpinejs/alpine/v3.17.2/LICENSE.md", Path: "assets/js/runtime/alpinejs-mask/3.17.2/LICENSE.txt", Integrity: "sha384-mPDeTwJRT4aRsEPcFO8TKeh7q5BLRuVhTpyUvCHsKe5BZIXSpXRdyCVbkoZ2budt", Hash: "sha384:98f0de4f02514f8691b043dc14ef1329e87bab904b46e5614e9c94bc21ec29ee416485d2a5745dc8255b9286766ee76d"},
+		{Name: "mask-package", URL: "https://unpkg.com/@alpinejs/mask@3.17.2/package.json", Path: "assets/js/runtime/alpinejs-mask/3.17.2/package.json", Integrity: "sha384-+d5nIsy4d5UD2eOYTRPOc5pFxHXFypVNRwbui3BT+Hp2kzxkYfGbi0WIf8HqBlKt", Hash: "sha384:f9de6722ccb8779503d9e3984d13ce739a45c475c5ca954d4706ee8b7053f87a76933c6461f19b8b45887fc1ea0652ad"},
 	}},
-	{Name: "htmx", Version: "2.0.8", Downloads: []MuambaDownload{
-		{Name: "core-js", URL: "https://unpkg.com/htmx.org@2.0.8/dist/htmx.min.js", Path: "assets/js/runtime/htmx.org/2.0.8/htmx.min.js", Integrity: "sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz", Hash: "sha384:fd38241a4ee9df4ed31fb117243b949601b709ed54568940385a2915e9109245e2862e6effa382bd52b2cf55be89d6b3"},
-		{Name: "license", URL: "https://unpkg.com/htmx.org@2.0.8/LICENSE", Path: "assets/js/runtime/htmx.org/2.0.8/LICENSE.txt", Integrity: "sha384-hU3SbIwDRi3Fq5qi+gLVwm7zNVOKB3ddD795kmN4Dg7C86VuGoDrWKa/TPGW6BWA", Hash: "sha384:854dd26c8c03462dc5ab9aa2fa02d5c26ef335538a07775d0fbf799263780e0ec2f3a56e1a80eb58a6bf4cf196e81580"},
-		{Name: "package", URL: "https://unpkg.com/htmx.org@2.0.8/package.json", Path: "assets/js/runtime/htmx.org/2.0.8/package.json", Integrity: "sha384-NHRsoCB1k9O/hjsUudBAHt4Sh2XxPOVIr9cxNwrCo1hIr/M3if4YiXFLEexC6q9H", Hash: "sha384:34746ca0207593d3bf863b14b9d0401ede128765f13ce548afd731370ac2a35848aff33789fe1889714b11ec42eaaf47"},
+	{Name: "htmx", Version: "4.0.0", Downloads: []MuambaDownload{
+		{Name: "alpine-compat-js", URL: "https://unpkg.com/htmx.org@4.0.0/dist/ext/hx-alpine-compat.js", Path: "assets/js/runtime/htmx.org/4.0.0/hx-alpine-compat.js", Integrity: "sha384-8Lujltc+yuNRRb8vLl0eLeXEzwGhFXOUkWieQ172LgJye+aU/qd/XyhkX5xWwHM9", Hash: "sha384:f0bba396d73ecae35145bf2f2e5d1e2de5c4cf01a115739491689e435ef62e02727be694fea77f5f28645f9c56c0733d"},
+		{Name: "core-js", URL: "https://unpkg.com/htmx.org@4.0.0/dist/htmx.min.js", Path: "assets/js/runtime/htmx.org/4.0.0/htmx.min.js", Integrity: "sha384-BvJpBiO8Kh31EqtJe5DRIeWrHWnCGkwytKs9NKFi86Hhw96dEqdEMzZDeK9iEGTc", Hash: "sha384:06f2690623bc2a1df512ab497b90d121e5ab1d69c21a4c32b4ab3d34a162f3a1e1c3de9d12a74433364378af621064dc"},
+		{Name: "license", URL: "https://unpkg.com/htmx.org@4.0.0/LICENSE", Path: "assets/js/runtime/htmx.org/4.0.0/LICENSE.txt", Integrity: "sha384-hU3SbIwDRi3Fq5qi+gLVwm7zNVOKB3ddD795kmN4Dg7C86VuGoDrWKa/TPGW6BWA", Hash: "sha384:854dd26c8c03462dc5ab9aa2fa02d5c26ef335538a07775d0fbf799263780e0ec2f3a56e1a80eb58a6bf4cf196e81580"},
+		{Name: "package", URL: "https://unpkg.com/htmx.org@4.0.0/package.json", Path: "assets/js/runtime/htmx.org/4.0.0/package.json", Integrity: "sha384-CBE29LVf7Ec4X9XYQJtzE4zD4EsQi+ME5dBc4Fg1byz4y9uNbWZz+06Qzz/yBUIt", Hash: "sha384:081136f4b55fec47385fd5d8409b73138cc3e04b108be304e5d05ce058356f2cf8cbdb8d6d6673fb4e90cf3ff205422d"},
 	}},
-	{Name: "htmx-ext-sse", Version: "2.2.3", Downloads: []MuambaDownload{
-		{Name: "license", URL: "https://unpkg.com/htmx-ext-sse@2.2.3/LICENSE", Path: "assets/js/runtime/htmx-ext-sse/2.2.3/LICENSE.txt", Integrity: "sha384-oTkMp4+HooLc5pBZJ20QldWAgewTPXjxHjSD3my+oulQNRIwISxGjEzaXGM/UefT", Hash: "sha384:a1390ca78f87a282dce69059276d1095d58081ec133d78f11e3483de6cbea2e950351230212c468c4cda5c633f51e7d3"},
-		{Name: "package", URL: "https://unpkg.com/htmx-ext-sse@2.2.3/package.json", Path: "assets/js/runtime/htmx-ext-sse/2.2.3/package.json", Integrity: "sha384-207L8WXQ4YzBbq9olqS6+o3/Zg1zNlV4IQGUrkRWzGjzaa0I26iTpHPeA+TzOYTn", Hash: "sha384:db4ecbf165d0e18cc16eaf6896a4bafa8dff660d73365578210194ae4456cc68f369ad08dba893a473de03e4f33984e7"},
-		{Name: "runtime-js", URL: "https://unpkg.com/htmx-ext-sse@2.2.3/dist/sse.min.js", Path: "assets/js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js", Integrity: "sha384-Y4gc0CK6Kg+hmulDc6rZPJu0tqvk7EWlih0Oh+2OkAi1ZDlCbBDCQEE2uVk472Ky", Hash: "sha384:63881cd022ba2a0fa19ae94373aad93c9bb4b6abe4ec45a58a1d0e87ed8e9008b56439426c10c2404136b95938ef62b2"},
+	{Name: "htmx-ext-sse", Version: "4.0.0", Downloads: []MuambaDownload{
+		{Name: "license", URL: "https://unpkg.com/htmx.org@4.0.0/LICENSE", Path: "assets/js/runtime/htmx-ext-sse/4.0.0/LICENSE.txt", Integrity: "sha384-hU3SbIwDRi3Fq5qi+gLVwm7zNVOKB3ddD795kmN4Dg7C86VuGoDrWKa/TPGW6BWA", Hash: "sha384:854dd26c8c03462dc5ab9aa2fa02d5c26ef335538a07775d0fbf799263780e0ec2f3a56e1a80eb58a6bf4cf196e81580"},
+		{Name: "package", URL: "https://unpkg.com/htmx.org@4.0.0/package.json", Path: "assets/js/runtime/htmx-ext-sse/4.0.0/package.json", Integrity: "sha384-CBE29LVf7Ec4X9XYQJtzE4zD4EsQi+ME5dBc4Fg1byz4y9uNbWZz+06Qzz/yBUIt", Hash: "sha384:081136f4b55fec47385fd5d8409b73138cc3e04b108be304e5d05ce058356f2cf8cbdb8d6d6673fb4e90cf3ff205422d"},
+		{Name: "runtime-js", URL: "https://unpkg.com/htmx.org@4.0.0/dist/ext/hx-sse.js", Path: "assets/js/runtime/htmx-ext-sse/4.0.0/htmx-ext-sse.min.js", Integrity: "sha384-O9jqsFi4oKUTwu9V0DTXGP+lKOx/8Y4exCbAo4C259mlwITM1xPC3s3Nb4VPQvzj", Hash: "sha384:3bd8eab058b8a0a513c2ef55d034d718ffa528ec7ff18e1ec426c0a380b6e7d9a5c084ccd713c2decdcd6f854f42fce3"},
 	}},
-	{Name: "htmx-ext-ws", Version: "2.0.3", Downloads: []MuambaDownload{
-		{Name: "license", URL: "https://unpkg.com/htmx-ext-ws@2.0.3/LICENSE", Path: "assets/js/runtime/htmx-ext-ws/2.0.3/LICENSE.txt", Integrity: "sha384-oTkMp4+HooLc5pBZJ20QldWAgewTPXjxHjSD3my+oulQNRIwISxGjEzaXGM/UefT", Hash: "sha384:a1390ca78f87a282dce69059276d1095d58081ec133d78f11e3483de6cbea2e950351230212c468c4cda5c633f51e7d3"},
-		{Name: "package", URL: "https://unpkg.com/htmx-ext-ws@2.0.3/package.json", Path: "assets/js/runtime/htmx-ext-ws/2.0.3/package.json", Integrity: "sha384-tCXvVmJJVdA8qM2S8c5m7ieSVjAdK/HvycooMC28nsjLHTKmbtjxxIZWEjpnRhVR", Hash: "sha384:b425ef56624955d03ca8cd92f1ce66ee279256301d2bf1efc9ca28302dbc9ec8cb1d32a66ed8f1c48656123a67461551"},
-		{Name: "runtime-js", URL: "https://unpkg.com/htmx-ext-ws@2.0.3/ws.js", Path: "assets/js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js", Integrity: "sha384-IeVkDiDIU+Zsabm4HnVf7ifa7LYLSoUCAYrFIjsn+0voIDaflLAalBqJ4CeEZodl", Hash: "sha384:21e5640e20c853e66c69b9b81e755fee27daecb60b4a8502018ac5223b27fb4be820369f94b01a941a89e02784668765"},
+	{Name: "htmx-ext-ws", Version: "4.0.0", Downloads: []MuambaDownload{
+		{Name: "license", URL: "https://unpkg.com/htmx.org@4.0.0/LICENSE", Path: "assets/js/runtime/htmx-ext-ws/4.0.0/LICENSE.txt", Integrity: "sha384-hU3SbIwDRi3Fq5qi+gLVwm7zNVOKB3ddD795kmN4Dg7C86VuGoDrWKa/TPGW6BWA", Hash: "sha384:854dd26c8c03462dc5ab9aa2fa02d5c26ef335538a07775d0fbf799263780e0ec2f3a56e1a80eb58a6bf4cf196e81580"},
+		{Name: "package", URL: "https://unpkg.com/htmx.org@4.0.0/package.json", Path: "assets/js/runtime/htmx-ext-ws/4.0.0/package.json", Integrity: "sha384-CBE29LVf7Ec4X9XYQJtzE4zD4EsQi+ME5dBc4Fg1byz4y9uNbWZz+06Qzz/yBUIt", Hash: "sha384:081136f4b55fec47385fd5d8409b73138cc3e04b108be304e5d05ce058356f2cf8cbdb8d6d6673fb4e90cf3ff205422d"},
+		{Name: "runtime-js", URL: "https://unpkg.com/htmx.org@4.0.0/dist/ext/hx-ws.js", Path: "assets/js/runtime/htmx-ext-ws/4.0.0/htmx-ext-ws.js", Integrity: "sha384-+NHXUaKKyfnYOM95fSYshyGKQO/frrPZKfBS6Untkcz1qvEOcMTaMYqDCThSfVUS", Hash: "sha384:f8d1d751a28ac9f9d838cf797d262c87218a40efdfaeb3d929f052e949ed91ccf5aaf10e70c4da318a830938527d5512"},
 	}},
 	{Name: "tailwindcss", Version: "4.3.3", Downloads: []MuambaDownload{
 		{Name: "license", URL: "https://raw.githubusercontent.com/tailwindlabs/tailwindcss/v4.3.3/LICENSE", Path: "assets/licenses/tailwindcss/4.3.3/LICENSE.txt", Integrity: "sha384-zZwI/O2prTGDEmLZ7zRQDU5uBHh0I9RcfsxxiBs8rVAEUeWHCkfZZuadqFVCMuoU", Hash: "sha384:cd9c08fceda9ad31831262d9ef34500d4e6e04787423d45c7ecc71881b3cad500451e5870a47d966e69da8554232ea14"},
@@ -91,52 +93,54 @@ var muambaResources = []MuambaResource{
 }
 
 var muambaEmbeddedPaths = map[string]string{
-	"alpinejs\x00collapse-js":      "js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js",
-	"alpinejs\x00collapse-license": "js/runtime/alpinejs-collapse/3.14.9/LICENSE.txt",
-	"alpinejs\x00collapse-package": "js/runtime/alpinejs-collapse/3.14.9/package.json",
-	"alpinejs\x00core-js":          "js/runtime/alpinejs/3.14.9/alpine.min.js",
-	"alpinejs\x00core-license":     "js/runtime/alpinejs/3.14.9/LICENSE.txt",
-	"alpinejs\x00core-package":     "js/runtime/alpinejs/3.14.9/package.json",
-	"alpinejs\x00focus-js":         "js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js",
-	"alpinejs\x00focus-license":    "js/runtime/alpinejs-focus/3.14.9/LICENSE.txt",
-	"alpinejs\x00focus-package":    "js/runtime/alpinejs-focus/3.14.9/package.json",
-	"alpinejs\x00mask-js":          "js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js",
-	"alpinejs\x00mask-license":     "js/runtime/alpinejs-mask/3.14.9/LICENSE.txt",
-	"alpinejs\x00mask-package":     "js/runtime/alpinejs-mask/3.14.9/package.json",
-	"htmx\x00core-js":              "js/runtime/htmx.org/2.0.8/htmx.min.js",
-	"htmx\x00license":              "js/runtime/htmx.org/2.0.8/LICENSE.txt",
-	"htmx\x00package":              "js/runtime/htmx.org/2.0.8/package.json",
-	"htmx-ext-sse\x00license":      "js/runtime/htmx-ext-sse/2.2.3/LICENSE.txt",
-	"htmx-ext-sse\x00package":      "js/runtime/htmx-ext-sse/2.2.3/package.json",
-	"htmx-ext-sse\x00runtime-js":   "js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js",
-	"htmx-ext-ws\x00license":       "js/runtime/htmx-ext-ws/2.0.3/LICENSE.txt",
-	"htmx-ext-ws\x00package":       "js/runtime/htmx-ext-ws/2.0.3/package.json",
-	"htmx-ext-ws\x00runtime-js":    "js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js",
+	"alpinejs\x00collapse-js":      "js/runtime/alpinejs-collapse/3.17.2/alpine-collapse.min.js",
+	"alpinejs\x00collapse-license": "js/runtime/alpinejs-collapse/3.17.2/LICENSE.txt",
+	"alpinejs\x00collapse-package": "js/runtime/alpinejs-collapse/3.17.2/package.json",
+	"alpinejs\x00core-js":          "js/runtime/alpinejs/3.17.2/alpine.min.js",
+	"alpinejs\x00core-license":     "js/runtime/alpinejs/3.17.2/LICENSE.txt",
+	"alpinejs\x00core-package":     "js/runtime/alpinejs/3.17.2/package.json",
+	"alpinejs\x00focus-js":         "js/runtime/alpinejs-focus/3.17.2/alpine-focus.min.js",
+	"alpinejs\x00focus-license":    "js/runtime/alpinejs-focus/3.17.2/LICENSE.txt",
+	"alpinejs\x00focus-package":    "js/runtime/alpinejs-focus/3.17.2/package.json",
+	"alpinejs\x00mask-js":          "js/runtime/alpinejs-mask/3.17.2/alpine-mask.min.js",
+	"alpinejs\x00mask-license":     "js/runtime/alpinejs-mask/3.17.2/LICENSE.txt",
+	"alpinejs\x00mask-package":     "js/runtime/alpinejs-mask/3.17.2/package.json",
+	"htmx\x00alpine-compat-js":     "js/runtime/htmx.org/4.0.0/hx-alpine-compat.js",
+	"htmx\x00core-js":              "js/runtime/htmx.org/4.0.0/htmx.min.js",
+	"htmx\x00license":              "js/runtime/htmx.org/4.0.0/LICENSE.txt",
+	"htmx\x00package":              "js/runtime/htmx.org/4.0.0/package.json",
+	"htmx-ext-sse\x00license":      "js/runtime/htmx-ext-sse/4.0.0/LICENSE.txt",
+	"htmx-ext-sse\x00package":      "js/runtime/htmx-ext-sse/4.0.0/package.json",
+	"htmx-ext-sse\x00runtime-js":   "js/runtime/htmx-ext-sse/4.0.0/htmx-ext-sse.min.js",
+	"htmx-ext-ws\x00license":       "js/runtime/htmx-ext-ws/4.0.0/LICENSE.txt",
+	"htmx-ext-ws\x00package":       "js/runtime/htmx-ext-ws/4.0.0/package.json",
+	"htmx-ext-ws\x00runtime-js":    "js/runtime/htmx-ext-ws/4.0.0/htmx-ext-ws.js",
 	"tailwindcss\x00license":       "licenses/tailwindcss/4.3.3/LICENSE.txt",
 }
 
 var muambaHashes = map[string]string{
 	"alpinejs\x00collapse-js":      "sha384:340acdc335ac51217e918da5816e18ae21248cbaa2f89fb36ba1eb10d527ff79d9aa406759bc55db69022442b952eea7",
-	"alpinejs\x00collapse-license": "sha384:63a7711c475d0471ec521260626b253423dd005b6a7fd592b95a5f68f61b9e1bfe03332f16f249c1169d359f7f99d38d",
-	"alpinejs\x00collapse-package": "sha384:d5078eae0c6ad007401302291d3b0cfe898209039839b974488b105ee529676acf22bea68f8278a7b9d7a4736678d58d",
-	"alpinejs\x00core-js":          "sha384:f40c773264bd002971272779ff369f7175e3c66c0585909db13e872682636abbc2680909964e500f38cb266f96771e45",
-	"alpinejs\x00core-license":     "sha384:63a7711c475d0471ec521260626b253423dd005b6a7fd592b95a5f68f61b9e1bfe03332f16f249c1169d359f7f99d38d",
-	"alpinejs\x00core-package":     "sha384:f77701747c089ff95641d2ae1f23778ece2e5ef394f02f03a36090fa07c397a92ba1a99bcfeb56ffd2deb2488556eb00",
-	"alpinejs\x00focus-js":         "sha384:6ca5cd53ba36637524fc5d8f07a5346ccc8665fea92c39de3ccef453bb13137717510f892e0cebaff9308a9121d29db7",
-	"alpinejs\x00focus-license":    "sha384:63a7711c475d0471ec521260626b253423dd005b6a7fd592b95a5f68f61b9e1bfe03332f16f249c1169d359f7f99d38d",
-	"alpinejs\x00focus-package":    "sha384:e65d9a587b413e8febac8c6167c226eb525b89517416481361dba5cb3e2daecc2384447f30c1a5c3ac4a9f5f596a336f",
-	"alpinejs\x00mask-js":          "sha384:48684ecb5aea8769587a284f90161c1145976833fed36e10365910b809f5d6970fdcd436400748df3588375880b2515e",
-	"alpinejs\x00mask-license":     "sha384:63a7711c475d0471ec521260626b253423dd005b6a7fd592b95a5f68f61b9e1bfe03332f16f249c1169d359f7f99d38d",
-	"alpinejs\x00mask-package":     "sha384:c3e3f7a83ec8a1a4d2deac128522210cb3ac48ee78a20bb10dc3851ba7e3e0b80d4fc32a3161160ff44937292addcdb7",
-	"htmx\x00core-js":              "sha384:fd38241a4ee9df4ed31fb117243b949601b709ed54568940385a2915e9109245e2862e6effa382bd52b2cf55be89d6b3",
+	"alpinejs\x00collapse-license": "sha384:98f0de4f02514f8691b043dc14ef1329e87bab904b46e5614e9c94bc21ec29ee416485d2a5745dc8255b9286766ee76d",
+	"alpinejs\x00collapse-package": "sha384:d659905912066f3839c2c4f9e76dd1efb36fa7011c967b06880f23699abef2abce3fd2c69fc6e73cb658dc02907133ad",
+	"alpinejs\x00core-js":          "sha384:95c68c14776f455b045d5ba18ade1f4e76f1aba7932e6e473dd3733bbbd73598ebf07382328b8f9afe214861773c2255",
+	"alpinejs\x00core-license":     "sha384:98f0de4f02514f8691b043dc14ef1329e87bab904b46e5614e9c94bc21ec29ee416485d2a5745dc8255b9286766ee76d",
+	"alpinejs\x00core-package":     "sha384:5c6abcf049adf39c46cc4ad800f65ef0f16d1bf34f8de9c425996ed5c765130b62313032108cf311dbc0665152e01633",
+	"alpinejs\x00focus-js":         "sha384:cac25c9c76faa02cea00629da139be22a2aa98f2a0c474fe0296426b093258e25f32ad795afcd6dd14661e5eed5a9118",
+	"alpinejs\x00focus-license":    "sha384:98f0de4f02514f8691b043dc14ef1329e87bab904b46e5614e9c94bc21ec29ee416485d2a5745dc8255b9286766ee76d",
+	"alpinejs\x00focus-package":    "sha384:bb3c9d3dc82fdacc07a7b4ebbf38c75bfda0624e277f25fdb410553f3dba35f23fe084d14e7bc14d26bf9eefb4b073f8",
+	"alpinejs\x00mask-js":          "sha384:fcab299d269ca466aa733f23a121dd55fa4767cf216cf9222bd5801c36a51637dff7004ee15416adabcd6ae057da0f3c",
+	"alpinejs\x00mask-license":     "sha384:98f0de4f02514f8691b043dc14ef1329e87bab904b46e5614e9c94bc21ec29ee416485d2a5745dc8255b9286766ee76d",
+	"alpinejs\x00mask-package":     "sha384:f9de6722ccb8779503d9e3984d13ce739a45c475c5ca954d4706ee8b7053f87a76933c6461f19b8b45887fc1ea0652ad",
+	"htmx\x00alpine-compat-js":     "sha384:f0bba396d73ecae35145bf2f2e5d1e2de5c4cf01a115739491689e435ef62e02727be694fea77f5f28645f9c56c0733d",
+	"htmx\x00core-js":              "sha384:06f2690623bc2a1df512ab497b90d121e5ab1d69c21a4c32b4ab3d34a162f3a1e1c3de9d12a74433364378af621064dc",
 	"htmx\x00license":              "sha384:854dd26c8c03462dc5ab9aa2fa02d5c26ef335538a07775d0fbf799263780e0ec2f3a56e1a80eb58a6bf4cf196e81580",
-	"htmx\x00package":              "sha384:34746ca0207593d3bf863b14b9d0401ede128765f13ce548afd731370ac2a35848aff33789fe1889714b11ec42eaaf47",
-	"htmx-ext-sse\x00license":      "sha384:a1390ca78f87a282dce69059276d1095d58081ec133d78f11e3483de6cbea2e950351230212c468c4cda5c633f51e7d3",
-	"htmx-ext-sse\x00package":      "sha384:db4ecbf165d0e18cc16eaf6896a4bafa8dff660d73365578210194ae4456cc68f369ad08dba893a473de03e4f33984e7",
-	"htmx-ext-sse\x00runtime-js":   "sha384:63881cd022ba2a0fa19ae94373aad93c9bb4b6abe4ec45a58a1d0e87ed8e9008b56439426c10c2404136b95938ef62b2",
-	"htmx-ext-ws\x00license":       "sha384:a1390ca78f87a282dce69059276d1095d58081ec133d78f11e3483de6cbea2e950351230212c468c4cda5c633f51e7d3",
-	"htmx-ext-ws\x00package":       "sha384:b425ef56624955d03ca8cd92f1ce66ee279256301d2bf1efc9ca28302dbc9ec8cb1d32a66ed8f1c48656123a67461551",
-	"htmx-ext-ws\x00runtime-js":    "sha384:21e5640e20c853e66c69b9b81e755fee27daecb60b4a8502018ac5223b27fb4be820369f94b01a941a89e02784668765",
+	"htmx\x00package":              "sha384:081136f4b55fec47385fd5d8409b73138cc3e04b108be304e5d05ce058356f2cf8cbdb8d6d6673fb4e90cf3ff205422d",
+	"htmx-ext-sse\x00license":      "sha384:854dd26c8c03462dc5ab9aa2fa02d5c26ef335538a07775d0fbf799263780e0ec2f3a56e1a80eb58a6bf4cf196e81580",
+	"htmx-ext-sse\x00package":      "sha384:081136f4b55fec47385fd5d8409b73138cc3e04b108be304e5d05ce058356f2cf8cbdb8d6d6673fb4e90cf3ff205422d",
+	"htmx-ext-sse\x00runtime-js":   "sha384:3bd8eab058b8a0a513c2ef55d034d718ffa528ec7ff18e1ec426c0a380b6e7d9a5c084ccd713c2decdcd6f854f42fce3",
+	"htmx-ext-ws\x00license":       "sha384:854dd26c8c03462dc5ab9aa2fa02d5c26ef335538a07775d0fbf799263780e0ec2f3a56e1a80eb58a6bf4cf196e81580",
+	"htmx-ext-ws\x00package":       "sha384:081136f4b55fec47385fd5d8409b73138cc3e04b108be304e5d05ce058356f2cf8cbdb8d6d6673fb4e90cf3ff205422d",
+	"htmx-ext-ws\x00runtime-js":    "sha384:f8d1d751a28ac9f9d838cf797d262c87218a40efdfaeb3d929f052e949ed91ccf5aaf10e70c4da318a830938527d5512",
 	"tailwindcss\x00license":       "sha384:cd9c08fceda9ad31831262d9ef34500d4e6e04787423d45c7ecc71881b3cad500451e5870a47d966e69da8554232ea14",
 }
 

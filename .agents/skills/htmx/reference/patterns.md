@@ -1,200 +1,49 @@
-# htmx Patterns — copy-paste recipes
+# htmx 4 patterns
 
-Server returns **HTML fragments**. Examples show the markup; a Go/templ handler returns the matching fragment.
+Sources: [official patterns](https://four.htmx.org/patterns), [versioned guidance](https://raw.githubusercontent.com/bigskysoftware/htmx/v4.0.0/dist/skills/htmx-guidance.md).
 
-## Active search (search-as-you-type)
+## Search and validation
 
 ```html
-<input type="search" name="q"
-       hx-get="/search"
-       hx-trigger="input changed delay:500ms, search"
-       hx-target="#results"
-       hx-indicator="#spinner">
-<span id="spinner" class="htmx-indicator">Searching…</span>
+<input name="search" hx-get="/search" hx-trigger="input changed delay:300ms"
+       hx-target="#results" hx-indicator="#busy">
+<span id="busy" class="htmx-indicator">Searching…</span>
 <div id="results"></div>
+
+<form hx-post="/save" hx-target="#result"
+      hx-status:422="target:#errors" hx-status:5xx="swap:none">
+  <input name="name" required>
+  <button hx-disable="this">Save</button>
+</form>
+<div id="errors"></div>
+<div id="result"></div>
 ```
 
-`delay` debounces; `changed` skips no-op keystrokes; the extra `search` event catches the clear-button. Server returns just the `#results` inner HTML.
+Search returns result HTML. Save returns success HTML or a 422 validation fragment. Choose explicitly whether server-error bodies should replace UI.
 
-## Infinite scroll
+## Multiple regions
 
-Last row carries the trigger; the response replaces it (`outerHTML`) with more rows + a new sentinel.
+Prefer a common ancestor target when regions naturally belong together. For disjoint updates, existing OOB markup remains available; htmx 4 also supports explicit partials:
 
 ```html
-<tr hx-get="/rows?page=2" hx-trigger="revealed" hx-swap="outerHTML">
-  <td>last visible row…</td>
-</tr>
+<hx-partial hx-target="#messages" hx-swap="beforeend">
+  <div>New message</div>
+</hx-partial>
+<hx-partial hx-target="#count"><span>5</span></hx-partial>
 ```
 
-## Lazy load
+Main content swaps before OOB/partials. A response containing only those updates leaves the main target alone by default. Use `swapEmpty:true` only when clearing it is intended.
 
-```html
-<div hx-get="/graph" hx-trigger="load" hx-swap="outerHTML">
-  <img class="htmx-indicator" src="/spinner.svg">
-</div>
-```
+For independently refreshed consumers, return `HX-Trigger: items-updated`; listeners can use `hx-trigger="items-updated from:body"` to fetch their own fragments.
 
-## Click to load (button → append)
+## Navigation and state
 
-```html
-<tbody id="rows">
-  <!-- rows … -->
-  <tr id="load-more">
-    <td colspan="3">
-      <button hx-get="/rows?page=2" hx-target="#load-more" hx-swap="outerHTML">Load more</button>
-    </td>
-  </tr>
-</tbody>
-```
+`hx-select="#content" hx-target="#content"` can select a fragment from a full document. Ensure the server returns that document for full requests and supports direct navigation, refresh, and history. Read `HX-Request-Type` when distinguishing full and partial responses.
 
-## Polling
+Use `innerMorph`/`outerMorph` with `hx-alpine-compat` when Alpine state and input state should survive. Use `innerHTML`/`outerHTML` when replacing or resetting the component is the intended behavior.
 
-```html
-<div hx-get="/job/status" hx-trigger="every 2s" hx-swap="innerHTML">Pending…</div>
-```
+## Debugging
 
-Stop server-side by responding **HTTP 286** (htmx halts polling on that status). Or load-poll once: `hx-trigger="load delay:1s"`.
+Enable `htmx.config.logAll = true` temporarily. Check the network request's form values, headers, status, response HTML and destination. Inspect live `getAttribute()` values for templ expressions. Listen to `htmx:error` and `htmx:response:error`; inspect event-specific `detail` rather than a presumed XHR object. For lifecycle checks, wait through `htmx:after:settle` and Alpine's DOM updates.
 
-## Delete a table row
-
-```html
-<tr>
-  <td>Row data</td>
-  <td><button hx-delete="/contacts/42"
-              hx-target="closest tr"
-              hx-swap="outerHTML swap:500ms"
-              hx-confirm="Delete this contact?">Delete</button></td>
-</tr>
-```
-
-`swap:500ms` lets a `tr.htmx-swapping{opacity:0;transition:.5s}` fade out first. Server returns empty body.
-
-## Inline edit (click to edit)
-
-```html
-<!-- view fragment -->
-<div hx-target="this" hx-swap="outerHTML">
-  <p>Name: Joe</p>
-  <button hx-get="/contact/1/edit">Edit</button>
-</div>
-```
-
-`/contact/1/edit` returns a form fragment with `hx-put="/contact/1" hx-target="this" hx-swap="outerHTML"`; PUT returns the view fragment again.
-
-## Out-of-band swaps (update multiple regions in one response)
-
-Request targets `#main`; the response also updates an unrelated counter:
-
-```html
-<!-- response body -->
-<div id="main">…primary swap (uses hx-target)…</div>
-<span id="cart-count" hx-swap-oob="true">3</span>
-```
-
-`hx-swap-oob="true"` matches the existing element by `id` and swaps it `outerHTML`. Use `hx-swap-oob="innerHTML"` or `hx-swap-oob="beforeend:#log"` for other strategies. **Wrap OOB `<tr>`/`<td>`/`<option>` in `<template>`** so the browser doesn't strip them.
-
-## Select a fragment from a full-page response (`hx-select`)
-
-One handler renders the whole page; htmx swaps in only the part it asked for. The same URL serves a real navigation *and* an htmx swap — no `HX-Request` branching, one template.
-
-```html
-<a hx-get="/dashboard" hx-select="#content" hx-target="#content" hx-swap="outerHTML">Refresh</a>
-```
-
-Server can override per-response with `HX-Reselect: #content`. Cost: the full page is rendered/shipped each time — prefer a dedicated fragment on hot paths.
-
-## Server-triggered client events
-
-Response header:
-
-```
-HX-Trigger: {"showToast":{"level":"success","msg":"Saved"}}
-```
-
-```javascript
-document.body.addEventListener("showToast", e => toast(e.detail.level, e.detail.msg));
-```
-
-Or listen for an event to drive a request: `hx-trigger="showToast from:body"`.
-
-## Indicators
-
-```css
-/* default: htmx injects .htmx-indicator{opacity:0;transition:opacity .2s} and
-   .htmx-request .htmx-indicator{opacity:1}. Override if you prefer display: */
-.htmx-indicator { display: none; }
-.htmx-request .htmx-indicator { display: inline-block; }
-.htmx-request.htmx-indicator { display: inline-block; } /* when the indicator IS the requesting elt */
-```
-
-## CSRF / auth headers globally
-
-```html
-<body hx-headers='{"X-CSRF-Token": "TOKEN_HERE"}'>
-```
-
-Or dynamically, for bearer tokens:
-
-```javascript
-document.body.addEventListener("htmx:configRequest", e => {
-  e.detail.headers["Authorization"] = "Bearer " + getToken();
-});
-```
-
-## Custom confirm dialog (async)
-
-```javascript
-document.addEventListener("htmx:confirm", function(e) {
-  if (!e.target.hasAttribute("hx-confirm")) return;
-  e.preventDefault();
-  myAsyncConfirm(e.detail.question).then(ok => { if (ok) e.detail.issueRequest(true); });
-});
-```
-
-## Abort an in-flight request
-
-```html
-<button id="job" hx-post="/start">Start</button>
-<button onclick="htmx.trigger('#job','htmx:abort')">Cancel</button>
-```
-
-Or coordinate automatically: `hx-sync="closest form:abort"` on a field cancels its request when the form submits. Other strategies: `:drop` (default — ignore new while one runs), `:replace`, `:queue first|last|all`.
-
-## Programmatic request after you inject HTML
-
-```javascript
-const html = await (await fetch("/frag")).text();
-container.innerHTML = html;
-htmx.process(container);   // REQUIRED: htmx only scans content it swapped itself
-```
-
-## Debugging an htmx interaction (when a request silently does nothing)
-
-Work outward from "did it even fire":
-
-```javascript
-htmx.logAll();                          // log every htmx event to the console
-monitorEvents(document.getElementById("thing"));  // Chrome DevTools: every DOM event on an element
-```
-
-- **No request fired?** Check the *default trigger* (a `<form>` fires on `submit`, an `<input>` on `change`, everything else on `click`) and confirm the element was actually processed by htmx (it must have been swapped in by htmx or passed to `htmx.process` — see below).
-- **Request fired, wrong params/headers?** Listen on `htmx:configRequest` and inspect/patch `e.detail.parameters`, `e.detail.headers`, `e.detail.target`, `e.detail.verb` before it sends.
-- **Response came back but didn't swap?** Non-2xx/3xx won't swap by default (see gotchas). Inspect/override the swap in `htmx:beforeSwap` — `e.detail.shouldSwap`, `e.detail.target`, `e.detail.serverResponse`:
-  ```javascript
-  document.body.addEventListener("htmx:beforeSwap", e => {
-    if (e.detail.xhr.status === 422) { e.detail.shouldSwap = true; e.detail.isError = false; }
-  });
-  ```
-- **Attribute looks right in source but dead in browser?** Inspect the *rendered* DOM in devtools for `&quot;`/`&#39;` — templ escaped it. See `gotchas.md`.
-
-## Server: detect htmx vs full-page request (Go)
-
-```go
-func handler(w http.ResponseWriter, r *http.Request) {
-    if r.Header.Get("HX-Request") == "true" {
-        renderFragment(w)   // return just the partial
-        return
-    }
-    renderFullPage(w)       // first load / refresh / no-JS
-}
-```
+For lazy loading use `hx-trigger="load"`; for viewport loading use `revealed` or `intersect`; for polling use `every 2s`. Keep inserted content valid for its HTML context (especially table rows).

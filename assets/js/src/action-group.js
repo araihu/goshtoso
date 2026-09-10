@@ -189,7 +189,7 @@
     initializeDocument();
   }
 
-  document.addEventListener("htmx:afterSwap", function (event) {
+  document.addEventListener("htmx:after:process", function (event) {
     initializeWithin(event.target);
   });
 })();

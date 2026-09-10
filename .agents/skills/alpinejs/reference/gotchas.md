@@ -1,87 +1,34 @@
-# Alpine.js Gotchas (Goshtoso: Alpine + templ + htmx)
+# Alpine.js gotchas (Goshtoso: Alpine + templ + htmx)
 
-The failure mode that wastes the most time: **Alpine swallows expression parse failures with no console error.** A component just silently does nothing. Always inspect the *rendered* HTML in devtools before debugging logic.
+Baseline target: Alpine 3.17.2. For htmx 4 swap lifecycle read [integration](htmx4.md); check `muamba.yaml` before assuming that integration is already installed.
 
-## 1. templ attribute escaping — the #1 bug
+## Generated expressions
 
-templ's `EscapeString` converts `"` → `&quot;`, `'` → `&#39;`, `&` → `&amp;` inside HTML attributes. That breaks the JS Alpine parses out of `x-data`/`x-bind`/`@`.
+Follow AGENTS.md's preference for simple data attributes and shared `Alpine.data()` providers for complex behavior. Inspect both the browser console and live `element.getAttribute('x-data')` value when debugging. HTML entities in serialized HTML are normal and decoded by the browser; double encoding, malformed JavaScript, or unavailable providers are distinct problems. Do not use `templ.Raw()` to bypass escaping on user data or interpolate untrusted strings into scripts.
 
-**Symptom:** dropdown/combobox options missing, toggles dead — no console error, unit tests pass, browser fails. Look for `&quot;` inside `x-data` in devtools.
+Normalize nil Go slices to empty arrays before Alpine calls methods such as `.includes()`: JSON `null` is not `[]`.
 
-**Simple `x-data` (data only):** use unquoted keys, avoid quoted string literals.
-```go
-return fmt.Sprintf(`{ opened: [false,false], count: 0 }`) // GOOD — nothing to escape
-```
+## Registration and lifecycle
 
-**Complex Alpine (functions/strings):** register via `<script>` + `Alpine.data()`, reference by name.
-```go
-func myAlpineScript(cfg Config) string {
-    return fmt.Sprintf(`document.addEventListener('alpine:init', () => {
-        Alpine.data('myComponent', () => ({
-            value: '%s',
-            doThing() { htmx.ajax('GET', '/api/data', {target: '#target'}); }
-        }));
-    });`, cfg.DefaultValue)
-}
-```
-```templ
-templ myScript(cfg Config) {
-    @templ.Raw("<script>" + myAlpineScript(cfg) + "</script>")
-}
-// then: <div x-data="myComponent">
-```
+Prefer providers in the first-party bundle before Alpine starts. If registration must arrive later, do not rely exclusively on an `alpine:init` event that already fired:
 
-## 2. NEVER json.Marshal into an HTML attribute
-
-`json.Marshal` emits double-quoted strings → templ escapes the quotes → Alpine sees broken syntax. Build single-quoted JS instead.
-```go
-func optionsToJS(options []Option) string {
-    result := "["
-    for i, opt := range options {
-        if i > 0 { result += "," }
-        result += fmt.Sprintf("{value:'%s',label:'%s'}",
-            jsEscapeSingle(opt.Value), jsEscapeSingle(opt.Label))
-    }
-    return result + "]"
-}
-```
-
-## 3. null arrays crash Alpine
-
-`json.Marshal([]string(nil))` → `null`, not `[]`. Alpine `selectedValues.includes(...)` throws on null. Guard:
-```go
-if string(selectedJSON) == "null" {
-    selectedJSON = []byte("[]")
-}
-```
-
-## 4. Fragment-nav: register Alpine.data immediately, not only on alpine:init
-
-Alpine is already running when a page/fragment arrives via an htmx (sidebar) swap. A component registered ONLY inside an `alpine:init` listener is **undefined** for the swapped-in node. Register immediately if Alpine is already up:
 ```js
-function register() { Alpine.data('logFeed', () => ({ /* … */ })) }
-if (window.Alpine) register()                                  // fragment-nav path
-else document.addEventListener('alpine:init', register)        // first paint
+function register() {
+  Alpine.data('logFeed', () => ({ entries: [] }))
+}
+if (window.Alpine) register()
+else document.addEventListener('alpine:init', register, { once: true })
 ```
 
-## 5. htmx-inserted nodes aren't auto-processed by Alpine
+This registration still needs to run before the new component initializes. The compatibility extension cannot fix a provider that has not been registered. Alpine starts once; repeated navigation must not duplicate global listeners or timers. Release resources in `destroy()`.
 
-When Alpine (or your own JS) inserts nodes, htmx won't bind them automatically — call `htmx.process(el)` on the new subtree. (Conversely, htmx-swapped HTML containing Alpine directives is initialized by Alpine's mutation observer.)
+Alpine observes DOM changes; htmx 4 compatibility coordinates those observations with swaps. When Alpine or application JS inserts new htmx markup itself, process the relevant subtree with `htmx.process()` if necessary. Avoid unconditional reinitialization of already live Alpine trees.
 
-## 6. hx-swap-oob on first paint → htmx:oobErrorNoTarget
+## UI and browser verification
 
-An element carrying `hx-swap-oob` on its *first* render makes htmx attempt an OOB swap (with no target) when it arrives via fragment nav. Gate the attribute to update-only (an `oob bool` that's false on first paint).
-
-## 7. x-cloak FOUC
-
-Initially-hidden (`x-show="false"`) elements flash before Alpine boots unless they carry `x-cloak` AND the page has `[x-cloak]{display:none!important}`.
-
-## 8. E2E: Alpine state in Playwright
-
-- `GetAttribute("aria-expanded")` returns the *static* HTML attribute, not the Alpine-bound live value. Use `Evaluate("el => el.getAttribute('aria-expanded')", nil)`.
-- Wait for Alpine: `WaitForFunction("() => typeof Alpine !== 'undefined'")`.
-- `Locator.Fill()` does NOT fire a native `input` event → `x-model` won't update. Dispatch `input` manually (the `fillSearchInput` helper).
-
-## 9. $dispatch reaches ancestors, not siblings
-
-Custom events bubble up. To catch a sibling component's event, listen at window: `@my-event.window="..."`.
+- Initially hidden components need `x-cloak` and `[x-cloak]{display:none!important}`.
+- `x-for` / `x-if` belong on a `<template>` with one root; use stable keys for reordered lists.
+- Custom events bubble to ancestors, not siblings. Use `.window` where cross-component listening is intended.
+- Keep update-only OOB attributes out of initial fragments; test main/OOB ordering after the htmx upgrade.
+- For Goshtoso E2E assertions, use the existing helpers and live DOM evaluation for bound attributes. Await Alpine readiness and settled updates; verify actual `input` events when diagnosing `x-model` tests.
+- Test both state-preserving morphs and intentional replacement/teardown. Compatibility does not make every swap preserve state.

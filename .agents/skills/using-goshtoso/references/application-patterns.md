@@ -422,7 +422,7 @@ or block the decision; reloading the same stale fixture is not recovery.
 
 Hold each real mutation in flight and assert pending copy plus a disabled or
 otherwise deduplicated submitter. `button.WithLoadingText` follows an ancestor
-HTMX form; put `hx-disabled-elt="find button[type='submit']"` on that form. A
+HTMX form; put `hx-disable="find button[type='submit']"` on that form. A
 fixture labeled “Loading” is not evidence that the mutation path announces or
 deduplicates work.
 

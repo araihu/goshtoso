@@ -61,7 +61,7 @@
   document.readyState === "loading"
     ? document.addEventListener("DOMContentLoaded", initializeDocument, { once: true })
     : initializeDocument();
-  document.addEventListener("htmx:afterSwap", function (event) {
+  document.addEventListener("htmx:after:process", function (event) {
     enableWithin(event.target);
   });
 })();

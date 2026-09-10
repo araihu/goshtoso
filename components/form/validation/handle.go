@@ -27,7 +27,7 @@ func Handle(r *http.Request, def *FormDef, validate ValidateFunc) *Result {
 	triggerField := ""
 	if IsFieldValidation(r) {
 		valType = ValidationFieldChange
-		triggerField = r.Header.Get("HX-Trigger-Name")
+		triggerField = r.FormValue("X-Goshtoso-Field")
 	}
 
 	// Determine which fields to validate

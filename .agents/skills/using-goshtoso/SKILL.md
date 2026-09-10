@@ -415,15 +415,15 @@ go run github.com/araihu/goshtoso/cmd/goshtoso@"$GOSHTOSO_VERSION" -source-path
 - HTMX handlers should return rendered HTML fragments, not JSON.
 - `button.WithLoadingText` follows either a Button-owned request or an ancestor
   HTMX form. For a form-owned mutation, add
-  `hx-disabled-elt="find button[type='submit']"` to the form so pending copy and
+  `hx-disable="find button[type='submit']"` to the form so pending copy and
   duplicate prevention are both real; hold the request in a browser test and
   assert the label, disabled state, and final response.
-- HTMX does not swap 4xx/5xx responses by default. For expected validation or
-  recovery fragments, either return a swappable 2xx response while preserving
-  application status in a header, or deliberately opt in from
-  `htmx:beforeSwap`. Do not let a correct server fragment fail silently.
-- Move focus after a fragment is settled, not merely swapped. Use
-  `htmx:afterSettle` to focus `[data-autofocus]`, `FormErrors`, or the next
+- htmx 4 swaps all response statuses except 204/304 by default, including
+  4xx/5xx validation and recovery fragments. Return useful HTML for those
+  responses; use `htmx:before:swap` to cancel a swap deliberately when needed.
+  Test the rendered error state as well as the HTTP status.
+- Restore focus to rendered targets after settlement. Use
+  `htmx:after:settle` to focus `[data-autofocus]`, `FormErrors`, or the next
   task target only when the response deliberately marks one; filter and search
   swaps must keep focus and caret in the initiating control. Never install a
   global fallback that focuses the page title after every swap.

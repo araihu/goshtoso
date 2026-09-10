@@ -466,7 +466,8 @@ func TestHandle_FieldChange_OnlyTriggerAndDeps(t *testing.T) {
 		"unrelated":             {"x"},
 		"X-Goshtoso-Validation": {"field"},
 	}
-	r := newPostRequest(values, map[string]string{"HX-Trigger-Name": "country"})
+	values.Set("X-Goshtoso-Field", "country")
+	r := newPostRequest(values, map[string]string{"HX-Source": "div#goshtoso-field-country"})
 
 	Handle(r, fd, hook)
 
@@ -495,7 +496,8 @@ func TestHandle_FieldChange_SetsCorrectType(t *testing.T) {
 		"region":                {""},
 		"X-Goshtoso-Validation": {"field"},
 	}
-	r := newPostRequest(values, map[string]string{"HX-Trigger-Name": "country"})
+	values.Set("X-Goshtoso-Field", "country")
+	r := newPostRequest(values, nil)
 
 	Handle(r, fd, hook)
 
@@ -521,7 +523,8 @@ func TestHandle_FieldChange_PrimaryAndDependents(t *testing.T) {
 		"city":                  {""},
 		"X-Goshtoso-Validation": {"field"},
 	}
-	r := newPostRequest(values, map[string]string{"HX-Trigger-Name": "country"})
+	values.Set("X-Goshtoso-Field", "country")
+	r := newPostRequest(values, nil)
 
 	result := Handle(r, fd, hook)
 
@@ -577,7 +580,8 @@ func TestHandle_UnknownTriggerField(t *testing.T) {
 	values := url.Values{
 		"X-Goshtoso-Validation": {"field"},
 	}
-	r := newPostRequest(values, map[string]string{"HX-Trigger-Name": "nonexistent"})
+	values.Set("X-Goshtoso-Field", "nonexistent")
+	r := newPostRequest(values, nil)
 
 	result := Handle(r, fd, hook)
 

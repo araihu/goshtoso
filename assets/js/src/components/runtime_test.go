@@ -46,7 +46,7 @@ func TestCodeBlockRuntimeDeclaresProgressiveEnhancementContract(t *testing.T) {
 		`button.hidden = false`,
 		`navigator.clipboard.writeText(target.textContent)`,
 		`document.addEventListener("click"`,
-		`document.addEventListener("htmx:afterSwap"`,
+		`document.addEventListener("htmx:after:process"`,
 		`setState(button, "error")`,
 		`status.textContent = successful ? "Copied!"`,
 	} {
@@ -161,9 +161,9 @@ func TestAuthoredComponentRuntimePreservesLifecycleAndDataContracts(t *testing.T
 		"root.dataset.tableFilterEndpoint",
 		"head.dataset.tableSortBy",
 		"url.searchParams.set(\"order_by\"",
-		"document.removeEventListener(\"htmx:configRequest\"",
-		"document.addEventListener(\"htmx:load\"",
-		"document.addEventListener(\"htmx:beforeCleanupElement\"",
+		"document.removeEventListener(\"htmx:config:request\"",
+		"document.addEventListener(\"htmx:after:process\"",
+		"document.addEventListener(\"htmx:before:cleanup\"",
 		"window.goshtosoSafeNavigationTarget",
 	} {
 		if !strings.Contains(table, want) {
@@ -197,7 +197,7 @@ func TestAuthoredComponentRuntimePreservesLifecycleAndDataContracts(t *testing.T
 		"resizeObserver.observe(viewport)",
 		"resizeObserver.observe(child)",
 		"mutationObserver.observe(viewport",
-		`document.addEventListener("htmx:beforeCleanupElement"`,
+		`document.addEventListener("htmx:before:cleanup"`,
 		"nestedState.disconnect()",
 	} {
 		if !strings.Contains(scrollRegion, want) {

@@ -16,7 +16,7 @@ func TestLoadPreservesApprovedRuntimeOrder(t *testing.T) {
 	}
 	want := []string{
 		"alpine-collapse", "alpine-focus", "alpine-mask", "first-party",
-		"dark-mode", "alpine", "htmx", "htmx-ext-sse", "htmx-ext-ws",
+		"dark-mode", "htmx", "htmx-alpine-compat", "alpine", "htmx-ext-sse", "htmx-ext-ws",
 		"combobox", "action-group", "code-block",
 	}
 	got := make([]string, len(model.Dependencies))
@@ -123,10 +123,10 @@ func fixtureInventory(t *testing.T) *assetmeta.Inventory {
 		return result
 	}
 	inventory, err := assetmeta.NewInventory([]assetmeta.Resource{
-		resource("alpinejs", "3.14.9", "collapse-js", "collapse-license", "collapse-package", "focus-js", "focus-license", "focus-package", "mask-js", "mask-license", "mask-package", "core-js", "core-license", "core-package"),
-		resource("htmx", "2.0.8", "core-js", "license", "package"),
-		resource("htmx-ext-sse", "2.2.3", "runtime-js", "license", "package"),
-		resource("htmx-ext-ws", "2.0.3", "runtime-js", "license", "package"),
+		resource("alpinejs", "3.17.2", "collapse-js", "collapse-license", "collapse-package", "focus-js", "focus-license", "focus-package", "mask-js", "mask-license", "mask-package", "core-js", "core-license", "core-package"),
+		resource("htmx", "4.0.0", "core-js", "alpine-compat-js", "license", "package"),
+		resource("htmx-ext-sse", "4.0.0", "runtime-js", "license", "package"),
+		resource("htmx-ext-ws", "4.0.0", "runtime-js", "license", "package"),
 	})
 	if err != nil {
 		t.Fatal(err)

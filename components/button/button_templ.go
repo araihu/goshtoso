@@ -51,7 +51,7 @@ func buttonTemplate(options ...Option) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.id)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 12, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 11, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -69,7 +69,7 @@ func buttonTemplate(options ...Option) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.buttonType)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 14, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 13, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -113,7 +113,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.alpine.OnClick)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 25, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 23, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 				if templ_7745c5c3_Err != nil {
@@ -132,7 +132,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.alpine.Show)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 28, Col: 28}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 26, Col: 28}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 				if templ_7745c5c3_Err != nil {
@@ -151,7 +151,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.alpine.BindDisabled)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 31, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 29, Col: 39}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 				if templ_7745c5c3_Err != nil {
@@ -176,7 +176,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.alpine.Data)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 42, Col: 28}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 40, Col: 28}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 				if templ_7745c5c3_Err != nil {
@@ -190,7 +190,7 @@ func buttonTemplate(options ...Option) templ.Component {
 		}
 		if hasHTMX {
 			if cfg.loadingText != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " hx-disabled-elt=\"this\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " hx-disable=\"this\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -203,7 +203,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmx.Get)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 51, Col: 25}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 48, Col: 25}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 				if templ_7745c5c3_Err != nil {
@@ -222,7 +222,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmx.Post)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 54, Col: 27}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 51, Col: 27}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 				if templ_7745c5c3_Err != nil {
@@ -241,7 +241,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmx.Put)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 57, Col: 25}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 54, Col: 25}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 				if templ_7745c5c3_Err != nil {
@@ -260,7 +260,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmx.Delete)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 60, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 57, Col: 31}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 				if templ_7745c5c3_Err != nil {
@@ -279,7 +279,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmx.Patch)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 63, Col: 29}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 60, Col: 29}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 				if templ_7745c5c3_Err != nil {
@@ -298,7 +298,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmx.Target)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 66, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 63, Col: 31}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 				if templ_7745c5c3_Err != nil {
@@ -317,7 +317,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmx.Swap)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 69, Col: 27}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 66, Col: 27}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 				if templ_7745c5c3_Err != nil {
@@ -336,7 +336,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var17 string
 				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmx.Trigger)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 72, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 69, Col: 33}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 				if templ_7745c5c3_Err != nil {
@@ -355,7 +355,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmx.Indicator)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 75, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 72, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
 				if templ_7745c5c3_Err != nil {
@@ -380,7 +380,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmx.Confirm)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 81, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 78, Col: 33}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
 				if templ_7745c5c3_Err != nil {
@@ -399,7 +399,7 @@ func buttonTemplate(options ...Option) templ.Component {
 				var templ_7745c5c3_Var20 string
 				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.htmx.Vals)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 84, Col: 27}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 81, Col: 27}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 				if templ_7745c5c3_Err != nil {
@@ -435,7 +435,7 @@ func buttonTemplate(options ...Option) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.loadingText)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 91, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/button/button.templ`, Line: 89, Col: 76}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {

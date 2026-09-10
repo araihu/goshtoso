@@ -279,7 +279,7 @@ templ fieldGroupTemplate(cfg FieldGroupConfig) {
 			}
 			hx-swap="outerHTML"
 			hx-include="closest form"
-			hx-vals='{"X-Goshtoso-Validation":"field"}'
+			hx-vals="js:{'X-Goshtoso-Validation':'field','X-Goshtoso-Field':this.getAttribute('name')}"
 		}
 	>
 		if cfg.Label != "" {

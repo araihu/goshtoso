@@ -4,40 +4,44 @@
 package assets
 
 const (
-	DependencyLoaderURL          = "/assets/js/dependency-loader.js"
-	AlpineCollapseURL            = "/assets/js/runtime/alpinejs-collapse/3.14.9/alpine-collapse.min.js"
-	runtimeVersionAlpineCollapse = "3.14.9"
-	AlpineCollapseCDNURL         = "https://unpkg.com/@alpinejs/collapse@3.14.9/dist/cdn.min.js"
-	AlpineCollapseIntegrity      = "sha384-NArNwzWsUSF+kY2lgW4YriEkjLqi+J+za6HrENUn/3nZqkBnWbxV22kCJEK5Uu6n"
-	AlpineFocusURL               = "/assets/js/runtime/alpinejs-focus/3.14.9/alpine-focus.min.js"
-	runtimeVersionAlpineFocus    = "3.14.9"
-	AlpineFocusCDNURL            = "https://unpkg.com/@alpinejs/focus@3.14.9/dist/cdn.min.js"
-	AlpineFocusIntegrity         = "sha384-bKXNU7o2Y3Uk/F2PB6U0bMyGZf6pLDnePM70U7sTE3cXUQ+JLgzrr/kwipEh0p23"
-	AlpineMaskURL                = "/assets/js/runtime/alpinejs-mask/3.14.9/alpine-mask.min.js"
-	runtimeVersionAlpineMask     = "3.14.9"
-	AlpineMaskCDNURL             = "https://unpkg.com/@alpinejs/mask@3.14.9/dist/cdn.min.js"
-	AlpineMaskIntegrity          = "sha384-SGhOy1rqh2lYeihPkBYcEUWXaDP+024QNlkQuAn11pcP3NQ2QAdI3zWIN1iAslFe"
-	FirstPartyBundleURL          = "/assets/js/goshtoso.min.js"
-	DarkModeURL                  = "/assets/js/darkmode.js"
-	AlpineJSURL                  = "/assets/js/runtime/alpinejs/3.14.9/alpine.min.js"
-	runtimeVersionAlpineJS       = "3.14.9"
-	AlpineJSCDNURL               = "https://unpkg.com/alpinejs@3.14.9/dist/cdn.min.js"
-	AlpineJSIntegrity            = "sha384-9Ax3MmS9AClxJyd5/zafcXXjxmwFhZCdsT6HJoJjarvCaAkJlk5QDzjLJm+Wdx5F"
-	HTMXURL                      = "/assets/js/runtime/htmx.org/2.0.8/htmx.min.js"
-	runtimeVersionHTMX           = "2.0.8"
-	HTMXCDNURL                   = "https://unpkg.com/htmx.org@2.0.8/dist/htmx.min.js"
-	HTMXIntegrity                = "sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"
-	HTMXExtSSEURL                = "/assets/js/runtime/htmx-ext-sse/2.2.3/htmx-ext-sse.min.js"
-	runtimeVersionHTMXExtSSE     = "2.2.3"
-	HTMXExtSSECDNURL             = "https://unpkg.com/htmx-ext-sse@2.2.3/dist/sse.min.js"
-	HTMXExtSSEIntegrity          = "sha384-Y4gc0CK6Kg+hmulDc6rZPJu0tqvk7EWlih0Oh+2OkAi1ZDlCbBDCQEE2uVk472Ky"
-	HTMXExtWSURL                 = "/assets/js/runtime/htmx-ext-ws/2.0.3/htmx-ext-ws.js"
-	runtimeVersionHTMXExtWS      = "2.0.3"
-	HTMXExtWSCDNURL              = "https://unpkg.com/htmx-ext-ws@2.0.3/ws.js"
-	HTMXExtWSIntegrity           = "sha384-IeVkDiDIU+Zsabm4HnVf7ifa7LYLSoUCAYrFIjsn+0voIDaflLAalBqJ4CeEZodl"
-	ComboboxURL                  = "/assets/js/combobox.js"
-	ActionGroupURL               = "/assets/js/action-group.js"
-	CodeBlockURL                 = "/assets/js/code-block.js"
+	DependencyLoaderURL            = "/assets/js/dependency-loader.js"
+	AlpineCollapseURL              = "/assets/js/runtime/alpinejs-collapse/3.17.2/alpine-collapse.min.js"
+	runtimeVersionAlpineCollapse   = "3.17.2"
+	AlpineCollapseCDNURL           = "https://unpkg.com/@alpinejs/collapse@3.17.2/dist/cdn.min.js"
+	AlpineCollapseIntegrity        = "sha384-NArNwzWsUSF+kY2lgW4YriEkjLqi+J+za6HrENUn/3nZqkBnWbxV22kCJEK5Uu6n"
+	AlpineFocusURL                 = "/assets/js/runtime/alpinejs-focus/3.17.2/alpine-focus.min.js"
+	runtimeVersionAlpineFocus      = "3.17.2"
+	AlpineFocusCDNURL              = "https://unpkg.com/@alpinejs/focus@3.17.2/dist/cdn.min.js"
+	AlpineFocusIntegrity           = "sha384-ysJcnHb6oCzqAGKdoTm+IqKqmPKgxHT+ApZCawkyWOJfMq15WvzW3RRmHl7tWpEY"
+	AlpineMaskURL                  = "/assets/js/runtime/alpinejs-mask/3.17.2/alpine-mask.min.js"
+	runtimeVersionAlpineMask       = "3.17.2"
+	AlpineMaskCDNURL               = "https://unpkg.com/@alpinejs/mask@3.17.2/dist/cdn.min.js"
+	AlpineMaskIntegrity            = "sha384-/KspnSacpGaqcz8joSHdVfpHZ88hbPkiK9WAHDalFjff9wBO4VQWravNauBX2g88"
+	FirstPartyBundleURL            = "/assets/js/goshtoso.min.js"
+	DarkModeURL                    = "/assets/js/darkmode.js"
+	HTMXURL                        = "/assets/js/runtime/htmx.org/4.0.0/htmx.min.js"
+	runtimeVersionHTMX             = "4.0.0"
+	HTMXCDNURL                     = "https://unpkg.com/htmx.org@4.0.0/dist/htmx.min.js"
+	HTMXIntegrity                  = "sha384-BvJpBiO8Kh31EqtJe5DRIeWrHWnCGkwytKs9NKFi86Hhw96dEqdEMzZDeK9iEGTc"
+	HTMXAlpineCompatURL            = "/assets/js/runtime/htmx.org/4.0.0/hx-alpine-compat.js"
+	runtimeVersionHTMXAlpineCompat = "4.0.0"
+	HTMXAlpineCompatCDNURL         = "https://unpkg.com/htmx.org@4.0.0/dist/ext/hx-alpine-compat.js"
+	HTMXAlpineCompatIntegrity      = "sha384-8Lujltc+yuNRRb8vLl0eLeXEzwGhFXOUkWieQ172LgJye+aU/qd/XyhkX5xWwHM9"
+	AlpineJSURL                    = "/assets/js/runtime/alpinejs/3.17.2/alpine.min.js"
+	runtimeVersionAlpineJS         = "3.17.2"
+	AlpineJSCDNURL                 = "https://unpkg.com/alpinejs@3.17.2/dist/cdn.min.js"
+	AlpineJSIntegrity              = "sha384-lcaMFHdvRVsEXVuhit4fTnbxq6eTLm5HPdNzO7vXNZjr8HOCMouPmv4hSGF3PCJV"
+	HTMXExtSSEURL                  = "/assets/js/runtime/htmx-ext-sse/4.0.0/htmx-ext-sse.min.js"
+	runtimeVersionHTMXExtSSE       = "4.0.0"
+	HTMXExtSSECDNURL               = "https://unpkg.com/htmx.org@4.0.0/dist/ext/hx-sse.js"
+	HTMXExtSSEIntegrity            = "sha384-O9jqsFi4oKUTwu9V0DTXGP+lKOx/8Y4exCbAo4C259mlwITM1xPC3s3Nb4VPQvzj"
+	HTMXExtWSURL                   = "/assets/js/runtime/htmx-ext-ws/4.0.0/htmx-ext-ws.js"
+	runtimeVersionHTMXExtWS        = "4.0.0"
+	HTMXExtWSCDNURL                = "https://unpkg.com/htmx.org@4.0.0/dist/ext/hx-ws.js"
+	HTMXExtWSIntegrity             = "sha384-+NHXUaKKyfnYOM95fSYshyGKQO/frrPZKfBS6Untkcz1qvEOcMTaMYqDCThSfVUS"
+	ComboboxURL                    = "/assets/js/combobox.js"
+	ActionGroupURL                 = "/assets/js/action-group.js"
+	CodeBlockURL                   = "/assets/js/code-block.js"
 )
 
 // RuntimeHash returns the normalized Muamba content hash for a vendored runtime role.
@@ -49,10 +53,12 @@ func RuntimeHash(role RuntimeAssetRole) (string, bool) {
 		return MuambaHash("alpinejs", "focus-js")
 	case RuntimeRoleAlpineMask:
 		return MuambaHash("alpinejs", "mask-js")
-	case RuntimeRoleAlpineJS:
-		return MuambaHash("alpinejs", "core-js")
 	case RuntimeRoleHTMX:
 		return MuambaHash("htmx", "core-js")
+	case RuntimeRoleHTMXAlpineCompat:
+		return MuambaHash("htmx", "alpine-compat-js")
+	case RuntimeRoleAlpineJS:
+		return MuambaHash("alpinejs", "core-js")
 	case RuntimeRoleHTMXExtSSE:
 		return MuambaHash("htmx-ext-sse", "runtime-js")
 	case RuntimeRoleHTMXExtWS:

@@ -16,10 +16,12 @@ const (
 	RuntimeRoleFirstParty RuntimeAssetRole = "first-party"
 	// RuntimeRoleDarkMode identifies Goshtoso dark-mode runtime.
 	RuntimeRoleDarkMode RuntimeAssetRole = "dark-mode"
-	// RuntimeRoleAlpineJS identifies Alpine.js.
-	RuntimeRoleAlpineJS RuntimeAssetRole = "alpine"
 	// RuntimeRoleHTMX identifies htmx.
 	RuntimeRoleHTMX RuntimeAssetRole = "htmx"
+	// RuntimeRoleHTMXAlpineCompat identifies htmx Alpine compatibility.
+	RuntimeRoleHTMXAlpineCompat RuntimeAssetRole = "htmx-alpine-compat"
+	// RuntimeRoleAlpineJS identifies Alpine.js.
+	RuntimeRoleAlpineJS RuntimeAssetRole = "alpine"
 	// RuntimeRoleHTMXExtSSE identifies htmx SSE extension.
 	RuntimeRoleHTMXExtSSE RuntimeAssetRole = "htmx-ext-sse"
 	// RuntimeRoleHTMXExtWS identifies htmx WebSocket extension.
@@ -43,8 +45,9 @@ func defaultRuntimeDependencies() []RuntimeAsset {
 		RuntimeAsset{Role: RuntimeRoleAlpineMask, Kind: RuntimeAssetScript, PrimaryURL: AlpineMaskCDNURL, LocalURL: AlpineMaskURL, Integrity: AlpineMaskIntegrity, Enabled: true, Defer: true},
 		RuntimeAsset{Role: RuntimeRoleFirstParty, Kind: RuntimeAssetScript, PrimaryURL: FirstPartyBundleURL, LocalURL: FirstPartyBundleURL, Enabled: true, IncludeInMinimal: true, Defer: true},
 		RuntimeAsset{Role: RuntimeRoleDarkMode, Kind: RuntimeAssetScript, PrimaryURL: DarkModeURL, LocalURL: DarkModeURL, IncludeInMinimal: true, Defer: true},
+		RuntimeAsset{Role: RuntimeRoleHTMX, Kind: RuntimeAssetScript, PrimaryURL: HTMXCDNURL, LocalURL: HTMXURL, Integrity: HTMXIntegrity, Enabled: true, IncludeInMinimal: true},
+		RuntimeAsset{Role: RuntimeRoleHTMXAlpineCompat, Kind: RuntimeAssetScript, PrimaryURL: HTMXAlpineCompatCDNURL, LocalURL: HTMXAlpineCompatURL, Integrity: HTMXAlpineCompatIntegrity, Enabled: true, IncludeInMinimal: true},
 		RuntimeAsset{Role: RuntimeRoleAlpineJS, Kind: RuntimeAssetScript, PrimaryURL: AlpineJSCDNURL, LocalURL: AlpineJSURL, Integrity: AlpineJSIntegrity, Enabled: true, IncludeInMinimal: true, Defer: true},
-		RuntimeAsset{Role: RuntimeRoleHTMX, Kind: RuntimeAssetScript, PrimaryURL: HTMXCDNURL, LocalURL: HTMXURL, Integrity: HTMXIntegrity, Enabled: true, IncludeInMinimal: true, WaitForWindowLoaded: true},
 		RuntimeAsset{Role: RuntimeRoleHTMXExtSSE, Kind: RuntimeAssetScript, PrimaryURL: HTMXExtSSECDNURL, LocalURL: HTMXExtSSEURL, Integrity: HTMXExtSSEIntegrity, IncludeInMinimal: true, Defer: true},
 		RuntimeAsset{Role: RuntimeRoleHTMXExtWS, Kind: RuntimeAssetScript, PrimaryURL: HTMXExtWSCDNURL, LocalURL: HTMXExtWSURL, Integrity: HTMXExtWSIntegrity, IncludeInMinimal: true, Defer: true},
 		RuntimeAsset{Role: RuntimeRoleCombobox, Kind: RuntimeAssetScript, PrimaryURL: ComboboxURL, LocalURL: ComboboxURL, IncludeInMinimal: true, Defer: true},
@@ -56,15 +59,16 @@ func defaultRuntimeDependencies() []RuntimeAsset {
 func defaultRuntimeMetadata() []RuntimeAssetMetadata {
 	return []RuntimeAssetMetadata{
 		{Role: RuntimeRoleDependencyLoader, Name: "Goshtoso dependency loader", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Loads the declared runtime in order with same-version local fallback"},
-		{Role: RuntimeRoleAlpineCollapse, Name: "@alpinejs/collapse", Version: "3.14.9", PackageName: "@alpinejs/collapse", ProvenanceURL: "https://unpkg.com/@alpinejs/collapse@3.14.9/package.json", Homepage: "https://alpinejs.dev/plugins/collapse", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs-collapse/3.14.9/LICENSE.txt", Purpose: "Collapse transitions for accordions and disclosure components"},
-		{Role: RuntimeRoleAlpineFocus, Name: "@alpinejs/focus", Version: "3.14.9", PackageName: "@alpinejs/focus", ProvenanceURL: "https://unpkg.com/@alpinejs/focus@3.14.9/package.json", Homepage: "https://alpinejs.dev/plugins/focus", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs-focus/3.14.9/LICENSE.txt", Purpose: "Focus trapping and keyboard focus management"},
-		{Role: RuntimeRoleAlpineMask, Name: "@alpinejs/mask", Version: "3.14.9", PackageName: "@alpinejs/mask", ProvenanceURL: "https://unpkg.com/@alpinejs/mask@3.14.9/package.json", Homepage: "https://alpinejs.dev/plugins/mask", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs-mask/3.14.9/LICENSE.txt", Purpose: "Input masking"},
+		{Role: RuntimeRoleAlpineCollapse, Name: "@alpinejs/collapse", Version: "3.17.2", PackageName: "@alpinejs/collapse", ProvenanceURL: "https://unpkg.com/@alpinejs/collapse@3.17.2/package.json", Homepage: "https://alpinejs.dev/plugins/collapse", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs-collapse/3.17.2/LICENSE.txt", Purpose: "Collapse transitions for accordions and disclosure components"},
+		{Role: RuntimeRoleAlpineFocus, Name: "@alpinejs/focus", Version: "3.17.2", PackageName: "@alpinejs/focus", ProvenanceURL: "https://unpkg.com/@alpinejs/focus@3.17.2/package.json", Homepage: "https://alpinejs.dev/plugins/focus", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs-focus/3.17.2/LICENSE.txt", Purpose: "Focus trapping and keyboard focus management"},
+		{Role: RuntimeRoleAlpineMask, Name: "@alpinejs/mask", Version: "3.17.2", PackageName: "@alpinejs/mask", ProvenanceURL: "https://unpkg.com/@alpinejs/mask@3.17.2/package.json", Homepage: "https://alpinejs.dev/plugins/mask", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs-mask/3.17.2/LICENSE.txt", Purpose: "Input masking"},
 		{Role: RuntimeRoleFirstParty, Name: "Goshtoso component runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Reusable first-party component behavior"},
 		{Role: RuntimeRoleDarkMode, Name: "Goshtoso dark-mode runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Registers the Alpine dark-mode store"},
-		{Role: RuntimeRoleAlpineJS, Name: "Alpine.js", Version: "3.14.9", PackageName: "alpinejs", ProvenanceURL: "https://unpkg.com/alpinejs@3.14.9/package.json", Homepage: "https://alpinejs.dev", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs/3.14.9/LICENSE.txt", Purpose: "Reactive client-side UI state"},
-		{Role: RuntimeRoleHTMX, Name: "htmx", Version: "2.0.8", PackageName: "htmx.org", ProvenanceURL: "https://unpkg.com/htmx.org@2.0.8/package.json", Homepage: "https://htmx.org", License: "Zero-Clause BSD", LicenseURL: "/assets/js/runtime/htmx.org/2.0.8/LICENSE.txt", Purpose: "Server-driven interactions and fragment updates"},
-		{Role: RuntimeRoleHTMXExtSSE, Name: "htmx SSE extension", Version: "2.2.3", PackageName: "htmx-ext-sse", ProvenanceURL: "https://unpkg.com/htmx-ext-sse@2.2.3/package.json", Homepage: "https://htmx.org/extensions/sse/", License: "Zero-Clause BSD", LicenseURL: "/assets/js/runtime/htmx-ext-sse/2.2.3/LICENSE.txt", Purpose: "Server-sent event integration"},
-		{Role: RuntimeRoleHTMXExtWS, Name: "htmx WebSocket extension", Version: "2.0.3", PackageName: "htmx-ext-ws", ProvenanceURL: "https://unpkg.com/htmx-ext-ws@2.0.3/package.json", Homepage: "https://htmx.org/extensions/ws/", License: "Zero-Clause BSD", LicenseURL: "/assets/js/runtime/htmx-ext-ws/2.0.3/LICENSE.txt", Purpose: "WebSocket integration"},
+		{Role: RuntimeRoleHTMX, Name: "htmx", Version: "4.0.0", PackageName: "htmx.org", ProvenanceURL: "https://unpkg.com/htmx.org@4.0.0/package.json", Homepage: "https://htmx.org", License: "Zero-Clause BSD", LicenseURL: "/assets/js/runtime/htmx.org/4.0.0/LICENSE.txt", Purpose: "Server-driven interactions and fragment updates"},
+		{Role: RuntimeRoleHTMXAlpineCompat, Name: "htmx Alpine compatibility", Version: "4.0.0", PackageName: "htmx.org", ProvenanceURL: "https://unpkg.com/htmx.org@4.0.0/package.json", Homepage: "https://four.htmx.org/extensions/hx-alpine-compat", License: "Zero-Clause BSD", LicenseURL: "/assets/js/runtime/htmx.org/4.0.0/LICENSE.txt", Purpose: "Coordinates Alpine initialization and state during htmx swaps"},
+		{Role: RuntimeRoleAlpineJS, Name: "Alpine.js", Version: "3.17.2", PackageName: "alpinejs", ProvenanceURL: "https://unpkg.com/alpinejs@3.17.2/package.json", Homepage: "https://alpinejs.dev", License: "MIT", LicenseURL: "/assets/js/runtime/alpinejs/3.17.2/LICENSE.txt", Purpose: "Reactive client-side UI state"},
+		{Role: RuntimeRoleHTMXExtSSE, Name: "htmx SSE extension", Version: "4.0.0", PackageName: "htmx.org", ProvenanceURL: "https://unpkg.com/htmx.org@4.0.0/package.json", Homepage: "https://four.htmx.org/extensions/hx-sse", License: "Zero-Clause BSD", LicenseURL: "/assets/js/runtime/htmx-ext-sse/4.0.0/LICENSE.txt", Purpose: "Server-sent event integration"},
+		{Role: RuntimeRoleHTMXExtWS, Name: "htmx WebSocket extension", Version: "4.0.0", PackageName: "htmx.org", ProvenanceURL: "https://unpkg.com/htmx.org@4.0.0/package.json", Homepage: "https://four.htmx.org/extensions/hx-ws", License: "Zero-Clause BSD", LicenseURL: "/assets/js/runtime/htmx-ext-ws/4.0.0/LICENSE.txt", Purpose: "WebSocket integration"},
 		{Role: RuntimeRoleCombobox, Name: "Goshtoso combobox compatibility runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Standalone compatibility build for combobox behavior"},
 		{Role: RuntimeRoleActionGroup, Name: "Goshtoso action-group runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Responsive action-group measurement"},
 		{Role: RuntimeRoleCodeBlock, Name: "Goshtoso CodeBlock runtime", Version: "", PackageName: "", ProvenanceURL: "", Homepage: "", License: "", LicenseURL: "", Purpose: "Progressive copy behavior for CodeBlock"},

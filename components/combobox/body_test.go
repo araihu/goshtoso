@@ -244,7 +244,6 @@ func TestCombobox_ClientMode_RootHasMarker(t *testing.T) {
 	html := buf.String()
 
 	assert.Contains(t, html, `data-combobox-mode="client"`)
-	assert.Contains(t, html, `hx-disinherit="hx-replace-url"`)
 	assert.Contains(t, html, `data-combobox-name="status"`)
 	assert.Contains(t, html, `data-combobox-multi="true"`)
 }

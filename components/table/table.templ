@@ -288,7 +288,8 @@ templ tableHeadRow(cfg Config) {
 			} else {
 				<th scope="col" class={ columnHeaderClasses(col) }>
 					if col.HeaderSuffix != nil {
-						<div class="flex items-center gap-2"><span>{ col.Label }</span>@col.HeaderSuffix</div>
+						<div class="flex items-center gap-2"><span>{ col.Label }</span>@col.HeaderSuffix
+</div>
 					} else {
 						{ col.Label }
 					}
@@ -631,7 +632,7 @@ templ sortableHeader(cfg Config, col Column) {
 			<span>{ col.Label }</span>
 			@sortIcon(cfg, col.Key)
 			if col.HeaderSuffix != nil {
-				<div x-data hx-disinherit="*" x-on:click.stop x-on:keydown.stop>
+				<div x-data x-on:click.stop x-on:keydown.stop>
 					@col.HeaderSuffix
 				</div>
 			}

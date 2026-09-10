@@ -76,19 +76,19 @@
       init: function () {
         var state = this;
         this.configRequestListener = function (event) {
-          var element = event.detail && event.detail.elt;
+          var element = event.detail && event.detail.ctx && event.detail.ctx.sourceElement;
           if (!element || !element.closest || element.closest("[data-table-filters]") !== root) {
             return;
           }
           activeFilterEntries(state.filters).forEach(function (entry) {
-            event.detail.parameters[entry[0]] = entry[1];
+            event.detail.ctx.request.body.set(entry[0], entry[1]);
           });
         };
-        document.addEventListener("htmx:configRequest", this.configRequestListener);
+        document.addEventListener("htmx:config:request", this.configRequestListener);
       },
       destroy: function () {
         if (this.configRequestListener) {
-          document.removeEventListener("htmx:configRequest", this.configRequestListener);
+          document.removeEventListener("htmx:config:request", this.configRequestListener);
         }
         this.configRequestListener = null;
       },
@@ -205,11 +205,11 @@
     initializeSentinels(document);
   }
 
-  document.addEventListener("htmx:load", function (event) {
-    initializeSentinels((event.detail && event.detail.elt) || event.target);
+  document.addEventListener("htmx:after:process", function (event) {
+    initializeSentinels(event.target);
   });
-  document.addEventListener("htmx:beforeCleanupElement", function (event) {
-    sentinelNodes((event.detail && event.detail.elt) || event.target).forEach(cleanupSentinel);
+  document.addEventListener("htmx:before:cleanup", function (event) {
+    sentinelNodes(event.target).forEach(cleanupSentinel);
   });
   window.addEventListener("goshtoso:dependencies-ready", restartSentinels);
 })();

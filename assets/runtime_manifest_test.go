@@ -41,8 +41,9 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 		RuntimeRoleAlpineMask,
 		RuntimeRoleFirstParty,
 		RuntimeRoleDarkMode,
-		RuntimeRoleAlpineJS,
 		RuntimeRoleHTMX,
+		RuntimeRoleHTMXAlpineCompat,
+		RuntimeRoleAlpineJS,
 		RuntimeRoleHTMXExtSSE,
 		RuntimeRoleHTMXExtWS,
 		RuntimeRoleCombobox,
@@ -62,8 +63,8 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	if !reflect.DeepEqual(gotRoles, wantRoles) {
 		t.Fatalf("dependency roles = %v, want %v", gotRoles, wantRoles)
 	}
-	wantMinimal := []bool{false, false, false, true, true, true, true, true, true, true, true, true}
-	wantEnabled := []bool{true, true, true, true, false, true, true, false, false, false, false, false}
+	wantMinimal := []bool{false, false, false, true, true, true, true, true, true, true, true, true, true}
+	wantEnabled := []bool{true, true, true, true, false, true, true, true, false, false, false, false, false}
 	for index, dependency := range manifest.Dependencies {
 		if dependency.IncludeInMinimal != wantMinimal[index] {
 			t.Errorf("%s IncludeInMinimal = %t, want %t", dependency.Role, dependency.IncludeInMinimal, wantMinimal[index])
@@ -78,13 +79,14 @@ func TestDefaultRuntimeManifestHasCompleteOrderedContract(t *testing.T) {
 	assertRuntimeAsset(t, manifest.Dependencies[2], AlpineMaskCDNURL, AlpineMaskURL, true, false)
 	assertRuntimeAsset(t, manifest.Dependencies[3], FirstPartyBundleURL, FirstPartyBundleURL, true, false)
 	assertRuntimeAsset(t, manifest.Dependencies[4], DarkModeURL, DarkModeURL, true, false)
-	assertRuntimeAsset(t, manifest.Dependencies[5], AlpineJSCDNURL, AlpineJSURL, true, false)
-	assertRuntimeAsset(t, manifest.Dependencies[6], HTMXCDNURL, HTMXURL, false, true)
-	assertRuntimeAsset(t, manifest.Dependencies[7], HTMXExtSSECDNURL, HTMXExtSSEURL, true, false)
-	assertRuntimeAsset(t, manifest.Dependencies[8], HTMXExtWSCDNURL, HTMXExtWSURL, true, false)
-	assertRuntimeAsset(t, manifest.Dependencies[9], ComboboxURL, ComboboxURL, true, false)
-	assertRuntimeAsset(t, manifest.Dependencies[10], ActionGroupURL, ActionGroupURL, true, false)
-	assertRuntimeAsset(t, manifest.Dependencies[11], CodeBlockURL, CodeBlockURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[5], HTMXCDNURL, HTMXURL, false, false)
+	assertRuntimeAsset(t, manifest.Dependencies[6], HTMXAlpineCompatCDNURL, HTMXAlpineCompatURL, false, false)
+	assertRuntimeAsset(t, manifest.Dependencies[7], AlpineJSCDNURL, AlpineJSURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[8], HTMXExtSSECDNURL, HTMXExtSSEURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[9], HTMXExtWSCDNURL, HTMXExtWSURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[10], ComboboxURL, ComboboxURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[11], ActionGroupURL, ActionGroupURL, true, false)
+	assertRuntimeAsset(t, manifest.Dependencies[12], CodeBlockURL, CodeBlockURL, true, false)
 }
 
 func TestDefaultRuntimeManifestIsCallerOwned(t *testing.T) {
@@ -104,8 +106,8 @@ func TestDefaultRuntimeManifestIsCallerOwned(t *testing.T) {
 	if fresh.Dependencies[0].LocalURL != AlpineCollapseURL {
 		t.Fatalf("fresh collapse URL = %q", fresh.Dependencies[0].LocalURL)
 	}
-	if len(fresh.Dependencies) != 12 {
-		t.Fatalf("fresh dependency count = %d, want 12", len(fresh.Dependencies))
+	if len(fresh.Dependencies) != 13 {
+		t.Fatalf("fresh dependency count = %d, want 13", len(fresh.Dependencies))
 	}
 }
 
@@ -123,7 +125,7 @@ func TestDefaultRuntimeMetadataExposesCanonicalDependencyMetadata(t *testing.T) 
 	if alpine.Homepage != "https://alpinejs.dev" || alpine.License != "MIT" || alpine.Purpose == "" {
 		t.Fatalf("Alpine attribution metadata = %#v", alpine)
 	}
-	if alpine.PackageName != "alpinejs" || alpine.ProvenanceURL != "https://unpkg.com/alpinejs@3.14.9/package.json" {
+	if alpine.PackageName != "alpinejs" || alpine.ProvenanceURL != "https://unpkg.com/alpinejs@3.17.2/package.json" {
 		t.Fatalf("Alpine provenance metadata = %#v", alpine)
 	}
 	if alpine.LicenseURL != path.Join(path.Dir(AlpineJSURL), "LICENSE.txt") {
@@ -178,8 +180,8 @@ func TestDefaultRuntimeManifestLocalURLsMatchHandlerBytesAndSRI(t *testing.T) {
 			t.Errorf("%s served SRI = %q, manifest = %q", asset.Role, got, asset.Integrity)
 		}
 	}
-	if integrityCount != 7 {
-		t.Fatalf("manifest SRI count = %d, want 7 version-matched third-party dependencies", integrityCount)
+	if integrityCount != 8 {
+		t.Fatalf("manifest SRI count = %d, want 8 version-matched third-party dependencies", integrityCount)
 	}
 }
 

@@ -87,14 +87,14 @@
 
   function scanHTMXTarget(event) {
     var detail = event.detail || {};
-    scan(detail.elt || detail.target || document);
+    scan((detail.ctx && detail.ctx.target) || event.target);
   }
 
   document.addEventListener("DOMContentLoaded", refresh);
-  document.addEventListener("htmx:load", scanHTMXTarget);
-  document.addEventListener("htmx:afterSwap", scanHTMXTarget);
-  document.addEventListener("htmx:beforeCleanupElement", function (event) {
-    var element = event.detail && event.detail.elt;
+  document.addEventListener("htmx:after:process", scanHTMXTarget);
+  document.addEventListener("htmx:after:swap", scanHTMXTarget);
+  document.addEventListener("htmx:before:cleanup", function (event) {
+    var element = event.target;
     if (!element) return;
     var state = regions.get(element);
     if (state) state.disconnect();

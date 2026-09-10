@@ -917,7 +917,7 @@ import "github.com/araihu/goshtoso/components/head"  // package head
 
 **Options:** `WithActionGroupURL(url string)` · `WithComboboxURL(url string)` · `WithDependencyCDNURL(dependency Dependency, url string)` · `WithDependencyIntegrity(dependency Dependency, integrity string)` · `WithDependencyLocalURL(dependency Dependency, url string)` · `WithLoaderURL(url string)` · `WithLocalRuntime()` · `WithRuntimeManifest(manifest assets.RuntimeManifest)` · `WithStylesheetOnly()` · `WithStylesheetURL(url string)` · `WithoutDependency(dependency Dependency)` · `WithoutLocalFallback()`
 
-- **Dependency** — DependencyAlpineJS = "alpinejs", DependencyAlpineCollapse = "alpinejs-collapse", DependencyAlpineFocus = "alpinejs-focus", DependencyAlpineMask = "alpinejs-mask", DependencyHTMX = "htmx"
+- **Dependency** — DependencyAlpineJS = "alpinejs", DependencyAlpineCollapse = "alpinejs-collapse", DependencyAlpineFocus = "alpinejs-focus", DependencyAlpineMask = "alpinejs-mask", DependencyHTMX = "htmx", DependencyHTMXAlpineCompat = "htmx-alpine-compat"
 - **OpenGraphType** — OpenGraphTypeWebsite = "website"
 - **TwitterCard** — TwitterCardSummary = "summary", TwitterCardSummaryLargeImage = "summary_large_image"
 
