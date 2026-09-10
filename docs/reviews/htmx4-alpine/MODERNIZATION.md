@@ -10,7 +10,7 @@ Modernization has three purposes: remove duplicate request/lifecycle owners, use
 
 ## Two equal worklists and reciprocal review
 
-Pair A owns tasks A01–A12 (inputs, forms, table requests). Pair B owns B01–B12 (overlays, lifecycle, site and shells). Each pair has two programmers with disjoint initial file ownership; each reviews the other's patch, challenges tests and fixes findings before integration. Four subagents are scheduled within the available three-worker concurrency limit. Each has an isolated worktree; the coordinator integrates reviewed commits, regenerates shared assets and runs combined gates.
+Pair A owns tasks A01–A12 (inputs, forms, table requests). Pair B owns B01–B12 (overlays, lifecycle, site and shells). Each pair has two programmers with disjoint initial file ownership; each reviews the other's patch, challenges tests and fixes findings before integration. Four subagents worked within the available three-worker concurrency limit. Each has an isolated worktree; the coordinator integrates reviewed commits, regenerates shared assets and runs combined gates.
 
 Within Pair A, programmer A1 drives A01–A06 and A2 drives A07–A12. Within Pair B, B1 drives B01–B06 and B2 drives B07–B12. Review tasks include verification work and do not require gratuitous production edits. Shared Combobox/form files are handed off explicitly; shared generated assets and dependency pins are finalized by the coordinator.
 
@@ -221,3 +221,52 @@ Every task requires a specific implementation or evidence-backed retained decisi
 - [htmx 4 release](https://four.htmx.org/announcements/2026-08-28-htmx-4.0.0-is-released), [tagged core](https://github.com/bigskysoftware/htmx/blob/v4.0.0/dist/htmx.js), [tagged compat](https://github.com/bigskysoftware/htmx/blob/v4.0.0/dist/ext/hx-alpine-compat.js), [tagged SSE](https://github.com/bigskysoftware/htmx/blob/v4.0.0/dist/ext/hx-sse.js).
 - [Alpine 3.17.2](https://github.com/alpinejs/alpine/releases/tag/v3.17.2), [modelable](https://github.com/alpinejs/alpine/blob/v3.17.2/packages/alpinejs/src/directives/x-modelable.js), [watch](https://github.com/alpinejs/alpine/blob/v3.17.2/packages/alpinejs/src/magics/%24watch.js), [Focus](https://alpinejs.dev/plugins/focus).
 - Archived [A1](01-alpine-inputs.md), [A1 probes](01-alpine-inputs-probes.md), [A2](02-alpine-overlays.md), [B1](03-htmx-components.md), [B2](04-htmx-lifecycle.md) preserve exact source anchors, coverage ledgers, reproduction recipes and original candidate confidence.
+## Final modernization decisions
+
+Both pairs completed their twelve-task halves and reviewed each other's implementation. The table below is the consolidated outcome; archived programmer notes are supporting evidence, not additional worklists.
+
+| Task | Final decision |
+|---|---|
+| A01 | **Implemented + tested retention.** Removed dead watcher teardown; retained explicit Select binding because native/normalized modelable changes empty/invalid parent semantics. |
+| A02 | **Implemented.** Client Combobox restores persistence once per Alpine mount and on persisted pageshow; fragment entry no longer misses restoration. |
+| A03 | **Implemented.** Server toggle/clear return one full-root outerMorph response; options-only search remains narrow. Real mutation tests preserve focused search/caret and cumulative selection. |
+| A04 | **Tested retention.** Select/Search/StructuredInput configuration changes require replacement; probes demonstrated stale options, cache and indexed defaults under morph. |
+| A05 | **Implemented.** Validation field identity is static escaped JSON hx-vals; removed indirect wrapper-name lookup. |
+| A06 | **Implemented.** Dependent validation renders a copied OOB config; shared FieldGroup state is never temporarily mutated, even on errors/cancellation. |
+| A07 | **Implemented.** Read/submission coordination uses scoped context tracking, native admission and readonly search locking; a minimal guard covers the pinned upstream queue bug. |
+| A08 | **Implemented.** Native sentinel intersection with explicit contained/page root, margin and retry button replaces observer registry and restart plumbing. |
+| A09 | **Implemented.** Named included filters replace imperative AJAX/global request listener; scoped normalization preserves empty/false/query precedence. |
+| A10 | **Implemented.** A stable per-table request owner coordinates filter/sort/pagination; exact-source cleanup avoids cancelling unrelated descendant work. |
+| A11 | **Implemented.** Form root attributes, Sync/Disable and validation policy support deliberate status and submission behavior; pre-disabled controls stay disabled. |
+| A12 | **Reviewed and verified.** Pair A closed indicator ownership, extra per_page, descendant cleanup and real mutation-focus findings. Native include parsing now preserves prior selections and dependencies. |
+| B01 | **Implemented.** One declarative selected-panel load owner; failures clear pending state and retry on reselection, including offscreen activation. |
+| B02 | **Implemented.** Navbar uses shared popover state/focus ownership; keyboard opening exposes correct expanded state. |
+| B03 | **Implemented.** ActionGroup has idempotent directive/htmx cleanup for observers, frames and pending font callbacks. |
+| B04 | **Implemented.** Shared disposable Toast provider waits for public x-show hide completion; scoped timers, idempotent dismiss and monotonic IDs handle bursts. |
+| B05 | **Implemented.** Generated server identities namespace implicit accordion roots/items; explicit caller IDs remain unchanged. |
+| B06 | **Implemented.** ScrollRegion uses processed-subtree enhancement and cleanup under htmx/Alpine removal; departed children are unobserved. |
+| B07 | **Implemented.** Removed historical manifest-role fallbacks while retaining declared loading order and real network fallback. |
+| B08 | **Implemented.** Active docs shell exclusively owns TOC/scroll; legacy layout remains supported and redundant OOB initialization is removed. |
+| B09 | **Implemented.** Removed no-op watch bookkeeping/deep option; Alpine markup owns ticker/log event listeners with original pause and insertion semantics. |
+| B10 | **Tested retention.** Rejected native drawer trap after rapid open/close left Tab blocked on a closed drawer. Restored existing trap and added a permanent regression. |
+| B11 | **Tested retention.** Changed Tabs/Carousel/Tooltip configuration requires replacement; retained transition-aware popover focus safeguards. |
+| B12 | **Reviewed and verified.** Retained SSE cancel-before-abort and processing of Alpine-created connectors; both pair programmers reviewed the final shell/lifecycle decisions. |
+
+### Defects found by implementation and reciprocal review
+
+The delayed-response regressions exposed an upstream htmx 4.0.0 queue lifecycle problem: `replace` starts request B after aborting A, then A's final continuation can clear B's active queue slot. A subsequent native abort can miss B. The new narrowly scoped request helper retains each actual request context and clears it only on that context's completion. Three-request, out-of-order, removal and mutation/submission regressions protect it. Remove the helper only after those tests pass without it against a corrected upstream version; keeping `hx-sync` alone does not cover the pinned bug.
+
+Other fixes emerged from real rendering and pair review: htmx extended-selector comma parsing selected the wrong scrolling root on a full docs page; native Combobox inclusion previously failed to include hidden selected values; false toggle values needed explicit serialization; request activity cannot be inferred from an indicator's CSS class; and descendant cleanup must not cancel its parent's independent request. The tests now exercise full-page geometry, repeated selection payloads and delayed responses rather than only attribute strings.
+
+The native drawer Focus prototype initially passed the ordinary full shell suite. Its reviewer then proved a rapid-toggle failure caused by pending trap activation: the closed, inert drawer still prevented Tab. That permanent regression failed with native trapping (0.640s) and passed with the restored implementation and visual matrix (45.362s). A new delay-based workaround would defeat the intended simplification, so the existing focus owner stays. Select modelable and broad component morph changes were likewise retained only after concrete semantic probes, not deferred without investigation.
+
+### Verification status
+
+Focused implementation suites and reciprocal-review reruns passed. Root unit tests, root/site lint, JS extraction policy, generated output and locked runtime integrity checks are green. Both site contracts pass: current-source integration covers 86 non-E2E packages and public-pinned deployability covers 85; both build the server. App-shells unit tests and lint pass, and its full browser suite passes all 10 top-level tests (113 including subtests, no failures or skips, 41.665s). The final uninterrupted Goshtoso browser run passed all 445 top-level tests (1,194 including subtests, zero failures or skips, 785.026s). Its executed test set exactly matches the full-suite inventory. Command: `GOFLAGS=-p=2 go test -json -tags=e2e,full ./site/tests/e2e/... -count=1 -timeout=25m`.
+
+
+The first full Goshtoso run exposed two integration regressions, both fixed: a source-provider test still expected removed watcher-disposer bookkeeping, and handcrafted landing/playground heads omitted the shared request provider/compatibility runtime. Landing pages now use the shared dependency builder, with a regression that delays bundle loading and verifies guarded table requests. The site validation contract also now checks preservation of caller-owned OOB configuration on both success and failure.
+
+Concurrent final checks exceeded available resources (killed Go linkers, crashed browser pages and failed WebGL context creation). Both module contracts then passed serially with `GOFLAGS=-p=2`; the complete browser suite then passed without concurrent builds or a second browser suite. These infrastructure failures are recorded separately from assertion failures.
+
+Published dependency chain: root library `5882ce53d277` (`v0.2.11-0.20260910212854-5882ce53d277`) → app-shells `cacbfabe8724` (`v0.1.9-0.20260910213838-cacbfabe8724`) → site pins both exact public versions. The root feature branch is `feat/htmx4-alpine`; app-shells is `feat/htmx4-events`. Neither module uses a replacement to conceal missing published APIs.
