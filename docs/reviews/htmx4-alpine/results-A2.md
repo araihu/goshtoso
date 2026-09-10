@@ -58,3 +58,11 @@ The full existing docs-page infinite-scroll append test caught a selector regres
 - Root Go lint: **0 issues**. Authored JavaScript lint: **no new inline findings** (19 existing baselined candidates); no extraction-policy waiver was added. Logs: `/tmp/modern-a2-lint-final.log`, `/tmp/modern-a2-jslint-final.log`.
 
 The first broad run's real-demo sentinel failure was fixed by the grouped selector and then verified in the successful combined run. No test was weakened to accept the unrelated-scroller behavior. The first native-sync probe's cancellation failures were fixed with the context guard and retained as regression coverage. Full repository and public-pinned integration gates remain the coordinator's final responsibility.
+
+### Integrated landing dependency correction
+
+The coordinator's full suite found that `/playground/theme` still declared only htmx and Alpine manually, without the component bundle. Its lazy table therefore invoked an undefined request helper. The homepage separately omitted Alpine compatibility from its manual chain. Both standalone documents now use the same manifest-backed `head.DependenciesMinimal(head.WithLocalRuntime())` contract as library consumers. Their rendered controls do not require focus/collapse/mask plugins.
+
+`TestLandingPlaygroundWaitsForComponentRuntime` holds the actual page's component bundle download, lets the document finish parsing, and asserts that no table request runs early. Releasing the bundle then allows guarded lazy loading and sorting without console/page errors. This fixes the missing dependency rather than silently skipping synchronization. It changes only site code; it needs no new library runtime version.
+
+Validation: `TestLanding|TestModern|TestHead` passed **32.839s**, and head/start-page units passed. Logs: `/tmp/modern-a2-landingfix.log`, `/tmp/modern-a2-landingunit.log`.
