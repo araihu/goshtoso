@@ -166,7 +166,7 @@ func TestAppShellHTMXPagesDocumentFragmentResponseContract(t *testing.T) {
 			page: appShellsComponentDocsShellContent,
 			want: []string{
 				`Full documents and HTMX fragments`,
-				`request.Header.Get("HX-Request") == "true"`,
+				`request.Header.Get("HX-Request-Type") == "partial"`,
 				`componentdocshell.Fragment(cfg, page)`,
 				`main content, scoped sidebar, and family navigation`,
 			},
@@ -176,7 +176,7 @@ func TestAppShellHTMXPagesDocumentFragmentResponseContract(t *testing.T) {
 			page: appShellsConsoleShellContent,
 			want: []string{
 				`Full documents and HTMX fragments`,
-				`request.Header.Get("HX-Request") == "true"`,
+				`request.Header.Get("HX-Request-Type") == "partial"`,
 				`consoleshell.Fragment(cfg, page)`,
 				`NavigationOOB`,
 			},

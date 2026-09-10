@@ -62,7 +62,7 @@ func (s *Server) renderChatPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := chatpage.ChatApp(me)
 	meta := demoregistry.MetaForKey("examples/chat")
-	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
+	if r.Header.Get("HX-Request-Type") == "partial" {
 		_ = demo.ComponentDocsFragment(meta, "chat", content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}
@@ -100,8 +100,8 @@ func (s *Server) handleChatRename(w http.ResponseWriter, r *http.Request) {
 	_ = chatpage.RenameResult(me).Render(r.Context(), w)
 }
 
-// wsFrame is the JSON htmx's ws extension sends on ws-send: the composer's form
-// fields plus a HEADERS object we ignore.
+// wsFrame is the JSON htmx's ws extension sends on hx-ws:send: the composer's form
+// fields plus a headers object we ignore.
 type wsFrame struct {
 	Message string `json:"message"`
 	Nick    string `json:"nick"`

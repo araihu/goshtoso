@@ -18,7 +18,7 @@ func (s *Server) registerTickerRoutes() {
 }
 
 // handleTickerStream is the SSE endpoint. It subscribes to the shared broker and
-// emits one named event per symbol (event name = ticker) on each tick, until the
+// emits HTML partial updates for each symbol on each tick, until the
 // client disconnects.
 func (s *Server) handleTickerStream(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/event-stream")
@@ -67,20 +67,22 @@ func (s *Server) handleTickerRows(w http.ResponseWriter, r *http.Request) {
 }
 
 // writeTickerSnapshot renders each symbol's price fragment and emits it as a
-// named SSE event, then flushes.
+// unnamed SSE event containing explicit partials, then flushes.
 func writeTickerSnapshot(r *http.Request, w http.ResponseWriter, rc *http.ResponseController, snap ticker.Snapshot) {
 	for _, sym := range snap.Symbols {
 		var buf bytes.Buffer
 		_ = tickerpage.TickerCellInner(sym).Render(r.Context(), &buf)
-		writeSSEEvent(w, sym.Ticker, buf.String())
+		writeSSEEvent(w, "", fmt.Sprintf(`<hx-partial hx-target="#ticker-card-%s">%s</hx-partial><hx-partial hx-target="#ticker-cell-%s">%s</hx-partial>`, sym.Ticker, buf.String(), sym.Ticker, buf.String()))
 	}
 	_ = rc.Flush()
 }
 
-// writeSSEEvent writes a single named SSE event. Multi-line HTML is split into
+// writeSSEEvent writes an SSE event, optionally named. Multi-line HTML is split into
 // multiple data: lines per the SSE spec.
 func writeSSEEvent(w http.ResponseWriter, event, data string) {
-	_, _ = fmt.Fprintf(w, "event: %s\n", event)
+	if event != "" {
+		_, _ = fmt.Fprintf(w, "event: %s\n", event)
+	}
 	for line := range strings.SplitSeq(data, "\n") {
 		_, _ = fmt.Fprintf(w, "data: %s\n", line)
 	}

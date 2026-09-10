@@ -1,5 +1,22 @@
 // demo-layout.js — Alpine providers plus HTMX navigation and TOC lifecycle.
 (function () {
+  // hx-sse 4.0.0 aborts before cancelling its reader, which rejects the
+  // extension's unobserved cancel() promise. Close the reader first. This uses
+  // the connection exposed by the SSE event and keeps upstream assets intact.
+  document.addEventListener("htmx:sse:after:connection", function (event) {
+    var connection = event.detail.connection;
+    var controller = connection.abortController;
+    var abort = controller.abort.bind(controller);
+    controller.abort = function () {
+      if (connection.reader) {
+        connection.reader.cancel().catch(function (error) {
+          if (error.name !== "AbortError") console.error(error);
+        });
+      }
+      abort();
+    };
+  });
+
   function storageAllowed() {
     return !window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed();
   }
@@ -86,8 +103,7 @@
   }
 
   function handleAfterSwap(event) {
-    var target = event && event.detail && event.detail.target;
-    if (target && window.Alpine && Alpine.initTree) Alpine.initTree(target);
+    var target = event && event.detail && event.detail.ctx && event.detail.ctx.target;
     if (!target || target.id !== "main-content") return;
 
     var sidebarContent = document.getElementById("sidebar-nav-content");
@@ -196,15 +212,15 @@
   function teardownRuntime(event) {
     if (event && event.persisted) return;
     disconnectTOC();
-    document.removeEventListener("htmx:pushedIntoHistory", updateNavPath);
-    document.removeEventListener("htmx:beforeSwap", rememberSidebarScroll);
-    document.removeEventListener("htmx:afterSwap", handleAfterSwap);
+    document.removeEventListener("htmx:after:history:push", updateNavPath);
+    document.removeEventListener("htmx:before:swap", rememberSidebarScroll);
+    document.removeEventListener("htmx:after:swap", handleAfterSwap);
   }
 
   window.buildTOC = buildTOC;
-  document.addEventListener("htmx:pushedIntoHistory", updateNavPath);
-  document.addEventListener("htmx:beforeSwap", rememberSidebarScroll);
-  document.addEventListener("htmx:afterSwap", handleAfterSwap);
+  document.addEventListener("htmx:after:history:push", updateNavPath);
+  document.addEventListener("htmx:before:swap", rememberSidebarScroll);
+  document.addEventListener("htmx:after:swap", handleAfterSwap);
   window.addEventListener("pagehide", teardownRuntime, { once: true });
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", buildTOC, { once: true });

@@ -177,18 +177,11 @@ templ ExpenseList(s expense.State, oob bool) {
 	</div>
 }
 
-// ExpenseAddForm is the "add an expense" form. It posts to /add and swaps the
-// inner HTML of its ancestor #expense-add-region. Preservation is htmx-native via
-// hx-preserve: on a rejected add the handler re-renders this form WITH preserve
-// (so htmx keeps the existing form element — values, caret, and focus intact);
-// on success it re-renders WITHOUT preserve, so the live form is replaced by this
-// blank one. The list/total update out-of-band on the add path.
-templ ExpenseAddForm(preserve bool) {
+// ExpenseAddForm renders a fresh form after a successful add. Rejected adds
+// return OOB updates only, leaving the user's input and focus intact.
+templ ExpenseAddForm() {
 	<form
 		id="expense-add-form"
-		if preserve {
-			hx-preserve="true"
-		}
 		class="flex flex-col gap-3"
 		hx-post="/api/examples/expense/add"
 		hx-target="#expense-add-region"
@@ -249,14 +242,14 @@ templ ExpenseApp(s expense.State) {
 					@SummaryBadge(s, false)
 				</div>
 				<div id="expense-add-region">
-					@ExpenseAddForm(false)
+					@ExpenseAddForm()
 				</div>
 				<form
 					class="flex flex-col gap-3 border-t border-outline pt-3 dark:border-outline-dark"
 					hx-post="/api/examples/expense/filter"
 					hx-target="#expense-list"
 					hx-swap="outerHTML"
-					hx-trigger="input changed delay:300ms, change"
+					hx-trigger="input delay:300ms, change"
 				>
 					@textinput.TextInput(textinput.Config{Name: "search", Label: "Search", Placeholder: "Filter by description…", Value: s.Search})
 					<div class="flex flex-wrap gap-2">

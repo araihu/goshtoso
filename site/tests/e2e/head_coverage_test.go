@@ -76,6 +76,7 @@ func dependencyFallbackFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
 		head.WithDependencyCDNURL(head.DependencyAlpineMask, broken("alpine-mask")),
 		head.WithDependencyCDNURL(head.DependencyAlpineJS, broken("alpine")),
 		head.WithDependencyCDNURL(head.DependencyHTMX, broken("htmx")),
+		head.WithDependencyCDNURL(head.DependencyHTMXAlpineCompat, broken("htmx-alpine-compat")),
 	).Render(ctx, &dependencyHead))
 
 	var failedRequests atomic.Int32
@@ -392,13 +393,13 @@ window.addEventListener("goshtoso:dependency-fallback", event => {
 
 	_, err = page.Evaluate(`async () => await window.goshtosoDependencies.ready`, nil)
 	require.NoError(t, err)
-	require.Equal(t, int32(5), failedRequests.Load(), "every third-party CDN primary should be attempted")
+	require.Equal(t, int32(6), failedRequests.Load(), "every third-party CDN primary should be attempted")
 
 	sourcesValue, err := page.Evaluate(`() => window.goshtosoDependencies.sources`, nil)
 	require.NoError(t, err)
 	sources, ok := sourcesValue.(map[string]any)
 	require.True(t, ok, "dependency source ledger should be an object: %#v", sourcesValue)
-	for _, name := range []string{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx"} {
+	for _, name := range []string{"alpine-collapse", "alpine-focus", "alpine-mask", "htmx", "htmx-alpine-compat", "alpine"} {
 		assert.Equal(t, "fallback", sources[name], "%s should use its local fallback", name)
 	}
 	assert.Equal(t, "primary", sources["first-party"], "the local first-party bundle should load without a fallback")
@@ -434,7 +435,7 @@ window.addEventListener("goshtoso:dependency-fallback", event => {
 
 	fallbacks, err := page.Evaluate(`() => window.__goshtosoFallbacks`, nil)
 	require.NoError(t, err)
-	assert.Equal(t, []any{"alpine-collapse", "alpine-focus", "alpine-mask", "alpine", "htmx"}, fallbacks)
+	assert.Equal(t, []any{"alpine-collapse", "alpine-focus", "alpine-mask", "htmx", "htmx-alpine-compat", "alpine"}, fallbacks)
 	assert.Empty(t, pageErrors, "fallback must not cause uncaught JavaScript errors")
 }
 
@@ -456,14 +457,14 @@ func TestDependenciesCustomManifestBootsExtensionsInDeclaredOrderWithFallback(t 
 
 	orderValue, err := page.Evaluate(`() => Array.from(document.querySelectorAll("script[data-goshtoso-dependency]"), script => script.dataset.goshtosoDependency)`, nil)
 	require.NoError(t, err)
-	assert.Equal(t, []any{"alpine-collapse", "alpine-focus", "alpine-mask", "first-party", "dark-mode", "alpine", "htmx", "htmx-ext-sse", "htmx-ext-ws"}, orderValue)
+	assert.Equal(t, []any{"alpine-collapse", "alpine-focus", "alpine-mask", "first-party", "dark-mode", "htmx", "htmx-alpine-compat", "alpine", "htmx-ext-sse", "htmx-ext-ws"}, orderValue)
 
 	sourcesValue, err := page.Evaluate(`() => window.goshtosoDependencies.sources`, nil)
 	require.NoError(t, err)
 	sources, ok := sourcesValue.(map[string]any)
 	require.True(t, ok, "custom dependency source ledger should be an object: %#v", sourcesValue)
 	assert.Equal(t, "fallback", sources["htmx-ext-sse"])
-	for _, role := range []string{"dark-mode", "alpine", "htmx", "htmx-ext-ws"} {
+	for _, role := range []string{"dark-mode", "htmx", "htmx-alpine-compat", "alpine", "htmx-ext-ws"} {
 		assert.Equal(t, "primary", sources[role], "%s should load from its controlled primary", role)
 	}
 
@@ -471,8 +472,8 @@ func TestDependenciesCustomManifestBootsExtensionsInDeclaredOrderWithFallback(t 
 typeof Alpine !== "undefined" &&
 Alpine.store("darkMode") !== undefined &&
 typeof htmx !== "undefined" &&
-typeof htmx.createEventSource === "function" &&
-typeof htmx.createWebSocket === "function" &&
+window.goshtosoDependencies.loaded["htmx-ext-sse"] === true &&
+window.goshtosoDependencies.loaded["htmx-ext-ws"] === true &&
 document.querySelector("#alpine-ready").textContent === "true"`, nil)
 	require.NoError(t, err)
 	assert.Empty(t, pageErrors, "custom ordered runtime must boot without uncaught JavaScript errors")

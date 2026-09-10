@@ -3,7 +3,6 @@
 package e2e
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/a-h/templ"
@@ -208,8 +207,6 @@ func verifySidebarOverlayMobileTargetAcrossAcceptanceThemes(t *testing.T) {
 		}
 	})
 
-	_, err := page.Goto(baseURL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateLoad})
-	require.NoError(t, err)
 	html := renderInteractiveDocument(
 		t,
 		head.Dependencies(head.WithLocalRuntime()),
@@ -238,10 +235,16 @@ func verifySidebarOverlayMobileTargetAcrossAcceptanceThemes(t *testing.T) {
 			}))+
 			`</div></main>`),
 	)
-	// SetContent injects a complete document without parser-deferred ordering.
-	// Keep this synthetic fixture in production script order before Alpine scans.
-	html = strings.ReplaceAll(html, "<script defer ", "<script ")
-	require.NoError(t, page.SetContent(html, playwright.PageSetContentOptions{WaitUntil: playwright.WaitUntilStateLoad}))
+	// Navigate directly to the fixture so it gets normal parser/defer semantics
+	// and does not inherit outstanding requests from the landing page.
+	fixtureURL := baseURL + "/__e2e/sidebar-target"
+	require.NoError(t, page.Route(fixtureURL, func(route playwright.Route) {
+		if err := route.Fulfill(playwright.RouteFulfillOptions{ContentType: playwright.String("text/html"), Body: html}); err != nil {
+			t.Errorf("serve sidebar fixture: %v", err)
+		}
+	}))
+	_, err := page.Goto(fixtureURL, playwright.PageGotoOptions{WaitUntil: playwright.WaitUntilStateLoad})
+	require.NoError(t, err)
 	require.NoError(t, waitForAlpine(page))
 	require.NoError(t, page.SetViewportSize(390, 844))
 

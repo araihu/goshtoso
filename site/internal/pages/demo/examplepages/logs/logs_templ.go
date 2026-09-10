@@ -82,7 +82,7 @@ func LogRow(line logs.LogLine) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(line.Time.Format("15:04:05"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/logs/logs.templ`, Line: 34, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/logs/logs.templ`, Line: 36, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -108,7 +108,7 @@ func LogRow(line logs.LogLine) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(line.Source)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/logs/logs.templ`, Line: 44, Col: 106}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/logs/logs.templ`, Line: 46, Col: 106}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -121,7 +121,7 @@ func LogRow(line logs.LogLine) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(line.Message)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/logs/logs.templ`, Line: 45, Col: 96}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/logs/logs.templ`, Line: 47, Col: 96}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -195,7 +195,7 @@ func LogsApp() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"logs-fragment\" x-data=\"logFeed\" x-on:htmx:sse-open=\"connected = true\" x-on:htmx:sse-error=\"connected = false\" class=\"mx-auto max-w-3xl\"><header class=\"mb-6\"><h1 class=\"text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Live Log Feed</h1><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">A streaming log viewer built from Goshtoso components. The server pushes synthetic log lines over Server-Sent Events; htmx appends each rendered row while Alpine owns filtering, auto-scroll, pause, and connection status. No state is stored — the only state is the live connection, which closes when you pause or leave.</p></header><div class=\"rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><!-- Control bar (OUTSIDE #log-feed so it survives every swap) --><div class=\"flex flex-wrap items-end gap-3\"><div class=\"w-40\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div id=\"logs-fragment\" x-data=\"logFeed\" x-on:htmx:sse:after:connection=\"connected = true\" x-on:htmx:sse:error=\"connected = false\" class=\"mx-auto max-w-3xl\"><header class=\"mb-6\"><h1 class=\"text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Live Log Feed</h1><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">A streaming log viewer built from Goshtoso components. The server pushes synthetic log lines over Server-Sent Events; htmx appends each rendered row while Alpine owns filtering, auto-scroll, pause, and connection status. No state is stored — the only state is the live connection, which closes when you pause or leave.</p></header><div class=\"rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><!-- Control bar (OUTSIDE #log-feed so it survives every swap) --><div class=\"flex flex-wrap items-end gap-3\"><div class=\"w-40\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -266,7 +266,7 @@ func LogsApp() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div><!-- Persistent feed + filter wrapper --><div x-ref=\"feedWrap\" class=\"flt-all rounded-radius border border-outline dark:border-outline-dark\"><div id=\"log-feed\" class=\"h-80 overflow-y-auto\"></div></div><!-- SSE connector: removed on pause (closes EventSource), targets the persistent feed --><template x-if=\"!paused\"><div hx-ext=\"sse\" sse-connect=\"/api/examples/logs/stream\"><div sse-swap=\"message\" hx-target=\"#log-feed\" hx-swap=\"beforeend\" hidden></div></div></template></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></div><!-- Persistent feed + filter wrapper --><div x-ref=\"feedWrap\" class=\"flt-all rounded-radius border border-outline dark:border-outline-dark\"><div id=\"log-feed\" class=\"h-80 overflow-y-auto\"></div></div><!-- SSE connector: removed on pause (closes EventSource), targets the persistent feed --><template x-if=\"!paused\"><div data-log-connector x-init=\"connect($el)\" hx-sse:connect=\"/api/examples/logs/stream\" hx-target=\"#log-feed\" hx-swap=\"beforeend\" hidden></div></template></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

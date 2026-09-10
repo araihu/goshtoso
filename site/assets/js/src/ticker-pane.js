@@ -22,17 +22,17 @@
           this._onError = function () {
             component.connected = false;
           };
-          element.addEventListener("htmx:sseBeforeMessage", this._beforeMessage);
-          element.addEventListener("htmx:sseError", this._onError);
+          element.addEventListener("htmx:sse:before:message", this._beforeMessage);
+          element.addEventListener("htmx:sse:error", this._onError);
         },
         disconnect: function () {
           this.connected = false;
           if (!this._sseElement) return;
           if (this._beforeMessage) {
-            this._sseElement.removeEventListener("htmx:sseBeforeMessage", this._beforeMessage);
+            this._sseElement.removeEventListener("htmx:sse:before:message", this._beforeMessage);
           }
           if (this._onError) {
-            this._sseElement.removeEventListener("htmx:sseError", this._onError);
+            this._sseElement.removeEventListener("htmx:sse:error", this._onError);
           }
           this._sseElement = null;
           this._beforeMessage = null;

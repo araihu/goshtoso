@@ -12,15 +12,16 @@ type siteRuntimeScript struct {
 }
 
 var siteEnabledRuntimeRoles = map[assets.RuntimeAssetRole]bool{
-	assets.RuntimeAssetRole("alpine-collapse"): true,
-	assets.RuntimeAssetRole("alpine-focus"):    true,
-	assets.RuntimeAssetRole("alpine-mask"):     true,
-	assets.RuntimeAssetRole("first-party"):     true,
-	assets.RuntimeAssetRole("dark-mode"):       true,
-	assets.RuntimeAssetRole("alpine"):          true,
-	assets.RuntimeAssetRole("htmx"):            true,
-	assets.RuntimeAssetRole("htmx-ext-sse"):    true,
-	assets.RuntimeAssetRole("htmx-ext-ws"):     true,
+	assets.RuntimeAssetRole("alpine-collapse"):    true,
+	assets.RuntimeAssetRole("alpine-focus"):       true,
+	assets.RuntimeAssetRole("alpine-mask"):        true,
+	assets.RuntimeAssetRole("first-party"):        true,
+	assets.RuntimeAssetRole("dark-mode"):          true,
+	assets.RuntimeAssetRole("alpine"):             true,
+	assets.RuntimeAssetRole("htmx-alpine-compat"): true,
+	assets.RuntimeAssetRole("htmx"):               true,
+	assets.RuntimeAssetRole("htmx-ext-sse"):       true,
+	assets.RuntimeAssetRole("htmx-ext-ws"):        true,
 }
 
 // siteRuntimeScripts derives execution order and local URLs from the Goshtoso

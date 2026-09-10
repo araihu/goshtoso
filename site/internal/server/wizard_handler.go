@@ -35,7 +35,7 @@ func (s *Server) renderWizardPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := wizardpage.WizardApp(st, nil)
 	meta := demoregistry.MetaForKey("examples/wizard")
-	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
+	if r.Header.Get("HX-Request-Type") == "partial" {
 		_ = demo.ComponentDocsFragment(meta, "wizard", content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}

@@ -44,7 +44,7 @@
       }, { once: true });
     }
     window.addEventListener("load", reportHeight, { once: true });
-    document.addEventListener("htmx:afterSettle", reportHeight);
+    document.addEventListener("htmx:after:settle", reportHeight);
   }
 
   if (document.readyState === "loading") {

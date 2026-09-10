@@ -47,7 +47,7 @@ func TestDemoAssetHandlersUseSharedCachePolicy(t *testing.T) {
 		path string
 		want string
 	}{
-		{name: "versioned Goshtoso runtime", path: "/assets/js/runtime/alpinejs/3.14.9/alpine.min.js", want: libraryassets.ImmutableCacheControl},
+		{name: "versioned Goshtoso runtime", path: libraryassets.AlpineJSURL, want: libraryassets.ImmutableCacheControl},
 		{name: "versioned charts runtime", path: chartassets.RuntimeURL, want: libraryassets.ImmutableCacheControl},
 		{name: "versioned charts control", path: chartassets.ControlRuntimeURL, want: libraryassets.ImmutableCacheControl},
 		{name: "compiled CSS alias", path: "/assets/styles.css", want: libraryassets.RevalidateCacheControl},
@@ -98,7 +98,7 @@ func TestConsumerLocalHeroiconsSpriteIsServedByTheDemo(t *testing.T) {
 func TestPackageAndDemoHandlersReturnIdenticalCachePolicy(t *testing.T) {
 	server := newAssetTestServer(t)
 	for _, path := range []string{
-		"/assets/js/runtime/alpinejs/3.14.9/alpine.min.js",
+		libraryassets.AlpineJSURL,
 		"/assets/styles.css",
 		"/assets/js/goshtoso.min.js",
 		"/assets/icons/heroicons.svg",

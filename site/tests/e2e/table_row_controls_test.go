@@ -37,7 +37,7 @@ func TestTableLinkedRowNestedControls(t *testing.T) {
 				require.NoError(t, err)
 				setThemeMode(t, page, theme.name, theme.dark)
 				// Count HTMX row requests before cancelling them, keeping the fixture in place.
-				_, err = page.Evaluate(`() => {window.rowRequests=0;document.addEventListener('htmx:beforeRequest',e=>{if(e.detail.elt.hasAttribute('data-table-row-link')){window.rowRequests++;e.preventDefault();}});}`)
+				_, err = page.Evaluate(`() => {window.rowRequests=0;document.addEventListener('htmx:before:request',e=>{if(e.detail.ctx.sourceElement.hasAttribute('data-table-row-link')){window.rowRequests++;e.preventDefault();}});}`)
 				require.NoError(t, err)
 				require.NoError(t, page.Locator("label[for=pin]").Click())
 				checked, err := page.Locator("#pin").IsChecked()

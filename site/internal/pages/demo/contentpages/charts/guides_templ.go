@@ -104,7 +104,7 @@ func chartModesContent() templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(row.Capability)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 48, Col: 146}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 46, Col: 146}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +117,7 @@ func chartModesContent() templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(row.Static)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 48, Col: 251}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 46, Col: 251}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -130,7 +130,7 @@ func chartModesContent() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(row.Interactive)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 48, Col: 361}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 46, Col: 361}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -270,7 +270,7 @@ func chartControlsContent(examples ChartControlExamples) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div><p class=\"max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The equivalent public helper is <code class=\"font-mono\">window.__goshtosoChartsControls.setWrapperMode(wrapper, mode, focusReturn)</code>. For compatibility it accepts both the empty Go zero value and <code class=\"font-mono\">\"enabled\"</code>, but DOM state and change-event details always use the canonical value <code class=\"font-mono\">\"enabled\"</code>. The helper returns false when the wrapper is missing or the requested mode is omitted or unknown; otherwise it returns true. After applying a changed state, the wrapper emits <code class=\"font-mono\">goshtoso-charts:wrapper-mode-change</code> with exact detail <code class=\"font-mono\">&#123; previousMode, mode &#125;</code>. Listen on the wrapper or an ancestor; the event bubbles. Directly editing mode, <code class=\"font-mono\">hidden</code>, <code class=\"font-mono\">inert</code>, or fieldset attributes bypasses lifecycle guarantees.</p></section><section class=\"space-y-4\"><h2 id=\"htmx-swaps\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">HTMX swaps</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">Let the server return the desired initial mode when HTMX replaces a chart. The runtime observes <code class=\"font-mono\">htmx:load</code> and <code class=\"font-mono\">htmx:afterSwap</code>, and a <code class=\"font-mono\">MutationObserver</code> covers other DOM insertion and removal. Preparation is idempotent: newly swapped wrappers rehydrate from their rendered mode without application re-init code. This also handles full wrapper replacement, including enabled-to-omitted and omitted-to-non-omitted transitions. An omitted chart itself has no wrapper to receive a client event.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div><p class=\"max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The equivalent public helper is <code class=\"font-mono\">window.__goshtosoChartsControls.setWrapperMode(wrapper, mode, focusReturn)</code>. For compatibility it accepts both the empty Go zero value and <code class=\"font-mono\">\"enabled\"</code>, but DOM state and change-event details always use the canonical value <code class=\"font-mono\">\"enabled\"</code>. The helper returns false when the wrapper is missing or the requested mode is omitted or unknown; otherwise it returns true. After applying a changed state, the wrapper emits <code class=\"font-mono\">goshtoso-charts:wrapper-mode-change</code> with exact detail <code class=\"font-mono\">&#123; previousMode, mode &#125;</code>. Listen on the wrapper or an ancestor; the event bubbles. Directly editing mode, <code class=\"font-mono\">hidden</code>, <code class=\"font-mono\">inert</code>, or fieldset attributes bypasses lifecycle guarantees.</p></section><section class=\"space-y-4\"><h2 id=\"htmx-swaps\" data-toc-heading class=\"scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">HTMX swaps</h2><p class=\"max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted\">Let the server return the desired initial mode when HTMX replaces a chart. The runtime observes <code class=\"font-mono\">htmx:after:init</code> and <code class=\"font-mono\">htmx:after:swap</code>, and a <code class=\"font-mono\">MutationObserver</code> covers other DOM insertion and removal. Preparation is idempotent: newly swapped wrappers rehydrate from their rendered mode without application re-init code. This also handles full wrapper replacement, including enabled-to-omitted and omitted-to-non-omitted transitions. An omitted chart itself has no wrapper to receive a client event.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -398,7 +398,7 @@ func controlFact(title string, text string) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 220, Col: 234}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 206, Col: 234}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -411,7 +411,7 @@ func controlFact(title string, text string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 220, Col: 325}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 206, Col: 325}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -466,7 +466,7 @@ func guideAPIReferences(packageNames []string) templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(packageName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 230, Col: 18}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/charts/guides.templ`, Line: 216, Col: 18}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {

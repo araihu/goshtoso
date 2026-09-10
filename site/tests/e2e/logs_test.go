@@ -64,21 +64,16 @@ func TestLogFeed_AutoScrollFollowsStream(t *testing.T) {
 	require.NoError(t, err)
 	waitForRows(t, page)
 
+	// The provider scrolls in requestAnimationFrame after each swap. Wait for
+	// that visible result, not just insertion of the rows before the frame runs.
 	_, err = page.WaitForFunction(
 		`() => {
 			const feed = document.getElementById('log-feed');
-			return feed && feed.children.length >= 4 && feed.scrollHeight > feed.clientHeight;
+			return feed && feed.children.length >= 4 && feed.scrollHeight > feed.clientHeight &&
+				(feed.scrollHeight - feed.clientHeight - feed.scrollTop) <= 2;
 		}`,
 		nil)
-	require.NoError(t, err)
-
-	atBottom, err := page.Evaluate(
-		`() => {
-			const feed = document.getElementById('log-feed');
-			return (feed.scrollHeight - feed.clientHeight - feed.scrollTop) <= 2;
-		}`)
-	require.NoError(t, err)
-	require.Equal(t, true, atBottom, "auto-scroll should keep the log feed pinned to the newest rows")
+	require.NoError(t, err, "auto-scroll should keep the log feed pinned to the newest rows")
 }
 
 // TestLogFeed_FragmentNavNoErrors lands elsewhere, navigates to the feed via the
@@ -120,7 +115,7 @@ func TestLogFeed_PauseStopsAndResumes(t *testing.T) {
 	// Paused: Alpine flag set AND the SSE connector removed (stream closed) — no
 	// more rows can arrive, asserted without any wall-clock wait.
 	_, err := page.WaitForFunction(
-		"() => { const d = Alpine.$data(document.getElementById('logs-fragment')); return d && d.paused === true && !document.querySelector('#logs-fragment [sse-connect]'); }",
+		"() => { const d = Alpine.$data(document.getElementById('logs-fragment')); return d && d.paused === true && !document.querySelector('#logs-fragment [data-log-connector]'); }",
 		nil)
 	require.NoError(t, err)
 
@@ -164,7 +159,7 @@ func TestLogFeed_ClearEmptiesFeed(t *testing.T) {
 	pause := page.Locator("#logs-fragment button").Filter(playwright.LocatorFilterOptions{HasText: "Pause"})
 	require.NoError(t, pause.Click())
 	_, err := page.WaitForFunction(
-		"() => { const d = Alpine.$data(document.getElementById('logs-fragment')); return d && d.paused === true && !document.querySelector('#logs-fragment [sse-connect]'); }",
+		"() => { const d = Alpine.$data(document.getElementById('logs-fragment')); return d && d.paused === true && !document.querySelector('#logs-fragment [data-log-connector]'); }",
 		nil)
 	require.NoError(t, err)
 
@@ -175,7 +170,7 @@ func TestLogFeed_ClearEmptiesFeed(t *testing.T) {
 }
 
 // TestLogFeed_SidebarScrollPreservedDuringStream guards a layout regression: the
-// global htmx:afterSwap sidebar-scroll restore used to fire on EVERY htmx swap,
+// global htmx:after:swap sidebar-scroll restore used to fire on EVERY htmx swap,
 // so each SSE log append snapped the nav sidebar back to the top. The restore is
 // now gated to #main-content (page-nav) swaps only; an in-page feed swap must
 // leave the nav scroll position alone.
@@ -217,8 +212,8 @@ func TestLogFeed_SidebarScrollPreservedDuringStream(t *testing.T) {
 }
 
 // TestLogFeed_StatusReachesConnected guards against the connection-status sticking
-// on "Connecting": the htmx:sseOpen listener must sit on an ancestor of the
-// sse-connect connector so the bubbled event flips `connected` to true once the
+// on "Connecting": the htmx:sse:after:connection listener must sit on an ancestor of the
+// hx-sse:connect connector so the bubbled event flips `connected` to true once the
 // stream opens (rows can stream while connected stays false if the listener is on
 // a sibling element, never receiving the event).
 func TestLogFeed_StatusReachesConnected(t *testing.T) {

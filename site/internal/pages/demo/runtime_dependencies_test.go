@@ -14,11 +14,11 @@ func TestSiteRuntimeScriptsFollowLinkedManifestOrderWithExplicitOverrides(t *tes
 	for _, script := range got {
 		roles = append(roles, script.Role)
 	}
-	want := []assets.RuntimeAssetRole{"alpine-collapse", "alpine-focus", "alpine-mask", "first-party", "dark-mode", "site-demo", "alpine", "htmx", "htmx-ext-sse", "htmx-ext-ws"}
+	want := []assets.RuntimeAssetRole{"alpine-collapse", "alpine-focus", "alpine-mask", "first-party", "dark-mode", "htmx", "htmx-alpine-compat", "site-demo", "alpine", "htmx-ext-sse", "htmx-ext-ws"}
 	if !reflect.DeepEqual(roles, want) {
 		t.Fatalf("runtime roles = %v, want %v", roles, want)
 	}
-	if got[5].URL != siteassets.DemoBundleURL || got[7].Defer {
+	if got[7].URL != siteassets.DemoBundleURL || got[5].Defer {
 		t.Fatalf("site override semantics = %#v", got)
 	}
 	if siteRuntimeStylesheetURL() != assets.DefaultRuntimeManifest().Stylesheet.LocalURL {

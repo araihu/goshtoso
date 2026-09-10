@@ -53,7 +53,7 @@ func (s *Server) renderExpensePage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := expensepage.ExpenseApp(st)
 	meta := demoregistry.MetaForKey("examples/expense")
-	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
+	if r.Header.Get("HX-Request-Type") == "partial" {
 		_ = demo.ComponentDocsFragment(meta, "expense", content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}
@@ -71,11 +71,11 @@ func (s *Server) handleExpenseAdd(w http.ResponseWriter, r *http.Request) {
 	persistExpense(r, w, st)
 	added := st.Seq != seqBefore
 	writeHTML(w)
-	// The add form is the main swap target (#expense-add-region innerHTML); the
-	// list and total ride along out-of-band. On a rejected add we render the form
-	// WITH hx-preserve so htmx keeps the live form (values + focus); on success we
-	// render it WITHOUT preserve, replacing it with a blank form.
-	_ = expensepage.ExpenseAddForm(!added).Render(r.Context(), w)
+	// Only successful adds replace the form. An OOB-only rejection response
+	// preserves the existing form values under htmx 4's empty-swap behavior.
+	if added {
+		_ = expensepage.ExpenseAddForm().Render(r.Context(), w)
+	}
 	_ = expensepage.ExpenseList(st, true).Render(r.Context(), w)
 	_ = expensepage.SummaryBadge(st, true).Render(r.Context(), w)
 	switch {

@@ -63,32 +63,35 @@ observation is not a confirmed upstream defect report.
 - Root, site and app-shells unit suites pass; root and site Go lint report zero
   issues. Vendored integrity, runtime generation, JavaScript checks and both
   updated skill validators pass.
-- All 426 top-level browser tests were exercised in two complete-suite
-  partitions. Two fixture races failed initially: log auto-scroll asserted
-  before its animation frame, and a sidebar fixture replaced the landing
-  document while a lazy request was outstanding. Both fixtures were corrected
-  and passed 10 consecutive reruns. One conditional pagination subtest skips
-  when its selected fixture has no next-page control; dedicated sorting and
-  pagination tests pass.
+- One uninterrupted full browser run passes all 426 top-level tests (1,167
+  including subtests), with zero failures and zero skips, in 12m55s. The
+  pagination test now uses the actual next-page link and asserts page 2 loads.
+  The auto-scroll test waits for the animation-frame result, and the sidebar
+  fixture loads as its own document instead of replacing a busy landing page.
+- App-shells' complete browser suite passes all 9 top-level tests (112 including
+  subtests), with zero failures and zero skips, against the pinned public root
+  module with `GOWORK=off`.
 - Added browser regressions cover Alpine morph identity/state, replacement
   initialization/cleanup, secondary-partial enhancement, and SSE teardown.
   App-shells browser checks cover console and component-docs history/focus,
   plus drawer behavior in light/dark and Goshtoso/Minimal themes.
-- Current-source site integration passes. Standalone pinned-dependency
-  deployability fails until the coordinated releases below provide the new
-  runtime API and shell lifecycle through public module versions.
+- Current-source integration and standalone pinned-dependency deployability
+  both pass. A standalone browser smoke run also passes with `GOWORK=off`.
 
-## Coordinated release
+## Coordinated dependency pins
 
-The migration spans Goshtoso and goshtoso-app-shells. Local validation uses a
-workspace containing the root library, site and app-shells checkout. No local
-replacement is committed to a module manifest.
+The migration spans Goshtoso and goshtoso-app-shells. The root runtime commit
+was pushed first, then app-shells pinned that reachable revision and published
+its migration commit. The site now pins both exact public pseudo-versions:
 
-Release the root Goshtoso runtime first, pin that reachable version in
-app-shells and release its htmx 4 lifecycle changes, then pin both reachable
-versions in `site/go.mod`. The standalone pinned-site gate cannot validate the
-new runtime while that file still points to a pre-migration release. Run both
-site module contracts after updating those public pins.
+- Goshtoso: `v0.2.11-0.20260910201950-724e5ba38a60`
+- goshtoso-app-shells: `v0.1.9-0.20260910202148-7b3d1f0c7aac`
+
+These versions resolve without local replacements. The feature branches are
+`feat/htmx4-alpine` in Goshtoso and `feat/htmx4-events` in app-shells; they are
+not stable release tags. Development validation also uses an ignored workspace
+containing the root, site and app-shells checkouts. Both site module contracts
+must remain green when replacing these pins with future release tags.
 
 Sources: [release](https://four.htmx.org/announcements/2026-08-28-htmx-4.0.0-is-released),
 [migration guide](https://four.htmx.org/docs/whats-new-in-htmx-4),

@@ -138,6 +138,8 @@ func (s *Server) setupAssetRoutes() {
 	assetsDir := filepath.Join(s.projectRoot, "assets")
 	assetsHandler := http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir)))
 	s.mux.Handle("/assets/", libraryassets.WithCacheControl(assetsHandler))
+	// Versioned dependencies must match the linked module, including standalone builds.
+	s.mux.Handle("/assets/js/runtime/", libraryassets.Handler())
 	bootstrapSprite := filepath.Join(s.projectRoot, "site", "internal", "demoicons", "bootstrapicons", "sprite.svg")
 	s.mux.HandleFunc("GET /assets/icons/bootstrapicons/sprite.svg", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/svg+xml")
@@ -309,7 +311,7 @@ func (s *Server) renderDemo(w http.ResponseWriter, r *http.Request, key string) 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := entry.Content()
 	meta := demoregistry.MetaForKey(key)
-	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
+	if r.Header.Get("HX-Request-Type") == "partial" {
 		_ = demo.ComponentDocsFragment(meta, entry.Active, content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}

@@ -20,7 +20,6 @@ templ chartModesContent() {
 			<h1 class="font-title text-4xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong">Static/vector and interactive charts</h1>
 			<p class="max-w-3xl text-lg text-on-surface-muted dark:text-on-surface-dark-muted">Choose the delivery model from the job the chart must do. Both families share theme tokens, accessible framing, and chart controls, but their runtime, output, and failure behavior differ substantially.</p>
 		</header>
-
 		<section class="space-y-4">
 			<h2 id="choose-a-mode" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Choose a mode</h2>
 			<div class="grid gap-4 md:grid-cols-2">
@@ -34,7 +33,6 @@ templ chartModesContent() {
 				</article>
 			</div>
 		</section>
-
 		<section class="space-y-4">
 			<h2 id="capability-comparison" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Capability comparison</h2>
 			<p class="max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted">Interactive is not an upgrade tier, and static is not a reduced preview. They solve different delivery and exploration problems.</p>
@@ -52,7 +50,6 @@ templ chartModesContent() {
 			</div>
 			<p class="max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Wrapper lifecycle is independent of renderer choice. Every chart accepts the same enabled, disabled, hidden, or omitted wrapper state; review <a class="font-semibold text-primary underline dark:text-primary-dark" href="/modules/charts/docs/chart-controls" hx-get="/modules/charts/docs/chart-controls" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">chart controls and wrapper lifecycle</a> before choosing client-side transitions.</p>
 		</section>
-
 		<section class="space-y-4" data-chart-mode-limits>
 			<h2 id="shared-wrapper-boundary" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Shared wrapper boundary</h2>
 			<div class="grid gap-4 md:grid-cols-2">
@@ -62,20 +59,19 @@ templ chartModesContent() {
 				@controlFact("Equivalent data remains separate", "Neither SVG geometry nor canvas pixels replace exact values, reading order, or relationships. Keep the component's disclosure or a caller-owned table, summary, or download.")
 			</div>
 		</section>
-
 		<section class="space-y-4">
 			<h2 id="rendering-examples" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Render the same data two ways</h2>
 			<div class="grid gap-6 xl:grid-cols-2">
-				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Static/vector</h3>@codeblock.CodeBlock(codeblock.Config{Language: "templ", Label: "templ", Code: staticModeCode})</div>
-				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Interactive</h3>@codeblock.CodeBlock(codeblock.Config{Language: "templ", Label: "templ", Code: interactiveModeCode})</div>
+				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Static/vector</h3>@codeblock.CodeBlock(codeblock.Config{Language: "templ", Label: "templ", Code: staticModeCode})
+</div>
+				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Interactive</h3>@codeblock.CodeBlock(codeblock.Config{Language: "templ", Label: "templ", Code: interactiveModeCode})
+</div>
 			</div>
 		</section>
-
 		<section class="space-y-4 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt">
 			<h2 id="assets-and-csp" data-toc-heading class="scroll-mt-8 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Assets and CSP</h2>
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Interactive charts require the versioned local assets handler and <code class="font-mono">dependencies.Dependencies()</code>; hosted delivery is an explicit opt-in. Dependency tags inherit a templ nonce. The current per-chart initializer, theme, and live-update scripts do not yet accept a nonce, so a strict nonce-only script policy is not fully supported for interactive charts. Static chart images avoid those initializer scripts, although enabled controls still load their same-origin external runtime.</p>
 		</section>
-
 		@guideAPIReferences([]string{"line", "interactive", "dependencies"})
 		@relatedGuide("chart-controls")
 	</div>
@@ -88,7 +84,6 @@ templ chartControlsContent(examples ChartControlExamples) {
 			<h1 class="font-title text-4xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong">Chart controls</h1>
 			<p class="max-w-3xl text-lg text-on-surface-muted dark:text-on-surface-dark-muted">Every chart accepts the same renderer-neutral wrapper options. Configure lifecycle, controls, and export on the chart config; the wrapper supplies responsive actions, a large modal, fullscreen behavior, downloads, and focus management when present.</p>
 		</header>
-
 		<section class="space-y-4">
 			<h2 id="defaults" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Defaults</h2>
 			<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" data-control-defaults>
@@ -98,9 +93,7 @@ templ chartControlsContent(examples ChartControlExamples) {
 				@controlFact("Collapse", "Not part of the public control API.")
 			</div>
 		</section>
-
 		@chartControlExamples(examples)
-
 		<section class="space-y-4">
 			<h2 id="wrapper-lifecycle" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Wrapper lifecycle</h2>
 			<p class="max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted"><code class="font-mono">chartcontrol.Options.Mode</code> is one closed state shared by static/vector and interactive charts. Its zero value and <code class="font-mono">WrapperModeEnabled</code> both mean enabled, so overlapping wrapper booleans and precedence rules do not exist. Mode applies before individual action settings: omitted returns the chart without a wrapper, while every non-omitted mode preserves the configured action set and wrapper runtime. Even an actionless non-omitted wrapper loads the versioned same-origin external runtime, so lifecycle events work without inline script. Omitted mode alone suppresses that runtime.</p>
@@ -127,24 +120,23 @@ templ chartControlsContent(examples ChartControlExamples) {
 				@codeblock.CodeBlock(codeblock.Config{Language: "templ", Label: "templ", Code: wrapperModeInitialCode})
 			</div>
 		</section>
-
 		<section class="space-y-4">
 			<h2 id="client-transitions" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Client transitions</h2>
 			<p class="max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted">Dispatch the stable bubbling <code class="font-mono">goshtoso-charts:set-wrapper-mode</code> event on a wrapper or any descendant. Its detail is <code class="font-mono">&#123; mode, focusReturn? &#125;</code>; mode accepts <code class="font-mono">enabled</code>, <code class="font-mono">disabled</code>, or <code class="font-mono">hidden</code>. After transient UI closes, a connected external <code class="font-mono">HTMLElement</code> in <code class="font-mono">focusReturn</code> receives focus only when focus remains inside the wrapper. Focus already outside the wrapper is preserved; focus still inside without a valid external target is blurred.</p>
 			<div class="grid gap-6 xl:grid-cols-2">
-				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Plain JavaScript</h3>@codeblock.CodeBlock(codeblock.Config{Language: "javascript", Label: "JavaScript", Code: wrapperModeJavaScriptCode})</div>
-				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Alpine</h3>@codeblock.CodeBlock(codeblock.Config{Language: "html", Label: "templ", Code: wrapperModeAlpineCode()})</div>
+				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Plain JavaScript</h3>@codeblock.CodeBlock(codeblock.Config{Language: "javascript", Label: "JavaScript", Code: wrapperModeJavaScriptCode})
+</div>
+				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Alpine</h3>@codeblock.CodeBlock(codeblock.Config{Language: "html", Label: "templ", Code: wrapperModeAlpineCode()})
+</div>
 			</div>
 			<p class="max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted">The equivalent public helper is <code class="font-mono">window.__goshtosoChartsControls.setWrapperMode(wrapper, mode, focusReturn)</code>. For compatibility it accepts both the empty Go zero value and <code class="font-mono">"enabled"</code>, but DOM state and change-event details always use the canonical value <code class="font-mono">"enabled"</code>. The helper returns false when the wrapper is missing or the requested mode is omitted or unknown; otherwise it returns true. After applying a changed state, the wrapper emits <code class="font-mono">goshtoso-charts:wrapper-mode-change</code> with exact detail <code class="font-mono">&#123; previousMode, mode &#125;</code>. Listen on the wrapper or an ancestor; the event bubbles. Directly editing mode, <code class="font-mono">hidden</code>, <code class="font-mono">inert</code>, or fieldset attributes bypasses lifecycle guarantees.</p>
 		</section>
-
 		<section class="space-y-4">
 			<h2 id="htmx-swaps" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">HTMX swaps</h2>
-			<p class="max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted">Let the server return the desired initial mode when HTMX replaces a chart. The runtime observes <code class="font-mono">htmx:load</code> and <code class="font-mono">htmx:afterSwap</code>, and a <code class="font-mono">MutationObserver</code> covers other DOM insertion and removal. Preparation is idempotent: newly swapped wrappers rehydrate from their rendered mode without application re-init code. This also handles full wrapper replacement, including enabled-to-omitted and omitted-to-non-omitted transitions. An omitted chart itself has no wrapper to receive a client event.</p>
+			<p class="max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted">Let the server return the desired initial mode when HTMX replaces a chart. The runtime observes <code class="font-mono">htmx:after:init</code> and <code class="font-mono">htmx:after:swap</code>, and a <code class="font-mono">MutationObserver</code> covers other DOM insertion and removal. Preparation is idempotent: newly swapped wrappers rehydrate from their rendered mode without application re-init code. This also handles full wrapper replacement, including enabled-to-omitted and omitted-to-non-omitted transitions. An omitted chart itself has no wrapper to receive a client event.</p>
 			@codeblock.CodeBlock(codeblock.Config{Language: "templ", Label: "templ", Code: wrapperModeHTMXCode})
 			<p class="max-w-3xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Map request values to the four known <code class="font-mono">WrapperMode</code> constants before rendering; reject unknown values instead of casting arbitrary input.</p>
 		</section>
-
 		<section class="space-y-4">
 			<h2 id="state-guarantees" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">State guarantees</h2>
 			<div class="grid gap-4 md:grid-cols-2">
@@ -154,12 +146,10 @@ templ chartControlsContent(examples ChartControlExamples) {
 				@controlFact("Export and validation", "Wrapper mode never adds an unsupported format. Enabled, disabled, and hidden validate export configuration during server rendering. Omitted skips wrapper-only export validation because no wrapper action or export runtime renders.")
 			</div>
 		</section>
-
 		<section class="space-y-4 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt">
 			<h2 id="no-javascript" data-toc-heading class="scroll-mt-8 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">No-JavaScript behavior</h2>
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Static/vector charts remain readable when enabled or disabled; controls cannot act without JavaScript. Hidden stays hidden. Omitted leaves the static/vector chart visible with no wrapper runtime. Interactive charts still require their chart runtime regardless of wrapper mode. Client mode events and hidden-to-visible transitions require JavaScript; use an HTMX or full-page server response when the server must own state.</p>
 		</section>
-
 		<section class="space-y-4">
 			<h2 id="expand-and-fullscreen" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Expand and fullscreen</h2>
 			<div class="grid gap-4 md:grid-cols-2">
@@ -167,7 +157,6 @@ templ chartControlsContent(examples ChartControlExamples) {
 				@controlFact("Fullscreen", "Uses the browser fullscreen API when available and a viewport fallback otherwise. It preserves the same chart instance, reports active state, resizes on entry and exit, and restores focus.")
 			</div>
 		</section>
-
 		<section class="space-y-4">
 			<h2 id="responsive-actions" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Responsive actions</h2>
 			<p class="max-w-3xl text-on-surface-muted dark:text-on-surface-dark-muted">The Goshtoso ActionGroup keeps the primary Expand action visible. When Expand and fullscreen are both enabled, a wide layout presents them as one stacked Expand dropdown. Multiple export formats use an Export dropdown. As space narrows, trailing groups are flattened into one accessible overflow menu—there are no nested submenus on constrained layouts.</p>
@@ -175,7 +164,6 @@ templ chartControlsContent(examples ChartControlExamples) {
 				<p><strong class="text-on-surface-strong dark:text-on-surface-dark-strong">Keyboard:</strong> Space, Enter, or Arrow Down opens a menu; Arrow Up and Arrow Down move through enabled actions; Escape closes it and returns focus to the trigger.</p>
 			</div>
 		</section>
-
 		<section class="space-y-4">
 			<h2 id="export-capabilities" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Export capabilities</h2>
 			<div class="overflow-x-auto rounded-radius border border-outline dark:border-outline-dark" data-export-capabilities>
@@ -186,20 +174,19 @@ templ chartControlsContent(examples ChartControlExamples) {
 			</div>
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted"><code class="font-mono">PixelRatio</code> defaults to 1. Filenames are normalized to a lowercase, filesystem-safe basename. Unsupported format and background requests fail during rendering instead of showing a control that cannot work. Wrapper lifecycle does not expand this capability matrix.</p>
 		</section>
-
 		<section class="space-y-4">
 			<h2 id="configure-controls" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Configure controls</h2>
 			<div class="grid gap-6 xl:grid-cols-2">
-				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Static/vector</h3>@codeblock.CodeBlock(codeblock.Config{Language: "templ", Label: "templ", Code: controlsStaticCode})</div>
-				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Interactive</h3>@codeblock.CodeBlock(codeblock.Config{Language: "templ", Label: "templ", Code: controlsInteractiveCode})</div>
+				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Static/vector</h3>@codeblock.CodeBlock(codeblock.Config{Language: "templ", Label: "templ", Code: controlsStaticCode})
+</div>
+				<div class="min-w-0 space-y-3"><h3 class="font-title text-lg font-semibold">Interactive</h3>@codeblock.CodeBlock(codeblock.Config{Language: "templ", Label: "templ", Code: controlsInteractiveCode})
+</div>
 			</div>
 		</section>
-
 		<section class="space-y-4 rounded-radius border border-outline bg-surface-alt p-5 dark:border-outline-dark dark:bg-surface-dark-alt">
 			<h2 id="accessibility" data-toc-heading class="scroll-mt-8 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Accessibility and status</h2>
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Controls form a named group based on the chart label. Modal focus is contained while open. Fullscreen exposes pressed state. Export actions become busy while processing and report completion or failure through a polite live region. These controls improve operation, but they do not make chart geometry equivalent to exact data; retain a caption, summary, disclosure, or adjacent table as the task requires.</p>
 		</section>
-
 		<section class="space-y-4">
 			<h2 id="caller-responsibilities" data-toc-heading class="scroll-mt-8 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Caller responsibilities</h2>
 			<div class="grid gap-4 md:grid-cols-2">
@@ -210,7 +197,6 @@ templ chartControlsContent(examples ChartControlExamples) {
 				@controlFact("Unsupported export", "Request only formats and backgrounds proven by the capability table. Invalid server configuration fails rendering; browser capture failures are announced in the wrapper status region.")
 			</div>
 		</section>
-
 		@guideAPIReferences([]string{"chartcontrol", "line", "interactive"})
 		@relatedGuide("chart-modes")
 	</div>

@@ -357,7 +357,7 @@ func ChatApp(me chat.Identity) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</form><!-- message log --><div id=\"chat-log\" role=\"log\" aria-live=\"polite\" aria-relevant=\"additions\" aria-label=\"Chat messages\" class=\"flex-1 overflow-y-auto px-4 pb-4 pt-1\"></div><!-- composer: ws-send form. The hx-ext=\"ws\" wrapper must contain the form.\n\t\t     onsubmit=\"return false\" guards the htmx ws-send rebind race: on a\n\t\t     fragment-nav swap htmx binds ws-send a beat after the form lands in the\n\t\t     DOM. A submit fired in that window would otherwise fall through to the\n\t\t     browser's NATIVE submit — and because this form has no action, that\n\t\t     navigates to the current URL (?message=… as GET), reloading the page and\n\t\t     wiping the composer. The guard makes a race-lost click a harmless no-op\n\t\t     (htmx's own addEventListener handler still fires once bound), so the send\n\t\t     simply succeeds on the next attempt with the typed text intact. --><div hx-ext=\"ws\" ws-connect=\"/api/examples/chat/ws\" class=\"border-t border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt\"><form ws-send onsubmit=\"return false\" class=\"flex flex-col gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</form><!-- message log --><div id=\"chat-log\" role=\"log\" aria-live=\"polite\" aria-relevant=\"additions\" aria-label=\"Chat messages\" class=\"flex-1 overflow-y-auto px-4 pb-4 pt-1\"></div><!-- composer: hx-ws:send form. The wrapper must contain the form.\n\t\t     onsubmit=\"return false\" guards the htmx hx-ws:send rebind race: on a\n\t\t     fragment-nav swap htmx binds hx-ws:send a beat after the form lands in the\n\t\t     DOM. A submit fired in that window would otherwise fall through to the\n\t\t     browser's NATIVE submit — and because this form has no action, that\n\t\t     navigates to the current URL (?message=… as GET), reloading the page and\n\t\t     wiping the composer. The guard makes a race-lost click a harmless no-op\n\t\t     (htmx's own addEventListener handler still fires once bound), so the send\n\t\t     simply succeeds on the next attempt with the typed text intact. --><div hx-ws:connect=\"/api/examples/chat/ws\" class=\"border-t border-outline bg-surface-alt px-4 py-3 dark:border-outline-dark dark:bg-surface-dark-alt\"><form hx-ws:send onsubmit=\"return false\" class=\"flex flex-col gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -378,7 +378,7 @@ func ChatApp(me chat.Identity) templ.Component {
 			Name:        "message",
 			Placeholder: "Type a message…",
 			Rows:        1,
-			// Enter sends (requestSubmit fires htmx's ws-send submit
+			// Enter sends (requestSubmit fires htmx's hx-ws:send submit
 			// listener; the form's onsubmit="return false" only blocks
 			// the NATIVE submit). Shift+Enter falls through to insert a
 			// newline. Handler string carries no quotes or && so templ's
@@ -435,7 +435,7 @@ func ChatApp(me chat.Identity) templ.Component {
 	})
 }
 
-// chatHidden is a hidden input carrying identity into every ws-send frame. It is
+// chatHidden is a hidden input carrying identity into every hx-ws:send frame. It is
 // id'd so the rename handler can OOB-swap its value.
 func chatHidden(name, value string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
