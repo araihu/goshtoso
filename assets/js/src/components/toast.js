@@ -1,6 +1,17 @@
 // A toast owns its timer and waits for x-show's public DOM hide completion.
 (function () {
   if (window.goshtosoToast) return;
+  window.goshtosoToastHover = function (element, paused) {
+    window.dispatchEvent(new CustomEvent(paused ? 'pause-auto-dismiss' : 'resume-auto-dismiss', {
+      detail: { container: element.closest('[data-toast-container]') },
+    }));
+  };
+  window.goshtosoClientToast = function (root, duration, id) {
+    var owner = root.closest('[data-toast-container]');
+    return window.goshtosoToast(root, duration, false, function () {
+      Alpine.$data(owner).removeNotification(id);
+    });
+  };
   window.goshtosoToast = function (root, duration, persistent, complete) {
     var timer = null;
     var observer = null;
@@ -38,7 +49,8 @@
           observer.disconnect();
           observer = null;
           destroyed = true;
-          complete();
+          if (complete) complete();
+          else root.remove();
         };
         observer = new MutationObserver(finish);
         observer.observe(root, { attributes: true, attributeFilter: ['style'] });

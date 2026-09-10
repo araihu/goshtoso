@@ -58,14 +58,14 @@ func TestToast_RenderedDismissExpressionsUseGeneratedSafeID(t *testing.T) {
 func TestSingleToastAlpineData_UsesNumericDuration(t *testing.T) {
 	data := singleToastAlpineData(1250, false)
 
-	assert.Contains(t, data, "goshtosoToast($el, 1250, false,")
+	assert.Contains(t, data, "goshtosoToast($el, 1250, false)")
 	assert.NotContains(t, data, "}, '1250');")
 }
 
 func TestSingleToastAlpineData_PersistentHasNoAutoDismiss(t *testing.T) {
 	data := singleToastAlpineData(1250, true)
 
-	assert.Contains(t, data, "goshtosoToast($el, 1250, true,")
+	assert.Contains(t, data, "goshtosoToast($el, 1250, true)")
 	assert.NotContains(t, data, "setTimeout")
 	assert.NotContains(t, data, "toast-dismiss")
 }

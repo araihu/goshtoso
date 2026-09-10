@@ -21,8 +21,8 @@ templ toastContainerTemplate(cfg ContainerConfig) {
 		data-toast-container
 	>
 		<div
-			x-on:mouseenter="$dispatch('pause-auto-dismiss', { container: $el.closest('[data-toast-container]') })"
-			x-on:mouseleave="$dispatch('resume-auto-dismiss', { container: $el.closest('[data-toast-container]') })"
+			x-on:mouseenter="goshtosoToastHover($el, true)"
+			x-on:mouseleave="goshtosoToastHover($el, false)"
 			class="group pointer-events-none fixed inset-x-8 top-0 z-99 flex max-w-full flex-col gap-2 bg-transparent px-6 py-6 md:bottom-0 md:left-[unset] md:right-0 md:top-[unset] md:max-w-sm"
 		>
 			<template x-for="(notification, index) in notifications" x-bind:key="notification.id">
@@ -79,7 +79,7 @@ templ clientNotification(tone string) {
 			{{ titleClass = "text-danger" }}
 	}
 	<div
-		x-data="goshtosoToast($el, displayDuration, false, () => removeNotification(notification.id))"
+		x-data="goshtosoClientToast($el, displayDuration, notification.id)"
 		x-on:toast-dismiss.window="if ($event.detail.id === notification.id) dismiss()"
 		x-cloak
 		x-show="isVisible"
@@ -135,7 +135,7 @@ templ clientNotification(tone string) {
 // clientMessageNotification renders the message notification template (used inside x-for)
 templ clientMessageNotification() {
 	<div
-		x-data="goshtosoToast($el, displayDuration, false, () => removeNotification(notification.id))"
+		x-data="goshtosoClientToast($el, displayDuration, notification.id)"
 		x-on:toast-dismiss.window="if ($event.detail.id === notification.id) dismiss()"
 		x-cloak
 		x-show="isVisible"

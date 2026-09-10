@@ -102,7 +102,7 @@ func TestCoverageRenderOOBToastWithActionHTMX(t *testing.T) {
 		`id="server-toast-1"`,
 		`data-toast-id="server-toast-1"`,
 		`x-data="goshtosoToast($el,`,
-		`goshtosoToast($el, 2500, false,`,
+		`goshtosoToast($el, 2500, false)`,
 		`border-warning`,
 		`bg-warning/10`,
 		`text-warning`,
@@ -131,7 +131,7 @@ func TestCoverageRenderPersistentMessageToast(t *testing.T) {
 
 	for _, want := range []string{
 		`id="server-toast-1"`,
-		`x-data="goshtosoToast($el, 8000, true, () => $el.remove())"`,
+		`x-data="goshtosoToast($el, 8000, true)"`,
 		`border-outline bg-surface`,
 		`src="/assets/avatar.webp"`,
 		`Avery`,

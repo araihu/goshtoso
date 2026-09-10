@@ -220,7 +220,7 @@ func containerAlpineData(cfg ContainerConfig) string {
 
 // singleToastAlpineData returns the Alpine.js x-data for an individual toast item
 func singleToastAlpineData(duration int, persistent bool) string {
-	return fmt.Sprintf(`goshtosoToast($el, %d, %t, () => $el.remove())`, duration, persistent)
+	return fmt.Sprintf(`goshtosoToast($el, %d, %t)`, duration, persistent)
 }
 
 // jsEscapeSingle escapes single quotes and backslashes for safe JS string embedding
