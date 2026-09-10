@@ -346,7 +346,7 @@ func bannerVariantsPreview() templ.Component {
 	})
 }
 
-// Containment gives the fixed dialog a local viewport without duplicating runtimes.
+// Keep this presentation override local to the centered documentation preview.
 func bannerCookiePreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -368,7 +368,7 @@ func bannerCookiePreview() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"banner-cookie\" class=\"w-full max-w-2xl mx-auto\" style=\"contain: layout paint; min-height: 24rem;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<style>\n\t\t#banner-cookie > [role=\"dialog\"] {\n\t\t\ttop: 50%;\n\t\t\tleft: 50%;\n\t\t\tright: auto;\n\t\t\tbottom: auto;\n\t\t\ttransform: translate(-50%, -50%);\n\t\t\twidth: calc(100% - 2rem);\n\t\t\tmax-width: 24rem;\n\t\t}\n\t</style><div id=\"banner-cookie\" class=\"w-full max-w-2xl mx-auto\" style=\"contain: layout paint; min-height: 24rem;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
