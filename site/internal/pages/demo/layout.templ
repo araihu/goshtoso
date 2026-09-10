@@ -562,7 +562,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 	sections := []sidebar.Section{}
 	sectionIndex := map[string]int{}
 	for _, page := range catalog.ComponentPages() {
-		if page.Active == "app-shell" {
+		if page.Active == "app-shell" || page.Active == "icon" {
 			continue
 		}
 		index, ok := sectionIndex[page.Section]

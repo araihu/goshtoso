@@ -15,6 +15,12 @@ func TestComponentSidebarAndNavigationFollowCatalogOrder(t *testing.T) {
 			pages = append(pages, page)
 		}
 	}
+	sidebarPages := make([]catalog.Entry, 0, len(pages))
+	for _, page := range pages {
+		if page.Active != "icon" {
+			sidebarPages = append(sidebarPages, page)
+		}
+	}
 	sections := getSidebarSections("button")
 
 	require.Len(t, sections, 6)
@@ -27,7 +33,7 @@ func TestComponentSidebarAndNavigationFollowCatalogOrder(t *testing.T) {
 	pageIndex := 0
 	for _, section := range sections[:5] {
 		for _, item := range section.Items {
-			page := pages[pageIndex]
+			page := sidebarPages[pageIndex]
 			require.Equal(t, page.Section, section.Title)
 			require.Equal(t, page.Active, item.ID)
 			require.Equal(t, page.Title, item.Label)
@@ -37,7 +43,7 @@ func TestComponentSidebarAndNavigationFollowCatalogOrder(t *testing.T) {
 			componentItems++
 		}
 	}
-	require.Len(t, pages, componentItems)
+	require.Len(t, sidebarPages, componentItems)
 
 	for i, page := range pages {
 		prev, next := getComponentNav(page.Active)
