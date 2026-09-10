@@ -61,8 +61,8 @@ templ bodyInner(cfg Config, state State) {
 				data-combobox-clear-all
 				class="w-full px-4 py-2 text-left text-xs font-medium text-primary hover:bg-primary/5 dark:text-primary-dark dark:hover:bg-primary-dark/10"
 				hx-post={ cfg.ClearEndpoint }
-				hx-target="closest [data-combobox-body]"
-				hx-swap="outerHTML"
+				hx-target="closest [data-combobox]"
+				hx-swap="outerMorph"
 				hx-include={ cfg.hxIncludeSelector() }
 			>Clear all</button>
 		}
@@ -146,8 +146,8 @@ templ serverOptionLI(cfg Config, state State, opt Option) {
 		} else {
 			class={ "flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors motion-reduce:transition-none hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value)) }
 			hx-post={ cfg.ToggleEndpoint }
-			hx-target="closest [data-combobox-body]"
-			hx-swap="outerHTML"
+			hx-target="closest [data-combobox]"
+			hx-swap="outerMorph"
 			hx-vals={ hxValsJSON(opt.Value) }
 			hx-include={ cfg.hxIncludeSelector() }
 		}
@@ -175,7 +175,9 @@ templ optionCheckbox(selected bool) {
 
 // Combobox is the top-level component. Alpine lives here with ephemeral UI state
 // only (isOpen, openedWithKeyboard, focusIndex). Data state (options, selection,
-// search) lives server-side and in DOM.
+// search) lives server-side and in DOM. Server mutations morph this full root
+// so labels, option ARIA and hidden values reconcile together. A focused search
+// draft remains user-owned; options-only search responses keep their narrow target.
 templ comboboxTemplate(cfg Config, state State) {
 	<div
 		data-combobox
@@ -187,7 +189,12 @@ templ comboboxTemplate(cfg Config, state State) {
 		data-combobox-placeholder={ cfg.Placeholder }
 		id={ cfg.ID }
 		class={ "relative " + cfg.RootClass }
-		x-data="{isOpen:false, openedWithKeyboard:false, focusIndex:-1}"
+		if cfg.isClientMode() {
+			x-data="goshtosoComboboxClient($el)"
+			x-on:pageshow.window="if ($event.persisted) restoreSelection()"
+		} else {
+			x-data="{isOpen:false, openedWithKeyboard:false, focusIndex:-1}"
+		}
 		x-on:click.outside="isOpen=false; openedWithKeyboard=false"
 		x-on:keydown.esc.window="isOpen=false; openedWithKeyboard=false; focusIndex=-1"
 		x-on:htmx:after:swap="focusIndex=-1"

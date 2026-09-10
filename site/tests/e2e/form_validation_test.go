@@ -59,7 +59,7 @@ func fillAndTriggerValidation(t *testing.T, page playwright.Page, fieldName, val
 
 		const targetID = %q;
 		const el = document.getElementById(targetID);
-		vals['X-Goshtoso-Field'] = el.getAttribute('name');
+		Object.assign(vals, JSON.parse(el.getAttribute('hx-vals')));
 		await htmx.ajax('POST', '/api/components/form-validation', {
 			source: el,
 			target: el,

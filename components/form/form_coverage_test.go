@@ -337,7 +337,6 @@ func TestCoverageFieldGroupValidationAndMeta(t *testing.T) {
 		`data-goshtoso-depends="region"`,
 		`hx-post="/validate"`,
 		`hx-trigger="change"`,
-		`name="host"`,
 		`hx-target="this"`,
 		`hx-swap="outerHTML"`,
 		`hx-include="closest form"`,

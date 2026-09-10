@@ -251,3 +251,21 @@ func TestHandler_CascadeInvalidation_DropsStaleSelection(t *testing.T) {
 	assert.NotContains(t, body, `type="hidden" name="region" value="eu-central-1"`, "stale region must be dropped")
 	assert.Contains(t, body, `type="hidden" name="region" value="us-east"`)
 }
+
+func TestHandlerMutationsReturnOneMorphableRoot(t *testing.T) {
+	cfg := Config{ID: "morph", Name: "choice", Mode: ModeMultiple, Source: Source{LazyEndpoint: "/combo/options"}, OptionsEndpoint: "/combo/options", ToggleEndpoint: "/combo/toggle", ClearEndpoint: "/combo/clear"}
+	handler := &comboHandler{cfg: cfg, provider: staticProvider([]Option{{Value: "a", Label: "Alpha"}})}
+	for _, path := range []string{"toggle", "clear"} {
+		t.Run(path, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodPost, "/combo/"+path, strings.NewReader("value=a"))
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			rec := httptest.NewRecorder()
+			handler.ServeHTTP(rec, req)
+			require.Equal(t, http.StatusOK, rec.Code)
+			require.Equal(t, 1, strings.Count(rec.Body.String(), `id="morph"`))
+			require.Contains(t, rec.Body.String(), `data-combobox-mode="server"`)
+			require.NotContains(t, rec.Body.String(), "hx-swap-oob")
+			require.Contains(t, rec.Body.String(), `id="morph-trigger-label"`)
+		})
+	}
+}
