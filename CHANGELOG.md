@@ -12,7 +12,9 @@ All notable changes to Goshtoso are documented in this file.
   integrations, and app-shell navigation use the HTMX 4 contracts.
 - Consumers must migrate custom HTMX event listeners and attributes, return
   fragments for `HX-Request-Type: partial`, and review explicit attribute
-  inheritance and field-validation request parameters. See the tracked
+  inheritance. Field-validation requests now identify the field with the
+  `X-Goshtoso-Field` form parameter instead of the removed `HX-Trigger-Name`
+  header. See the tracked
   `.agents/skills/htmx/reference/migration.md` guide for the migration checklist.
 - Upgrade application runtime assets and server handlers together. Custom
   runtime loaders must preserve the manifest's extension and Alpine load order.
