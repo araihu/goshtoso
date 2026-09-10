@@ -7,40 +7,6 @@
       return {
         connected: false,
         paused: false,
-        _sseElement: null,
-        _beforeMessage: null,
-        _onError: null,
-        connect: function (element) {
-          if (!element) return;
-          this.disconnect();
-          var component = this;
-          this._sseElement = element;
-          this._beforeMessage = function (event) {
-            component.connected = true;
-            if (component.paused) event.preventDefault();
-          };
-          this._onError = function () {
-            component.connected = false;
-          };
-          element.addEventListener("htmx:sse:before:message", this._beforeMessage);
-          element.addEventListener("htmx:sse:error", this._onError);
-        },
-        disconnect: function () {
-          this.connected = false;
-          if (!this._sseElement) return;
-          if (this._beforeMessage) {
-            this._sseElement.removeEventListener("htmx:sse:before:message", this._beforeMessage);
-          }
-          if (this._onError) {
-            this._sseElement.removeEventListener("htmx:sse:error", this._onError);
-          }
-          this._sseElement = null;
-          this._beforeMessage = null;
-          this._onError = null;
-        },
-        destroy: function () {
-          this.disconnect();
-        },
       };
     });
   }

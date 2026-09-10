@@ -62,13 +62,8 @@
         theme: readTheme(),
         sidebarOpen: false,
         showThemeDropdown: false,
-        _stopThemeWatch: null,
         init: function () {
-          this._stopThemeWatch = this.$watch("theme", persistTheme);
-        },
-        destroy: function () {
-          if (typeof this._stopThemeWatch === "function") this._stopThemeWatch();
-          this._stopThemeWatch = null;
+          this.$watch("theme", persistTheme);
         },
         setTheme: function (name) {
           this.theme = name;
@@ -97,18 +92,21 @@
     if (nav) nav.path = window.location.pathname;
   }
 
+  function shellOwnsNavigation() {
+    return !!document.querySelector(".component-doc-shell-root");
+  }
+
   function rememberSidebarScroll() {
+    if (shellOwnsNavigation()) return;
     var sidebar = document.querySelector(".sidebar-scroll");
     if (sidebar) sidebarScrollTop = sidebar.scrollTop;
   }
 
   function handleAfterSwap(event) {
+    if (shellOwnsNavigation()) return;
     var target = event && event.detail && event.detail.ctx && event.detail.ctx.target;
     if (!target || target.id !== "main-content") return;
 
-    var sidebarContent = document.getElementById("sidebar-nav-content");
-    if (sidebarContent && window.Alpine && Alpine.initTree) Alpine.initTree(sidebarContent);
-    if (sidebarContent && window.htmx && htmx.process) htmx.process(sidebarContent);
     var sidebar = document.querySelector(".sidebar-scroll");
     if (sidebar) sidebar.scrollTop = sidebarScrollTop;
     var pageScroll = document.getElementById("page-scroll");
@@ -155,6 +153,7 @@
   }
 
   function buildTOC() {
+    if (shellOwnsNavigation()) { disconnectTOC(); return; }
     var rail = document.getElementById("toc-rail");
     var nav = document.getElementById("toc-list");
     var pageScroll = document.getElementById("page-scroll");
@@ -180,7 +179,7 @@
         "block border-l border-transparent py-1.5 pl-4 -ml-px text-sm text-on-surface-muted transition-colors hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong";
       link.addEventListener("click", function (event) {
         event.preventDefault();
-        heading.scrollIntoView({ behavior: "smooth", block: "start" });
+        heading.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
         history.replaceState(null, "", "#" + heading.id);
         setActive(nav, heading.id);
       });

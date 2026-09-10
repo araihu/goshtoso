@@ -40,7 +40,8 @@ templ tickerPane(symbols []ticker.Symbol) {
 		</div>
 		<div
 			x-ref="sse"
-			x-init="$nextTick(() => connect($refs.sse))"
+			x-on:htmx:sse:before:message="connected = true; if (paused) $event.preventDefault()"
+			x-on:htmx:sse:error="connected = false"
 			hx-sse:connect="/api/examples/ticker/stream"
 			hx-swap="none"
 		>

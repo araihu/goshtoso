@@ -89,7 +89,7 @@ func tickerPane(symbols []ticker.Symbol) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div></div><div x-ref=\"sse\" x-init=\"$nextTick(() => connect($refs.sse))\" hx-sse:connect=\"/api/examples/ticker/stream\" hx-swap=\"none\"><div id=\"ticker-cards\" class=\"grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div></div><div x-ref=\"sse\" x-on:htmx:sse:before:message=\"connected = true; if (paused) $event.preventDefault()\" x-on:htmx:sse:error=\"connected = false\" hx-sse:connect=\"/api/examples/ticker/stream\" hx-swap=\"none\"><div id=\"ticker-cards\" class=\"grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -178,7 +178,7 @@ func tickerCardPrice(sym ticker.Symbol) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue("ticker-card-" + sym.Ticker)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/ticker/ticker.templ`, Line: 72, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/ticker/ticker.templ`, Line: 73, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -230,7 +230,7 @@ func TickerCell(sym ticker.Symbol) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue("ticker-cell-" + sym.Ticker)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/ticker/ticker.templ`, Line: 81, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/ticker/ticker.templ`, Line: 82, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
@@ -282,7 +282,7 @@ func TickerCellInner(sym ticker.Symbol) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(tickerPrice(sym))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/ticker/ticker.templ`, Line: 90, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/ticker/ticker.templ`, Line: 91, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {

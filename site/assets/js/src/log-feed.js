@@ -11,15 +11,8 @@
         connected: false,
         minLevel: "all",
         init: function () {
-          this.handleAfterSwap = this.onSwap.bind(this);
-          this.$root.addEventListener("htmx:after:swap", this.handleAfterSwap);
           this.$watch("minLevel", this.applyFilter.bind(this));
           this.applyFilter(this.minLevel);
-        },
-        destroy: function () {
-          if (this.handleAfterSwap) {
-            this.$root.removeEventListener("htmx:after:swap", this.handleAfterSwap);
-          }
         },
         applyFilter: function (value) {
           var wrap = this.$refs.feedWrap;

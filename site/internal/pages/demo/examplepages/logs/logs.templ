@@ -63,6 +63,7 @@ templ LogsApp() {
 	<div
 		id="logs-fragment"
 		x-data="logFeed"
+		x-on:htmx:after:swap="onSwap($event)"
 		x-on:htmx:sse:after:connection="connected = true"
 		x-on:htmx:sse:error="connected = false"
 		class="mx-auto max-w-3xl"

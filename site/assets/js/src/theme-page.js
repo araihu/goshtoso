@@ -125,7 +125,6 @@
               storeValue("themeOverrides", JSON.stringify(value));
               component.applyColors();
             },
-            { deep: true },
           );
           this.$watch("cssMode", function (value) {
             storeValue("themeCssMode", value);
