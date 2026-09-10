@@ -46,7 +46,7 @@ templ chartsModuleContent() {
 		<header class="max-w-4xl space-y-4">
 			<p class="text-sm font-semibold text-primary dark:text-primary-dark">Application frames and shells · { appShellsVersion }</p>
 			<h1 class="font-title text-3xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Goshtoso App Shells</h1>
-			<p class="text-lg leading-8 text-on-surface dark:text-on-surface-dark">Build the frame once, then let each route focus on its work. Try the documentation, console, and landing shells below, or use Component Page to organize a reference page.</p>
+			<p class="text-lg leading-8 text-on-surface dark:text-on-surface-dark">Build the frame once, then let each route focus on its work. Choose a frame or shell from the sidebar to explore its live example and integration guide.</p>
 			<div class="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
 				<a href="https://github.com/araihu/goshtoso-app-shells" target="_blank" rel="noopener noreferrer" class="text-primary underline underline-offset-2 dark:text-primary-dark">View source on GitHub</a>
 				<a href="https://pkg.go.dev/github.com/araihu/goshtoso-app-shells@v0.1.9-0.20260910224508-5b2222e54637" target="_blank" rel="noopener noreferrer" class="text-primary underline underline-offset-2 dark:text-primary-dark">Read the API docs</a>
@@ -77,11 +77,7 @@ templ chartsModuleContent() {
 				<h2 id="shells-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Shells</h2>
 				<p class="max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">A shell owns the regions around a product surface—identity, navigation, responsive behavior, and page lifecycle. Your application still owns routes, permissions, data, and navigation items.</p>
 			</div>
-			<div class="space-y-8">
-				<section class="space-y-3"><h3 class="text-xl font-semibold"><a href="/modules/app-shells/shells/component-docs-shell">Component Docs Shell →</a></h3>@appShellsComponentDocsShellPreview()</section>
-				<section class="space-y-3"><h3 class="text-xl font-semibold"><a href="/modules/app-shells/shells/console-shell">Console Shell →</a></h3>@appShellsConsoleShellPreview()</section>
-				<section class="space-y-3"><h3 class="text-xl font-semibold"><a href="/modules/app-shells/shells/landing-shell">Landing Shell →</a></h3>@appShellsLandingShellPreview()</section>
-			</div>
+			<p class="max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">Use <code class="font-mono">componentdocshell</code> to build documentation, <code class="font-mono">consoleshell</code> to build application workspaces, and <code class="font-mono">landingshell</code> to build public pages.</p>
 		</section>
 
 		<section id="fragment-support" class="border-y border-outline py-8 dark:border-outline-dark" aria-labelledby="fragment-support-title">
