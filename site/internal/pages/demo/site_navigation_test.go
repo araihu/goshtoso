@@ -60,7 +60,8 @@ func TestComponentDocsSecondaryNavigationTracksAgents(t *testing.T) {
 	agentsEnd := strings.Index(html[agentsStart:], `</a>`)
 	require.NotEqual(t, -1, agentsEnd)
 	require.Contains(t, html[agentsStart:agentsStart+agentsEnd], `aria-current="location"`)
-	for _, sidebarItem := range []string{"AI Agents", "Attributions", "License"} {
+	require.Contains(t, html, `data-sidebar-item="AI Agents"`)
+	for _, sidebarItem := range []string{"Getting Started", "Button", "Attributions", "License"} {
 		require.NotContains(t, html, `data-sidebar-item="`+sidebarItem+`"`)
 	}
 }

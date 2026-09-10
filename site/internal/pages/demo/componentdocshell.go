@@ -56,6 +56,14 @@ func componentDocsConfig(persist bool, active string) componentdocshell.Config {
 
 func componentDocsNavigation(active string) componentdocshell.Navigation {
 	switch componentDocsFamily(active) {
+	case "agents":
+		return componentdocshell.Navigation{
+			Items: []sidebar.Item{{
+				ID: "agents", Label: "AI Agents", Href: "/docs/agents",
+				Active: true, LinkAttrs: navHxAttrs("/docs/agents", "AI Agents"),
+			}},
+			DisableSearch: true,
+		}
 	case "charts":
 		return chartsDocsNavigation(active)
 	case "icon-packs":
