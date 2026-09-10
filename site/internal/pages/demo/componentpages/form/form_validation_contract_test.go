@@ -120,7 +120,7 @@ func TestFormValidationFieldResponseLifecycle(t *testing.T) {
 	require.Contains(t, recorder.Body.String(), `id="email-field"`)
 	require.Contains(t, recorder.Body.String(), `id="confirm-field"`)
 	require.Contains(t, recorder.Body.String(), `hx-swap-oob="true"`)
-	require.False(t, dependent.FieldGroup.OOB, "RenderFieldResponse always resets dependent OOB false")
+	require.True(t, dependent.FieldGroup.OOB, "RenderFieldResponse preserves the caller-owned OOB configuration")
 
 	renderError := errors.New("render failure")
 	failing := &formvalidation.FieldDef{
@@ -139,5 +139,5 @@ func TestFormValidationFieldResponseLifecycle(t *testing.T) {
 		formvalidation.Result{Dependents: []*formvalidation.FieldDef{failing}},
 	)
 	require.ErrorIs(t, err, renderError)
-	require.False(t, failing.FieldGroup.OOB, "error path always resets dependent OOB false")
+	require.True(t, failing.FieldGroup.OOB, "error paths preserve the caller-owned OOB configuration")
 }
