@@ -158,12 +158,8 @@ func TestAuthoredComponentRuntimePreservesLifecycleAndDataContracts(t *testing.T
 
 	table := readRuntimeSource(t, "table.js")
 	for _, want := range []string{
-		"root.dataset.tableFilterEndpoint",
 		"head.dataset.tableSortBy",
-		"url.searchParams.set(\"order_by\"",
-		"document.removeEventListener(\"htmx:config:request\"",
-		"document.addEventListener(\"htmx:after:process\"",
-		"document.addEventListener(\"htmx:before:cleanup\"",
+		"ctx.request.body.set(\"order_by\"",
 		"window.goshtosoSafeNavigationTarget",
 	} {
 		if !strings.Contains(table, want) {

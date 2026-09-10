@@ -1,4 +1,4 @@
-// Table filters, linked-row navigation, and infinite-scroll sentinels.
+// Table filter presentation/payload normalization and linked-row navigation.
 (function () {
   "use strict";
 
@@ -14,83 +14,36 @@
     return filters;
   }
 
-  function activeFilterEntries(filters) {
-    return Object.entries(filters).filter(function (entry) {
-      return entry[1] !== "" && entry[1] !== "false";
-    });
-  }
-
-  function relativeRequestURL(url) {
-    if (url.origin !== window.location.origin) return url.toString();
-    return url.pathname + url.search + url.hash;
-  }
-
-  function applyExtraQuery(url, extraQuery) {
-    var query = (extraQuery || "").replace(/^[?&]+/, "");
-    new URLSearchParams(query).forEach(function (value, key) {
-      url.searchParams.set(key, value);
-    });
-  }
-
-  function applySortQuery(url, root) {
-    var head = root.querySelector("thead[data-table-sort-by]");
-    var orderBy = (head && head.dataset.tableSortBy) || "";
-    var orderDir = (head && head.dataset.tableSortDir) || "";
-    url.searchParams.delete("order_by");
-    url.searchParams.delete("order_dir");
-    if (orderBy && orderDir) {
-      url.searchParams.set("order_by", orderBy);
-      url.searchParams.set("order_dir", orderDir);
-    }
-  }
-
   window.goshtosoTableFilters = function (root) {
     return {
       filtersExpanded: root.dataset.tableFiltersExpanded === "true",
       filters: readInitialFilters(root),
-      configRequestListener: null,
-      buildFilterURL: function () {
-        var endpoint = root.dataset.tableFilterEndpoint || "";
-        var url = new URL(endpoint || window.location.href, window.location.href);
-        url.searchParams.set("_filter", "1");
-        url.searchParams.delete("page");
-        var perPage = root.dataset.tableFilterPerPage || "";
-        if (perPage) url.searchParams.set("per_page", perPage);
-        applyExtraQuery(url, root.dataset.tableFilterExtraQuery);
-        applySortQuery(url, root);
-        Object.keys(this.filters).forEach(function (key) {
-          url.searchParams.delete(key);
-        });
-        activeFilterEntries(this.filters).forEach(function (entry) {
-          url.searchParams.set(entry[0], entry[1]);
-        });
-        return relativeRequestURL(url);
-      },
       applyFilters: function () {
-        if (!window.htmx) return;
-        window.htmx.ajax("GET", this.buildFilterURL(), {
-          target: root.dataset.tableFilterTarget || "",
-          swap: root.dataset.tableFilterSwap || "innerHTML",
+        root.dispatchEvent(new Event("table-filter", { bubbles: true }));
+      },
+      configureRequest: function (event) {
+        var ctx = event.detail && event.detail.ctx;
+        if (!ctx || ctx.request.method !== "GET" || ctx.sourceElement.closest("[data-table-filters]") !== root) return;
+        // Option loaders have their own endpoint and must not become row filters.
+        if (ctx.sourceElement.matches("select[data-table-filter-key]")) return;
+        var url = new URL(ctx.request.action, window.location.href);
+        // Native inclusion owns values. Clear stale values in server-generated
+        // sort/page URLs, retaining the existing omission contract for empty/false.
+        root.querySelectorAll("[data-table-filter-key]").forEach(function (input) {
+          var key = input.name;
+          url.searchParams.delete(key);
+          var value = ctx.request.body.get(key);
+          if (value === "" || value === "false") ctx.request.body.delete(key);
         });
-      },
-      init: function () {
-        var state = this;
-        this.configRequestListener = function (event) {
-          var element = event.detail && event.detail.ctx && event.detail.ctx.sourceElement;
-          if (!element || !element.closest || element.closest("[data-table-filters]") !== root) {
-            return;
+        if (ctx.sourceElement === root) {
+          var head = root.querySelector("thead[data-table-sort-by]");
+          ["order_by", "order_dir"].forEach(function (key) { url.searchParams.delete(key); });
+          if (head && head.dataset.tableSortBy && head.dataset.tableSortDir) {
+            ctx.request.body.set("order_by", head.dataset.tableSortBy);
+            ctx.request.body.set("order_dir", head.dataset.tableSortDir);
           }
-          activeFilterEntries(state.filters).forEach(function (entry) {
-            event.detail.ctx.request.body.set(entry[0], entry[1]);
-          });
-        };
-        document.addEventListener("htmx:config:request", this.configRequestListener);
-      },
-      destroy: function () {
-        if (this.configRequestListener) {
-          document.removeEventListener("htmx:config:request", this.configRequestListener);
         }
-        this.configRequestListener = null;
+        ctx.request.action = url.origin === location.origin ? url.pathname + url.search + url.hash : url.toString();
       },
     };
   };
@@ -129,87 +82,4 @@
     if (opened) opened.opener = null;
   });
 
-  var sentinelObservers = new WeakMap();
-
-  function requestSentinel(sentinel) {
-    var url = sentinel.getAttribute("data-hx-get");
-    if (!url || !window.htmx) return false;
-    window.htmx.ajax("GET", url, {
-      source: sentinel,
-      target: sentinel,
-      swap: "outerHTML settle:200ms",
-    });
-    return true;
-  }
-
-  function cleanupSentinel(sentinel) {
-    var observer = sentinelObservers.get(sentinel);
-    if (observer) observer.disconnect();
-    sentinelObservers.delete(sentinel);
-  }
-
-  function initializeSentinel(sentinel) {
-    if (sentinelObservers.has(sentinel)) return;
-    if (typeof IntersectionObserver === "undefined") {
-      requestSentinel(sentinel);
-      return;
-    }
-
-    var scrollRoot =
-      sentinel.closest(".overflow-y-auto") ||
-      sentinel.closest('[style*="overflow-y"]') ||
-      null;
-    var observer = new IntersectionObserver(
-      function (entries) {
-        for (var index = 0; index < entries.length; index += 1) {
-          if (!entries[index].isIntersecting) continue;
-          if (requestSentinel(sentinel)) cleanupSentinel(sentinel);
-          return;
-        }
-      },
-      { root: scrollRoot, rootMargin: "400px 0px" },
-    );
-    sentinelObservers.set(sentinel, observer);
-    observer.observe(sentinel);
-  }
-
-  function sentinelNodes(root) {
-    var nodes = [];
-    if (root && root.matches && root.matches("[data-table-scroll-sentinel]")) nodes.push(root);
-    if (root && root.querySelectorAll) {
-      nodes = nodes.concat(Array.from(root.querySelectorAll("[data-table-scroll-sentinel]")));
-    }
-    return nodes;
-  }
-
-  function initializeSentinels(root) {
-    sentinelNodes(root).forEach(initializeSentinel);
-  }
-
-  function restartSentinels() {
-    sentinelNodes(document).forEach(function (sentinel) {
-      cleanupSentinel(sentinel);
-      initializeSentinel(sentinel);
-    });
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      function () {
-        initializeSentinels(document);
-      },
-      { once: true },
-    );
-  } else {
-    initializeSentinels(document);
-  }
-
-  document.addEventListener("htmx:after:process", function (event) {
-    initializeSentinels(event.target);
-  });
-  document.addEventListener("htmx:before:cleanup", function (event) {
-    sentinelNodes(event.target).forEach(cleanupSentinel);
-  });
-  window.addEventListener("goshtoso:dependencies-ready", restartSentinels);
 })();

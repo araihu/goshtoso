@@ -53,6 +53,16 @@ templ formTemplate(cfg Config) {
 		if cfg.HTMX != nil && cfg.HTMX.Encoding != "" {
 			hx-encoding={ cfg.HTMX.Encoding }
 		}
+		if cfg.HTMX != nil && cfg.HTMX.Sync != "" {
+			hx-sync={ cfg.HTMX.Sync }
+		}
+		if cfg.HTMX != nil && cfg.HTMX.Disable != "" {
+			hx-disable={ cfg.HTMX.Disable }
+		}
+		if cfg.HTMX != nil {
+			hx-on::before:request="if(event.detail.ctx.sourceElement === this) { goshtosoRequests.track(this,event.detail.ctx); this.querySelectorAll('[data-form-validation]').forEach(field => goshtosoRequests.abort(field)); } else if(event.detail.ctx.sourceElement.hasAttribute('data-form-validation') && goshtosoRequests.pending(this)) event.preventDefault()"
+		}
+		{ cfg.RootAttrs... }
 		class={ "relative " + cfg.RootClass }
 		if cfg.shouldPreventEnter() {
 			@keydown.enter="if ($event.target.type !== 'submit' && $event.target.tagName !== 'TEXTAREA') $event.preventDefault()"
@@ -265,6 +275,7 @@ templ fieldGroupTemplate(cfg FieldGroupConfig) {
 			}
 		}
 		if cfg.Validation != nil {
+			data-form-validation
 			if cfg.Validation.Endpoint != "" {
 				hx-post={ cfg.Validation.Endpoint }
 				hx-trigger={ cfg.Validation.getTrigger() }
@@ -276,6 +287,8 @@ templ fieldGroupTemplate(cfg FieldGroupConfig) {
 			}
 			hx-swap="outerHTML"
 			hx-include="closest form"
+			hx-sync="this:replace"
+			hx-on::before:request="goshtosoRequests.latest(this,event.detail.ctx)"
 			hx-vals={ cfg.validationValues() }
 		}
 	>

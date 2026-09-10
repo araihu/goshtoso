@@ -66,10 +66,10 @@ func TestFilterRuntimeContractEmitsResolvedHXTarget(t *testing.T) {
 		},
 	}
 	out := renderFilterContract(t, cfg)
-	if !strings.Contains(out, `data-table-filter-target="#install-modal-body"`) {
+	if !strings.Contains(out, `hx-target="#install-modal-body"`) {
 		t.Fatalf("filter contract missing explicit target; got:\n%s", out)
 	}
-	if strings.Contains(out, `data-table-filter-target="#addon-picker-tbody"`) {
+	if strings.Contains(out, `hx-target="#addon-picker-tbody"`) {
 		t.Fatalf("filter contract still emits default tbody target despite override; got:\n%s", out)
 	}
 }
@@ -168,10 +168,10 @@ func TestFilterRuntimeContractEmitsHXSwap(t *testing.T) {
 		},
 	}
 	out := renderFilterContract(t, cfg)
-	if !strings.Contains(out, `data-table-filter-target="#addons-catalog"`) {
+	if !strings.Contains(out, `hx-target="#addons-catalog"`) {
 		t.Fatalf("filter contract missing target; got:\n%s", out)
 	}
-	if !strings.Contains(out, `data-table-filter-swap="outerHTML"`) {
+	if !strings.Contains(out, `hx-swap="outerHTML"`) {
 		t.Fatalf("filter contract missing outerHTML swap; got:\n%s", out)
 	}
 }
@@ -183,7 +183,7 @@ func TestFilterRuntimeContractDefaultSwap(t *testing.T) {
 		Filters: &FilterConfig{Filters: []Filter{{Key: "q", Type: FilterSearch}}},
 	}
 	out := renderFilterContract(t, cfg)
-	if !strings.Contains(out, `data-table-filter-swap="innerHTML"`) {
+	if !strings.Contains(out, `hx-swap="innerHTML"`) {
 		t.Fatalf("filter contract missing default innerHTML swap; got:\n%s", out)
 	}
 }
@@ -198,9 +198,7 @@ func TestFilterRuntimeContractPreservesExtraQueryParamsAndPerPage(t *testing.T) 
 	}
 	out := renderFilterContract(t, cfg)
 	for _, want := range []string{
-		`data-table-filter-endpoint="/console/addons/install?table_id=cluster-picker-table"`,
-		`data-table-filter-extra-query="&amp;addon_name=argo-cd"`,
-		`data-table-filter-per-page="25"`,
+		`hx-get="/console/addons/install?_filter=1&amp;addon_name=argo-cd&amp;per_page=25&amp;table_id=cluster-picker-table"`,
 	} {
 		if !strings.Contains(out, want) {
 			t.Fatalf("filter contract missing %q; got:\n%s", want, out)

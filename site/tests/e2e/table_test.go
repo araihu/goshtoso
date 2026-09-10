@@ -578,15 +578,14 @@ func TestTable_InfiniteScroll(t *testing.T) {
 	t.Run("Infinite_Scroll_Has_Sentinel", func(t *testing.T) {
 		infiniteTable := page.Locator("#infinite-table")
 
-		// Should have a script-driven sentinel row for the next page.
-		sentinel := infiniteTable.Locator("tr#infinite-table-sentinel[data-hx-get]")
+		// Should have a native intersection sentinel row for the next page.
+		sentinel := infiniteTable.Locator("tr#infinite-table-sentinel[hx-get]")
 		count, err := sentinel.Count()
 		require.NoError(t, err)
 		require.Equal(t, 1, count, "should have one scroll sentinel row")
 
-		// Sentinel should point at the next page. The URL is stored in data-hx-get
-		// because the component drives htmx.ajax from IntersectionObserver.
-		hxGet, err := sentinel.GetAttribute("data-hx-get")
+		// Sentinel should point at the next page through native hx-get.
+		hxGet, err := sentinel.GetAttribute("hx-get")
 		require.NoError(t, err)
 		assert.Contains(t, hxGet, "page=2", "sentinel should request page 2")
 

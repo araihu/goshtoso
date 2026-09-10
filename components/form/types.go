@@ -27,6 +27,8 @@ type Config struct {
 	Method string
 	// RootClass allows additional CSS classes on the form element.
 	RootClass string
+	// RootAttrs adds root attributes, including status-specific htmx policies.
+	RootAttrs templ.Attributes
 	// HTMX enables HTMX-based submission (alternative to native Action)
 	HTMX *HTMXConfig
 	// PreventEnterSubmit prevents Enter key from submitting the form.
@@ -63,6 +65,11 @@ type HTMXConfig struct {
 	Target   string // hx-target
 	Swap     string // hx-swap
 	Encoding string // hx-encoding (e.g. "multipart/form-data")
+	// Sync controls request admission (hx-sync); use drop for duplicate submits.
+	Sync string
+	// Disable selects controls owned by this request (hx-disable). Exclude
+	// :disabled controls so htmx does not re-enable consumer-disabled controls.
+	Disable string
 }
 
 // FooterConfig configures the form footer with action buttons

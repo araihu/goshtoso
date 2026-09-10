@@ -168,11 +168,14 @@ func FormValidationFormSection(nameField *form.FieldGroupConfig, slugField *form
 			return nil
 		})
 		templ_7745c5c3_Err = form.Form(form.Config{
-			ID: "demo-validation",
+			ID:        "demo-validation",
+			RootAttrs: templ.Attributes{"hx-status:5xx": "swap:none"},
 			HTMX: &form.HTMXConfig{
-				Post:   "/api/components/form-validation",
-				Target: "#form-result",
-				Swap:   "innerHTML",
+				Post:    "/api/components/form-validation",
+				Target:  "#form-result",
+				Swap:    "innerHTML",
+				Sync:    "this:drop",
+				Disable: "findAll button[type=submit]:not(:disabled)",
 			},
 			Footer: &form.FooterConfig{
 				SubmitLabel: "Submit",

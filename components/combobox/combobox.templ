@@ -61,6 +61,8 @@ templ bodyInner(cfg Config, state State) {
 				data-combobox-clear-all
 				class="w-full px-4 py-2 text-left text-xs font-medium text-primary hover:bg-primary/5 dark:text-primary-dark dark:hover:bg-primary-dark/10"
 				hx-post={ cfg.ClearEndpoint }
+				hx-sync="closest [data-combobox]:drop"
+				hx-disable={ mutationDisableSelector(cfg) }
 				hx-target="closest [data-combobox]"
 				hx-swap="outerMorph"
 				hx-include={ cfg.hxIncludeSelector() }
@@ -79,6 +81,8 @@ templ bodyInner(cfg Config, state State) {
 				placeholder="Search…"
 				class="w-full bg-transparent py-2.5 pl-9 pr-3 text-sm text-on-surface placeholder:text-on-surface/40 focus:outline-none dark:text-on-surface-dark dark:placeholder:text-on-surface-dark/40"
 				hx-get={ cfg.OptionsEndpoint }
+				hx-sync="this:replace"
+				hx-on::before:request="goshtosoRequests.latest(this,event.detail.ctx)"
 				hx-trigger="input changed delay:200ms"
 				hx-target={ "#" + cfg.ID + "-options" }
 				hx-swap="outerHTML"
@@ -146,6 +150,8 @@ templ serverOptionLI(cfg Config, state State, opt Option) {
 		} else {
 			class={ "flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors motion-reduce:transition-none hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value)) }
 			hx-post={ cfg.ToggleEndpoint }
+			hx-sync="closest [data-combobox]:drop"
+			hx-disable={ mutationDisableSelector(cfg) }
 			hx-target="closest [data-combobox]"
 			hx-swap="outerMorph"
 			hx-vals={ hxValsJSON(opt.Value) }
@@ -198,6 +204,7 @@ templ comboboxTemplate(cfg Config, state State) {
 		x-on:click.outside="isOpen=false; openedWithKeyboard=false"
 		x-on:keydown.esc.window="isOpen=false; openedWithKeyboard=false; focusIndex=-1"
 		x-on:htmx:after:swap="focusIndex=-1"
+		x-on:htmx:before:request="if ($event.detail.ctx.request.method === 'POST') { goshtosoRequests.track($el,$event.detail.ctx); const search = $el.querySelector('[data-combobox-search]'); goshtosoRequests.abort(search); goshtosoRequests.lockInput(search,$event.detail.ctx); } else if (goshtosoRequests.pending($el)) $event.preventDefault()"
 	>
 		if cfg.Label != "" {
 			<label for={ cfg.ID + "-trigger" } class="block pb-1 text-sm text-on-surface dark:text-on-surface-dark">{ cfg.Label }</label>

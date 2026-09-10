@@ -140,6 +140,7 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 
 	root := t.TempDir()
 	sources := map[string]string{
+		"assets/js/src/components/requests.js":         `(() => {window.requestsFixture=true})();`,
 		"assets/js/src/combobox.js":                    `(() => { window.comboboxFixture = true })();`,
 		"assets/js/src/components/combobox-client.js":  `(() => { window.comboboxClientFixture = true })();`,
 		"assets/js/src/action-group.js":                `(() => { window.actionGroupFixture = true })();`,

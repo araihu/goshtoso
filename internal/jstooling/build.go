@@ -29,6 +29,7 @@ var defaultArtifacts = []artifact{
 	{
 		output: "assets/js/combobox.js",
 		inputs: []string{
+			"assets/js/src/components/requests.js",
 			"assets/js/src/combobox.js",
 			"assets/js/src/components/combobox-client.js",
 		},
@@ -40,6 +41,7 @@ var defaultArtifacts = []artifact{
 	{
 		output: "assets/js/goshtoso.min.js",
 		inputs: []string{
+			"assets/js/src/components/requests.js",
 			"assets/js/src/combobox.js",
 			"assets/js/src/components/combobox-client.js",
 			"assets/js/src/action-group.js",
