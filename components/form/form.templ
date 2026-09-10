@@ -60,7 +60,7 @@ templ formTemplate(cfg Config) {
 			hx-disable={ cfg.HTMX.Disable }
 		}
 		if cfg.HTMX != nil {
-			hx-on::before:request="if(event.detail.ctx.sourceElement === this) { goshtosoRequests.track(this,event.detail.ctx); this.querySelectorAll('[data-form-validation]').forEach(field => goshtosoRequests.abort(field)); } else if(event.detail.ctx.sourceElement.hasAttribute('data-form-validation') && goshtosoRequests.pending(this)) event.preventDefault()"
+			hx-on::before:request="goshtosoRequests.form(this,event)"
 		}
 		{ cfg.RootAttrs... }
 		class={ "relative " + cfg.RootClass }

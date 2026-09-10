@@ -52,7 +52,7 @@ import (
 //	    InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
 //	})
 templ tableTemplate(cfg Config) {
-	<div data-table-requests class="contents" hx-on::before:request="if(event.detail.ctx.request.method === 'GET' && (event.detail.ctx.sourceElement.matches('[data-table-filters],[data-table-sort-request]') || event.detail.ctx.sourceElement.closest('[data-table-pages]'))) goshtosoRequests.latest(this,event.detail.ctx)">
+	<div data-table-requests class="contents" hx-on::before:request="goshtosoRequests.table(this,event)">
 		@tableContent(cfg)
 	</div>
 }
@@ -674,12 +674,14 @@ templ sortIcon(cfg Config, key string) {
 	}
 }
 
+// Keep the root selector grouped: htmx splits bare commas into separate
+// extended selectors, which could otherwise select an unrelated page scroller.
 templ scrollSentinel(cfg Config) {
 	<tr
 		id={ cfg.getID() + "-sentinel" }
 		data-table-scroll-sentinel
 		hx-get={ cfg.NextPageURL() }
-		hx-trigger={ `intersect once root:"closest .overflow-y-auto, [style*=overflow-y]" rootMargin:"400px 0px", click` }
+		hx-trigger={ `intersect once root:"closest :is(.overflow-y-auto,[style*=overflow-y])" rootMargin:"400px 0px", click` }
 		hx-target="this"
 		hx-swap="outerHTML settle:200ms"
 		hx-sync="this:drop"

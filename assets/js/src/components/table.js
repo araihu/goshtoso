@@ -9,7 +9,8 @@
     var filters = Object.create(null);
     root.querySelectorAll("[data-table-filter-key]").forEach(function (control) {
       var key = control.dataset.tableFilterKey;
-      filters[key] = control.dataset.tableFilterDefault || "";
+      var value = control.dataset.tableFilterDefault || "";
+      filters[key] = control.type === "checkbox" ? value === "true" : value;
     });
     return filters;
   }

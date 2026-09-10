@@ -129,7 +129,7 @@ func TestOptionsList_LiHasHXAttributesForToggle(t *testing.T) {
 	assert.Contains(t, html, `hx-swap="outerMorph"`)
 	assert.Contains(t, html, `hx-vals`)
 	assert.Contains(t, html, `&#34;value&#34;:&#34;running&#34;`)
-	assert.Contains(t, html, `hx-include="closest [data-combobox] input[type=hidden],[name=&#39;provider&#39;]"`)
+	assert.Contains(t, html, `hx-include="closest [data-combobox],[name=&#39;provider&#39;]"`)
 }
 
 func TestBody_SearchInput_RenderedWhenEnabled(t *testing.T) {

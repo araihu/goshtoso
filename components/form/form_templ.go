@@ -284,7 +284,7 @@ func formTemplate(cfg Config) templ.Component {
 			}
 		}
 		if cfg.HTMX != nil {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " hx-on::before:request=\"if(event.detail.ctx.sourceElement === this) { goshtosoRequests.track(this,event.detail.ctx); this.querySelectorAll('[data-form-validation]').forEach(field => goshtosoRequests.abort(field)); } else if(event.detail.ctx.sourceElement.hasAttribute('data-form-validation') && goshtosoRequests.pending(this)) event.preventDefault()\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " hx-on::before:request=\"goshtosoRequests.form(this,event)\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

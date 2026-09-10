@@ -880,7 +880,7 @@ func comboboxTemplate(cfg Config, state State) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, " x-on:click.outside=\"isOpen=false; openedWithKeyboard=false\" x-on:keydown.esc.window=\"isOpen=false; openedWithKeyboard=false; focusIndex=-1\" x-on:htmx:after:swap=\"focusIndex=-1\" x-on:htmx:before:request=\"if ($event.detail.ctx.request.method === 'POST') { goshtosoRequests.track($el,$event.detail.ctx); const search = $el.querySelector('[data-combobox-search]'); goshtosoRequests.abort(search); goshtosoRequests.lockInput(search,$event.detail.ctx); } else if (goshtosoRequests.pending($el)) $event.preventDefault()\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, " x-on:click.outside=\"isOpen=false; openedWithKeyboard=false\" x-on:keydown.esc.window=\"isOpen=false; openedWithKeyboard=false; focusIndex=-1\" x-on:htmx:after:swap=\"focusIndex=-1\" x-on:htmx:before:request=\"goshtosoRequests.combobox($el,$event)\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -59,21 +59,21 @@ func TestModernTablePayloadAndLatestRequest(t *testing.T) {
 	cfg := table.Config{ID: "one", HTMX: &table.HTMXConfig{Endpoint: "/modern-api/rows?search=stale&active=true&page=7"},
 		ExtraQueryParams: "&extra=a%26b&per_page=9", Columns: []table.Column{{Key: "name", Label: "Name", Sortable: true}},
 		Rows:    []table.Row{{ID: "old", Cells: map[string]table.Cell{"name": {Text: "Original"}}}},
-		Filters: &table.FilterConfig{Filters: []table.Filter{{Key: "search", Type: table.FilterSearch}, {Key: "active", Type: table.FilterToggle}}},
+		Filters: &table.FilterConfig{Filters: []table.Filter{{Key: "search", Type: table.FilterSearch}, {Key: "active", Type: table.FilterToggle, DefaultValue: "false"}, {Key: "odd'[]&", Type: table.FilterSearch, DefaultValue: "0"}}},
 	}
 	other := cfg
 	other.ID = "two"
 	body := `<form><input name="unrelated" value="private">` + renderComponentFragment(t, table.Table(cfg)) + renderComponentFragment(t, table.Table(other)) + `</form>`
 	page := modernizationPage(t, body)
-	require.NoError(t, page.Locator("#one-filters input[type=search]").Fill("first"))
+	require.NoError(t, page.Locator("#one-filters input[type=search]").First().Fill("first"))
 	modernizationWait(t, page, `()=>requests.length===1`)
 	_, err := page.Evaluate(`()=>{const u=new URL(requests[0].url,location.href);window.initialPayload=Object.fromEntries(u.searchParams);}`)
 	require.NoError(t, err)
 	payload, err := page.Evaluate(`()=>initialPayload`)
 	require.NoError(t, err)
-	require.Equal(t, map[string]interface{}{"_filter": "1", "extra": "a&b", "per_page": "9", "search": "first", "table_id": "one"}, payload)
+	require.Equal(t, map[string]interface{}{"_filter": "1", "extra": "a&b", "per_page": "9", "search": "first", "table_id": "one", "odd'[]&": "0"}, payload)
 	// Sorting shares the first table's stable queue, but cannot cancel table two.
-	require.NoError(t, page.Locator("#two-filters input[type=search]").Fill("independent"))
+	require.NoError(t, page.Locator("#two-filters input[type=search]").First().Fill("independent"))
 	modernizationWait(t, page, `()=>requests.length===2`)
 	require.NoError(t, page.Locator("#one th").Click())
 	modernizationWait(t, page, `()=>requests.length===3 && requests[0].aborted`)
@@ -82,12 +82,12 @@ func TestModernTablePayloadAndLatestRequest(t *testing.T) {
 	require.Equal(t, false, aborted)
 	// Third intent arrives after the first abort's finally: native replace alone
 	// loses the second request's handle in htmx 4.0.0.
-	require.NoError(t, page.Locator("#one-filters input[type=search]").Fill("newest"))
+	require.NoError(t, page.Locator("#one-filters input[type=search]").First().Fill("newest"))
 	modernizationWait(t, page, `()=>requests.length===4 && requests[2].aborted`)
 	_, err = page.Evaluate(`()=>{requests[3].resolve('<tr><td>Newest sort</td></tr>');requests[2].resolve('<tr><td>Stale second</td></tr>');requests[0].resolve('<tr><td>Stale</td></tr>');requests[1].resolve('<tr><td>Independent</td></tr>');}`)
 	require.NoError(t, err)
 	modernizationWait(t, page, `()=>document.querySelector('#one-tbody').textContent.includes('Newest sort') && document.querySelector('#two-tbody').textContent.includes('Independent')`)
-	require.NoError(t, page.Locator("#one-filters input[type=search]").Fill(""))
+	require.NoError(t, page.Locator("#one-filters input[type=search]").First().Fill(""))
 	modernizationWait(t, page, `()=>requests.length===5`)
 	absent, err := page.Evaluate(`()=>{const q=new URL(requests[4].url,location.href).searchParams;return !q.has('search')&&!q.has('active')&&!q.has('page')&&!q.has('unrelated');}`)
 	require.NoError(t, err)
@@ -112,6 +112,9 @@ func TestModernTableNativeSentinelRetryAndChain(t *testing.T) {
 				Rows:       []table.Row{{ID: "first", Cells: map[string]table.Cell{"name": {Text: "First"}}}},
 				Pagination: &table.PaginationConfig{Mode: table.PaginationInfiniteScroll, CurrentPage: 1, PerPage: 1, HasMore: true}}
 			body := renderComponentFragment(t, table.Table(cfg))
+			if !contained {
+				body = `<div style="overflow-y:auto;height:10px">Unrelated scroller</div>` + body
+			}
 			if contained {
 				body = `<div id="scroller" class="overflow-y-auto" style="height:100px;overflow-y:auto"><div style="height:900px"></div>` + body + `</div>`
 			}
@@ -191,9 +194,9 @@ func TestModernFormSubmissionOwnsValidationAndStatus(t *testing.T) {
 }
 
 func TestModernComboboxMutationCancelsStaleSearch(t *testing.T) {
-	cfg := combobox.Config{ID: "choices", Name: "choice", Mode: combobox.ModeMultiple, Source: combobox.Source{LazyEndpoint: "/modern-api/options"}, OptionsEndpoint: "/modern-api/options", ToggleEndpoint: "/modern-api/toggle", ClearEndpoint: "/modern-api/clear", EnableSearch: true, EnableClearAll: true, DisablePersistence: true}
+	cfg := combobox.Config{ID: "choices", Name: "choice", Mode: combobox.ModeMultiple, Source: combobox.Source{LazyEndpoint: "/modern-api/options"}, OptionsEndpoint: "/modern-api/options", ToggleEndpoint: "/modern-api/toggle", ClearEndpoint: "/modern-api/clear", EnableSearch: true, EnableClearAll: true, DisablePersistence: true, DependsOn: []string{"provider"}}
 	state := combobox.State{Options: []combobox.Option{{Value: "a", Label: "Alpha"}, {Value: "b", Label: "Beta"}}}
-	page := modernizationPage(t, renderComponentFragment(t, combobox.Combobox(cfg, state)))
+	page := modernizationPage(t, `<input name="provider" value="cloud"><input name="unrelated" value="private">`+renderComponentFragment(t, combobox.Combobox(cfg, state)))
 	require.NoError(t, page.Locator("#choices-trigger").Click())
 	require.NoError(t, page.Locator("[data-combobox-search]").Fill("a"))
 	modernizationWait(t, page, `()=>requests.length===1`)
@@ -211,8 +214,38 @@ func TestModernComboboxMutationCancelsStaleSearch(t *testing.T) {
 	count, err := page.Evaluate(`()=>requests.length`)
 	require.NoError(t, err)
 	require.EqualValues(t, 3, count)
-	// 502 is an intentional retry fragment, never covered by blanket 5xx suppression.
-	_, err = page.Evaluate(`()=>requests[2].resolve('<div data-combobox-body>Retry provider</div>',502,{'HX-Retarget':'#choices-body','HX-Reswap':'outerHTML'})`)
+	// A real component response morphs the root while the user keeps query focus.
+	state.Selected = []string{"a"}
+	state.Search = "al"
+	_, err = page.Evaluate(`html=>requests[2].resolve(html)`, renderComponentFragment(t, combobox.Combobox(cfg, state)))
 	require.NoError(t, err)
-	modernizationWait(t, page, `()=>document.querySelector('[data-combobox-body]').textContent.includes('Retry provider')`)
+	modernizationWait(t, page, `()=>document.querySelector('#choices input[type=hidden]')?.value==='a' && !document.querySelector('[data-combobox-search]').readOnly`)
+	focus, err := page.Evaluate(`()=>{const input=document.querySelector('[data-combobox-search]');return {focus:document.activeElement===input,value:input.value,caret:input.selectionStart};}`)
+	require.NoError(t, err)
+	require.Equal(t, map[string]interface{}{"focus": true, "value": "al", "caret": 1}, focus)
+	_, err = page.Evaluate(`()=>document.querySelectorAll('#choices-options [data-combobox-option]')[1].dispatchEvent(new MouseEvent('click',{bubbles:true}))`)
+	require.NoError(t, err)
+	modernizationWait(t, page, `()=>requests.length===4`)
+	payload, err := page.Evaluate(`()=>Object.fromEntries(new URLSearchParams(requests[3].body))`)
+	require.NoError(t, err)
+	require.Equal(t, map[string]interface{}{"choice": "a", "q": "al", "provider": "cloud", "value": "b"}, payload)
+	state.Selected = []string{"a", "b"}
+	_, err = page.Evaluate(`html=>requests[3].resolve(html)`, renderComponentFragment(t, combobox.Combobox(cfg, state)))
+	require.NoError(t, err)
+	modernizationWait(t, page, `()=>document.querySelectorAll('#choices input[type=hidden]').length===2 && !document.querySelector('#choices-trigger').disabled`)
+	require.NoError(t, page.Locator("#choices [data-combobox-clear-all]").Click())
+	modernizationWait(t, page, `()=>requests.length===5`)
+	selected, err := page.Evaluate(`()=>new URLSearchParams(requests[4].body).getAll('choice')`)
+	require.NoError(t, err)
+	require.Equal(t, []interface{}{"a", "b"}, selected)
+	state.Selected = nil
+	_, err = page.Evaluate(`html=>requests[4].resolve(html)`, renderComponentFragment(t, combobox.Combobox(cfg, state)))
+	require.NoError(t, err)
+	modernizationWait(t, page, `()=>document.querySelectorAll('#choices input[type=hidden]').length===0 && !document.querySelector('#choices-trigger').disabled`)
+	require.NoError(t, page.Locator("#choices-options [data-combobox-option]").First().Click())
+	modernizationWait(t, page, `()=>requests.length===6`)
+	// Provider 502 intentionally retargets the options and keeps the root alive.
+	_, err = page.Evaluate(`()=>requests[5].resolve('<ul id="choices-options"><li>Retry provider</li></ul>',502,{'HX-Retarget':'#choices-options'})`)
+	require.NoError(t, err)
+	modernizationWait(t, page, `()=>document.querySelector('#choices-options').textContent.includes('Retry provider') && !document.querySelector('#choices-trigger').disabled`)
 }

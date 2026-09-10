@@ -7,6 +7,35 @@
   if (window.goshtosoRequests) return;
   var current = new WeakMap();
   window.goshtosoRequests = {
+    form: function (root, event) {
+      var ctx = event.detail.ctx;
+      if (ctx.sourceElement === root) {
+        window.goshtosoRequests.track(root, ctx);
+        root.querySelectorAll("[data-form-validation]").forEach(function (field) {
+          window.goshtosoRequests.abort(field);
+        });
+      } else if (ctx.sourceElement.hasAttribute("data-form-validation") && window.goshtosoRequests.pending(root)) {
+        event.preventDefault();
+      }
+    },
+    combobox: function (root, event) {
+      var ctx = event.detail.ctx;
+      if (ctx.request.method === "POST") {
+        window.goshtosoRequests.track(root, ctx);
+        var search = root.querySelector("[data-combobox-search]");
+        window.goshtosoRequests.abort(search);
+        window.goshtosoRequests.lockInput(search, ctx);
+      } else if (window.goshtosoRequests.pending(root)) {
+        event.preventDefault();
+      }
+    },
+    table: function (root, event) {
+      var ctx = event.detail.ctx;
+      if (ctx.sourceElement.closest("[data-table-requests]") !== root) return;
+      if (ctx.request.method === "GET" && (ctx.sourceElement.matches("[data-table-filters],[data-table-sort-request]") || ctx.sourceElement.closest("[data-table-pages]"))) {
+        window.goshtosoRequests.latest(root, ctx);
+      }
+    },
     abort: function (owner) {
       var ctx = owner && current.get(owner);
       if (ctx) {

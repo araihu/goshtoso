@@ -321,7 +321,8 @@ type Filter struct {
 	Options []FilterOption
 	// OptionsHTMX loads select options dynamically via HTMX on load
 	OptionsHTMX *FilterOptionsHTMXConfig
-	// DefaultValue is the initial value
+	// DefaultValue is the initial value. Toggles use "true" for checked;
+	// "false" and the empty value are unchecked.
 	DefaultValue string
 }
 
