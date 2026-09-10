@@ -1,6 +1,6 @@
 # Pair A1 modernization results
 
-Baseline: `0ff8117c`; runtimes: htmx 4.0.0, Alpine 3.17.2 and official hx-alpine-compat. A03 requires paired A07 synchronization before integration. Shared minified bundles are regenerated locally for testing and finalized by the coordinator.
+Baseline: `0ff8117c`; runtimes: htmx 4.0.0, Alpine 3.17.2 and official hx-alpine-compat. A03 is paired with the reviewed A07 synchronization implementation. Shared minified bundles are regenerated locally for testing and finalized by the coordinator.
 
 | Task | Outcome | Evidence |
 |---|---|---|
@@ -59,4 +59,23 @@ This rejects a proposed boundary; the shipped replacement path was not broken. I
 
 The first browser run caught a helper manually reading removed wrapper name; native change already passed. The helper now consumes static hx-vals, and the complete focused rerun passed. Unit markup expectations were updated with an additional full-response regression.
 
-Pair A2 reciprocal review/combined race verification pending at this implementation checkpoint. No public API fields or dependency pins changed here. Coordinator owns combined full suite, public pins/module contracts and shared generated outputs.
+No public API fields or dependency pins changed in A1. Coordinator owns combined full suite, public pins/module contracts and shared generated outputs. Final reciprocal review is recorded below.
+
+
+## Final reciprocal review — closed
+
+Reviewed A2 implementation through `ab3c26bf`, including its integration of A1. Independently integrated the same source in the A1 worktree; source diffs against A2 were empty for the implementation and tests. Four review findings are resolved:
+
+1. Form submission ownership uses the actual tracked context, independent of an external loading indicator. The delayed-submit regression attempts field validation and duplicate submission while pending, then checks expected422/unexpected500 behavior and a pre-disabled button.
+2. Native filter payload construction preserves explicitly supplied per_page extras. The exact payload regression includes numeric zero, unusual field keys, false defaults, stale URL values and two tables inside a consumer form without unrelated-input leakage.
+3. Cleanup checks the actual source event target and context identity. Descendant cleanup no longer cancels its parent's active request; removing the source does cancel it. A three-intent table regression proves an old aborted request's finally cannot erase the newer cancellation handle, and another table remains independent.
+4. Actual Combobox mutations make search read-only instead of disabled. The real request/response path retains focus, query and caret through full-root morph, restores editability, and blocks overlapping mutation/read intent. Two successive toggle payloads include current selection, query and explicit dependency; clear carries both selected values. Corrected closest inclusion targets the widget root rather than an invalid chained closest selector.
+
+The named form/combobox/table methods remove long inline request hooks without changing lifecycle ownership. requests.js retains the pinned-runtime workaround: cancellation uses the real request abort handle, and finally/cleanup compare context identity. Native mutation admission remains separate from latest-result cancellation. The helper is loaded before consumers in both full and standalone Combobox bundles.
+
+Independent review verification:
+
+- `go test -tags=e2e,full ./site/tests/e2e/... -count=1 -timeout 5m -run 'TestModern|TestComboboxServerMorph|TestComboboxPersistence|TestSelectBinding|TestInputReplacement'`: passed, **11.362s**.
+- `go test ./components/combobox ./components/form/... ./components/table ./assets/js/src/components ./internal/jstooling -count=1`: all passed.
+
+No remaining blocking findings in A2's reviewed source. A2's reciprocal review of A1 and the combined existing-suite run are recorded in results-A2.md. Full integrated repository and module-contract gates remain the coordinator's responsibility.
