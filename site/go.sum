@@ -6,10 +6,10 @@ github.com/alecthomas/chroma/v2 v2.27.0 h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r
 github.com/alecthomas/chroma/v2 v2.27.0/go.mod h1:NjJ3ciIgrqBNeIkWZ4e46nseoLDslxU1LmfCoL+wcY8=
 github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
-github.com/araihu/goshtoso v0.2.11-0.20260910201950-724e5ba38a60 h1:IO9hh3BRH6rQSYW9YMvQdty3iaK2hnbB1szdSnA34lI=
-github.com/araihu/goshtoso v0.2.11-0.20260910201950-724e5ba38a60/go.mod h1:9gg3IPPU1C1gJZUZts+AUDfbV/iYb0N5mSbL5NtyRzU=
-github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910202148-7b3d1f0c7aac h1:8GmJYwz1+qiSj8+Kvek1BILJDpzQ9DHgcpr1H/uxln4=
-github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910202148-7b3d1f0c7aac/go.mod h1:3fy1/aQtf7e1XNUTrO3Nv+t6DF2xYCnNp6zCg67/kNE=
+github.com/araihu/goshtoso v0.2.11-0.20260910212854-5882ce53d277 h1:XkpQwPIWa41rgR9mSoxL9/nMR89pU/AqYyVl0Nv04dk=
+github.com/araihu/goshtoso v0.2.11-0.20260910212854-5882ce53d277/go.mod h1:9gg3IPPU1C1gJZUZts+AUDfbV/iYb0N5mSbL5NtyRzU=
+github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910213838-cacbfabe8724 h1:dP/6L+EYnWSj2X4LUvqejilFMSrA1Zb/hOy7J/8WTkE=
+github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910213838-cacbfabe8724/go.mod h1:vme6qwadyuneFflKQsnvIWYp8D/oFhJSux0YOxPMvhg=
 github.com/araihu/goshtoso-charts v0.0.3 h1:dWWAyLCAkgHZET+HOXwOuD02H+je16xJY4LjhH9bQKQ=
 github.com/araihu/goshtoso-charts v0.0.3/go.mod h1:ZyuqIfYasKRnMUohpRdUEIcAlePJAgsSIHdQp3msNqM=
 github.com/coder/websocket v1.8.15 h1:6B2JPeOGlpff2Uz6vOEH1Vzpi0iUz20A+lPVhPHtNUA=

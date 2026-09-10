@@ -81,12 +81,16 @@ func TestJavaScriptBatch3LaneF_SourceProvidersRunBeforeBundleIntegration(t *test
 		if (!window.goshtosoRestoreSelectDraft('draft-os', 'linux') || !changed ||
 			document.getElementById('draft-os').value !== 'linux') return false;
 
-		let stopped = false;
+		let themeWatcher;
 		const layout = window.__laneFProviders.demoLayout();
-		layout.$watch = () => () => { stopped = true; };
+		// Alpine owns watcher disposal; its magic returns no disposer.
+		layout.$watch = (name, callback) => { if (name === 'theme') themeWatcher = callback; };
 		layout.init();
-		layout.destroy();
-		if (!stopped || layout._stopThemeWatch !== null) return false;
+		if (typeof themeWatcher !== 'function') return false;
+		layout.setTheme('goshtoso');
+		themeWatcher(layout.theme);
+		if (document.documentElement.dataset.theme !== 'goshtoso' ||
+			localStorage.getItem('theme') !== 'goshtoso') return false;
 
 		const consent = window.__laneFProviders.demoStorageConsent();
 		consent.deny();
