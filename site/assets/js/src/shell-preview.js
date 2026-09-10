@@ -7,6 +7,7 @@
         available: 0,
         observer: null,
         init: function () {
+          this.mobile = window.matchMedia("(max-width: 639px)").matches;
           var self = this;
           this.observer = new ResizeObserver(function (entries) {
             self.available = entries[0].contentRect.width;
