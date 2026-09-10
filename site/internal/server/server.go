@@ -12,6 +12,8 @@ import (
 	"time"
 
 	shellassets "github.com/araihu/goshtoso-app-shells/componentdocshell/assets"
+	consoleassets "github.com/araihu/goshtoso-app-shells/consoleshell/assets"
+	landingassets "github.com/araihu/goshtoso-app-shells/landingshell/assets"
 	chartassets "github.com/araihu/goshtoso-charts/assets"
 	libraryassets "github.com/araihu/goshtoso/assets"
 	combobox "github.com/araihu/goshtoso/components/combobox"
@@ -113,6 +115,9 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/docs/iconpack", s.handleIconpackPage)
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
 	s.registerChartsRoutes()
+	s.mux.HandleFunc("/modules/app-shells/live/", modulespages.ShellLive)
+	s.mux.Handle("/consoleshell/assets/", consoleassets.Handler())
+	s.mux.Handle("/landingshell/assets/", landingassets.Handler())
 	s.mux.HandleFunc("/modules/app-shells", s.handleAppShellsModulePage)
 	s.mux.HandleFunc("/modules/app-shells/", s.handleAppShellsSubpage)
 	s.mux.HandleFunc("/getting-started", s.handleGettingStarted)

@@ -1,6 +1,6 @@
 package modulespages
 
-const appShellsVersion = "v0.1.6"
+const appShellsVersion = "v0.1.9-0.20260910224508-5b2222e54637"
 
 func appShellsComponentPageCode() string {
 	return `@componentpage.Page(componentpage.Config{

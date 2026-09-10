@@ -97,7 +97,7 @@ templ appShellsComponentDocsShellContent() {
 		"app-shells-component-docs-shell",
 		appShellsComponentDocsShellPreview(),
 		appShellsComponentDocsShellCode(),
-		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/componentdocshell@v0.1.6",
+		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells@" + appShellsVersion + "/componentdocshell",
 		appShellsComponentDocsFragmentGuidance(),
 	)
 }
@@ -110,7 +110,7 @@ templ appShellsConsoleShellContent() {
 		"app-shells-console-shell",
 		appShellsConsoleShellPreview(),
 		appShellsConsoleShellCode(),
-		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/consoleshell@v0.1.6",
+		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells@" + appShellsVersion + "/consoleshell",
 		appShellsConsoleFragmentGuidance(),
 	)
 }
@@ -123,7 +123,7 @@ templ appShellsLandingShellContent() {
 		"app-shells-landing-shell",
 		appShellsLandingShellPreview(),
 		appShellsLandingShellCode(),
-		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/landingshell@v0.1.6",
+		"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells@" + appShellsVersion + "/landingshell",
 		appShellsLandingResponseGuidance(),
 	)
 }
@@ -131,7 +131,7 @@ templ appShellsLandingShellContent() {
 templ appShellPackagePage(title, packageName, description, codeID string, preview templpkg.Component, code, packageURL string, responseGuidance templpkg.Component) {
 	<div class="mx-auto max-w-4xl space-y-10">
 		<header class="space-y-4">
-			<p class="text-sm font-semibold text-primary dark:text-primary-dark">Goshtoso App Shells · { appShellsVersion }</p>
+			<p class="text-sm font-semibold text-primary dark:text-primary-dark">Goshtoso App Shells</p>
 			<h1 class="font-title text-3xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">{ title }</h1>
 			<p class="max-w-3xl text-lg leading-8 text-on-surface dark:text-on-surface-dark">{ description }</p>
 			<div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold">
@@ -142,14 +142,17 @@ templ appShellPackagePage(title, packageName, description, codeID string, previe
 
 		<section class="space-y-4" aria-labelledby={ codeID + "-preview-title" }>
 			<div>
-				<h2 id={ codeID + "-preview-title" } data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">What the package owns</h2>
-				<p class="mt-2 max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Shell-owned structure stays stable while the application supplies its brand, navigation, routes, and content.</p>
+				<h2 id={ codeID + "-preview-title" } data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Try it live</h2>
+				<p class="mt-2 max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">A working example with its own navigation, theme controls, and viewport.</p>
 			</div>
-			<div data-app-shell-package={ packageName } class="rounded-radius border border-outline bg-surface p-5 dark:border-outline-dark dark:bg-surface-dark sm:p-6">
+			<div data-app-shell-package={ packageName } class="overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark">
 				@preview
 			</div>
 		</section>
 
+		<details class="rounded-radius border border-outline p-5 dark:border-outline-dark">
+			<summary class="cursor-pointer text-lg font-semibold">Setup and integration</summary>
+			<div class="mt-6 space-y-8">
 		<section class="space-y-4" aria-labelledby={ codeID + "-code-title" }>
 			<h2 id={ codeID + "-code-title" } data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Install and compose</h2>
 			@codeblock.CodeBlock(codeblock.Config{
@@ -175,25 +178,20 @@ templ appShellPackagePage(title, packageName, description, codeID string, previe
 			<h2 id={ codeID + "-boundary-title" } data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Consumer boundary</h2>
 			<p class="mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">The shell owns the surrounding frame, responsive behavior, and lifecycle hooks. The consumer owns product vocabulary, authorization, data, navigation policy, metadata, and content.</p>
 		</section>
+			</div>
+		</details>
 	</div>
 }
 
 templ appShellsComponentDocsShellPreview() {
-	<div class="space-y-5">
-		<p class="text-sm font-semibold text-success-text dark:text-success-text-dark">Live proof: this page is rendered inside Component Docs Shell.</p>
-		<div class="divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark">
-			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Header</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Brand, appearance controls, family navigation, and a consumer-owned actions slot.</span></div>
-			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Search</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">The shell owns scoped sidebar search. Consumer-owned global search belongs in <code class="font-mono">HeaderActions</code>.</span></div>
-			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Scoped sidebar</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Local pages, grouped sections, active route, and mobile drawer behavior.</span></div>
-			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Main + TOC</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">One content scroller, optional table of contents, focus handling, and fragment navigation.</span></div>
-		</div>
-	</div>
+ @appShellLivePreview("componentdocshell", "Navigate between Overview and Activity, search the sidebar, and try the mobile drawer.")
 }
 
 templ appShellsComponentDocsFragmentGuidance() {
+ <p class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Consumer-owned global search belongs in <code>HeaderActions</code>. The shell’s sidebar search filters local navigation.</p>
 	@appShellsFragmentGuidance(
 		"app-shells-component-docs-shell-fragments",
-		"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
+		"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request-Type: partial and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
 		"Component Docs Shell Fragment emits the document title plus out-of-band replacements for main content, scoped sidebar, and family navigation. Active page and family state therefore stay synchronized after navigation.",
 		appShellsComponentDocsShellFragmentCode(),
 	)
@@ -202,7 +200,7 @@ templ appShellsComponentDocsFragmentGuidance() {
 templ appShellsConsoleFragmentGuidance() {
 	@appShellsFragmentGuidance(
 		"app-shells-console-shell-fragments",
-		"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
+		"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request-Type: partial and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
 		"Console Shell Fragment emits the document title and stable main region. NavigationOOB controls whether the same response also replaces the sidebar so its active state follows the new page.",
 		appShellsConsoleShellFragmentCode(),
 	)
@@ -227,28 +225,31 @@ templ appShellsFragmentGuidance(id, summary, contract, code string) {
 templ appShellsLandingResponseGuidance() {
 	<section class="space-y-2 border-t border-outline pt-8 dark:border-outline-dark" aria-labelledby="app-shells-landing-response-title">
 		<h2 id="app-shells-landing-response-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Full-document response</h2>
-		<p class="max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark"><code class="font-mono">landingshell</code> has no <code class="font-mono">Fragment</code> API in v0.1.6. Use <code class="font-mono">Layout</code> to render complete public pages; keep any HTMX fragments inside consumer-owned content.</p>
+		<p class="max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark"><code class="font-mono">landingshell</code> has no <code class="font-mono">Fragment</code> API in v0.1.9-0.20260910224508-5b2222e54637. Use <code class="font-mono">Layout</code> to render complete public pages; keep any HTMX fragments inside consumer-owned content.</p>
 	</section>
 }
 
 templ appShellsConsoleShellPreview() {
-	<div class="space-y-5">
-		<p class="text-sm font-semibold text-primary dark:text-primary-dark">Operations frame</p>
-		<div class="divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark">
-			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Header</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Persistent identity, actions, and optional application header content.</span></div>
-			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Navigation</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Desktop sidebar and mobile drawer with active state and Escape recovery.</span></div>
-			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Lifecycle</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Stable main target, HTMX history, focus restoration, scroll reset, and optional navigation OOB.</span></div>
-		</div>
-	</div>
+ @appShellLivePreview("consoleshell", "Switch routes without losing the application frame. Try the navigation menu at mobile size.")
 }
 
 templ appShellsLandingShellPreview() {
-	<div class="space-y-5">
-		<p class="text-sm font-semibold text-primary dark:text-primary-dark">Public-site frame</p>
-		<div class="divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark">
-			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Brand header</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Logo, tagline, links, appearance control, repository link, and optional actions.</span></div>
-			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Hero slot</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">The consumer supplies the message, proof, art direction, and calls to action.</span></div>
-			<div class="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"><span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Footer</span><span class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Structured organization metadata and links remain separate from product content.</span></div>
-		</div>
-	</div>
+ @appShellLivePreview("landingshell", "Explore the header links, appearance controls, mobile menu, and footer.")
+}
+
+// Frames isolate shell layout, focus, navigation and styles from the documentation.
+templ appShellLivePreview(family, hint string) {
+ <div x-data="shellPreview">
+  <div class="flex flex-wrap items-center justify-between gap-3 border-b border-outline bg-surface-alt p-3 dark:border-outline-dark dark:bg-surface-dark-alt">
+   <div class="flex gap-2" role="group" aria-label="Preview viewport">
+    <button type="button" class="rounded-radius border border-outline px-3 py-2 text-sm dark:border-outline-dark" x-on:click="mobile = false" x-bind:class="mobile ? '' : 'bg-surface dark:bg-surface-dark'" x-bind:aria-pressed="!mobile">Desktop</button>
+    <button type="button" class="rounded-radius border border-outline px-3 py-2 text-sm dark:border-outline-dark" x-on:click="mobile = true" x-bind:class="mobile ? 'bg-surface dark:bg-surface-dark' : ''" x-bind:aria-pressed="mobile">Mobile</button>
+   </div>
+   <a href={templpkg.URL("/modules/app-shells/live/"+family+"/overview")} target="_blank" rel="noopener" class="text-sm font-semibold text-primary underline underline-offset-2 dark:text-primary-dark">Open full example ↗</a>
+  </div>
+  <div x-ref="stage" class="relative w-full overflow-hidden bg-surface-alt dark:bg-surface-dark-alt" x-bind:style="stageStyle" style="min-height: 240px;">
+   <iframe src={templpkg.URL("/modules/app-shells/live/"+family+"/overview")} title={family+" live example"} loading="lazy" class="border-0" x-bind:style="frameStyle"></iframe>
+  </div>
+  <p class="border-t border-outline p-4 text-sm leading-6 text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted">{hint}</p>
+ </div>
 }

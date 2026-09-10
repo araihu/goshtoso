@@ -769,6 +769,9 @@
   .left-full {
     left: 100%;
   }
+  .isolate {
+    isolation: isolate;
+  }
   .z-10 {
     z-index: 10;
   }
@@ -3400,6 +3403,9 @@
   .py-14 {
     padding-block: calc(var(--spacing) * 14);
   }
+  .py-16 {
+    padding-block: calc(var(--spacing) * 16);
+  }
   .py-20 {
     padding-block: calc(var(--spacing) * 20);
   }
@@ -3468,6 +3474,9 @@
   }
   .pb-10 {
     padding-bottom: calc(var(--spacing) * 10);
+  }
+  .pb-16 {
+    padding-bottom: calc(var(--spacing) * 16);
   }
   .pb-\[max\(0\.5rem\,env\(safe-area-inset-bottom\)\)\] {
     padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
@@ -5344,9 +5353,6 @@
     }
     .sm\:grid-cols-\[8rem_1fr\] {
       grid-template-columns: 8rem 1fr;
-    }
-    .sm\:grid-cols-\[9rem_1fr\] {
-      grid-template-columns: 9rem 1fr;
     }
     .sm\:grid-cols-\[9rem_minmax\(0\,1fr\)\] {
       grid-template-columns: 9rem minmax(0,1fr);

@@ -277,7 +277,7 @@ func appShellsComponentDocsShellContent() templ.Component {
 			"app-shells-component-docs-shell",
 			appShellsComponentDocsShellPreview(),
 			appShellsComponentDocsShellCode(),
-			"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/componentdocshell@v0.1.6",
+			"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells@"+appShellsVersion+"/componentdocshell",
 			appShellsComponentDocsFragmentGuidance(),
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -315,7 +315,7 @@ func appShellsConsoleShellContent() templ.Component {
 			"app-shells-console-shell",
 			appShellsConsoleShellPreview(),
 			appShellsConsoleShellCode(),
-			"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/consoleshell@v0.1.6",
+			"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells@"+appShellsVersion+"/consoleshell",
 			appShellsConsoleFragmentGuidance(),
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -353,7 +353,7 @@ func appShellsLandingShellContent() templ.Component {
 			"app-shells-landing-shell",
 			appShellsLandingShellPreview(),
 			appShellsLandingShellCode(),
-			"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells/landingshell@v0.1.6",
+			"https://pkg.go.dev/github.com/araihu/goshtoso-app-shells@"+appShellsVersion+"/landingshell",
 			appShellsLandingResponseGuidance(),
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -384,111 +384,98 @@ func appShellPackagePage(title, packageName, description, codeID string, preview
 			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"mx-auto max-w-4xl space-y-10\"><header class=\"space-y-4\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Goshtoso App Shells · ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"mx-auto max-w-4xl space-y-10\"><header class=\"space-y-4\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Goshtoso App Shells</p><h1 class=\"font-title text-3xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(appShellsVersion)
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 134, Col: 113}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 135, Col: 135}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</p><h1 class=\"font-title text-3xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</h1><p class=\"max-w-3xl text-lg leading-8 text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 135, Col: 135}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 136, Col: 97}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</h1><p class=\"max-w-3xl text-lg leading-8 text-on-surface dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</p><div class=\"flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold\"><code class=\"font-mono text-primary dark:text-primary-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var14 string
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(description)
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(packageName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 136, Col: 97}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 138, Col: 77}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</p><div class=\"flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold\"><code class=\"font-mono text-primary dark:text-primary-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</code> <a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var15 string
-		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(packageName)
+		var templ_7745c5c3_Var15 templ.SafeURL
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinURLErrs(templpkg.SafeURL(packageURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 138, Col: 77}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 139, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</code> <a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Open API documentation</a></div></header><section class=\"space-y-4\" aria-labelledby=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var16 templ.SafeURL
-		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs(templpkg.SafeURL(packageURL))
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(codeID + "-preview-title")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 139, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 143, Col: 72}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Open API documentation</a></div></header><section class=\"space-y-4\" aria-labelledby=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\"><div><h2 id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.ResolveAttributeValue(codeID + "-preview-title")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 143, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 145, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"><div><h2 id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Try it live</h2><p class=\"mt-2 max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">A working example with its own navigation, theme controls, and viewport.</p></div><div data-app-shell-package=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var18 string
-		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(codeID + "-preview-title")
+		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(packageName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 145, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 148, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">What the package owns</h2><p class=\"mt-2 max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Shell-owned structure stays stable while the application supplies its brand, navigation, routes, and content.</p></div><div data-app-shell-package=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var19 string
-		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(packageName)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 148, Col: 44}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\" class=\"rounded-radius border border-outline bg-surface p-5 dark:border-outline-dark dark:bg-surface-dark sm:p-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" class=\"overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -496,33 +483,33 @@ func appShellPackagePage(title, packageName, description, codeID string, preview
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></section><section class=\"space-y-4\" aria-labelledby=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></section><details class=\"rounded-radius border border-outline p-5 dark:border-outline-dark\"><summary class=\"cursor-pointer text-lg font-semibold\">Setup and integration</summary><div class=\"mt-6 space-y-8\"><section class=\"space-y-4\" aria-labelledby=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var19 string
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.ResolveAttributeValue(codeID + "-code-title")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 156, Col: 69}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\"><h2 id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(codeID + "-code-title")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 153, Col: 69}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 157, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\"><h2 id=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var21 string
-		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(codeID + "-code-title")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 154, Col: 34}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Install and compose</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Install and compose</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -545,7 +532,7 @@ func appShellPackagePage(title, packageName, description, codeID string, preview
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -555,33 +542,33 @@ func appShellPackagePage(title, packageName, description, codeID string, preview
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<section class=\"border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<section class=\"border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var21 string
+		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(codeID + "-boundary-title")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 177, Col: 117}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\"><h2 id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(codeID + "-boundary-title")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 174, Col: 117}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 178, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\"><h2 id=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var23 string
-		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(codeID + "-boundary-title")
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 175, Col: 38}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var23)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Consumer boundary</h2><p class=\"mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\">The shell owns the surrounding frame, responsive behavior, and lifecycle hooks. The consumer owns product vocabulary, authorization, data, navigation policy, metadata, and content.</p></section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Consumer boundary</h2><p class=\"mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\">The shell owns the surrounding frame, responsive behavior, and lifecycle hooks. The consumer owns product vocabulary, authorization, data, navigation policy, metadata, and content.</p></section></div></details></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -605,12 +592,12 @@ func appShellsComponentDocsShellPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var24 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var24 == nil {
-			templ_7745c5c3_Var24 = templ.NopComponent
+		templ_7745c5c3_Var23 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var23 == nil {
+			templ_7745c5c3_Var23 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div class=\"space-y-5\"><p class=\"text-sm font-semibold text-success-text dark:text-success-text-dark\">Live proof: this page is rendered inside Component Docs Shell.</p><div class=\"divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\"><div class=\"grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Header</span><span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Brand, appearance controls, family navigation, and a consumer-owned actions slot.</span></div><div class=\"grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Search</span><span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">The shell owns scoped sidebar search. Consumer-owned global search belongs in <code class=\"font-mono\">HeaderActions</code>.</span></div><div class=\"grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Scoped sidebar</span><span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Local pages, grouped sections, active route, and mobile drawer behavior.</span></div><div class=\"grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Main + TOC</span><span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">One content scroller, optional table of contents, focus handling, and fragment navigation.</span></div></div></div>")
+		templ_7745c5c3_Err = appShellLivePreview("componentdocshell", "Navigate between Overview and Activity, search the sidebar, and try the mobile drawer.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -634,14 +621,18 @@ func appShellsComponentDocsFragmentGuidance() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var25 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var25 == nil {
-			templ_7745c5c3_Var25 = templ.NopComponent
+		templ_7745c5c3_Var24 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var24 == nil {
+			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Consumer-owned global search belongs in <code>HeaderActions</code>. The shell’s sidebar search filters local navigation.</p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = appShellsFragmentGuidance(
 			"app-shells-component-docs-shell-fragments",
-			"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
+			"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request-Type: partial and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
 			"Component Docs Shell Fragment emits the document title plus out-of-band replacements for main content, scoped sidebar, and family navigation. Active page and family state therefore stay synchronized after navigation.",
 			appShellsComponentDocsShellFragmentCode(),
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -668,14 +659,14 @@ func appShellsConsoleFragmentGuidance() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var26 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var26 == nil {
-			templ_7745c5c3_Var26 = templ.NopComponent
+		templ_7745c5c3_Var25 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var25 == nil {
+			templ_7745c5c3_Var25 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = appShellsFragmentGuidance(
 			"app-shells-console-shell-fragments",
-			"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
+			"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request-Type: partial and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
 			"Console Shell Fragment emits the document title and stable main region. NavigationOOB controls whether the same response also replaces the sidebar so its active state follows the new page.",
 			appShellsConsoleShellFragmentCode(),
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -702,64 +693,64 @@ func appShellsFragmentGuidance(id, summary, contract, code string) templ.Compone
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var27 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var27 == nil {
-			templ_7745c5c3_Var27 = templ.NopComponent
+		templ_7745c5c3_Var26 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var26 == nil {
+			templ_7745c5c3_Var26 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<section class=\"space-y-4 border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<section class=\"space-y-4 border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var27 string
+		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.ResolveAttributeValue(id + "-title")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 210, Col: 113}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var27)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\"><div class=\"space-y-2\"><h2 id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.ResolveAttributeValue(id + "-title")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 212, Col: 113}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 212, Col: 25}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var28)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\"><div class=\"space-y-2\"><h2 id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Full documents and HTMX fragments</h2><p class=\"max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var29 string
-		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(id + "-title")
+		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(summary)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 214, Col: 25}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 213, Col: 85}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Full documents and HTMX fragments</h2><p class=\"max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</p><p class=\"max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var30 string
-		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(summary)
+		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(contract)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 215, Col: 85}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 214, Col: 106}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</p><p class=\"max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var31 string
-		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(contract)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 216, Col: 106}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -772,7 +763,7 @@ func appShellsFragmentGuidance(id, summary, contract, code string) templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -796,12 +787,12 @@ func appShellsLandingResponseGuidance() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var32 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var32 == nil {
-			templ_7745c5c3_Var32 = templ.NopComponent
+		templ_7745c5c3_Var31 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var31 == nil {
+			templ_7745c5c3_Var31 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<section class=\"space-y-2 border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"app-shells-landing-response-title\"><h2 id=\"app-shells-landing-response-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Full-document response</h2><p class=\"max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\"><code class=\"font-mono\">landingshell</code> has no <code class=\"font-mono\">Fragment</code> API in v0.1.6. Use <code class=\"font-mono\">Layout</code> to render complete public pages; keep any HTMX fragments inside consumer-owned content.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<section class=\"space-y-2 border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"app-shells-landing-response-title\"><h2 id=\"app-shells-landing-response-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Full-document response</h2><p class=\"max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\"><code class=\"font-mono\">landingshell</code> has no <code class=\"font-mono\">Fragment</code> API in v0.1.9-0.20260910224508-5b2222e54637. Use <code class=\"font-mono\">Layout</code> to render complete public pages; keep any HTMX fragments inside consumer-owned content.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -825,12 +816,12 @@ func appShellsConsoleShellPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var33 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var33 == nil {
-			templ_7745c5c3_Var33 = templ.NopComponent
+		templ_7745c5c3_Var32 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var32 == nil {
+			templ_7745c5c3_Var32 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<div class=\"space-y-5\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Operations frame</p><div class=\"divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\"><div class=\"grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Header</span><span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Persistent identity, actions, and optional application header content.</span></div><div class=\"grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Navigation</span><span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Desktop sidebar and mobile drawer with active state and Escape recovery.</span></div><div class=\"grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Lifecycle</span><span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Stable main target, HTMX history, focus restoration, scroll reset, and optional navigation OOB.</span></div></div></div>")
+		templ_7745c5c3_Err = appShellLivePreview("consoleshell", "Switch routes without losing the application frame. Try the navigation menu at mobile size.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -854,12 +845,94 @@ func appShellsLandingShellPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var33 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var33 == nil {
+			templ_7745c5c3_Var33 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = appShellLivePreview("landingshell", "Explore the header links, appearance controls, mobile menu, and footer.").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// Frames isolate shell layout, focus, navigation and styles from the documentation.
+func appShellLivePreview(family, hint string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
 		templ_7745c5c3_Var34 := templ.GetChildren(ctx)
 		if templ_7745c5c3_Var34 == nil {
 			templ_7745c5c3_Var34 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<div class=\"space-y-5\"><p class=\"text-sm font-semibold text-primary dark:text-primary-dark\">Public-site frame</p><div class=\"divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\"><div class=\"grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Brand header</span><span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Logo, tagline, links, appearance control, repository link, and optional actions.</span></div><div class=\"grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Hero slot</span><span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">The consumer supplies the message, proof, art direction, and calls to action.</span></div><div class=\"grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Footer</span><span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Structured organization metadata and links remain separate from product content.</span></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div x-data=\"shellPreview\"><div class=\"flex flex-wrap items-center justify-between gap-3 border-b border-outline bg-surface-alt p-3 dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex gap-2\" role=\"group\" aria-label=\"Preview viewport\"><button type=\"button\" class=\"rounded-radius border border-outline px-3 py-2 text-sm dark:border-outline-dark\" x-on:click=\"mobile = false\" x-bind:class=\"mobile ? '' : 'bg-surface dark:bg-surface-dark'\" x-bind:aria-pressed=\"!mobile\">Desktop</button> <button type=\"button\" class=\"rounded-radius border border-outline px-3 py-2 text-sm dark:border-outline-dark\" x-on:click=\"mobile = true\" x-bind:class=\"mobile ? 'bg-surface dark:bg-surface-dark' : ''\" x-bind:aria-pressed=\"mobile\">Mobile</button></div><a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var35 templ.SafeURL
+		templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinURLErrs(templpkg.URL("/modules/app-shells/live/" + family + "/overview"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 248, Col: 72}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" target=\"_blank\" rel=\"noopener\" class=\"text-sm font-semibold text-primary underline underline-offset-2 dark:text-primary-dark\">Open full example ↗</a></div><div x-ref=\"stage\" class=\"relative w-full overflow-hidden bg-surface-alt dark:bg-surface-dark-alt\" x-bind:style=\"stageStyle\" style=\"min-height: 240px;\"><iframe src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var36 string
+		templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.ResolveAttributeValue(templpkg.URL("/modules/app-shells/live/" + family + "/overview"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 251, Col: 76}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var36)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "\" title=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var37 string
+		templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.ResolveAttributeValue(family + " live example")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 251, Col: 107}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var37)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" loading=\"lazy\" class=\"border-0\" x-bind:style=\"frameStyle\"></iframe></div><p class=\"border-t border-outline p-4 text-sm leading-6 text-on-surface-muted dark:border-outline-dark dark:text-on-surface-dark-muted\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var38 string
+		templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(hint)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/modules/app_shells.templ`, Line: 253, Col: 143}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -75,6 +75,7 @@ var defaultArtifacts = []artifact{
 			"site/assets/js/src/icon-catalog.js",
 			"site/assets/js/src/log-feed.js",
 			"site/assets/js/src/content-editor.js",
+			"site/assets/js/src/shell-preview.js",
 			"site/assets/js/src/chat.js",
 			"site/assets/js/src/profile-images.js",
 			"site/assets/js/src/ticker-pane.js",
