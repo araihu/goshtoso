@@ -4,6 +4,8 @@ import (
 	"github.com/araihu/goshtoso/components/modal"
 "github.com/araihu/goshtoso/components/drawer"
 "github.com/araihu/goshtoso/components/button"
+"github.com/araihu/goshtoso/components/textinput"
+"github.com/araihu/goshtoso/components/textarea"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -33,7 +35,12 @@ templ modalDemoContent() {
 })`,
 		)
 
- @demo.DemoSection(demo.DemoSectionProps{Title:"Content dialog above a drawer",Description:"Native dialog layering keeps the editor open. Escape dismisses only the picker; focus returns to its trigger."},modalContentPreview(),`@modal.Dialog(modal.DialogConfig{ID:"contentPicker",Title:"Choose item",FullscreenMobile:true,Content:pickerContent()})`)
+ @demo.DemoSection(demo.DemoSectionProps{Title:"Content dialog above a drawer",Description:"Native dialog layering keeps the editor open. Escape dismisses only the picker; focus returns to its trigger."},modalContentPreview(),`@modal.Dialog(modal.DialogConfig{
+    ID:               "contentPicker",
+    Title:            "Choose item",
+    FullscreenMobile: true,
+    Content:          pickerContent(),
+})`)
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -181,18 +188,51 @@ templ modalJSPreview() {
 }
 
 templ modalContentPreview() {
- <div id="modal-content-dialog" class="w-full max-w-2xl mx-auto">
- @button.Button(button.WithType("button"),button.WithAttrs(templ.Attributes{"x-data":"{}","x-on:click":"$dispatch('drawer:open', {id:'contentEditor'})"})) { Open content editor }
- @drawer.Drawer(drawer.Config{ID:"contentEditor",Title:"Content editor"}) {
-  <div x-data="{}">
-   <label>Draft<input aria-label="Draft" value="Unsaved draft"/></label>
-   @button.Button(button.WithType("button"),button.WithAttrs(templ.Attributes{"x-on:click":"$dispatch('modal:open', {id:'contentPicker'})"})) { Choose item }
+ <div id="modal-content-dialog" class="w-full max-w-2xl mx-auto" x-data="contentEditorDemo">
+ @button.Button(button.WithType("button"),button.WithAttrs(templ.Attributes{"x-on:click":"$dispatch('drawer:open', {id:'contentEditor'})"})) { Open content editor }
+ @drawer.Drawer(drawer.Config{ID:"contentEditor",Title:"Content editor",Width:drawer.WidthLG}) {
+  <div class="flex min-h-full flex-col gap-8 p-6 sm:p-8">
+   <div class="space-y-2">
+    <p class="text-xs font-semibold uppercase tracking-widest text-on-surface-muted dark:text-on-surface-dark-muted">Website / Draft</p>
+    <h3 class="text-xl font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Make it worth reading.</h3>
+    <p class="text-sm leading-relaxed text-on-surface-muted dark:text-on-surface-dark-muted">Shape your next update and connect readers to a helpful resource.</p>
+   </div>
+   @textinput.TextInput(textinput.Config{ID:"content-draft",Label:"Draft",Value:"Unsaved draft",HelperText:"A clear title helps readers know what to expect."})
+   @textarea.Textarea(textarea.Config{ID:"content-summary",Label:"Summary",Value:"A short introduction to what is new, why it matters, and where to go next.",Rows:5})
+   <section class="space-y-3" aria-label="Related content">
+    <h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Related content</h3>
+    <div class="space-y-4 rounded-radius border border-outline bg-surface-alt p-4 dark:border-outline-dark dark:bg-surface-dark-alt">
+     <div class="space-y-1"><p class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong" x-text="selectedItem"></p><p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">A helpful next step for your readers.</p></div>
+     @button.Button(button.WithType("button"),button.WithAttrs(templ.Attributes{"x-on:click":"pendingItem = selectedItem; itemSearch = ''; $dispatch('modal:open', {id:'contentPicker'})"})) { Choose item }
+    </div>
+   </section>
+   <div class="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-outline pt-5 dark:border-outline-dark">
+    <p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Preview only · Nothing is published</p>
+    @button.Button(button.WithType("button"),button.WithAttrs(templ.Attributes{"x-on:click":"$dispatch('drawer:close', {id:'contentEditor'})"})) { Done editing }
+   </div>
    @modal.Dialog(modal.DialogConfig{ID:"contentPicker",Title:"Choose item",FullscreenMobile:true,Content:pickerContent()})
   </div>
  }
  </div>
 }
+
 templ pickerContent() {
- <label>Search<input aria-label="Search items" autofocus/></label>
- @button.Button(button.WithType("button"),button.WithAttrs(templ.Attributes{"x-on:click":"$dispatch('modal:close', {id:'contentPicker'})"})) { Select item }
+ <div class="space-y-5 p-1 sm:p-2">
+  <p class="text-sm leading-relaxed text-on-surface-muted dark:text-on-surface-dark-muted">Choose a resource to feature alongside your draft.</p>
+  @textinput.TextInput(textinput.Config{ID:"content-item-search",Label:"Search items",Placeholder:"Search your content…",InputAttrs:templ.Attributes{"x-model":"itemSearch","autofocus":true}})
+  <fieldset class="space-y-2" x-ref="resources">
+   <legend class="mb-3 text-xs font-semibold uppercase tracking-widest text-on-surface-muted dark:text-on-surface-dark-muted">Published resources</legend>
+   for _, item := range []struct{Title,Description string}{{"Getting started","Everything you need for your first project."},{"Design principles","The thinking behind a consistent experience."},{"Release notes","Recent improvements and what is coming next."}} {
+    <label class="flex cursor-pointer items-start gap-3 rounded-radius border border-outline p-4 transition-colors hover:bg-surface-alt has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-outline-dark dark:hover:bg-surface-dark-alt dark:has-[:checked]:border-primary-dark dark:has-[:checked]:bg-primary-dark/5" x-show="matches($el.textContent)">
+     <input type="radio" name="content-resource" value={item.Title} x-model="pendingItem" class="mt-1 size-4 shrink-0 accent-primary dark:accent-primary-dark"/>
+     <span class="space-y-1"><span class="block text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{item.Title}</span><span class="block text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{item.Description}</span></span>
+    </label>
+   }
+   <p x-show="noMatches" class="py-6 text-center text-sm text-on-surface-muted dark:text-on-surface-dark-muted">No matching resources. Try another search.</p>
+  </fieldset>
+  <div class="flex items-center justify-end gap-3 border-t border-outline pt-4 dark:border-outline-dark">
+   <button type="button" class="cursor-pointer rounded-radius px-4 py-2 text-sm font-medium text-on-surface dark:text-on-surface-dark focus-visible:outline-2 focus-visible:outline-primary" x-on:click="$dispatch('modal:close', {id:'contentPicker'})">Cancel</button>
+   @button.Button(button.WithType("button"),button.WithAttrs(templ.Attributes{"x-on:click":"selectedItem = pendingItem; $dispatch('modal:close', {id:'contentPicker'})"})) { Select item }
+  </div>
+ </div>
 }
