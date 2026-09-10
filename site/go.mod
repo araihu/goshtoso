@@ -5,7 +5,7 @@ go 1.27.0
 require (
 	github.com/a-h/templ v0.3.1020
 	github.com/araihu/goshtoso v0.2.11-0.20260910222250-b9e434e3f393
-	github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910221700-55245c718fa6
+	github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910224508-5b2222e54637
 	github.com/araihu/goshtoso-charts v0.0.3
 	github.com/coder/websocket v1.8.15
 	github.com/mxschmitt/playwright-go v0.6201.1

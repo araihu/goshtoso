@@ -14,6 +14,8 @@ github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910213838-cacbfabe8724 h1:dP
 github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910213838-cacbfabe8724/go.mod h1:vme6qwadyuneFflKQsnvIWYp8D/oFhJSux0YOxPMvhg=
 github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910221700-55245c718fa6 h1:/4H5pub17UGf2AbINzz1xiJKqwAl7tOoFZCpiZrmBaQ=
 github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910221700-55245c718fa6/go.mod h1:vme6qwadyuneFflKQsnvIWYp8D/oFhJSux0YOxPMvhg=
+github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910224508-5b2222e54637 h1:Ur4NL5uoB0gIRtL72hXMKHwop/K76m1fkPzYTEeqNjw=
+github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910224508-5b2222e54637/go.mod h1:vme6qwadyuneFflKQsnvIWYp8D/oFhJSux0YOxPMvhg=
 github.com/araihu/goshtoso-charts v0.0.3 h1:dWWAyLCAkgHZET+HOXwOuD02H+je16xJY4LjhH9bQKQ=
 github.com/araihu/goshtoso-charts v0.0.3/go.mod h1:ZyuqIfYasKRnMUohpRdUEIcAlePJAgsSIHdQp3msNqM=
 github.com/coder/websocket v1.8.15 h1:6B2JPeOGlpff2Uz6vOEH1Vzpi0iUz20A+lPVhPHtNUA=

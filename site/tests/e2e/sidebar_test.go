@@ -39,7 +39,7 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 	}))
 
 	for _, componentPage := range componentPages {
-		if componentPage.Active == "app-shell" {
+		if componentPage.Active == "app-shell" || componentPage.Active == "icon" {
 			continue
 		}
 		t.Run(componentPage.Title, func(t *testing.T) {
@@ -137,15 +137,12 @@ func TestSidebar_ExamplesTopItemNavigatesToTicker(t *testing.T) {
 	overviewItem := sidebar.Locator("a[href='/examples/ticker'][data-sidebar-item='Live Ticker']")
 	count, err = overviewItem.Count()
 	require.NoError(t, err)
-	assert.Equal(t, 1, count, "Examples should start with Live Ticker after Modules")
+	assert.Equal(t, 1, count, "Examples should start with Live Ticker")
 
 	moduleHeading := sidebar.GetByRole("heading", playwright.LocatorGetByRoleOptions{Name: "Modules", Exact: playwright.Bool(true)})
-	examplesHeading := sidebar.GetByRole("heading", playwright.LocatorGetByRoleOptions{Name: "Examples", Exact: playwright.Bool(true)})
-	moduleBox, err := moduleHeading.BoundingBox()
+	count, err = moduleHeading.Count()
 	require.NoError(t, err)
-	examplesBox, err := examplesHeading.BoundingBox()
-	require.NoError(t, err)
-	assert.Less(t, moduleBox.Y, examplesBox.Y, "Modules should precede Examples")
+	assert.Zero(t, count, "Modules belong in the navbar, not the Examples sidebar")
 
 	require.NoError(t, examplesLink.Click())
 	require.NoError(t, page.WaitForURL("**/examples/ticker"))

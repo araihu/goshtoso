@@ -39,3 +39,34 @@ func TestSidebarNavigationPreservesScrollThroughoutSwap(t *testing.T) {
 		require.Equal(t, map[string]any{"scrolled": true, "stable": true, "active": "/components/" + route}, result)
 	}
 }
+
+func TestSidebarRevealsActiveItemOnlyWhenOutsideViewport(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	require.NoError(t, page.SetViewportSize(1162, 900))
+	_, err := page.Goto(baseURL + "/components/schema-form")
+	require.NoError(t, err)
+	visible := `() => {
+  const sidebar = document.querySelector('.sidebar-scroll');
+  const active = sidebar.querySelector('a[aria-current="page"]');
+  if (!active) return false;
+  const box = sidebar.getBoundingClientRect(), item = active.getBoundingClientRect();
+  return item.top >= box.top - 1 && item.bottom <= box.bottom + 1;
+ }`
+	_, err = page.WaitForFunction(visible, nil)
+	require.NoError(t, err, "direct load reveals the active item")
+	_, err = page.Evaluate(`async () => {
+  document.querySelector('.sidebar-scroll').scrollTop = 0;
+  await htmx.ajax('GET', '/components/schema-form', {target: '#main-content', swap: 'innerHTML'});
+ }`)
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(visible, nil)
+	require.NoError(t, err, "navigation reveals an offscreen active item")
+	result, err := page.Evaluate(`async () => {
+  const sidebar = document.querySelector('.sidebar-scroll');
+  const before = sidebar.scrollTop;
+  await htmx.ajax('GET', '/components/schema-form', {target: '#main-content', swap: 'innerHTML'});
+  return sidebar.scrollTop === before;
+ }`)
+	require.NoError(t, err)
+	require.Equal(t, true, result, "a visible active item must not move the sidebar")
+}
