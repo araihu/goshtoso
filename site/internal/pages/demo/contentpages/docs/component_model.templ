@@ -14,7 +14,7 @@ templ componentModelContent() {
 		<header class="space-y-3">
 			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Component Model</h1>
 			<p class="max-w-3xl text-on-surface dark:text-on-surface-dark">
-				Create a component by calling its package’s constructor, then render it in a templ template or through its Render method. Each constructor returns a Go value that implements templ.Component.
+				Create a component by calling its package’s constructor, then render it in a templ template or through its <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">Render</code> method. Each constructor returns a Go value that implements <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">templ.Component</code>.
 			</p>
 		</header>
 		<section id="constructor-styles" class="space-y-4">
@@ -49,7 +49,7 @@ templ componentModelContent() {
 		</section>
 		<section id="rendering" class="space-y-4">
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Render a component</h2>
-			<p class="text-on-surface dark:text-on-surface-dark">Use templ’s <code class="font-mono">{ "@" }</code> syntax to include a component in a template. Components that accept child content, such as Button, render the content inside the following block.</p>
+			<p class="text-on-surface dark:text-on-surface-dark">Use templ’s <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">{ "@" }</code> syntax to include a component in a template. Components that accept child content, such as Button, render the content inside the following block.</p>
 			@codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "Save button in a templ file", Code: `package views
 
 import "github.com/araihu/goshtoso/components/button"
@@ -59,12 +59,12 @@ templ SaveButton() {
         Save changes
     }
 }`})
-			<p class="text-on-surface dark:text-on-surface-dark">From a Go handler, call <code class="font-mono">SaveButton().Render(r.Context(), w)</code> and handle the returned error. The template supplies the button’s label; the component supplies its markup and behavior.</p>
+			<p class="text-on-surface dark:text-on-surface-dark">From a Go handler, call <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">SaveButton().Render(r.Context(), w)</code> and handle the returned error. The template supplies the button’s label; the component supplies its markup and behavior.</p>
 		</section>
 		<section id="public-interface" class="space-y-4">
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Use a shared interface</h2>
 			<p class="text-on-surface dark:text-on-surface-dark">
-				Use <code class="font-mono">templ.Component</code> when a function only needs to render a component. Goshtoso also defines <code class="font-mono">components.Component</code>, which adds <code class="font-mono">Kind()</code> to identify the component type.
+				Use <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">templ.Component</code> when a function only needs to render a component. Goshtoso also defines <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">components.Component</code>, which adds <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">Kind()</code> to identify the component type.
 			</p>
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "go",
@@ -72,13 +72,13 @@ templ SaveButton() {
 				Code:     componentModelInterfaceExample(),
 			})
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				Every public Goshtoso component implements this interface, so a slice of components.Component can hold buttons, tables, dialogs, and other component types.
+				Every public Goshtoso component implements this interface, so <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">[]components.Component</code> can hold buttons, tables, dialogs, and other component types.
 			</p>
 		</section>
 		<section id="concrete-values" class="space-y-4">
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Keep the concrete type when needed</h2>
 			<p class="text-on-surface dark:text-on-surface-dark">
-				A constructor returns a concrete type, such as <code class="font-mono">button.Instance</code> or <code class="font-mono">table.Instance</code>. Keep that type when you need its additional methods. Assigning the value to an interface lets you share rendering code, but only the interface’s methods are available through that variable.
+				A constructor returns a concrete type, such as <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">button.Instance</code> or <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">table.Instance</code>. Keep that type when you need its additional methods. Assigning the value to an interface lets you share rendering code, but only the interface’s methods are available through that variable.
 			</p>
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "go",
@@ -89,7 +89,7 @@ templ SaveButton() {
 		<section id="runtime-identity" class="space-y-4">
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Identify a component</h2>
 			<p class="text-on-surface dark:text-on-surface-dark">
-				Call <code class="font-mono">Kind()</code> when logging or other shared code needs to distinguish component types. For example, this function counts tables in a collection.
+				Call <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">Kind()</code> when logging or other shared code needs to distinguish component types. For example, this function counts tables in a collection.
 			</p>
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "go",
@@ -97,7 +97,7 @@ templ SaveButton() {
 				Code:     componentModelKindSwitchExample(),
 			})
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
-				Kind values use stable kebab-case names, such as table and alert-dialog. Compare them with the constants in the components package.
+				<code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">Kind</code> values use stable kebab-case names, such as <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">table</code> and <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">alert-dialog</code>. Compare them with the constants in the <code class="rounded-radius bg-surface-alt px-1 py-0.5 font-mono text-sm text-on-surface-strong [overflow-wrap:anywhere] dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">components</code> package.
 			</p>
 		</section>
 		<section id="defaults" class="space-y-3">
