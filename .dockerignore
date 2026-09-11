@@ -14,3 +14,12 @@ node_modules
 .idea
 justfile
 og-site
+
+.tools
+.coverage
+.codex
+.claude
+.agents
+.dagger
+**/.env*
+server
