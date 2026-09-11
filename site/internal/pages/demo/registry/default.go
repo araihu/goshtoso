@@ -64,6 +64,7 @@ import (
 	chatpage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/chat"
 	expensepage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/expense"
 	logspage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/logs"
+	overviewpage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/overview"
 	profilepage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/profile"
 	tickerpage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/ticker"
 	todopage "github.com/araihu/goshtoso/site/internal/pages/demo/examplepages/todo"
@@ -135,6 +136,7 @@ func mustDefault() *Registry {
 	definitions = append(definitions,
 		chatpage.Definition,
 		expensepage.Definition,
+		overviewpage.Definition,
 		logspage.Definition,
 		profilepage.Definition,
 		tickerpage.Definition,

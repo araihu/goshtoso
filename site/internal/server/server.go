@@ -291,11 +291,7 @@ func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
 
 	switch sub {
 	case "", "index":
-		target := "/examples/ticker"
-		if r.URL.RawQuery != "" {
-			target += "?" + r.URL.RawQuery
-		}
-		http.Redirect(w, r, target, http.StatusMovedPermanently)
+		s.renderDemo(w, r, "examples")
 	case "todo":
 		s.renderTodoPage(w, r)
 	case "expense":
@@ -348,7 +344,12 @@ func (s *Server) handleAgentsPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleApplicationPatternsPage(w http.ResponseWriter, r *http.Request) {
-	s.renderDemo(w, r, "docs/application-patterns")
+	if r.Header.Get("HX-Request") == "true" || r.Header.Get("HX-Request-Type") == "partial" {
+		w.Header().Set("HX-Redirect", "/examples")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	http.Redirect(w, r, "/examples", http.StatusMovedPermanently)
 }
 
 func (s *Server) handleComponentModelPage(w http.ResponseWriter, r *http.Request) {

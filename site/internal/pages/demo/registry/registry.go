@@ -124,8 +124,6 @@ func MetaForDefinition(definition demo.PageDefinition) demo.PageMeta {
 		title = "Getting Started with Goshtoso Go UI Components"
 	case definition.Key == "docs/agents":
 		title = "Using Goshtoso With AI Agents"
-	case definition.Key == "docs/application-patterns":
-		title = "Application Patterns for Goshtoso"
 	case definition.Key == "docs/component-model":
 		title = "Goshtoso Component Model"
 	case definition.Key == "docs/icon-catalog":

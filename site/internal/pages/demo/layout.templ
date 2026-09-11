@@ -144,12 +144,12 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 			<header data-boot-anim="header" class="sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60">
 				<div class="flex h-16 items-center justify-between px-4 lg:px-8">
 					<div class="flex items-center gap-4">
-						<button 
+						<button
 							@click="sidebarOpen = !sidebarOpen"
 							class="lg:hidden p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt"
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
 							</svg>
 						</button>
 						<a href="/" class="flex items-center gap-2" aria-label="Goshtoso home">
@@ -162,7 +162,6 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 							<span class="hidden text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong sm:inline">Goshtoso</span>
 						</a>
 					</div>
-					
 					<!-- Right side controls -->
 					<div class="flex items-center gap-2">
 						<!-- Theme Selector -->
@@ -175,9 +174,8 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 								Options:        getThemeOptions(),
 							})
 						</div>
-						
 						<!-- Dark Mode Toggle -->
-						<button 
+						<button
 							id="darkModeToggleBtn"
 							aria-label="dark mode toggle"
 							@click="$store.darkMode.toggle()"
@@ -192,15 +190,14 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 								<path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"></path>
 							</svg>
 						</button>
-						
 						<!-- GitHub Link -->
-						<a 
+						<a
 							href="https://github.com/araihu/goshtoso"
 							target="_blank"
 							class="hidden sm:inline-flex p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors motion-reduce:transition-none"
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-								<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+								<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
 							</svg>
 						</a>
 						<div class="demo-global-search">
@@ -209,7 +206,6 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 					</div>
 				</div>
 			</header>
-
 			<div class="flex h-[calc(100vh-4rem)] overflow-hidden">
 				<!-- Sidebar Component -->
 				<div
@@ -217,18 +213,17 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 					class="fixed top-16 bottom-0 left-0 z-40 w-72 shrink-0 transform transition-transform duration-200 ease-in-out motion-reduce:transition-none lg:static lg:translate-x-0 lg:h-full"
 					:class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
 				>
-				<div class="h-full">
-					<div id="sidebar-nav-content" class="h-full">
-						@sidebar.Sidebar(sidebar.Config{
-							Items:             getSidebarTopItems(activeComponent),
-							SectionsTitle:     "Components",
-							Sections:          getSidebarSections(activeComponent),
-							RootClass:         "docs-sidebar",
-						})
+					<div class="h-full">
+						<div id="sidebar-nav-content" class="h-full">
+							@sidebar.Sidebar(sidebar.Config{
+								Items:         getSidebarTopItems(activeComponent),
+								SectionsTitle: "Components",
+								Sections:      getSidebarSections(activeComponent),
+								RootClass:     "docs-sidebar",
+							})
+						</div>
 					</div>
 				</div>
-				</div>
-
 				<!-- Overlay for mobile sidebar -->
 				<div
 					x-show="sidebarOpen"
@@ -236,7 +231,6 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 					class="fixed inset-0 z-30 bg-black/50 lg:hidden"
 					x-cloak
 				></div>
-
 				<!-- Main Content -->
 				<main id="page-scroll" data-boot-anim="main" class="flex-1 overflow-y-auto">
 					<div class={ "mx-auto flex min-h-full w-full " + pageFrameMaxWidth(activeComponent) }>
@@ -289,13 +283,13 @@ templ LayoutWithMeta(meta PageMeta, activeComponent string, content templ.Compon
 					<button
 						@click="deny()"
 						class="px-3 py-1.5 text-xs font-medium rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark hover:border-primary dark:hover:border-primary-dark hover:text-primary dark:hover:text-primary-dark transition-colors motion-reduce:transition-none"
-						>
+					>
 						Use without storage
 					</button>
 					<button
 						@click="allow()"
 						class="px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity motion-reduce:transition-none"
-						>
+					>
 						Allow browser storage
 					</button>
 				</div>
@@ -346,9 +340,8 @@ func getSidebarTopItems(activeComponent string) []sidebar.Item {
 	return []sidebar.Item{
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineArrowDownTray, Decorative: true}), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
 		{ID: "component-model", Label: "Component Model", Href: "/docs/component-model", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineCube, Decorative: true}), Active: activeComponent == "component-model", LinkAttrs: navHxAttrs("/docs/component-model", "")},
-		{ID: "application-patterns", Label: "Application Patterns", Href: "/docs/application-patterns", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineQueueList, Decorative: true}), Active: activeComponent == "application-patterns", LinkAttrs: navHxAttrs("/docs/application-patterns", "")},
-        {ID: "agents", Label: "AI Agents", Href: "/docs/agents", Icon: iconsSidebarIcon(sidebaricons.IconHeroiconsOptimized24OutlineCube), Active: activeComponent == "agents", LinkAttrs: navHxAttrs("/docs/agents", "AI Agents")},
-        iconsSidebarItem(activeComponent),
+		{ID: "agents", Label: "AI Agents", Href: "/docs/agents", Icon: iconsSidebarIcon(sidebaricons.IconHeroiconsOptimized24OutlineCube), Active: activeComponent == "agents", LinkAttrs: navHxAttrs("/docs/agents", "AI Agents")},
+		iconsSidebarItem(activeComponent),
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineSwatch, Decorative: true}), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
 	}
 }
@@ -367,7 +360,6 @@ func docsSearchConfig(activeFamily ...string) searchfield.Config {
 		EmptyText:      "No matching pages found.",
 	}
 }
-
 
 // sidebarItem creates a sidebar item with data-sidebar-item for search filtering
 // and HTMX attributes for fragment-swap navigation.
@@ -509,7 +501,7 @@ func searchScopeForPath(path string) string {
 		return "charts"
 	case strings.HasPrefix(path, "/modules/app-shells"):
 		return "app-shells"
-	case strings.HasPrefix(path, "/examples/"):
+	case path == "/examples", strings.HasPrefix(path, "/examples/"):
 		return "examples"
 	default:
 		return "core"
@@ -518,15 +510,14 @@ func searchScopeForPath(path string) string {
 
 func searchItemDescription(id, label, section string) string {
 	descriptions := map[string]string{
-		"home":                  "Install Goshtoso, wire assets, and render your first component.",
-		"component-model":       "Learn the common component interface, concrete return values, constructor styles, and stable Kind identity.",
-		"application-patterns":   "Compose App Shell, Operations List, Detail Workspace, and Multi-step Workflow product surfaces.",
-		"theme":                 "Customize colors, radius, typography, and dark mode tokens.",
-		"todo":    "Runnable task-list example with add, edit, complete, and filter flows.",
-		"chat":    "Runnable chat interface example with messages, composer, and conversation layout.",
-		"logs":    "Live log-feed example with streaming updates and operational scanning patterns.",
-		"profile": "Profile editing example with forms, preferences, validation, and persisted state.",
-		"ticker":  "Live ticker example with real-time list updates and compact status rows.",
+		"home":            "Install Goshtoso, wire assets, and render your first component.",
+		"component-model": "Learn the common component interface, concrete return values, constructor styles, and stable Kind identity.",
+		"theme":           "Customize colors, radius, typography, and dark mode tokens.",
+		"todo":            "Runnable task-list example with add, edit, complete, and filter flows.",
+		"chat":            "Runnable chat interface example with messages, composer, and conversation layout.",
+		"logs":            "Live log-feed example with streaming updates and operational scanning patterns.",
+		"profile":         "Profile editing example with forms, preferences, validation, and persisted state.",
+		"ticker":          "Live ticker example with real-time list updates and compact status rows.",
 	}
 	if description, ok := descriptions[id]; ok {
 		return description

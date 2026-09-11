@@ -1,0 +1,27 @@
+package overviewpage
+
+templ Content() {
+	<div id="examples-overview" class="mx-auto max-w-4xl space-y-8">
+		<header class="space-y-3">
+			<h1 class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Examples</h1>
+			<p class="text-on-surface dark:text-on-surface-dark">Try these applications to see how Goshtoso components work together. Each example has working controls and server handlers you can use as a reference.</p>
+		</header>
+		<div class="divide-y divide-outline dark:divide-outline-dark">
+			@example("Expense Tracker", "/examples/expense", "Add an expense, search by description, filter by category, and page through the results. Delete an entry and use Undo to restore it.")
+			@example("Profile", "/examples/profile", "Edit a profile, upload an avatar, and change the theme. Reload the page to see which preferences and profile details were saved.")
+			@example("Onboarding Wizard", "/examples/wizard", "Complete a form one step at a time. Try an invalid value, go back to edit an earlier answer, then review and submit your choices.")
+			@example("Todo List", "/examples/todo", "Add tasks, mark them complete, filter the list, and change their order. Delete a task and restore it with Undo.")
+			@example("Live Ticker", "/examples/ticker", "Watch simulated prices update in a table and use the table controls to explore the data.")
+			@example("Chat", "/examples/chat", "Send messages and follow replies as they arrive. Open a second browser tab to try the shared conversation.")
+			@example("Live Log Feed", "/examples/logs", "Follow a stream of sample log entries and use the controls to inspect the output.")
+		</div>
+		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">For navigation layouts, browse <a class="underline" href="/modules/app-shells">App Shells</a>. The examples above show application behavior; App Shells provides the surrounding documentation and console layouts.</p>
+	</div>
+}
+
+templ example(title, href, description string) {
+	<section class="space-y-2 py-6">
+		<h2 class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong"><a class="underline" href={ templ.SafeURL(href) } hx-get={ href } hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">{ title }</a></h2>
+		<p class="text-on-surface dark:text-on-surface-dark">{ description }</p>
+	</section>
+}

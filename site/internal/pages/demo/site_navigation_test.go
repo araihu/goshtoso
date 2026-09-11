@@ -30,7 +30,7 @@ func TestComponentDocsSecondaryNavigationUsesSiteFamilies(t *testing.T) {
 		`href="/components/icon"`,
 		`href="/modules/charts"`,
 		`href="/modules/app-shells"`,
-		`href="/examples/ticker"`,
+		`href="/examples"`,
 	} {
 		require.Contains(t, html, link)
 	}
@@ -145,7 +145,7 @@ func TestComponentDocsSecondaryNavigationTracksExamplesDefault(t *testing.T) {
 	).Render(context.Background(), &page))
 
 	html := page.String()
-	examplesStart := strings.Index(html, `href="/examples/ticker"`)
+	examplesStart := strings.Index(html, `href="/examples"`)
 	require.NotEqual(t, -1, examplesStart)
 	examplesEnd := strings.Index(html[examplesStart:], `</a>`)
 	require.NotEqual(t, -1, examplesEnd)

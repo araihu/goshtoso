@@ -533,7 +533,6 @@ func getSidebarTopItems(activeComponent string) []sidebar.Item {
 	return []sidebar.Item{
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineArrowDownTray, Decorative: true}), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
 		{ID: "component-model", Label: "Component Model", Href: "/docs/component-model", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineCube, Decorative: true}), Active: activeComponent == "component-model", LinkAttrs: navHxAttrs("/docs/component-model", "")},
-		{ID: "application-patterns", Label: "Application Patterns", Href: "/docs/application-patterns", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineQueueList, Decorative: true}), Active: activeComponent == "application-patterns", LinkAttrs: navHxAttrs("/docs/application-patterns", "")},
 		{ID: "agents", Label: "AI Agents", Href: "/docs/agents", Icon: iconsSidebarIcon(sidebaricons.IconHeroiconsOptimized24OutlineCube), Active: activeComponent == "agents", LinkAttrs: navHxAttrs("/docs/agents", "AI Agents")},
 		iconsSidebarItem(activeComponent),
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineSwatch, Decorative: true}), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
@@ -695,7 +694,7 @@ func searchScopeForPath(path string) string {
 		return "charts"
 	case strings.HasPrefix(path, "/modules/app-shells"):
 		return "app-shells"
-	case strings.HasPrefix(path, "/examples/"):
+	case path == "/examples", strings.HasPrefix(path, "/examples/"):
 		return "examples"
 	default:
 		return "core"
@@ -704,15 +703,14 @@ func searchScopeForPath(path string) string {
 
 func searchItemDescription(id, label, section string) string {
 	descriptions := map[string]string{
-		"home":                 "Install Goshtoso, wire assets, and render your first component.",
-		"component-model":      "Learn the common component interface, concrete return values, constructor styles, and stable Kind identity.",
-		"application-patterns": "Compose App Shell, Operations List, Detail Workspace, and Multi-step Workflow product surfaces.",
-		"theme":                "Customize colors, radius, typography, and dark mode tokens.",
-		"todo":                 "Runnable task-list example with add, edit, complete, and filter flows.",
-		"chat":                 "Runnable chat interface example with messages, composer, and conversation layout.",
-		"logs":                 "Live log-feed example with streaming updates and operational scanning patterns.",
-		"profile":              "Profile editing example with forms, preferences, validation, and persisted state.",
-		"ticker":               "Live ticker example with real-time list updates and compact status rows.",
+		"home":            "Install Goshtoso, wire assets, and render your first component.",
+		"component-model": "Learn the common component interface, concrete return values, constructor styles, and stable Kind identity.",
+		"theme":           "Customize colors, radius, typography, and dark mode tokens.",
+		"todo":            "Runnable task-list example with add, edit, complete, and filter flows.",
+		"chat":            "Runnable chat interface example with messages, composer, and conversation layout.",
+		"logs":            "Live log-feed example with streaming updates and operational scanning patterns.",
+		"profile":         "Profile editing example with forms, preferences, validation, and persisted state.",
+		"ticker":          "Live ticker example with real-time list updates and compact status rows.",
 	}
 	if description, ok := descriptions[id]; ok {
 		return description
@@ -830,7 +828,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var28 templ.SafeURL
 				templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 618, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 609, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 				if templ_7745c5c3_Err != nil {
@@ -851,7 +849,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var29 string
 				templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 625, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 616, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 				if templ_7745c5c3_Err != nil {
@@ -876,7 +874,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var30 templ.SafeURL
 				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 633, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 624, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 				if templ_7745c5c3_Err != nil {
@@ -897,7 +895,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var31 string
 				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 637, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 628, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 				if templ_7745c5c3_Err != nil {

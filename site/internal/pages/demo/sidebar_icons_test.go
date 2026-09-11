@@ -10,12 +10,11 @@ import (
 
 func TestSidebarTopItemsUseTheConsumerLocalHeroiconsSprite(t *testing.T) {
 	wantSymbols := map[string]string{
-		"agents":               "heroicons-optimized-24-outline-cube",
-		"component-icon":       "heroicons-optimized-24-outline-squares-2x2",
-		"home":                 "heroicons-optimized-24-outline-arrow-down-tray",
-		"component-model":      "heroicons-optimized-24-outline-cube",
-		"application-patterns": "heroicons-optimized-24-outline-queue-list",
-		"theme":                "heroicons-optimized-24-outline-swatch",
+		"agents":          "heroicons-optimized-24-outline-cube",
+		"component-icon":  "heroicons-optimized-24-outline-squares-2x2",
+		"home":            "heroicons-optimized-24-outline-arrow-down-tray",
+		"component-model": "heroicons-optimized-24-outline-cube",
+		"theme":           "heroicons-optimized-24-outline-swatch",
 	}
 
 	for _, item := range getSidebarTopItems("") {

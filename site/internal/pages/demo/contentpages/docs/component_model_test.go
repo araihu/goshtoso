@@ -62,3 +62,14 @@ func TestComponentModelIsLinkedFromSiteNavigation(t *testing.T) {
 	require.NoError(t, startpages.Definitions[0].Content().Render(context.Background(), &buf))
 	require.Contains(t, buf.String(), `href="/docs/component-model"`)
 }
+
+func docsDefinition(t *testing.T, key string) demo.PageDefinition {
+	t.Helper()
+	for _, definition := range Definitions {
+		if definition.Key == key {
+			return definition
+		}
+	}
+	t.Fatalf("missing docs definition %q", key)
+	return demo.PageDefinition{}
+}

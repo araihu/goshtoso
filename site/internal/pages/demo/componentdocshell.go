@@ -91,7 +91,7 @@ func componentDocsSecondaryConfig(activeFamily string) navbar.SecondaryConfig {
 			{Label: "Charts", Href: "/modules/charts", Current: componentDocsSecondaryCurrent("charts", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("charts")},
 			{Label: "App Shells", Href: "/modules/app-shells", Current: componentDocsSecondaryCurrent("app-shells", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("app-shells")},
 			{Label: "Internationalization", Href: "/docs/internationalization", Current: componentDocsSecondaryCurrent("internationalization", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("internationalization")},
-			{Label: "Examples", Href: "/examples/ticker", Current: componentDocsSecondaryCurrent("examples", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("examples")},
+			{Label: "Examples", Href: "/examples", Current: componentDocsSecondaryCurrent("examples", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("examples")},
 		},
 		AriaLabel:  "Goshtoso documentation",
 		Scrollable: true,

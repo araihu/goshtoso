@@ -17,7 +17,7 @@ func TestDocsProseInlineSpacing(t *testing.T) {
 	}
 	page := newPage(t, sharedBrowser)
 	for _, route := range []string{
-		"/docs/iconpack", "/docs/component-model", "/docs/application-patterns",
+		"/docs/iconpack", "/docs/component-model", "/examples",
 		"/docs/internationalization", "/docs/internationalization/files",
 		"/docs/internationalization/examples", "/docs/agents", "/docs/icon-catalog",
 	} {
