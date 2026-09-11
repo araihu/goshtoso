@@ -49,6 +49,8 @@ type releaseBoundary struct {
 	release       releaseDocument
 	checksums     map[string]string
 	files         map[string][]byte
+	diskFiles     map[string]fileData
+	ctx           context.Context
 	generic       *genericPack
 	muamba        *muambaPack
 }

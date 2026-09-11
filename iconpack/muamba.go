@@ -56,26 +56,33 @@ func openMuambaPack(ctx context.Context, opts Options) (releaseBoundary, error) 
 	if err != nil {
 		return releaseBoundary{}, err
 	}
-	snapshot, err := engine.Snapshot(ctx, nil)
+	staging, err := os.MkdirTemp("", "goshtoso-sources-*")
 	if err != nil {
 		return releaseBoundary{}, fmt.Errorf("verify iconpack sources: %w", err)
 	}
-	lockBytes, err := os.ReadFile(input.lockPath)
-	if err != nil {
-		return releaseBoundary{}, fmt.Errorf("read iconpack lock: %w", err)
-	}
-	configHash := hashBytes(input.configBytes)
-	files, checksums, err := captureMuambaFiles(snapshot, input.sources)
+	keep := false
+	defer func() {
+		if !keep {
+			_ = os.RemoveAll(staging)
+		}
+	}()
+	files, lockBytes, err := captureMuambaFiles(ctx, engine, input.sources, staging, input.lockPath)
 	if err != nil {
 		return releaseBoundary{}, err
 	}
-	families, assets, err := buildMuambaAssets(input.sources, files)
+	configHash := hashBytes(input.configBytes)
+	checksums := make(map[string]string, len(files))
+	for key, file := range files {
+		checksums[key] = file.hash
+	}
+	families, assets, err := buildMuambaAssets(ctx, input.sources, files)
 	if err != nil {
 		return releaseBoundary{}, err
 	}
 	if len(assets) == 0 {
 		return releaseBoundary{}, fmt.Errorf("iconpack sources contain no selected SVG files")
 	}
+	keep = true
 	return releaseBoundary{
 		sourceKind: "muamba-snapshot",
 		catalog: iconcatalog.Catalog{
@@ -83,12 +90,13 @@ func openMuambaPack(ctx context.Context, opts Options) (releaseBoundary, error) 
 			Assets: assets, Hash: configHash,
 		},
 		checksums: checksums,
-		files:     files,
+		diskFiles: files,
+		ctx:       ctx,
 		muamba: &muambaPack{
 			config: input.config, configBytes: append([]byte(nil), input.configBytes...), manifestPath: filepath.Base(opts.ConfigPath), configHash: hashBytes(input.configBytes),
 			lockHash: hashBytes(lockBytes), families: families,
 		},
-		cleanup: func() {},
+		cleanup: func() { _ = os.RemoveAll(staging) },
 	}, nil
 }
 
@@ -163,24 +171,6 @@ func openMuambaEngine(ctx context.Context, input muambaInput, opts Options) (*mu
 	return engine, nil
 }
 
-func captureMuambaFiles(snapshot []muambasource.SnapshotFile, sources []resolvedConfigSource) (map[string][]byte, map[string]string, error) {
-	files := make(map[string][]byte, len(snapshot))
-	checksums := make(map[string]string, len(snapshot))
-	for _, file := range snapshot {
-		key, err := snapshotKey(file.Path, sources)
-		if err != nil {
-			return nil, nil, err
-		}
-		if _, duplicate := files[key]; duplicate {
-			return nil, nil, fmt.Errorf("iconpack source files resolve to duplicate path %q", key)
-		}
-		contents := append([]byte(nil), file.Contents...)
-		files[key] = contents
-		checksums[key] = hashBytes(contents)
-	}
-	return files, checksums, nil
-}
-
 func rejectMuambaPath(filename string) error {
 	base := strings.ToLower(filepath.Base(filename))
 	switch base {
@@ -207,12 +197,12 @@ func snapshotKey(target string, sources []resolvedConfigSource) (string, error) 
 	return "", fmt.Errorf("muamba snapshot path %q does not belong to a declared iconpack source", target)
 }
 
-func buildMuambaAssets(sources []resolvedConfigSource, files map[string][]byte) (map[string]sourceFamily, []iconcatalog.Asset, error) {
+func buildMuambaAssets(ctx context.Context, sources []resolvedConfigSource, files map[string]fileData) (map[string]sourceFamily, []iconcatalog.Asset, error) {
 	families := make(map[string]sourceFamily, len(sources))
 	assets := make([]iconcatalog.Asset, 0)
 	seenNames := make(map[string]string)
 	for _, source := range sortedConfigSources(sources) {
-		family, sourceAssets, err := buildMuambaSourceAssets(source, files, seenNames)
+		family, sourceAssets, err := buildMuambaSourceAssets(ctx, source, files, seenNames)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -227,7 +217,7 @@ func buildMuambaAssets(sources []resolvedConfigSource, files map[string][]byte) 
 	return families, assets, nil
 }
 
-func buildMuambaSourceAssets(source resolvedConfigSource, files map[string][]byte, seenNames map[string]string) (sourceFamily, []iconcatalog.Asset, error) {
+func buildMuambaSourceAssets(ctx context.Context, source resolvedConfigSource, files map[string]fileData, seenNames map[string]string) (sourceFamily, []iconcatalog.Asset, error) {
 	familyProduct := source.PackName
 	if familyProduct == "" {
 		familyProduct = source.ID
@@ -238,7 +228,7 @@ func buildMuambaSourceAssets(source resolvedConfigSource, files map[string][]byt
 		LicenseOutput: "LICENSES/" + sourcePackFileName(familyProduct) + "-LICENSE.txt",
 	}
 	licenseBytes, ok := files[family.LicensePath]
-	if !ok || len(licenseBytes) == 0 {
+	if !ok || licenseBytes.size == 0 {
 		return sourceFamily{}, nil, fmt.Errorf("iconpack source %q license %q was not found in the verified snapshot", source.ID, source.LicensePath)
 	}
 	wanted := make(map[string]struct{}, len(source.Paths))
@@ -247,13 +237,17 @@ func buildMuambaSourceAssets(source resolvedConfigSource, files map[string][]byt
 	}
 	assets := make([]iconcatalog.Asset, 0)
 	base := source.ID + "/"
-	for key, raw := range files {
+	for key, file := range files {
 		if !strings.HasPrefix(key, base) {
 			continue
 		}
 		relative := strings.TrimPrefix(key, base)
 		if !isSelectedMuambaIcon(source, relative, wanted) {
 			continue
+		}
+		raw, err := file.read(ctx)
+		if err != nil {
+			return sourceFamily{}, nil, err
 		}
 		viewBox, err := svgViewBox(raw, relative)
 		if err != nil {

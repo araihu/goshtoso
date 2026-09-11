@@ -6,7 +6,7 @@ require (
 	github.com/a-h/templ v0.3.1020
 	github.com/alecthomas/chroma/v2 v2.27.0
 	github.com/araihu/assets v0.2.3
-	github.com/araihu/muamba v0.0.5
+	github.com/araihu/muamba v0.0.6-0.20260911181149-86271baf604f
 	github.com/evanw/esbuild v0.28.2
 	github.com/gofrs/flock v0.13.1
 	github.com/stretchr/testify v1.12.1
