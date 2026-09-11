@@ -292,6 +292,8 @@ func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
 	switch sub {
 	case "", "index":
 		s.renderDemo(w, r, "examples")
+	case "deployments":
+		s.renderDeploymentConsole(w, r)
 	case "todo":
 		s.renderTodoPage(w, r)
 	case "expense":

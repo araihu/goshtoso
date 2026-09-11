@@ -12,7 +12,7 @@ func componentDocsFamily(active string) string {
 		return "charts"
 	case "module-app-shells":
 		return "app-shells"
-	case "examples", "todo", "expense", "chat", "logs", "profile", "ticker", "wizard":
+	case "examples", "deployments", "todo", "expense", "chat", "logs", "profile", "ticker", "wizard":
 		return "examples"
 	default:
 		if strings.HasPrefix(active, "app-shells-") {

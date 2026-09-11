@@ -49,6 +49,7 @@ func examplesSidebarItems(active string) []sidebar.Item {
 func examplesSidebarLinks() []examplesSidebarLink {
 	return []examplesSidebarLink{
 		{ID: "examples", Label: "Overview", Href: "/examples"},
+		{ID: "deployments", Label: "Deployment Console", Href: "/examples/deployments"},
 		{ID: "ticker", Label: "Live Ticker", Href: "/examples/ticker"},
 		{ID: "todo", Label: "Todo List", Href: "/examples/todo"},
 		{ID: "expense", Label: "Expense Tracker", Href: "/examples/expense"},

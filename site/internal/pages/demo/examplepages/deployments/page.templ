@@ -1,0 +1,151 @@
+package deploymentspage
+
+import (
+	"fmt"
+	"github.com/araihu/goshtoso/components/alert"
+	"github.com/araihu/goshtoso/components/badge"
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/emptystate"
+	selectfield "github.com/araihu/goshtoso/components/select"
+	"github.com/araihu/goshtoso/components/table"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/site/internal/examples/deployments"
+)
+
+templ Content() {
+	@Body(View{State: deployments.Initial(), Screen: "overview"})
+}
+
+templ HeaderActions() {
+	<a href="/examples" class="text-sm underline">Back to examples</a>
+}
+
+templ Footer() {
+	<p class="text-sm">Demo only. No services are deployed. Changes stay in the current URL; the eight most recent records are kept. <a href="/examples/deployments" class="underline">Reset demo</a></p>
+}
+
+templ Body(v View) {
+	<div id="deployment-console" class="mx-auto max-w-5xl space-y-6">
+		switch v.Screen {
+			case "new":
+				<h1 class="font-title text-3xl font-bold">New deployment</h1>
+				<p>Choose a service, version, and environment. You can review the request before approving it.</p>
+				if len(v.Errors)>0 {
+					@alert.Alert(alert.Config{Title: "Check the deployment details", Description: "Correct the fields below and submit again.", Tone: alert.ToneDanger})
+				}
+				<form method="post" action="/examples/deployments" class="max-w-xl space-y-5" novalidate>
+					<input type="hidden" name="state" value={ v.State.Encode() }/>
+					<input type="hidden" name="action" value="create"/>
+					@textinput.TextInput(textinput.Config{ID: "deployment-service", Name: "service", Label: "Service", Value: v.Service, Required: true, HelperText: v.Errors["service"], State: fieldState(v.Errors["service"]), InputAttrs: templ.Attributes{"maxlength": "60"}})
+					@textinput.TextInput(textinput.Config{ID: "deployment-version", Name: "version", Label: "Version", Value: v.Version, Placeholder: "v1.0.0", Required: true, HelperText: v.Errors["version"], State: fieldState(v.Errors["version"]), InputAttrs: templ.Attributes{"maxlength": "30"}})
+					@selectfield.Select(selectfield.Config{ID: "deployment-environment", Name: "environment", Label: "Environment", Options: []selectfield.Option{{Value: "Staging", Label: "Staging", Selected: v.Environment != "Production"}, {Value: "Production", Label: "Production", Selected: v.Environment == "Production"}}})
+					if v.Errors["environment"]!="" {
+						<p role="alert">{ v.Errors["environment"] }</p>
+					}
+					<div class="flex items-center gap-4">
+						@button.Button(button.WithType("submit")) {
+							Create deployment
+						}
+						<a href={ templ.SafeURL(v.State.URL("list", 0)) } class="underline">Cancel</a>
+					</div>
+				</form>
+			case "detail":
+				<a href={ templ.SafeURL(v.State.URL("list", 0)) } class="text-sm underline">Back to deployments</a>
+				<h1 class="font-title text-3xl font-bold">{ v.Record.Service }</h1>
+				if v.Created {
+					@alert.Alert(alert.Config{Title: "Deployment created", Description: "The request is ready for review.", Tone: alert.ToneSuccess})
+				}
+				@badge.Badge(badge.Config{Label: v.Record.Status, Tone: statusTone(v.Record.Status)})
+				<dl class="grid gap-5 border-y border-outline py-6 dark:border-outline-dark sm:grid-cols-3">
+					<div><dt class="text-sm">Version</dt><dd class="mt-1 font-mono">{ v.Record.Version }</dd></div>
+					<div><dt class="text-sm">Environment</dt><dd class="mt-1">{ v.Record.Environment }</dd></div>
+					<div><dt class="text-sm">Request</dt><dd class="mt-1">{ fmt.Sprintf("DEP-%03d",v.Record.ID) }</dd></div>
+				</dl>
+				if v.Record.Status=="Pending review" {
+					<p>Confirm that the version and environment are correct before approving this request.</p>
+					<form method="post" action="/examples/deployments">
+						<input type="hidden" name="state" value={ v.State.Encode() }/>
+						<input type="hidden" name="id" value={ fmt.Sprint(v.Record.ID) }/>
+						<input type="hidden" name="action" value="approve"/>
+						@button.Button(button.WithType("submit")) {
+							Approve deployment
+						}
+					</form>
+				} else {
+					@alert.Alert(alert.Config{Title: "Deployment approved", Description: "The simulated approval is complete.", Tone: alert.ToneSuccess})
+				}
+			default:
+				if v.Screen=="overview" {
+					<h1 class="font-title text-3xl font-bold">Operations overview</h1>
+					<p>Review deployment requests and create new ones for your services.</p>
+					<p class="text-lg font-semibold">{ fmt.Sprintf("%d deployments · %d awaiting review",len(v.State.Records),pending(v.State)) }</p>
+				} else {
+					<h1 class="font-title text-3xl font-bold">Deployments</h1>
+				}
+				<div class="flex flex-wrap items-end justify-between gap-4">
+					<form method="get" action="/examples/deployments" class="flex items-end gap-3">
+						<input type="hidden" name="state" value={ v.State.Encode() }/>
+						<input type="hidden" name="view" value="list"/>
+						@textinput.TextInput(textinput.Config{ID: "deployment-search", Name: "q", Label: "Search deployments", Value: v.Query, Placeholder: "Service, version, or environment"})
+						@button.Button(button.WithType("submit"), button.WithTone(button.ToneAlternate)) {
+							Search
+						}
+					</form>
+					<a href={ templ.SafeURL(v.State.URL("new", 0)) } class="font-semibold underline">New deployment</a>
+				</div>
+				@Records(v.State, v.Query)
+		}
+	</div>
+}
+
+templ Records(s deployments.State, query string) {
+	if len(s.Filter(query))==0 {
+		@emptystate.EmptyState(emptystate.Config{Title: "No matching deployments", Description: "Try another service, version, or environment."})
+		<a href={ templ.SafeURL(s.URL("list", 0)) } class="underline">Clear search</a>
+	} else {
+		@table.Table(recordsTable(s, query))
+	}
+}
+
+func fieldState(err string) textinput.State {
+	if err != "" {
+		return textinput.StateError
+	}
+	return textinput.StateDefault
+}
+func statusTone(status string) badge.Tone {
+	if status == "Approved" {
+		return badge.ToneSuccess
+	}
+	return badge.ToneWarning
+}
+func pending(s deployments.State) int {
+	count := 0
+	for _, r := range s.Records {
+		if r.Status == "Pending review" {
+			count++
+		}
+	}
+	return count
+}
+
+templ recordLink(s deployments.State, r deployments.Record) {
+	<a href={ templ.SafeURL(s.URL("detail", r.ID)) } class="underline">{ r.Service }</a>
+}
+
+func recordsTable(s deployments.State, query string) table.Config {
+	rows := []table.Row{}
+	for _, r := range s.Filter(query) {
+		rows = append(rows, table.Row{ID: fmt.Sprint(r.ID), Cells: map[string]table.Cell{
+			"service": {Component: recordLink(s, r)}, "version": {Text: r.Version, Code: true}, "environment": {Text: r.Environment}, "status": {Component: badge.Badge(badge.Config{Label: r.Status, Tone: statusTone(r.Status)})},
+		}})
+	}
+	return table.Config{ID: "deployment-table", Caption: "Deployment requests", Columns: []table.Column{{Key: "service", Label: "Service"}, {Key: "version", Label: "Version"}, {Key: "environment", Label: "Environment"}, {Key: "status", Label: "Status"}}, Rows: rows}
+}
+
+// The shell's active-link rule uses the light token in both color schemes.
+templ Styles() {
+	<style>
+ .dark #consoleshell-sidebar [data-consoleshell-nav-id][aria-current="page"] { color: var(--color-primary-dark); }
+ </style>
+}
