@@ -51,6 +51,15 @@ func TestAppShellLivePreviews(t *testing.T) {
 			}
 			require.NoError(t, page.Locator("iframe").ScrollIntoViewIfNeeded())
 			require.NoError(t, frame.Locator(menu).Click())
+			if spec.family == "landingshell" {
+				// Wait for the drawer focus trap to activate before following a link.
+				// Alpine schedules activation after the opening event.
+				_, err = page.WaitForFunction(`() => {
+					const doc = document.querySelector('iframe').contentDocument;
+					return !!doc.activeElement?.closest('[role="dialog"]');
+				}`, nil)
+				require.NoError(t, err)
+			}
 			require.NoError(t, frame.Locator(links).First().Click())
 			_, err = page.WaitForFunction(`() => document.querySelector('iframe').contentWindow.location.pathname.endsWith('/overview')`, nil)
 			require.NoError(t, err)

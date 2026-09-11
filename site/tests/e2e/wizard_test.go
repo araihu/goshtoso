@@ -149,6 +149,8 @@ func TestWizard_SidebarNavNoErrors(t *testing.T) {
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	require.NoError(t, err)
 
+	// Examples has its own navigation family, reached through the top navbar.
+	require.NoError(t, page.GetByRole("link", playwright.PageGetByRoleOptions{Name: "Examples", Exact: new(true)}).Click())
 	require.NoError(t, page.Locator("a[href='/examples/wizard']").First().Click())
 	_, err = page.WaitForFunction(stepCurrentJS(1), nil)
 	require.NoError(t, err)

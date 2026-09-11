@@ -95,6 +95,8 @@ func TestLogFeed_FragmentNavNoErrors(t *testing.T) {
 	require.NoError(t, err)
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	require.NoError(t, err)
+	// Examples has its own navigation family, reached through the top navbar.
+	require.NoError(t, page.GetByRole("link", playwright.PageGetByRoleOptions{Name: "Examples", Exact: new(true)}).Click())
 	require.NoError(t, page.Locator("a[href='/examples/logs']").First().Click())
 	// Rows only appear if the logFeed Alpine component registered after the swap
 	// and the SSE connection opened.
