@@ -25,7 +25,7 @@ templ iconpackContent() {
 		<section id="generate" class="space-y-5" aria-labelledby="generate-title">
 			<div>
 				<h2 id="generate-title" data-toc-heading class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Generate from an Assets release</h2>
-				<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">You can generate a pack from an Arai Hû Assets release or define your own sources in <code class="font-mono">.iconpack.yaml</code>, as shown in the next section. For a release archive, supply its SHA-256 checksum and the checksums for its catalog and release metadata. Each <code class="font-mono">-name</code> must match a <code class="font-mono">canonicalName</code> in the catalog.</p>
+				<p class="mt-2 max-w-3xl text-on-surface dark:text-on-surface-dark">You can generate a pack from an Arai Hû Assets release or define your own sources in <code class="font-mono">.iconpack.yaml</code>, as shown in the next section. For a release archive, supply its SHA-256 checksum and the checksums for its catalog and release metadata. Select icons using the <code class="font-mono">canonicalName</code> field in the release’s <code class="font-mono">catalog.json</code> file. Pass that field’s value to <code class="font-mono">-name</code>; for example, <code class="font-mono">-name ui-hi-16-solid-check</code> selects the check icon in the command below.</p>
 			</div>
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "bash",
@@ -44,7 +44,7 @@ templ iconpackContent() {
   -const-prefix Icon \
   -sprite-url /assets/icons/appicons/sprite.svg`,
 			})
-			<p class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">For a verified extracted release root, use <code class="font-mono">-release-root</code> instead of <code class="font-mono">-release-archive</code>. Create the parent directory, <code class="font-mono">internal</code> in this example, before running the command. The generator writes the output directory atomically.</p>
+			<p class="text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">For an extracted release directory, replace <code class="font-mono">-release-archive</code> with <code class="font-mono">-release-root</code> and omit <code class="font-mono">-archive-sha256</code>. Create the parent directory, <code class="font-mono">internal</code> in this example, before running the command. The generator writes the output directory atomically.</p>
 		</section>
 		<section id="iconpack-config" class="space-y-5" aria-labelledby="iconpack-config-title">
 			<div>
