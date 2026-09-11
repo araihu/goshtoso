@@ -427,6 +427,7 @@ func getSearchItems(activeFamily ...string) []searchfield.Item {
 	})
 
 	appendItem(searchItemFromLink("internationalization", "Internationalization", "Configure translations, application defaults, request expressions, and component labels.", "/docs/internationalization", "Internationalization", "translation", "language", "expressions"))
+	appendItem(searchItemFromLink("internationalization-files", "Expression files", "Load JSON and YAML expressions, embed translation files, and browse the JSON Schema reference.", "/docs/internationalization/files", "Internationalization", "json", "yaml", "schema", "embed"))
 	appendItem(searchItemFromLink("internationalization-examples", "Internationalization Examples", "System defaults, user language selection, HTMX fragments, and per-component translations.", "/docs/internationalization/examples", "Internationalization", "translation", "language", "expressions"))
 	for _, item := range iconsDocsNavigation("").Items {
 		appendItem(searchItemFromSidebar(item, "Icons"))

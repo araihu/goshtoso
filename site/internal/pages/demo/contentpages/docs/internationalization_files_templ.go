@@ -34,7 +34,7 @@ func internationalizationFiles() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section id=\"expression-files\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Load expressions from files</h2><p class=\"text-on-surface dark:text-on-surface-dark\">JSON and YAML files use the same property names as the Go API. Supply only the text you want to change. Missing fields and empty strings inherit the next layer of defaults.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"internationalization-files-fragment\" class=\"mx-auto max-w-4xl space-y-10\"><header class=\"space-y-3\"><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Expression files</h1><p class=\"text-on-surface dark:text-on-surface-dark\">Keep component text in JSON or YAML and load it into the same expression sets used by your Go code. Application defaults and request or component overrides are covered in the <a class=\"underline\" href=\"/docs/internationalization\">Internationalization guide</a>.</p></header><section id=\"expression-files\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Load expressions from files</h2><p class=\"text-on-surface dark:text-on-surface-dark\">JSON and YAML files use the same property names as the Go API. Supply only the text you want to change. Missing fields and empty strings inherit the next layer of defaults.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -75,7 +75,7 @@ EmptyState:
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("Function fields accept a string with the named placeholder shown in the reference below. For example, “Página {page}” becomes “Página 3.” Use {{ and }} for literal braces. Substituted values are treated as text and are never evaluated as code. For plural rules or locale-specific number formatting, override that field with a Go callback after loading the file.")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 30, Col: 430}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 35, Col: 431}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -89,7 +89,7 @@ EmptyState:
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -115,6 +115,7 @@ func (s *Server) setupRoutes() {
 		_, _ = w.Write(expressions.JSONSchema())
 	})
 	// Docs pages
+	s.mux.HandleFunc("/docs/internationalization/files", func(w http.ResponseWriter, r *http.Request) { s.renderDemo(w, r, "docs/internationalization/files") })
 	s.mux.HandleFunc("/docs/internationalization/examples", func(w http.ResponseWriter, r *http.Request) {
 		s.renderDemo(w, docspages.WithExpressionDemo(r), "docs/internationalization/examples")
 	})

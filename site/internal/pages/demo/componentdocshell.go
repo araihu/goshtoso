@@ -59,6 +59,7 @@ func componentDocsNavigation(active string) componentdocshell.Navigation {
 	case "internationalization":
 		return componentdocshell.Navigation{Items: []sidebar.Item{
 			{ID: "internationalization", Label: "Internationalization", Href: "/docs/internationalization", Active: active == "internationalization", LinkAttrs: navHxAttrs("/docs/internationalization", "Internationalization")},
+			{ID: "internationalization-files", Label: "Expression files", Href: "/docs/internationalization/files", Active: active == "internationalization-files", LinkAttrs: navHxAttrs("/docs/internationalization/files", "Expression files")},
 			{ID: "internationalization-examples", Label: "Examples", Href: "/docs/internationalization/examples", Active: active == "internationalization-examples", LinkAttrs: navHxAttrs("/docs/internationalization/examples", "Internationalization Examples")},
 		}, DisableSearch: true}
 	case "agents":
