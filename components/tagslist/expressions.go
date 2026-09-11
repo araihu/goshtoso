@@ -3,11 +3,12 @@ package tagslist
 import (
 	"context"
 	"github.com/araihu/goshtoso/expressions"
+	"github.com/araihu/goshtoso/internal/expressionutil"
 )
 
 func (cfg Config) withExpressions(ctx context.Context) Config {
 	text := expressions.From(ctx).TagsList
-	cfg.AddActionLabel = expressions.Text(cfg.AddActionLabel, text.AddLabel)
-	cfg.Placeholder = expressions.Text(cfg.Placeholder, text.Placeholder)
+	cfg.AddActionLabel = expressionutil.Text(cfg.AddActionLabel, text.AddLabel)
+	cfg.Placeholder = expressionutil.Text(cfg.Placeholder, text.Placeholder)
 	return cfg
 }

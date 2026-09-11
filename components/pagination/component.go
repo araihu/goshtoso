@@ -11,7 +11,7 @@ import (
 
 // Instance is a renderable pagination component.
 type Instance struct {
-	expressionOverrides expressions.Pagination
+	expressionOverrides *expressions.Pagination
 	cfg                 Config
 }
 
@@ -27,7 +27,9 @@ func (Instance) Kind() components.Kind {
 
 // Render writes the pagination markup.
 func (i Instance) Render(ctx context.Context, w io.Writer) error {
-	ctx = expressions.With(ctx, expressions.Set{Pagination: i.expressionOverrides})
+	if i.expressionOverrides != nil {
+		ctx = expressions.With(ctx, expressions.Set{Pagination: *i.expressionOverrides})
+	}
 	return paginationTemplate(i.cfg).Render(ctx, w)
 }
 
@@ -36,6 +38,11 @@ var _ components.Component = Instance{}
 // WithExpressions returns a copy with component-scoped text overrides. Existing
 // explicit config labels take precedence. Empty fields inherit render defaults.
 func (i Instance) WithExpressions(values expressions.Pagination) Instance {
-	i.expressionOverrides = expressions.Merge(expressions.Set{Pagination: i.expressionOverrides}, expressions.Set{Pagination: values}).Pagination
+	var current expressions.Pagination
+	if i.expressionOverrides != nil {
+		current = *i.expressionOverrides
+	}
+	merged := expressions.Merge(expressions.Set{Pagination: current}, expressions.Set{Pagination: values}).Pagination
+	i.expressionOverrides = &merged
 	return i
 }

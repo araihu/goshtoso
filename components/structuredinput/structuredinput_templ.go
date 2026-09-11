@@ -200,9 +200,9 @@ func structuredInputTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).StructuredInput.RemoveLabel)
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).StructuredInput.RemoveAriaLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/structuredinput/structuredinput.templ`, Line: 45, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/structuredinput/structuredinput.templ`, Line: 45, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 			if templ_7745c5c3_Err != nil {

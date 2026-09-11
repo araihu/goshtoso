@@ -612,6 +612,8 @@ func getSearchItems(activeFamily ...string) []searchfield.Item {
 		Attrs:       navHxAttrs("/docs/agents", ""),
 	})
 
+	appendItem(searchItemFromLink("internationalization", "Internationalization", "Configure translations, application defaults, request expressions, and component labels.", "/docs/internationalization", "Internationalization", "translation", "language", "expressions"))
+	appendItem(searchItemFromLink("internationalization-examples", "Internationalization Examples", "System defaults, user language selection, HTMX fragments, and per-component translations.", "/docs/internationalization/examples", "Internationalization", "translation", "language", "expressions"))
 	for _, item := range iconsDocsNavigation("").Items {
 		appendItem(searchItemFromSidebar(item, "Icons"))
 	}
@@ -683,7 +685,7 @@ func normalizeSearchScope(scope string) string {
 	switch scope {
 	case "icon-packs":
 		return "icons"
-	case "charts", "app-shells", "examples", "agents", "icons", "core":
+	case "internationalization", "charts", "app-shells", "examples", "agents", "icons", "core":
 		return scope
 	default:
 		return "core"
@@ -694,6 +696,8 @@ func searchScopeForPath(path string) string {
 	switch {
 	case path == "/components/icon", path == "/docs/icon-catalog", path == "/docs/iconpack":
 		return "icons"
+	case path == "/docs/internationalization", strings.HasPrefix(path, "/docs/internationalization/"):
+		return "internationalization"
 	case path == "/docs/agents":
 		return "agents"
 	case strings.HasPrefix(path, "/modules/charts"):
@@ -835,7 +839,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var28 templ.SafeURL
 				templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 623, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 627, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 				if templ_7745c5c3_Err != nil {
@@ -856,7 +860,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var29 string
 				templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 630, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 634, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 				if templ_7745c5c3_Err != nil {
@@ -881,7 +885,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var30 templ.SafeURL
 				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 638, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 642, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 				if templ_7745c5c3_Err != nil {
@@ -902,7 +906,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var31 string
 				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 642, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 646, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 				if templ_7745c5c3_Err != nil {

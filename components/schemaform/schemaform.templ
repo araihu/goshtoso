@@ -58,7 +58,7 @@ templ field(f Field, prefix string) {
 			<label for={ inputName } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark">
 				<span>{ f.Label }</span>
 				if f.Required {
-					<span class="text-danger" aria-label={ expressions.From(ctx).SchemaForm.RequiredLabel }>*</span>
+					<span class="text-danger" aria-label={ expressions.From(ctx).SchemaForm.RequiredAriaLabel }>*</span>
 				}
 				if f.Managed {
 					@managedBadge()

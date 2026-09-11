@@ -410,9 +410,9 @@ func selectTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var21 string
-			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Select.ListLabel(cfg.Label))
+			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Select.ListAriaLabel(cfg.Label))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/select/select.templ`, Line: 127, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/select/select.templ`, Line: 127, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 			if templ_7745c5c3_Err != nil {
@@ -457,9 +457,9 @@ func selectTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var23 string
-			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Select.ListLabel(cfg.Label))
+			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Select.ListAriaLabel(cfg.Label))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/select/select.templ`, Line: 140, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/select/select.templ`, Line: 140, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var23)
 			if templ_7745c5c3_Err != nil {

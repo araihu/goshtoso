@@ -122,7 +122,7 @@ templ searchModalTemplate(cfg Config) {
 				x-show="query.trim().length > 0"
 				class="flex max-h-[min(28rem,calc(100vh-12rem))] flex-col divide-y divide-outline overflow-hidden overflow-y-auto rounded-b-radius border border-outline bg-surface text-sm font-light dark:divide-outline-dark dark:border-outline-dark dark:bg-surface-dark-alt"
 				role="listbox"
-				aria-label={ expressions.From(ctx).Search.ResultsLabel(cfg.getLabel()) }
+				aria-label={ expressions.From(ctx).Search.ResultsAriaLabel(cfg.getLabel()) }
 			>
 				if cfg.ItemsURL != "" {
 					@clientResultItems()

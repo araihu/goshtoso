@@ -47,7 +47,7 @@ templ avatarStackTemplate(cfg StackConfig) {
 	{{
 		label := cfg.Label
 		if label == "" {
-			label = expressions.From(ctx).Avatar.GroupLabel
+			label = expressions.From(ctx).Avatar.GroupAriaLabel
 		}
 		rootClasses := "flex items-center " + cfg.RootClass
 	}}

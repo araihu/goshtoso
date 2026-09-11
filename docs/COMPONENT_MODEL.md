@@ -101,10 +101,20 @@ Components with built-in UI text expose a typed `WithExpressions` method on
 pager := pagination.Pagination(pagination.Config{
     CurrentPage: 2,
     TotalPages: 10,
-}).WithExpressions(expressions.Pagination{NextText: "Continue"})
+}).WithExpressions(expressions.Pagination{NextLabel: "Continue"})
 ```
 
 Existing config labels take precedence over component expressions. Request
 contexts and a configured renderer can supply inherited values so templates do
 not need to repeat overrides. English is the final fallback. See the
 [expression guide](EXPRESSIONS.md) for application defaults and dynamic messages.
+
+### Equality of component values
+
+Pagination, CodeBlock, and Table ImageCell retain their prior comparability.
+Their optional expression overrides are held by an immutable pointer. Copies
+share that pointer; calling WithExpressions creates a new pointer and leaves
+the original unchanged. Equality therefore compares override identity, not
+the contents of callbacks. Unconfigured instances keep their previous equality
+behavior. Other instances receiving function-bearing expression groups were
+already noncomparable.

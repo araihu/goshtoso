@@ -7,6 +7,8 @@ import (
 
 // Definitions contains the grouped documentation pages.
 var Definitions = []demo.PageDefinition{
+	{Key: "docs/internationalization/examples", Title: "Internationalization Examples", Active: "internationalization-examples", Description: "Examples of system defaults, user language preferences, HTMX request contexts, and component expression overrides.", Type: "TechArticle", Content: internationalizationExamplesContent},
+	{Key: "docs/internationalization", Title: "Internationalization", Active: "internationalization", Description: "Supply application-owned translations with English defaults, request-scoped expressions, and component overrides.", Type: "TechArticle", Content: internationalizationContent},
 	{Key: "docs/agents", Title: "AI Agents", Active: "agents", Description: "Install the Goshtoso consumer skill for AI coding tools and follow the supported integration path.", Type: "TechArticle", Content: agentsContent},
 	{Key: "docs/application-patterns", Title: "Application Patterns", Active: "application-patterns", Description: "Compose App Shell, Operations List, Detail Workspace, and Multi-step Workflow product surfaces from server-rendered Goshtoso components.", Type: "TechArticle", Content: applicationPatternsContent},
 	{Key: "docs/component-model", Title: "Component Model", Active: "component-model", Description: "Understand Goshtoso's common component interface, concrete return values, constructor styles, stable Kind identity, and rendered defaults.", Type: "TechArticle", Content: componentModelContent},

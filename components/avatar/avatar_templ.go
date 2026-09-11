@@ -102,7 +102,7 @@ func avatarStackTemplate(cfg StackConfig) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		label := cfg.Label
 		if label == "" {
-			label = expressions.From(ctx).Avatar.GroupLabel
+			label = expressions.From(ctx).Avatar.GroupAriaLabel
 		}
 		rootClasses := "flex items-center " + cfg.RootClass
 		var templ_7745c5c3_Var3 = []any{rootClasses}

@@ -326,9 +326,9 @@ func dismissibleAlert(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var20 string
-		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Alert.DismissLabel)
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Alert.DismissAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 54, Col: 126}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/alert/alert.templ`, Line: 54, Col: 130}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 		if templ_7745c5c3_Err != nil {
@@ -548,7 +548,7 @@ func actionAlert(cfg Config) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		dismissText := cfg.Action.DismissLabel
 		if dismissText == "" {
-			dismissText = expressions.From(ctx).Alert.DismissActionLabel
+			dismissText = expressions.From(ctx).Alert.DismissLabel
 		}
 		var templ_7745c5c3_Var35 = []any{cfg.containerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var35...)

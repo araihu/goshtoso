@@ -57,7 +57,7 @@ func ExpressionOverridesNote(group string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " <a class=\"underline\" href=\"https://github.com/araihu/goshtoso/blob/main/docs/EXPRESSIONS.md\">Read the expression guide</a>.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " <a class=\"underline\" href=\"/docs/internationalization\">Read the expression guide</a>.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

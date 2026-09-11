@@ -165,9 +165,9 @@ func field(f Field, prefix string) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).SchemaForm.RequiredLabel)
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).SchemaForm.RequiredAriaLabel)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/schemaform/schemaform.templ`, Line: 61, Col: 90}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/schemaform/schemaform.templ`, Line: 61, Col: 94}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 				if templ_7745c5c3_Err != nil {

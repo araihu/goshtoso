@@ -21,6 +21,7 @@ import (
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	comboboxpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/combobox"
+	docspages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/docs"
 	modulespages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/modules"
 	startpages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/start"
 	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
@@ -108,6 +109,10 @@ func (s *Server) setupRoutes() {
 	s.mux.Handle("/api/components/combobox/clusters/clear", clustersHandler)
 
 	// Docs pages
+	s.mux.HandleFunc("/docs/internationalization/examples", func(w http.ResponseWriter, r *http.Request) {
+		s.renderDemo(w, docspages.WithExpressionDemo(r), "docs/internationalization/examples")
+	})
+	s.mux.HandleFunc("/docs/internationalization", func(w http.ResponseWriter, r *http.Request) { s.renderDemo(w, r, "docs/internationalization") })
 	s.mux.HandleFunc("/docs/agents", s.handleAgentsPage)
 	s.mux.HandleFunc("/docs/application-patterns", s.handleApplicationPatternsPage)
 	s.mux.HandleFunc("/docs/component-model", s.handleComponentModelPage)

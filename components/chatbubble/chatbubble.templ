@@ -67,7 +67,7 @@ templ chatBubbleTemplate(cfg Config) {
 	//	    AvatarTone:     avatar.ToneInfo,
 //	})
 templ typingIndicatorTemplate(cfg Config) {
-	<div class={ cfg.rowClasses() } data-mine="false" aria-label={ expressions.From(ctx).ChatBubble.TypingLabel } aria-live="polite">
+	<div class={ cfg.rowClasses() } data-mine="false" aria-label={ expressions.From(ctx).ChatBubble.TypingAriaLabel } aria-live="polite">
 		if cfg.hasAvatar() {
 			@bubbleAvatar(cfg)
 		}

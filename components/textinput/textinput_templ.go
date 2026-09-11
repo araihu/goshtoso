@@ -757,9 +757,9 @@ func passwordInput(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var42 string
-		templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).TextInput.ShowPasswordLabel)
+		templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).TextInput.ShowPasswordAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textinput/textinput.templ`, Line: 154, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textinput/textinput.templ`, Line: 154, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var42)
 		if templ_7745c5c3_Err != nil {
@@ -1042,9 +1042,9 @@ func searchInput(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var59 string
-			templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).TextInput.SearchLabel)
+			templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).TextInput.SearchAriaLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textinput/textinput.templ`, Line: 211, Col: 61}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textinput/textinput.templ`, Line: 211, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var59)
 			if templ_7745c5c3_Err != nil {

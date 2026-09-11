@@ -19,7 +19,7 @@ templ sidebarTemplate(cfg Config) {
 } }}
 	<nav
 		class={ cfg.containerClasses() + " " + cfg.RootClass }
-		aria-label={ expressions.From(ctx).Sidebar.Label }
+		aria-label={ expressions.From(ctx).Sidebar.AriaLabel }
 	>
 		if !cfg.DisableSkipLink {
 			<!-- Skip to main content link for accessibility -->
@@ -50,7 +50,7 @@ templ sidebarTemplate(cfg Config) {
 						type="search"
 						class="w-full border border-outline rounded-radius bg-surface py-1.5 pl-9 pr-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark/50 dark:focus-visible:outline-primary-dark"
 						name="search"
-						aria-label={ expressions.From(ctx).Sidebar.SearchLabel }
+						aria-label={ expressions.From(ctx).Sidebar.SearchAriaLabel }
 						placeholder={ cfg.SearchPlaceholder }
 					/>
 				</div>

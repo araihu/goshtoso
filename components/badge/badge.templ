@@ -105,7 +105,7 @@ templ animatingDotTemplate(tone Tone) {
 			{{ colorClass = "bg-danger" }}
 	}
 	
-	<span class={ "flex size-3 items-center justify-center rounded-full " + colorClass } aria-label={ expressions.From(ctx).Badge.NotificationLabel }>
+	<span class={ "flex size-3 items-center justify-center rounded-full " + colorClass } aria-label={ expressions.From(ctx).Badge.NotificationAriaLabel }>
 		<span class={ "size-3 animate-ping rounded-full motion-reduce:animate-none " + colorClass }></span>
 	</span>
 }

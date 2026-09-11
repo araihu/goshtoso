@@ -123,9 +123,9 @@ func primaryNavbar(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Navbar.Label)
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Navbar.AriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 41, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 41, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -282,9 +282,9 @@ func primaryNavbar(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Navbar.OpenMenuLabel)
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Navbar.OpenMenuAriaLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 85, Col: 64}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 85, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 			if templ_7745c5c3_Err != nil {
@@ -295,9 +295,9 @@ func primaryNavbar(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Navbar.CloseMenuLabel)
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Navbar.CloseMenuAriaLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 85, Col: 129}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 85, Col: 137}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 			if templ_7745c5c3_Err != nil {
@@ -594,9 +594,9 @@ func avatarDropdown(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var29 string
-		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Navbar.UserMenuLabel)
+		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Navbar.UserMenuAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 165, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/navbar/navbar.templ`, Line: 165, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
 		if templ_7745c5c3_Err != nil {

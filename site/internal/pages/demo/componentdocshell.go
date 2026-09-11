@@ -56,6 +56,11 @@ func componentDocsConfig(persist bool, active string) componentdocshell.Config {
 
 func componentDocsNavigation(active string) componentdocshell.Navigation {
 	switch componentDocsFamily(active) {
+	case "internationalization":
+		return componentdocshell.Navigation{Items: []sidebar.Item{
+			{ID: "internationalization", Label: "Internationalization", Href: "/docs/internationalization", Active: active == "internationalization", LinkAttrs: navHxAttrs("/docs/internationalization", "Internationalization")},
+			{ID: "internationalization-examples", Label: "Examples", Href: "/docs/internationalization/examples", Active: active == "internationalization-examples", LinkAttrs: navHxAttrs("/docs/internationalization/examples", "Internationalization Examples")},
+		}, DisableSearch: true}
 	case "agents":
 		return componentdocshell.Navigation{
 			Items: []sidebar.Item{{
@@ -96,6 +101,7 @@ func componentDocsSecondaryConfig(activeFamily string) navbar.SecondaryConfig {
 			{Label: "Icons", Href: "/components/icon", Current: componentDocsSecondaryCurrent("icon-packs", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("icon-packs")},
 			{Label: "Charts", Href: "/modules/charts", Current: componentDocsSecondaryCurrent("charts", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("charts")},
 			{Label: "App Shells", Href: "/modules/app-shells", Current: componentDocsSecondaryCurrent("app-shells", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("app-shells")},
+			{Label: "Internationalization", Href: "/docs/internationalization", Current: componentDocsSecondaryCurrent("internationalization", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("internationalization")},
 			{Label: "Examples", Href: "/examples/ticker", Current: componentDocsSecondaryCurrent("examples", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("examples")},
 		},
 		AriaLabel:  "Goshtoso documentation",

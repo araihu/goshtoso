@@ -1,5 +1,7 @@
 package codeblock
 
+import "github.com/araihu/goshtoso/internal/expressionutil"
+
 import "github.com/araihu/goshtoso/expressions"
 
 // CodeBlock renders a syntax-highlighted code block with a header bar and
@@ -36,7 +38,7 @@ templ codeBlockTemplate(cfg Config) {
 					hidden
 					data-code-block-copy
 					data-code-block-target={ id }
-					aria-label={ expressions.From(ctx).CodeBlock.CopyAriaLabel(expressions.Text(cfg.getLabel(), cfg.getID())) }
+					aria-label={ expressions.From(ctx).CodeBlock.CopyAriaLabel(expressionutil.Text(cfg.getLabel(), cfg.getID())) }
  data-code-block-idle-text={ expressions.From(ctx).CodeBlock.CopyLabel }
  data-code-block-success-text={ expressions.From(ctx).CodeBlock.CopiedLabel }
  data-code-block-error-text={ expressions.From(ctx).CodeBlock.ErrorText }

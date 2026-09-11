@@ -30,7 +30,7 @@ templ tabsTemplate(cfg Config) {
 			x-on:keydown.left.prevent="moveFocus($event, -1)"
 			class="flex gap-2 overflow-x-auto border-b border-outline dark:border-outline-dark"
 			role="tablist"
-			aria-label={ expressions.From(ctx).Tabs.OptionsLabel }
+			aria-label={ expressions.From(ctx).Tabs.OptionsAriaLabel }
 		>
 			for _, tab := range cfg.Tabs {
 				@tabButton(containerID, tab)

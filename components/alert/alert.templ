@@ -51,7 +51,7 @@ templ dismissibleAlert(cfg Config) {
 					@listContent(cfg)
 				}
 			</div>
-			<button type="button" @click="alertIsVisible = false" class="ml-auto" aria-label={ expressions.From(ctx).Alert.DismissLabel }>
+			<button type="button" @click="alertIsVisible = false" class="ml-auto" aria-label={ expressions.From(ctx).Alert.DismissAriaLabel }>
 				@dismissIcon()
 			</button>
 		</div>
@@ -79,7 +79,7 @@ templ linkAlert(cfg Config) {
 // actionAlert renders an alert with action buttons
 templ actionAlert(cfg Config) {
 	{{ dismissText := cfg.Action.DismissLabel }}
-	{{ if dismissText == "" { dismissText = expressions.From(ctx).Alert.DismissActionLabel } }}
+	{{ if dismissText == "" { dismissText = expressions.From(ctx).Alert.DismissLabel } }}
 	<div class={ cfg.containerClasses() } role="alert">
 		<div class={ cfg.innerClasses() }>
 			@iconBadge(cfg)

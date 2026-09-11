@@ -13,10 +13,10 @@ import "github.com/araihu/goshtoso/expressions"
 
 renderer := expressions.NewRenderer(expressions.Set{
     Pagination: expressions.Pagination{
-        PreviousText:  "Anterior",
-        PreviousLabel: "Página anterior",
-        NextText:      "Próxima",
-        NextLabel:     "Próxima página",
+        PreviousLabel:  "Anterior",
+        PreviousAriaLabel: "Página anterior",
+        NextLabel:      "Próxima",
+        NextAriaLabel:     "Próxima página",
     },
     CodeBlock: expressions.CodeBlock{
         CopyLabel:   "Copiar",
@@ -66,7 +66,7 @@ control := pagination.Pagination(pagination.Config{
     CurrentPage: 2,
     TotalPages:  10,
 }).WithExpressions(expressions.Pagination{
-    NextText: "Continue",
+    NextLabel: "Continue",
 })
 ```
 
@@ -103,8 +103,8 @@ set := expressions.Set{
         },
     },
     Pagination: expressions.Pagination{
-        PageLabel: func(page int) string {
-            return translator.PageLabel(page)
+        PageAriaLabel: func(page int) string {
+            return translator.PageAriaLabel(page)
         },
     },
 }

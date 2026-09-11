@@ -333,9 +333,9 @@ func defaultModal(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var22 string
-		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Modal.CloseLabel)
+		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Modal.CloseAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 65, Col: 115}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 65, Col: 119}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 		if templ_7745c5c3_Err != nil {
@@ -639,9 +639,9 @@ func alertDialog(cfg AlertDialogConfig) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var43 string
-		templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Modal.CloseLabel)
+		templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Modal.CloseAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 125, Col: 115}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/modal.templ`, Line: 125, Col: 119}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var43)
 		if templ_7745c5c3_Err != nil {

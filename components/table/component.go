@@ -122,7 +122,7 @@ func (i TablePaginationNavInstance) Render(ctx context.Context, w io.Writer) err
 
 // ImageCellInstance is a renderable table image cell.
 type ImageCellInstance struct {
-	expressionOverrides expressions.Table
+	expressionOverrides *expressions.Table
 	imageURL            string
 	label               string
 	detail              string
@@ -144,7 +144,9 @@ func (ImageCellInstance) Kind() components.Kind {
 
 // Render writes the table image cell markup.
 func (i ImageCellInstance) Render(ctx context.Context, w io.Writer) error {
-	ctx = expressions.With(ctx, expressions.Set{Table: i.expressionOverrides})
+	if i.expressionOverrides != nil {
+		ctx = expressions.With(ctx, expressions.Set{Table: *i.expressionOverrides})
+	}
 	return imageCellTemplate(i.imageURL, i.label, i.detail).Render(ctx, w)
 }
 
@@ -195,6 +197,11 @@ func (i TablePaginationNavInstance) WithExpressions(values expressions.Table) Ta
 // WithExpressions returns a copy with component-scoped text overrides. Existing
 // explicit config labels take precedence. Empty fields inherit render defaults.
 func (i ImageCellInstance) WithExpressions(values expressions.Table) ImageCellInstance {
-	i.expressionOverrides = expressions.Merge(expressions.Set{Table: i.expressionOverrides}, expressions.Set{Table: values}).Table
+	var current expressions.Table
+	if i.expressionOverrides != nil {
+		current = *i.expressionOverrides
+	}
+	merged := expressions.Merge(expressions.Set{Table: current}, expressions.Set{Table: values}).Table
+	i.expressionOverrides = &merged
 	return i
 }

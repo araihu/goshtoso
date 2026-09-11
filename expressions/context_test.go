@@ -20,10 +20,10 @@ import (
 )
 
 func TestRenderPrecedenceAndIsolation(t *testing.T) {
-	renderer := expressions.NewRenderer(expressions.Set{Pagination: expressions.Pagination{PreviousLabel: "system previous", NextLabel: "system next"}})
+	renderer := expressions.NewRenderer(expressions.Set{Pagination: expressions.Pagination{PreviousAriaLabel: "system previous", NextAriaLabel: "system next"}})
 	page := pagination.Pagination(pagination.Config{CurrentPage: 2, TotalPages: 3})
-	ctx := expressions.With(context.Background(), expressions.Set{Pagination: expressions.Pagination{NextLabel: "request next"}})
-	component := page.WithExpressions(expressions.Pagination{PreviousLabel: "component previous"})
+	ctx := expressions.With(context.Background(), expressions.Set{Pagination: expressions.Pagination{NextAriaLabel: "request next"}})
+	component := page.WithExpressions(expressions.Pagination{PreviousAriaLabel: "component previous"})
 	var out bytes.Buffer
 	if err := renderer.Render(ctx, &out, component); err != nil {
 		t.Fatal(err)
@@ -61,7 +61,7 @@ func TestConcurrentRenderingAndCancellation(t *testing.T) {
 	for i := range 24 {
 		wg.Go(func() {
 			want := fmt.Sprintf("language-%d-page-3", i)
-			ctx := expressions.With(context.Background(), expressions.Set{Pagination: expressions.Pagination{PageLabel: func(n int) string { return fmt.Sprintf("language-%d-page-%d", i, n) }}})
+			ctx := expressions.With(context.Background(), expressions.Set{Pagination: expressions.Pagination{PageAriaLabel: func(n int) string { return fmt.Sprintf("language-%d-page-%d", i, n) }}})
 			var out bytes.Buffer
 			if err := renderer.Render(ctx, &out, component); err != nil {
 				t.Error(err)
@@ -84,15 +84,15 @@ func TestConcurrentRenderingAndCancellation(t *testing.T) {
 func TestExpressionsAreEscapedAndDefaultsAreValues(t *testing.T) {
 	text := `Fechar "janela" <script>alert('x')</script>`
 	var out bytes.Buffer
-	if err := modal.Modal(modal.Config{}).WithExpressions(expressions.Modal{CloseLabel: text}).Render(context.Background(), &out); err != nil {
+	if err := modal.Modal(modal.Config{}).WithExpressions(expressions.Modal{CloseAriaLabel: text}).Render(context.Background(), &out); err != nil {
 		t.Fatal(err)
 	}
 	if strings.Contains(out.String(), "<script>") || !strings.Contains(out.String(), "&lt;script&gt;") {
 		t.Fatal("expression was not HTML escaped")
 	}
 	first := expressions.English()
-	first.Modal.CloseLabel = "changed"
-	if expressions.English().Modal.CloseLabel == "changed" {
+	first.Modal.CloseAriaLabel = "changed"
+	if expressions.English().Modal.CloseAriaLabel == "changed" {
 		t.Fatal("English defaults mutated")
 	}
 }
@@ -103,9 +103,9 @@ func TestAdditionalRenderEntrypoints(t *testing.T) {
 		component templ.Component
 		want      string
 	}{
-		{"dropdown", dropdown.Dropdown(dropdown.Config{TriggerIconOnly: true, TriggerIcon: templ.Raw("<svg aria-hidden=\"true\"></svg>")}).WithExpressions(expressions.Dropdown{OpenMenuLabel: "Abrir menu"}), "Abrir menu"},
-		{"dot", badge.AnimatingDot(badge.ToneDanger).WithExpressions(expressions.Badge{NotificationLabel: "Notificação"}), "Notificação"},
-		{"dialog", modal.Dialog(modal.DialogConfig{ID: "dialog", Title: "Dialog"}).WithExpressions(expressions.Modal{DialogCloseLabel: "Fechar diálogo"}), "Fechar diálogo"},
+		{"dropdown", dropdown.Dropdown(dropdown.Config{TriggerIconOnly: true, TriggerIcon: templ.Raw("<svg aria-hidden=\"true\"></svg>")}).WithExpressions(expressions.Dropdown{OpenMenuAriaLabel: "Abrir menu"}), "Abrir menu"},
+		{"dot", badge.AnimatingDot(badge.ToneDanger).WithExpressions(expressions.Badge{NotificationAriaLabel: "Notificação"}), "Notificação"},
+		{"dialog", modal.Dialog(modal.DialogConfig{ID: "dialog", Title: "Dialog"}).WithExpressions(expressions.Modal{DialogCloseAriaLabel: "Fechar diálogo"}), "Fechar diálogo"},
 		{"schema tree", schematree.SchemaTree(schematree.Config{Nodes: []schematree.Node{{Name: "field", Required: true}}}).WithExpressions(expressions.SchemaTree{RequiredLabel: "Obrigatório"}), "Obrigatório"},
 	}
 	for _, test := range cases {

@@ -17,7 +17,7 @@ func TestSchemaLabelsPreserveRequiredAttributes(t *testing.T) {
 		{Path: "name", Name: "name", Label: "Name", Kind: schemaform.KindString, Required: true},
 		{Path: "amount", Name: "amount", Label: "Amount", Kind: schemaform.KindNumber, Required: true},
 		{Path: "choice", Name: "choice", Label: "Choice", Kind: schemaform.KindEnum, Enum: []string{"", "yes"}, Required: true},
-	}}).WithExpressions(expressions.SchemaForm{RequiredLabel: "Obrigatório"})
+	}}).WithExpressions(expressions.SchemaForm{RequiredAriaLabel: "Obrigatório"})
 	var out bytes.Buffer
 	if err := component.Render(context.Background(), &out); err != nil {
 		t.Fatal(err)
@@ -51,7 +51,7 @@ func TestSchemaLabelsPreserveRequiredAttributes(t *testing.T) {
 }
 
 func TestLegacyWhitespaceFallsThroughToRequest(t *testing.T) {
-	ctx := expressions.With(context.Background(), expressions.Set{Toolbar: expressions.Toolbar{Label: "Ferramentas"}})
+	ctx := expressions.With(context.Background(), expressions.Set{Toolbar: expressions.Toolbar{AriaLabel: "Ferramentas"}})
 	var out bytes.Buffer
 	if err := toolbar.Toolbar(toolbar.Config{Label: " \n "}).Render(ctx, &out); err != nil {
 		t.Fatal(err)

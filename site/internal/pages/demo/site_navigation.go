@@ -4,6 +4,8 @@ import "strings"
 
 func componentDocsFamily(active string) string {
 	switch active {
+	case "internationalization", "internationalization-examples":
+		return "internationalization"
 	case "agents":
 		return "agents"
 	case "icon", "icon-catalog", "iconpack":

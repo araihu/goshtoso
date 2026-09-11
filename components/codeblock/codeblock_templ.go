@@ -8,6 +8,8 @@ package codeblock
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "github.com/araihu/goshtoso/internal/expressionutil"
+
 import "github.com/araihu/goshtoso/expressions"
 
 // CodeBlock renders a syntax-highlighted code block with a header bar and
@@ -57,7 +59,7 @@ func codeBlockTemplate(cfg Config) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(string(cfg.Density))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 28, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 30, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -92,7 +94,7 @@ func codeBlockTemplate(cfg Config) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.getLabel())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 32, Col: 96}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 34, Col: 96}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -110,7 +112,7 @@ func codeBlockTemplate(cfg Config) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 38, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 40, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
@@ -121,9 +123,9 @@ func codeBlockTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).CodeBlock.CopyAriaLabel(expressions.Text(cfg.getLabel(), cfg.getID())))
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).CodeBlock.CopyAriaLabel(expressionutil.Text(cfg.getLabel(), cfg.getID())))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 39, Col: 110}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 41, Col: 113}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
@@ -136,7 +138,7 @@ func codeBlockTemplate(cfg Config) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).CodeBlock.CopyLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 40, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 42, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {
@@ -149,7 +151,7 @@ func codeBlockTemplate(cfg Config) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).CodeBlock.CopiedLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 41, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 43, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 			if templ_7745c5c3_Err != nil {
@@ -162,7 +164,7 @@ func codeBlockTemplate(cfg Config) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).CodeBlock.ErrorText)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 42, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 44, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 			if templ_7745c5c3_Err != nil {
@@ -175,7 +177,7 @@ func codeBlockTemplate(cfg Config) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 43, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 45, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 			if templ_7745c5c3_Err != nil {
@@ -188,7 +190,7 @@ func codeBlockTemplate(cfg Config) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(expressions.From(ctx).CodeBlock.CopyLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 52, Col: 114}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 54, Col: 114}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -215,7 +217,7 @@ func codeBlockTemplate(cfg Config) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 57, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 59, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
@@ -241,7 +243,7 @@ func codeBlockTemplate(cfg Config) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(cfg.maxHeightStyle())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 57, Col: 73}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/codeblock/codeblock.templ`, Line: 59, Col: 73}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {

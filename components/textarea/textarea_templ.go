@@ -420,15 +420,15 @@ func textareaWithActionsTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = actionButton(expressions.From(ctx).Textarea.EmojiLabel, emojiIcon()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = actionButton(expressions.From(ctx).Textarea.EmojiAriaLabel, emojiIcon()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = actionButton(expressions.From(ctx).Textarea.AttachLabel, attachIcon()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = actionButton(expressions.From(ctx).Textarea.AttachAriaLabel, attachIcon()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = actionButton(expressions.From(ctx).Textarea.VoiceLabel, micIcon()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = actionButton(expressions.From(ctx).Textarea.VoiceAriaLabel, micIcon()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -437,9 +437,9 @@ func textareaWithActionsTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var23 string
-		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Textarea.SendLabel)
+		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Textarea.SendAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textarea/textarea.templ`, Line: 98, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textarea/textarea.templ`, Line: 98, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var23)
 		if templ_7745c5c3_Err != nil {
@@ -450,9 +450,9 @@ func textareaWithActionsTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var24 string
-		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(expressions.From(ctx).Textarea.SendText)
+		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(expressions.From(ctx).Textarea.SendLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textarea/textarea.templ`, Line: 100, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/textarea/textarea.templ`, Line: 100, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {

@@ -8,6 +8,8 @@ package carousel
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "github.com/araihu/goshtoso/internal/expressionutil"
+
 import "github.com/araihu/goshtoso/expressions"
 
 import "fmt"
@@ -133,7 +135,7 @@ func staticCarousel(cfg Config) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 38, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 40, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
@@ -151,7 +153,7 @@ func staticCarousel(cfg Config) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(slidesData(cfg.Slides))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 41, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 43, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
@@ -169,7 +171,7 @@ func staticCarousel(cfg Config) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(fmt.Sprint(autoplayInterval(cfg)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 43, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 45, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
@@ -194,7 +196,7 @@ func staticCarousel(cfg Config) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(xInit)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 49, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 51, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {
@@ -363,7 +365,7 @@ func cardCarousel(cfg CardConfig) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 99, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 101, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 			if templ_7745c5c3_Err != nil {
@@ -381,7 +383,7 @@ func cardCarousel(cfg CardConfig) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(slidesData(cardCfg.Slides))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 102, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 104, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 		if templ_7745c5c3_Err != nil {
@@ -521,7 +523,7 @@ func htmxCarousel(cfg Config) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 159, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 161, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 			if templ_7745c5c3_Err != nil {
@@ -552,7 +554,7 @@ func htmxCarousel(cfg Config) templ.Component {
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.HTMX.Get)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 162, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 164, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var23)
 		if templ_7745c5c3_Err != nil {
@@ -565,7 +567,7 @@ func htmxCarousel(cfg Config) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.ResolveAttributeValue(trigger)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 163, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 165, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var24)
 		if templ_7745c5c3_Err != nil {
@@ -578,7 +580,7 @@ func htmxCarousel(cfg Config) templ.Component {
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(swap)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 164, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 166, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var25)
 		if templ_7745c5c3_Err != nil {
@@ -596,7 +598,7 @@ func htmxCarousel(cfg Config) templ.Component {
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.HTMX.Indicator)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 166, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 168, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var26)
 			if templ_7745c5c3_Err != nil {
@@ -614,7 +616,7 @@ func htmxCarousel(cfg Config) templ.Component {
 		var templ_7745c5c3_Var27 string
 		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(expressions.From(ctx).Carousel.LoadingText)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 174, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 176, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 		if templ_7745c5c3_Err != nil {
@@ -673,9 +675,9 @@ func prevButton() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var31 string
-		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.PreviousLabel)
+		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.PreviousAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 184, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 186, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var31)
 		if templ_7745c5c3_Err != nil {
@@ -734,9 +736,9 @@ func nextButton() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var35 string
-		templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.NextLabel)
+		templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.NextAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 198, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 200, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var35)
 		if templ_7745c5c3_Err != nil {
@@ -802,9 +804,9 @@ func indicators(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var39 string
-		templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.SlidesLabel)
+		templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.SlidesAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 217, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 219, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var39)
 		if templ_7745c5c3_Err != nil {
@@ -815,9 +817,9 @@ func indicators(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var40 string
-		templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.CountLabels(len(cfg.Slides), expressions.From(ctx).Carousel.SlideLabel))
+		templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressionutil.CountLabels(len(cfg.Slides), expressions.From(ctx).Carousel.SlideLabel))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 218, Col: 104}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 220, Col: 107}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var40)
 		if templ_7745c5c3_Err != nil {
@@ -830,7 +832,7 @@ func indicators(cfg Config) templ.Component {
 		var templ_7745c5c3_Var41 string
 		templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.ResolveAttributeValue(clickExpr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 223, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 225, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var41)
 		if templ_7745c5c3_Err != nil {
@@ -843,7 +845,7 @@ func indicators(cfg Config) templ.Component {
 		var templ_7745c5c3_Var42 string
 		templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.ResolveAttributeValue(classBinding)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 224, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 226, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var42)
 		if templ_7745c5c3_Err != nil {
@@ -884,9 +886,9 @@ func autoplayButton() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var44 string
-		templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.PauseLabel)
+		templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.PauseAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 236, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 238, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var44)
 		if templ_7745c5c3_Err != nil {
@@ -897,9 +899,9 @@ func autoplayButton() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var45 string
-		templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.PauseLabel)
+		templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.PauseAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 237, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 239, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var45)
 		if templ_7745c5c3_Err != nil {
@@ -910,9 +912,9 @@ func autoplayButton() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var46 string
-		templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.PlayLabel)
+		templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Carousel.PlayAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 238, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/carousel/carousel.templ`, Line: 240, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var46)
 		if templ_7745c5c3_Err != nil {

@@ -1,0 +1,61 @@
+package docspages
+
+import (
+	"fmt"
+	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/components/emptystate"
+	"github.com/araihu/goshtoso/components/fileinput"
+	"github.com/araihu/goshtoso/components/pagination"
+	selectfield "github.com/araihu/goshtoso/components/select"
+)
+
+templ internationalizationLive() {
+	<section id="live-translations" class="space-y-4">
+		<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Try translated components</h2>
+		<p class="text-on-surface dark:text-on-surface-dark">Select a language to translate the empty-state message, file picker, pagination, and copy feedback. The first preview follows your selection; the comparisons below keep their own settings.</p>
+		<form method="get" action="/docs/internationalization/examples" class="flex flex-wrap items-end gap-3">
+			<div class="w-64">
+				@selectfield.Select(selectfield.Config{
+					ID:         "expression-language",
+					Name:       "language",
+					Label:      "Preview language",
+					InputAttrs: templ.Attributes{"x-init": "$watch('selectedOption', () => $nextTick(() => $el.form.requestSubmit()))"},
+					Options: []selectfield.Option{
+						{Value: "en", Label: "English", Selected: expressionDemoFrom(ctx).Language == "en"},
+						{Value: "pt", Label: "Português", Selected: expressionDemoFrom(ctx).Language == "pt"},
+						{Value: "es", Label: "Español", Selected: expressionDemoFrom(ctx).Language == "es"},
+						{Value: "zh", Label: "简体中文", Selected: expressionDemoFrom(ctx).Language == "zh"},
+						{Value: "de", Label: "Deutsch", Selected: expressionDemoFrom(ctx).Language == "de"},
+					},
+				})
+			</div>
+		</form>
+		<div id="request-expression-preview" class="space-y-4 rounded-radius border border-outline p-4 dark:border-outline-dark">
+			<h3 class="font-semibold">Your selected language</h3>
+			@expressionPreview(expressionDemoFrom(ctx).Language, true, translatedControls(expressionDemoFrom(ctx)))
+		</div>
+		<div id="application-expression-preview" class="space-y-4 rounded-radius border border-outline p-4 dark:border-outline-dark">
+			<h3 class="font-semibold">Portuguese application defaults</h3>
+			<p>A renderer configured with Portuguese expressions supplies this empty state’s title and description.</p>
+			@expressionPreview("pt", false, emptystate.EmptyState(emptystate.Config{}))
+		</div>
+		<div id="component-expression-preview" class="space-y-4 rounded-radius border border-outline p-4 dark:border-outline-dark">
+			<h3 class="font-semibold">Spanish component override</h3>
+			<p>This empty state supplies its own Spanish expressions. Its sibling below keeps the default English text.</p>
+			@emptystate.EmptyState(emptystate.Config{}).WithExpressions(translatedDemoSet("es").EmptyState)
+			<h3 class="font-semibold">English sibling</h3>
+			@emptystate.EmptyState(emptystate.Config{RootAttrs: templ.Attributes{"id": "english-sibling-preview"}})
+		</div>
+	</section>
+}
+
+templ translatedControls(state expressionDemoState) {
+	@emptystate.EmptyState(emptystate.Config{RootAttrs: templ.Attributes{"id": "translated-empty-state"}})
+	<div id="translated-file-picker" class="space-y-3">
+		@fileinput.FileInput(fileinput.Config{ID: "translated-file", Name: "preview-file"})
+		@fileinput.FileInput(fileinput.Config{ID: "translated-upload", Name: "preview-upload", Appearance: fileinput.AppearanceUpload})
+	</div>
+	<p>{ fmt.Sprintf("Page %d of 5", state.Page) }</p>
+	@pagination.Pagination(pagination.Config{ID: "translated-pagination", CurrentPage: state.Page, TotalPages: 5, BaseURL: "/docs/internationalization/examples?language=" + state.Language + "#live-translations"})
+	@codeblock.CodeBlock(codeblock.Config{ID: "request-translated-code", Language: "go", Label: "Request preview", Code: `message := "Hello from Goshtoso"`})
+}

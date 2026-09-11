@@ -255,9 +255,9 @@ func typingIndicatorTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).ChatBubble.TypingLabel)
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).ChatBubble.TypingAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/chatbubble/chatbubble.templ`, Line: 70, Col: 108}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/chatbubble/chatbubble.templ`, Line: 70, Col: 112}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {

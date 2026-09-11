@@ -36,7 +36,7 @@ templ paginationTemplate(cfg Config) {
 		if cfg.ID != "" {
 			id={ cfg.ID }
 		}
-		aria-label={ expressions.From(ctx).Pagination.Label }
+		aria-label={ expressions.From(ctx).Pagination.AriaLabel }
 		class={ cfg.navClasses() }
 	>
 		<ul class={ cfg.listClasses() }>
@@ -47,28 +47,28 @@ templ paginationTemplate(cfg Config) {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.PreviousPage())) }
 							class={ cfg.prevNextClasses(true) }
-							aria-label={ expressions.From(ctx).Pagination.PreviousLabel }
+							aria-label={ expressions.From(ctx).Pagination.PreviousAriaLabel }
 							hx-get={ cfg.PageURL(cfg.PreviousPage()) }
 							hx-target={ cfg.HTMX.Target }
 							hx-swap={ cfg.swapStrategy() }
 						>
 							@prevIcon()
-							{ expressions.From(ctx).Pagination.PreviousText }
+							{ expressions.From(ctx).Pagination.PreviousLabel }
 						</a>
 					} else {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.PreviousPage())) }
 							class={ cfg.prevNextClasses(true) }
-							aria-label={ expressions.From(ctx).Pagination.PreviousLabel }
+							aria-label={ expressions.From(ctx).Pagination.PreviousAriaLabel }
 						>
 							@prevIcon()
-							{ expressions.From(ctx).Pagination.PreviousText }
+							{ expressions.From(ctx).Pagination.PreviousLabel }
 						</a>
 					}
 				} else {
 					<span class={ cfg.prevNextClasses(false) } aria-disabled="true">
 						@prevIcon()
-						{ expressions.From(ctx).Pagination.PreviousText }
+						{ expressions.From(ctx).Pagination.PreviousLabel }
 					</span>
 				}
 			</li>
@@ -77,7 +77,7 @@ templ paginationTemplate(cfg Config) {
 				for _, item := range cfg.Pages() {
 					if item.IsEllipsis {
 						<li>
-							<span class={ cfg.ellipsisClasses() } aria-label={ expressions.From(ctx).Pagination.MoreLabel }>
+							<span class={ cfg.ellipsisClasses() } aria-label={ expressions.From(ctx).Pagination.MoreAriaLabel }>
 								@ellipsisIcon()
 							</span>
 						</li>
@@ -88,7 +88,7 @@ templ paginationTemplate(cfg Config) {
 									href={ templ.URL(cfg.PageURL(item.Page)) }
 									class={ cfg.pageClasses(true) }
 									aria-current="page"
-									aria-label={ expressions.From(ctx).Pagination.PageLabel(item.Page) }
+									aria-label={ expressions.From(ctx).Pagination.PageAriaLabel(item.Page) }
 									hx-get={ cfg.PageURL(item.Page) }
 									hx-target={ cfg.HTMX.Target }
 									hx-swap={ cfg.swapStrategy() }
@@ -100,7 +100,7 @@ templ paginationTemplate(cfg Config) {
 									href={ templ.URL(cfg.PageURL(item.Page)) }
 									class={ cfg.pageClasses(true) }
 									aria-current="page"
-									aria-label={ expressions.From(ctx).Pagination.PageLabel(item.Page) }
+									aria-label={ expressions.From(ctx).Pagination.PageAriaLabel(item.Page) }
 								>
 									{ itoa(item.Page) }
 								</a>
@@ -112,7 +112,7 @@ templ paginationTemplate(cfg Config) {
 								<a
 									href={ templ.URL(cfg.PageURL(item.Page)) }
 									class={ cfg.pageClasses(false) }
-									aria-label={ expressions.From(ctx).Pagination.PageLabel(item.Page) }
+									aria-label={ expressions.From(ctx).Pagination.PageAriaLabel(item.Page) }
 									hx-get={ cfg.PageURL(item.Page) }
 									hx-target={ cfg.HTMX.Target }
 									hx-swap={ cfg.swapStrategy() }
@@ -123,7 +123,7 @@ templ paginationTemplate(cfg Config) {
 								<a
 									href={ templ.URL(cfg.PageURL(item.Page)) }
 									class={ cfg.pageClasses(false) }
-									aria-label={ expressions.From(ctx).Pagination.PageLabel(item.Page) }
+									aria-label={ expressions.From(ctx).Pagination.PageAriaLabel(item.Page) }
 								>
 									{ itoa(item.Page) }
 								</a>
@@ -139,27 +139,27 @@ templ paginationTemplate(cfg Config) {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.NextPage())) }
 							class={ cfg.prevNextClasses(true) }
-							aria-label={ expressions.From(ctx).Pagination.NextLabel }
+							aria-label={ expressions.From(ctx).Pagination.NextAriaLabel }
 							hx-get={ cfg.PageURL(cfg.NextPage()) }
 							hx-target={ cfg.HTMX.Target }
 							hx-swap={ cfg.swapStrategy() }
 						>
-							{ expressions.From(ctx).Pagination.NextText }
+							{ expressions.From(ctx).Pagination.NextLabel }
 							@nextIcon()
 						</a>
 					} else {
 						<a
 							href={ templ.URL(cfg.PageURL(cfg.NextPage())) }
 							class={ cfg.prevNextClasses(true) }
-							aria-label={ expressions.From(ctx).Pagination.NextLabel }
+							aria-label={ expressions.From(ctx).Pagination.NextAriaLabel }
 						>
-							{ expressions.From(ctx).Pagination.NextText }
+							{ expressions.From(ctx).Pagination.NextLabel }
 							@nextIcon()
 						</a>
 					}
 				} else {
 					<span class={ cfg.prevNextClasses(false) } aria-disabled="true">
-						{ expressions.From(ctx).Pagination.NextText }
+						{ expressions.From(ctx).Pagination.NextLabel }
 						@nextIcon()
 					</span>
 				}

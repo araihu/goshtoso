@@ -51,38 +51,38 @@ type Set struct {
 
 // ActionGroup contains optional expressions for the ActionGroup component family.
 type ActionGroup struct {
-	// Label defaults to "Actions".
-	Label string
-	// OverflowLabel defaults to "More actions".
-	OverflowLabel string
+	// AriaLabel defaults to "Actions".
+	AriaLabel string
+	// OverflowAriaLabel defaults to "More actions".
+	OverflowAriaLabel string
 }
 
 // Alert contains optional expressions for the Alert component family.
 type Alert struct {
-	// DismissLabel defaults to "dismiss alert".
+	// DismissAriaLabel defaults to "dismiss alert".
+	DismissAriaLabel string
+	// DismissLabel defaults to "Dismiss".
 	DismissLabel string
-	// DismissActionLabel defaults to "Dismiss".
-	DismissActionLabel string
 }
 
 // Avatar contains optional expressions for the Avatar component family.
 type Avatar struct {
-	// GroupLabel defaults to "Avatar group".
-	GroupLabel string
+	// GroupAriaLabel defaults to "Avatar group".
+	GroupAriaLabel string
 }
 
 // Badge contains optional expressions for the Badge component family.
 type Badge struct {
-	// NotificationLabel defaults to "notification".
-	NotificationLabel string
+	// NotificationAriaLabel defaults to "notification".
+	NotificationAriaLabel string
 }
 
 // Banner contains optional expressions for the Banner component family.
 type Banner struct {
-	// DismissLabel defaults to "dismiss banner".
-	DismissLabel string
-	// ConsentLabel defaults to "Cookie consent".
-	ConsentLabel string
+	// DismissAriaLabel defaults to "dismiss banner".
+	DismissAriaLabel string
+	// ConsentAriaLabel defaults to "Cookie consent".
+	ConsentAriaLabel string
 	// Title defaults to "Cookie Consent".
 	Title string
 	// AcceptLabel defaults to "Accept".
@@ -93,32 +93,33 @@ type Banner struct {
 
 // Breadcrumbs contains optional expressions for the Breadcrumbs component family.
 type Breadcrumbs struct {
-	// Label defaults to "breadcrumb".
-	Label string
+	// AriaLabel defaults to "breadcrumb".
+	AriaLabel string
 }
 
 // Carousel contains optional expressions for the Carousel component family.
 type Carousel struct {
 	// LoadingText defaults to "Loading carousel...".
 	LoadingText string
-	// PreviousLabel defaults to "previous slide".
-	PreviousLabel string
-	// NextLabel defaults to "next slide".
-	NextLabel string
-	// SlidesLabel defaults to "slides".
-	SlidesLabel string
-	// PauseLabel defaults to "pause carousel".
-	PauseLabel string
-	// PlayLabel defaults to "play carousel".
-	PlayLabel string
-	// SlideLabel formats a complete message.
-	SlideLabel func(int) string
+	// PreviousAriaLabel defaults to "previous slide".
+	PreviousAriaLabel string
+	// NextAriaLabel defaults to "next slide".
+	NextAriaLabel string
+	// SlidesAriaLabel defaults to "slides".
+	SlidesAriaLabel string
+	// PauseAriaLabel defaults to "pause carousel".
+	PauseAriaLabel string
+	// PlayAriaLabel defaults to "play carousel".
+	PlayAriaLabel string
+	// SlideLabel returns the carousel counter text for slide. Rendering prepares values
+	// from zero through the number of slides; visible slide numbers start at one.
+	SlideLabel func(slide int) string
 }
 
 // ChatBubble contains optional expressions for the ChatBubble component family.
 type ChatBubble struct {
-	// TypingLabel defaults to "typing".
-	TypingLabel string
+	// TypingAriaLabel defaults to "typing".
+	TypingAriaLabel string
 	// SendingLabel defaults to "Sending".
 	SendingLabel string
 	// DeliveredLabel defaults to "Delivered".
@@ -137,8 +138,9 @@ type CodeBlock struct {
 	CopiedLabel string
 	// ErrorText defaults to "Unable to copy".
 	ErrorText string
-	// CopyAriaLabel formats a complete message.
-	CopyAriaLabel func(string) string
+	// CopyAriaLabel returns the copy button’s accessible name for the code block header
+	// label, or its ID when no label is available.
+	CopyAriaLabel func(label string) string
 }
 
 // Combobox contains optional expressions for the Combobox component family.
@@ -155,22 +157,24 @@ type Combobox struct {
 	ErrorText string
 	// RetryLabel defaults to "Retry".
 	RetryLabel string
-	// SelectedLabel formats a complete message.
-	SelectedLabel func(int) string
+	// SelectedLabel returns the complete selection summary for count selected values. It
+	// must handle zero and positive counts; client components prepare all possible counts
+	// during rendering.
+	SelectedLabel func(count int) string
 }
 
 // Drawer contains optional expressions for the Drawer component family.
 type Drawer struct {
-	// CloseLabel defaults to "Close".
-	CloseLabel string
+	// CloseAriaLabel defaults to "Close".
+	CloseAriaLabel string
 }
 
 // Dropdown contains optional expressions for the Dropdown component family.
 type Dropdown struct {
-	// ContextMenuLabel defaults to "context menu".
-	ContextMenuLabel string
-	// OpenMenuLabel defaults to "open menu".
-	OpenMenuLabel string
+	// ContextMenuAriaLabel defaults to "context menu".
+	ContextMenuAriaLabel string
+	// OpenMenuAriaLabel defaults to "open menu".
+	OpenMenuAriaLabel string
 }
 
 // FileInput contains optional expressions for the FileInput component family.
@@ -195,42 +199,42 @@ type Form struct {
 
 // Modal contains optional expressions for the Modal component family.
 type Modal struct {
-	// CloseLabel defaults to "close modal".
-	CloseLabel string
-	// DialogCloseLabel defaults to "Close dialog".
-	DialogCloseLabel string
+	// CloseAriaLabel defaults to "close modal".
+	CloseAriaLabel string
+	// DialogCloseAriaLabel defaults to "Close dialog".
+	DialogCloseAriaLabel string
 }
 
 // Navbar contains optional expressions for the Navbar component family.
 type Navbar struct {
-	// Label defaults to "main navigation".
-	Label string
-	// OpenMenuLabel defaults to "Open mobile menu".
-	OpenMenuLabel string
-	// CloseMenuLabel defaults to "Close mobile menu".
-	CloseMenuLabel string
-	// UserMenuLabel defaults to "user menu".
-	UserMenuLabel string
-	// SecondaryLabel defaults to "secondary navigation".
-	SecondaryLabel string
+	// AriaLabel defaults to "main navigation".
+	AriaLabel string
+	// OpenMenuAriaLabel defaults to "Open mobile menu".
+	OpenMenuAriaLabel string
+	// CloseMenuAriaLabel defaults to "Close mobile menu".
+	CloseMenuAriaLabel string
+	// UserMenuAriaLabel defaults to "user menu".
+	UserMenuAriaLabel string
+	// SecondaryAriaLabel defaults to "secondary navigation".
+	SecondaryAriaLabel string
 }
 
 // Pagination contains optional expressions for the Pagination component family.
 type Pagination struct {
-	// Label defaults to "pagination".
-	Label string
-	// PreviousLabel defaults to "previous page".
+	// AriaLabel defaults to "pagination".
+	AriaLabel string
+	// PreviousAriaLabel defaults to "previous page".
+	PreviousAriaLabel string
+	// NextAriaLabel defaults to "next page".
+	NextAriaLabel string
+	// MoreAriaLabel defaults to "more pages".
+	MoreAriaLabel string
+	// PreviousLabel defaults to "Previous".
 	PreviousLabel string
-	// NextLabel defaults to "next page".
+	// NextLabel defaults to "Next".
 	NextLabel string
-	// MoreLabel defaults to "more pages".
-	MoreLabel string
-	// PreviousText defaults to "Previous".
-	PreviousText string
-	// NextText defaults to "Next".
-	NextText string
-	// PageLabel formats a complete message.
-	PageLabel func(int) string
+	// PageAriaLabel returns the accessible name for a page link. Page numbers start at one.
+	PageAriaLabel func(page int) string
 }
 
 // Palette contains optional expressions for the Palette component family.
@@ -267,14 +271,15 @@ type Rating struct {
 	SatisfiedLabel string
 	// VerySatisfiedLabel defaults to "very satisfied".
 	VerySatisfiedLabel string
-	// StarLabel formats a complete message.
-	StarLabel func(int) string
+	// StarLabel returns the complete label for a star rating value. Values include zero
+	// for an unrated display and run through the configured maximum.
+	StarLabel func(value int) string
 }
 
 // SchemaForm contains optional expressions for the SchemaForm component family.
 type SchemaForm struct {
-	// RequiredLabel defaults to "required".
-	RequiredLabel string
+	// RequiredAriaLabel defaults to "required".
+	RequiredAriaLabel string
 	// ManagedTitle defaults to "Managed by platform — cannot override".
 	ManagedTitle string
 	// ManagedLabel defaults to "managed".
@@ -283,8 +288,9 @@ type SchemaForm struct {
 	ItemPlaceholder string
 	// AddLabel defaults to "+ Add item".
 	AddLabel string
-	// DefaultLabel formats a complete message.
-	DefaultLabel func(string) string
+	// DefaultLabel returns the default-value annotation for a schema field. The argument is
+	// the field’s default value as supplied by the application.
+	DefaultLabel func(value string) string
 }
 
 // SchemaTree contains optional expressions for the SchemaTree component family.
@@ -311,24 +317,26 @@ type Search struct {
 	EscapeText string
 	// EmptyText defaults to "No results found.".
 	EmptyText string
-	// ResultsLabel formats a complete message.
-	ResultsLabel func(string) string
+	// ResultsAriaLabel returns the results region’s accessible name from the search
+	// control’s resolved label.
+	ResultsAriaLabel func(label string) string
 }
 
 // Select contains optional expressions for the Select component family.
 type Select struct {
 	// Placeholder defaults to "Please Select".
 	Placeholder string
-	// ListLabel formats a complete message.
-	ListLabel func(string) string
+	// ListAriaLabel returns the option list’s accessible name from the select control’s
+	// configured label, which may be empty.
+	ListAriaLabel func(label string) string
 }
 
 // Sidebar contains optional expressions for the Sidebar component family.
 type Sidebar struct {
-	// Label defaults to "sidebar navigation".
-	Label string
-	// SearchLabel defaults to "Search".
-	SearchLabel string
+	// AriaLabel defaults to "sidebar navigation".
+	AriaLabel string
+	// SearchAriaLabel defaults to "Search".
+	SearchAriaLabel string
 	// SkipLabel defaults to "skip to the main content".
 	SkipLabel string
 	// ActiveLabel defaults to "active".
@@ -339,20 +347,20 @@ type Sidebar struct {
 
 // Skeleton contains optional expressions for the Skeleton component family.
 type Skeleton struct {
-	// Label defaults to "Loading content".
-	Label string
+	// AriaLabel defaults to "Loading content".
+	AriaLabel string
 }
 
 // SplitButton contains optional expressions for the SplitButton component family.
 type SplitButton struct {
-	// MenuLabel defaults to "More actions".
-	MenuLabel string
+	// MenuAriaLabel defaults to "More actions".
+	MenuAriaLabel string
 }
 
 // Steps contains optional expressions for the Steps component family.
 type Steps struct {
-	// Label defaults to "progress".
-	Label string
+	// AriaLabel defaults to "progress".
+	AriaLabel string
 	// CompletedLabel defaults to "completed".
 	CompletedLabel string
 }
@@ -361,8 +369,8 @@ type Steps struct {
 type StructuredInput struct {
 	// AddLabel defaults to "Add row".
 	AddLabel string
-	// RemoveLabel defaults to "Remove row".
-	RemoveLabel string
+	// RemoveAriaLabel defaults to "Remove row".
+	RemoveAriaLabel string
 }
 
 // Table contains optional expressions for the Table component family.
@@ -375,14 +383,15 @@ type Table struct {
 	LoadMoreLabel string
 	// FiltersLabel defaults to "Filters".
 	FiltersLabel string
-	// OpenRowLabel formats a complete message.
-	OpenRowLabel func(string) string
+	// OpenRowLabel returns the screen-reader text for opening a table row. rowID is empty
+	// when the row has no ID.
+	OpenRowLabel func(rowID string) string
 }
 
 // Tabs contains optional expressions for the Tabs component family.
 type Tabs struct {
-	// OptionsLabel defaults to "tab options".
-	OptionsLabel string
+	// OptionsAriaLabel defaults to "tab options".
+	OptionsAriaLabel string
 	// LoadingText defaults to "Loading...".
 	LoadingText string
 }
@@ -393,30 +402,30 @@ type TagsList struct {
 	AddLabel string
 	// Placeholder defaults to "Add a tag...".
 	Placeholder string
-	// RemoveLabel defaults to "Remove tag".
-	RemoveLabel string
+	// RemoveAriaLabel defaults to "Remove tag".
+	RemoveAriaLabel string
 }
 
 // Textarea contains optional expressions for the Textarea component family.
 type Textarea struct {
-	// SendLabel defaults to "send".
+	// SendAriaLabel defaults to "send".
+	SendAriaLabel string
+	// EmojiAriaLabel defaults to "Emojis".
+	EmojiAriaLabel string
+	// AttachAriaLabel defaults to "Attach a file".
+	AttachAriaLabel string
+	// VoiceAriaLabel defaults to "Send voice".
+	VoiceAriaLabel string
+	// SendLabel defaults to "Send".
 	SendLabel string
-	// EmojiLabel defaults to "Emojis".
-	EmojiLabel string
-	// AttachLabel defaults to "Attach a file".
-	AttachLabel string
-	// VoiceLabel defaults to "Send voice".
-	VoiceLabel string
-	// SendText defaults to "Send".
-	SendText string
 }
 
 // TextInput contains optional expressions for the TextInput component family.
 type TextInput struct {
-	// ShowPasswordLabel defaults to "Show password".
-	ShowPasswordLabel string
-	// SearchLabel defaults to "search".
-	SearchLabel string
+	// ShowPasswordAriaLabel defaults to "Show password".
+	ShowPasswordAriaLabel string
+	// SearchAriaLabel defaults to "search".
+	SearchAriaLabel string
 }
 
 // Toast contains optional expressions for the Toast component family.
@@ -429,8 +438,8 @@ type Toast struct {
 
 // Toolbar contains optional expressions for the Toolbar component family.
 type Toolbar struct {
-	// Label defaults to "Page tools".
-	Label string
+	// AriaLabel defaults to "Page tools".
+	AriaLabel string
 }
 
 // Tooltip contains optional expressions for the Tooltip component family.
@@ -457,44 +466,44 @@ type EmptyState struct {
 func English() Set {
 	return Set{
 		ActionGroup: ActionGroup{
-			Label:         "Actions",
-			OverflowLabel: "More actions",
+			AriaLabel:         "Actions",
+			OverflowAriaLabel: "More actions",
 		},
 		Alert: Alert{
-			DismissLabel:       "dismiss alert",
-			DismissActionLabel: "Dismiss",
+			DismissAriaLabel: "dismiss alert",
+			DismissLabel:     "Dismiss",
 		},
 		Avatar: Avatar{
-			GroupLabel: "Avatar group",
+			GroupAriaLabel: "Avatar group",
 		},
 		Badge: Badge{
-			NotificationLabel: "notification",
+			NotificationAriaLabel: "notification",
 		},
 		Banner: Banner{
-			DismissLabel: "dismiss banner",
-			ConsentLabel: "Cookie consent",
-			Title:        "Cookie Consent",
-			AcceptLabel:  "Accept",
-			RejectLabel:  "Decline",
+			DismissAriaLabel: "dismiss banner",
+			ConsentAriaLabel: "Cookie consent",
+			Title:            "Cookie Consent",
+			AcceptLabel:      "Accept",
+			RejectLabel:      "Decline",
 		},
 		Breadcrumbs: Breadcrumbs{
-			Label: "breadcrumb",
+			AriaLabel: "breadcrumb",
 		},
 		Carousel: Carousel{
-			LoadingText:   "Loading carousel...",
-			PreviousLabel: "previous slide",
-			NextLabel:     "next slide",
-			SlidesLabel:   "slides",
-			PauseLabel:    "pause carousel",
-			PlayLabel:     "play carousel",
-			SlideLabel:    func(n int) string { return "slide " + strconv.Itoa(n) },
+			LoadingText:       "Loading carousel...",
+			PreviousAriaLabel: "previous slide",
+			NextAriaLabel:     "next slide",
+			SlidesAriaLabel:   "slides",
+			PauseAriaLabel:    "pause carousel",
+			PlayAriaLabel:     "play carousel",
+			SlideLabel:        func(n int) string { return "slide " + strconv.Itoa(n) },
 		},
 		ChatBubble: ChatBubble{
-			TypingLabel:    "typing",
-			SendingLabel:   "Sending",
-			DeliveredLabel: "Delivered",
-			SeenLabel:      "Seen",
-			BotLabel:       "BOT",
+			TypingAriaLabel: "typing",
+			SendingLabel:    "Sending",
+			DeliveredLabel:  "Delivered",
+			SeenLabel:       "Seen",
+			BotLabel:        "BOT",
 		},
 		CodeBlock: CodeBlock{
 			CopyLabel:     "Copy",
@@ -512,11 +521,11 @@ func English() Set {
 			SelectedLabel:     func(n int) string { return strconv.Itoa(n) + " selected" },
 		},
 		Drawer: Drawer{
-			CloseLabel: "Close",
+			CloseAriaLabel: "Close",
 		},
 		Dropdown: Dropdown{
-			ContextMenuLabel: "context menu",
-			OpenMenuLabel:    "open menu",
+			ContextMenuAriaLabel: "context menu",
+			OpenMenuAriaLabel:    "open menu",
 		},
 		FileInput: FileInput{
 			BrowseLabel: "Browse",
@@ -529,24 +538,24 @@ func English() Set {
 			ErrorTitle: "Validation failed",
 		},
 		Modal: Modal{
-			CloseLabel:       "close modal",
-			DialogCloseLabel: "Close dialog",
+			CloseAriaLabel:       "close modal",
+			DialogCloseAriaLabel: "Close dialog",
 		},
 		Navbar: Navbar{
-			Label:          "main navigation",
-			OpenMenuLabel:  "Open mobile menu",
-			CloseMenuLabel: "Close mobile menu",
-			UserMenuLabel:  "user menu",
-			SecondaryLabel: "secondary navigation",
+			AriaLabel:          "main navigation",
+			OpenMenuAriaLabel:  "Open mobile menu",
+			CloseMenuAriaLabel: "Close mobile menu",
+			UserMenuAriaLabel:  "user menu",
+			SecondaryAriaLabel: "secondary navigation",
 		},
 		Pagination: Pagination{
-			Label:         "pagination",
-			PreviousLabel: "previous page",
-			NextLabel:     "next page",
-			MoreLabel:     "more pages",
-			PreviousText:  "Previous",
-			NextText:      "Next",
-			PageLabel:     func(n int) string { return "page " + strconv.Itoa(n) },
+			AriaLabel:         "pagination",
+			PreviousAriaLabel: "previous page",
+			NextAriaLabel:     "next page",
+			MoreAriaLabel:     "more pages",
+			PreviousLabel:     "Previous",
+			NextLabel:         "Next",
+			PageAriaLabel:     func(n int) string { return "page " + strconv.Itoa(n) },
 		},
 		Palette: Palette{
 			Placeholder: "Pick a color",
@@ -573,12 +582,12 @@ func English() Set {
 			},
 		},
 		SchemaForm: SchemaForm{
-			RequiredLabel:   "required",
-			ManagedTitle:    "Managed by platform — cannot override",
-			ManagedLabel:    "managed",
-			ItemPlaceholder: "item",
-			AddLabel:        "+ Add item",
-			DefaultLabel:    func(value string) string { return "default: " + value },
+			RequiredAriaLabel: "required",
+			ManagedTitle:      "Managed by platform — cannot override",
+			ManagedLabel:      "managed",
+			ItemPlaceholder:   "item",
+			AddLabel:          "+ Add item",
+			DefaultLabel:      func(value string) string { return "default: " + value },
 		},
 		SchemaTree: SchemaTree{
 			RequiredLabel:   "required",
@@ -587,37 +596,37 @@ func English() Set {
 			DeprecatedLabel: "deprecated",
 		},
 		Search: Search{
-			Label:        "Search",
-			Placeholder:  "Search",
-			ShortcutText: "⌘ K",
-			EscapeText:   "Esc",
-			EmptyText:    "No results found.",
-			ResultsLabel: func(label string) string { return label + " results" },
+			Label:            "Search",
+			Placeholder:      "Search",
+			ShortcutText:     "⌘ K",
+			EscapeText:       "Esc",
+			EmptyText:        "No results found.",
+			ResultsAriaLabel: func(label string) string { return label + " results" },
 		},
 		Select: Select{
-			Placeholder: "Please Select",
-			ListLabel:   func(label string) string { return label + " list" },
+			Placeholder:   "Please Select",
+			ListAriaLabel: func(label string) string { return label + " list" },
 		},
 		Sidebar: Sidebar{
-			Label:        "sidebar navigation",
-			SearchLabel:  "Search",
-			SkipLabel:    "skip to the main content",
-			ActiveLabel:  "active",
-			TriggerLabel: "Open sidebar",
+			AriaLabel:       "sidebar navigation",
+			SearchAriaLabel: "Search",
+			SkipLabel:       "skip to the main content",
+			ActiveLabel:     "active",
+			TriggerLabel:    "Open sidebar",
 		},
 		Skeleton: Skeleton{
-			Label: "Loading content",
+			AriaLabel: "Loading content",
 		},
 		SplitButton: SplitButton{
-			MenuLabel: "More actions",
+			MenuAriaLabel: "More actions",
 		},
 		Steps: Steps{
-			Label:          "progress",
+			AriaLabel:      "progress",
 			CompletedLabel: "completed",
 		},
 		StructuredInput: StructuredInput{
-			AddLabel:    "Add row",
-			RemoveLabel: "Remove row",
+			AddLabel:        "Add row",
+			RemoveAriaLabel: "Remove row",
 		},
 		Table: Table{
 			LoadingText:   "Loading...",
@@ -632,31 +641,31 @@ func English() Set {
 			},
 		},
 		Tabs: Tabs{
-			OptionsLabel: "tab options",
-			LoadingText:  "Loading...",
+			OptionsAriaLabel: "tab options",
+			LoadingText:      "Loading...",
 		},
 		TagsList: TagsList{
-			AddLabel:    "Add",
-			Placeholder: "Add a tag...",
-			RemoveLabel: "Remove tag",
+			AddLabel:        "Add",
+			Placeholder:     "Add a tag...",
+			RemoveAriaLabel: "Remove tag",
 		},
 		Textarea: Textarea{
-			SendLabel:   "send",
-			EmojiLabel:  "Emojis",
-			AttachLabel: "Attach a file",
-			VoiceLabel:  "Send voice",
-			SendText:    "Send",
+			SendAriaLabel:   "send",
+			EmojiAriaLabel:  "Emojis",
+			AttachAriaLabel: "Attach a file",
+			VoiceAriaLabel:  "Send voice",
+			SendLabel:       "Send",
 		},
 		TextInput: TextInput{
-			ShowPasswordLabel: "Show password",
-			SearchLabel:       "search",
+			ShowPasswordAriaLabel: "Show password",
+			SearchAriaLabel:       "search",
 		},
 		Toast: Toast{
 			DismissLabel:     "Dismiss",
 			DismissAriaLabel: "dismiss notification",
 		},
 		Toolbar: Toolbar{
-			Label: "Page tools",
+			AriaLabel: "Page tools",
 		},
 		Tooltip: Tooltip{
 			TriggerLabel: "Hover Me",
@@ -716,45 +725,45 @@ func Merge(base, overrides Set) Set {
 }
 
 func mergeActionGroup(base, overrides ActionGroup) ActionGroup {
-	if overrides.Label != "" {
-		base.Label = overrides.Label
+	if overrides.AriaLabel != "" {
+		base.AriaLabel = overrides.AriaLabel
 	}
-	if overrides.OverflowLabel != "" {
-		base.OverflowLabel = overrides.OverflowLabel
+	if overrides.OverflowAriaLabel != "" {
+		base.OverflowAriaLabel = overrides.OverflowAriaLabel
 	}
 	return base
 }
 
 func mergeAlert(base, overrides Alert) Alert {
+	if overrides.DismissAriaLabel != "" {
+		base.DismissAriaLabel = overrides.DismissAriaLabel
+	}
 	if overrides.DismissLabel != "" {
 		base.DismissLabel = overrides.DismissLabel
-	}
-	if overrides.DismissActionLabel != "" {
-		base.DismissActionLabel = overrides.DismissActionLabel
 	}
 	return base
 }
 
 func mergeAvatar(base, overrides Avatar) Avatar {
-	if overrides.GroupLabel != "" {
-		base.GroupLabel = overrides.GroupLabel
+	if overrides.GroupAriaLabel != "" {
+		base.GroupAriaLabel = overrides.GroupAriaLabel
 	}
 	return base
 }
 
 func mergeBadge(base, overrides Badge) Badge {
-	if overrides.NotificationLabel != "" {
-		base.NotificationLabel = overrides.NotificationLabel
+	if overrides.NotificationAriaLabel != "" {
+		base.NotificationAriaLabel = overrides.NotificationAriaLabel
 	}
 	return base
 }
 
 func mergeBanner(base, overrides Banner) Banner {
-	if overrides.DismissLabel != "" {
-		base.DismissLabel = overrides.DismissLabel
+	if overrides.DismissAriaLabel != "" {
+		base.DismissAriaLabel = overrides.DismissAriaLabel
 	}
-	if overrides.ConsentLabel != "" {
-		base.ConsentLabel = overrides.ConsentLabel
+	if overrides.ConsentAriaLabel != "" {
+		base.ConsentAriaLabel = overrides.ConsentAriaLabel
 	}
 	if overrides.Title != "" {
 		base.Title = overrides.Title
@@ -769,8 +778,8 @@ func mergeBanner(base, overrides Banner) Banner {
 }
 
 func mergeBreadcrumbs(base, overrides Breadcrumbs) Breadcrumbs {
-	if overrides.Label != "" {
-		base.Label = overrides.Label
+	if overrides.AriaLabel != "" {
+		base.AriaLabel = overrides.AriaLabel
 	}
 	return base
 }
@@ -779,20 +788,20 @@ func mergeCarousel(base, overrides Carousel) Carousel {
 	if overrides.LoadingText != "" {
 		base.LoadingText = overrides.LoadingText
 	}
-	if overrides.PreviousLabel != "" {
-		base.PreviousLabel = overrides.PreviousLabel
+	if overrides.PreviousAriaLabel != "" {
+		base.PreviousAriaLabel = overrides.PreviousAriaLabel
 	}
-	if overrides.NextLabel != "" {
-		base.NextLabel = overrides.NextLabel
+	if overrides.NextAriaLabel != "" {
+		base.NextAriaLabel = overrides.NextAriaLabel
 	}
-	if overrides.SlidesLabel != "" {
-		base.SlidesLabel = overrides.SlidesLabel
+	if overrides.SlidesAriaLabel != "" {
+		base.SlidesAriaLabel = overrides.SlidesAriaLabel
 	}
-	if overrides.PauseLabel != "" {
-		base.PauseLabel = overrides.PauseLabel
+	if overrides.PauseAriaLabel != "" {
+		base.PauseAriaLabel = overrides.PauseAriaLabel
 	}
-	if overrides.PlayLabel != "" {
-		base.PlayLabel = overrides.PlayLabel
+	if overrides.PlayAriaLabel != "" {
+		base.PlayAriaLabel = overrides.PlayAriaLabel
 	}
 	if overrides.SlideLabel != nil {
 		base.SlideLabel = overrides.SlideLabel
@@ -801,8 +810,8 @@ func mergeCarousel(base, overrides Carousel) Carousel {
 }
 
 func mergeChatBubble(base, overrides ChatBubble) ChatBubble {
-	if overrides.TypingLabel != "" {
-		base.TypingLabel = overrides.TypingLabel
+	if overrides.TypingAriaLabel != "" {
+		base.TypingAriaLabel = overrides.TypingAriaLabel
 	}
 	if overrides.SendingLabel != "" {
 		base.SendingLabel = overrides.SendingLabel
@@ -861,18 +870,18 @@ func mergeCombobox(base, overrides Combobox) Combobox {
 }
 
 func mergeDrawer(base, overrides Drawer) Drawer {
-	if overrides.CloseLabel != "" {
-		base.CloseLabel = overrides.CloseLabel
+	if overrides.CloseAriaLabel != "" {
+		base.CloseAriaLabel = overrides.CloseAriaLabel
 	}
 	return base
 }
 
 func mergeDropdown(base, overrides Dropdown) Dropdown {
-	if overrides.ContextMenuLabel != "" {
-		base.ContextMenuLabel = overrides.ContextMenuLabel
+	if overrides.ContextMenuAriaLabel != "" {
+		base.ContextMenuAriaLabel = overrides.ContextMenuAriaLabel
 	}
-	if overrides.OpenMenuLabel != "" {
-		base.OpenMenuLabel = overrides.OpenMenuLabel
+	if overrides.OpenMenuAriaLabel != "" {
+		base.OpenMenuAriaLabel = overrides.OpenMenuAriaLabel
 	}
 	return base
 }
@@ -904,37 +913,46 @@ func mergeForm(base, overrides Form) Form {
 }
 
 func mergeModal(base, overrides Modal) Modal {
-	if overrides.CloseLabel != "" {
-		base.CloseLabel = overrides.CloseLabel
+	if overrides.CloseAriaLabel != "" {
+		base.CloseAriaLabel = overrides.CloseAriaLabel
 	}
-	if overrides.DialogCloseLabel != "" {
-		base.DialogCloseLabel = overrides.DialogCloseLabel
+	if overrides.DialogCloseAriaLabel != "" {
+		base.DialogCloseAriaLabel = overrides.DialogCloseAriaLabel
 	}
 	return base
 }
 
 func mergeNavbar(base, overrides Navbar) Navbar {
-	if overrides.Label != "" {
-		base.Label = overrides.Label
+	if overrides.AriaLabel != "" {
+		base.AriaLabel = overrides.AriaLabel
 	}
-	if overrides.OpenMenuLabel != "" {
-		base.OpenMenuLabel = overrides.OpenMenuLabel
+	if overrides.OpenMenuAriaLabel != "" {
+		base.OpenMenuAriaLabel = overrides.OpenMenuAriaLabel
 	}
-	if overrides.CloseMenuLabel != "" {
-		base.CloseMenuLabel = overrides.CloseMenuLabel
+	if overrides.CloseMenuAriaLabel != "" {
+		base.CloseMenuAriaLabel = overrides.CloseMenuAriaLabel
 	}
-	if overrides.UserMenuLabel != "" {
-		base.UserMenuLabel = overrides.UserMenuLabel
+	if overrides.UserMenuAriaLabel != "" {
+		base.UserMenuAriaLabel = overrides.UserMenuAriaLabel
 	}
-	if overrides.SecondaryLabel != "" {
-		base.SecondaryLabel = overrides.SecondaryLabel
+	if overrides.SecondaryAriaLabel != "" {
+		base.SecondaryAriaLabel = overrides.SecondaryAriaLabel
 	}
 	return base
 }
 
 func mergePagination(base, overrides Pagination) Pagination {
-	if overrides.Label != "" {
-		base.Label = overrides.Label
+	if overrides.AriaLabel != "" {
+		base.AriaLabel = overrides.AriaLabel
+	}
+	if overrides.PreviousAriaLabel != "" {
+		base.PreviousAriaLabel = overrides.PreviousAriaLabel
+	}
+	if overrides.NextAriaLabel != "" {
+		base.NextAriaLabel = overrides.NextAriaLabel
+	}
+	if overrides.MoreAriaLabel != "" {
+		base.MoreAriaLabel = overrides.MoreAriaLabel
 	}
 	if overrides.PreviousLabel != "" {
 		base.PreviousLabel = overrides.PreviousLabel
@@ -942,17 +960,8 @@ func mergePagination(base, overrides Pagination) Pagination {
 	if overrides.NextLabel != "" {
 		base.NextLabel = overrides.NextLabel
 	}
-	if overrides.MoreLabel != "" {
-		base.MoreLabel = overrides.MoreLabel
-	}
-	if overrides.PreviousText != "" {
-		base.PreviousText = overrides.PreviousText
-	}
-	if overrides.NextText != "" {
-		base.NextText = overrides.NextText
-	}
-	if overrides.PageLabel != nil {
-		base.PageLabel = overrides.PageLabel
+	if overrides.PageAriaLabel != nil {
+		base.PageAriaLabel = overrides.PageAriaLabel
 	}
 	return base
 }
@@ -1009,8 +1018,8 @@ func mergeRating(base, overrides Rating) Rating {
 }
 
 func mergeSchemaForm(base, overrides SchemaForm) SchemaForm {
-	if overrides.RequiredLabel != "" {
-		base.RequiredLabel = overrides.RequiredLabel
+	if overrides.RequiredAriaLabel != "" {
+		base.RequiredAriaLabel = overrides.RequiredAriaLabel
 	}
 	if overrides.ManagedTitle != "" {
 		base.ManagedTitle = overrides.ManagedTitle
@@ -1062,8 +1071,8 @@ func mergeSearch(base, overrides Search) Search {
 	if overrides.EmptyText != "" {
 		base.EmptyText = overrides.EmptyText
 	}
-	if overrides.ResultsLabel != nil {
-		base.ResultsLabel = overrides.ResultsLabel
+	if overrides.ResultsAriaLabel != nil {
+		base.ResultsAriaLabel = overrides.ResultsAriaLabel
 	}
 	return base
 }
@@ -1072,18 +1081,18 @@ func mergeSelect(base, overrides Select) Select {
 	if overrides.Placeholder != "" {
 		base.Placeholder = overrides.Placeholder
 	}
-	if overrides.ListLabel != nil {
-		base.ListLabel = overrides.ListLabel
+	if overrides.ListAriaLabel != nil {
+		base.ListAriaLabel = overrides.ListAriaLabel
 	}
 	return base
 }
 
 func mergeSidebar(base, overrides Sidebar) Sidebar {
-	if overrides.Label != "" {
-		base.Label = overrides.Label
+	if overrides.AriaLabel != "" {
+		base.AriaLabel = overrides.AriaLabel
 	}
-	if overrides.SearchLabel != "" {
-		base.SearchLabel = overrides.SearchLabel
+	if overrides.SearchAriaLabel != "" {
+		base.SearchAriaLabel = overrides.SearchAriaLabel
 	}
 	if overrides.SkipLabel != "" {
 		base.SkipLabel = overrides.SkipLabel
@@ -1098,22 +1107,22 @@ func mergeSidebar(base, overrides Sidebar) Sidebar {
 }
 
 func mergeSkeleton(base, overrides Skeleton) Skeleton {
-	if overrides.Label != "" {
-		base.Label = overrides.Label
+	if overrides.AriaLabel != "" {
+		base.AriaLabel = overrides.AriaLabel
 	}
 	return base
 }
 
 func mergeSplitButton(base, overrides SplitButton) SplitButton {
-	if overrides.MenuLabel != "" {
-		base.MenuLabel = overrides.MenuLabel
+	if overrides.MenuAriaLabel != "" {
+		base.MenuAriaLabel = overrides.MenuAriaLabel
 	}
 	return base
 }
 
 func mergeSteps(base, overrides Steps) Steps {
-	if overrides.Label != "" {
-		base.Label = overrides.Label
+	if overrides.AriaLabel != "" {
+		base.AriaLabel = overrides.AriaLabel
 	}
 	if overrides.CompletedLabel != "" {
 		base.CompletedLabel = overrides.CompletedLabel
@@ -1125,8 +1134,8 @@ func mergeStructuredInput(base, overrides StructuredInput) StructuredInput {
 	if overrides.AddLabel != "" {
 		base.AddLabel = overrides.AddLabel
 	}
-	if overrides.RemoveLabel != "" {
-		base.RemoveLabel = overrides.RemoveLabel
+	if overrides.RemoveAriaLabel != "" {
+		base.RemoveAriaLabel = overrides.RemoveAriaLabel
 	}
 	return base
 }
@@ -1151,8 +1160,8 @@ func mergeTable(base, overrides Table) Table {
 }
 
 func mergeTabs(base, overrides Tabs) Tabs {
-	if overrides.OptionsLabel != "" {
-		base.OptionsLabel = overrides.OptionsLabel
+	if overrides.OptionsAriaLabel != "" {
+		base.OptionsAriaLabel = overrides.OptionsAriaLabel
 	}
 	if overrides.LoadingText != "" {
 		base.LoadingText = overrides.LoadingText
@@ -1167,37 +1176,37 @@ func mergeTagsList(base, overrides TagsList) TagsList {
 	if overrides.Placeholder != "" {
 		base.Placeholder = overrides.Placeholder
 	}
-	if overrides.RemoveLabel != "" {
-		base.RemoveLabel = overrides.RemoveLabel
+	if overrides.RemoveAriaLabel != "" {
+		base.RemoveAriaLabel = overrides.RemoveAriaLabel
 	}
 	return base
 }
 
 func mergeTextarea(base, overrides Textarea) Textarea {
+	if overrides.SendAriaLabel != "" {
+		base.SendAriaLabel = overrides.SendAriaLabel
+	}
+	if overrides.EmojiAriaLabel != "" {
+		base.EmojiAriaLabel = overrides.EmojiAriaLabel
+	}
+	if overrides.AttachAriaLabel != "" {
+		base.AttachAriaLabel = overrides.AttachAriaLabel
+	}
+	if overrides.VoiceAriaLabel != "" {
+		base.VoiceAriaLabel = overrides.VoiceAriaLabel
+	}
 	if overrides.SendLabel != "" {
 		base.SendLabel = overrides.SendLabel
-	}
-	if overrides.EmojiLabel != "" {
-		base.EmojiLabel = overrides.EmojiLabel
-	}
-	if overrides.AttachLabel != "" {
-		base.AttachLabel = overrides.AttachLabel
-	}
-	if overrides.VoiceLabel != "" {
-		base.VoiceLabel = overrides.VoiceLabel
-	}
-	if overrides.SendText != "" {
-		base.SendText = overrides.SendText
 	}
 	return base
 }
 
 func mergeTextInput(base, overrides TextInput) TextInput {
-	if overrides.ShowPasswordLabel != "" {
-		base.ShowPasswordLabel = overrides.ShowPasswordLabel
+	if overrides.ShowPasswordAriaLabel != "" {
+		base.ShowPasswordAriaLabel = overrides.ShowPasswordAriaLabel
 	}
-	if overrides.SearchLabel != "" {
-		base.SearchLabel = overrides.SearchLabel
+	if overrides.SearchAriaLabel != "" {
+		base.SearchAriaLabel = overrides.SearchAriaLabel
 	}
 	return base
 }
@@ -1213,8 +1222,8 @@ func mergeToast(base, overrides Toast) Toast {
 }
 
 func mergeToolbar(base, overrides Toolbar) Toolbar {
-	if overrides.Label != "" {
-		base.Label = overrides.Label
+	if overrides.AriaLabel != "" {
+		base.AriaLabel = overrides.AriaLabel
 	}
 	return base
 }

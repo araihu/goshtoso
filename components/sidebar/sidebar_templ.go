@@ -68,9 +68,9 @@ func sidebarTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Sidebar.Label)
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Sidebar.AriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 22, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 22, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -165,9 +165,9 @@ func sidebarTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Sidebar.SearchLabel)
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Sidebar.SearchAriaLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 53, Col: 60}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/sidebar/sidebar.templ`, Line: 53, Col: 64}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {

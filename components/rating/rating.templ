@@ -1,5 +1,7 @@
 package rating
 
+import "github.com/araihu/goshtoso/internal/expressionutil"
+
 import "github.com/araihu/goshtoso/expressions"
 
 import "fmt"
@@ -22,9 +24,9 @@ templ ratingInteractive(cfg Config) {
 		{ cfg.RootAttrs... }
 	>
 		if cfg.ShowLabel {
-			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ expressions.Text(cfg.Label, expressions.From(ctx).Rating.Label) }</span>
+			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ expressionutil.Text(cfg.Label, expressions.From(ctx).Rating.Label) }</span>
 		}
-		<div class={ cfg.controlClasses() } role="radiogroup" aria-label={ expressions.Text(cfg.Label, expressions.From(ctx).Rating.Label) }>
+		<div class={ cfg.controlClasses() } role="radiogroup" aria-label={ expressionutil.Text(cfg.Label, expressions.From(ctx).Rating.Label) }>
 			for i := 1; i <= cfg.resolvedMax(); i++ {
 				@ratingOption(cfg, i)
 			}
@@ -43,7 +45,7 @@ templ ratingDisplay(cfg DisplayConfig) {
 		{ cfg.RootAttrs... }
 	>
 		if cfg.ShowLabel {
-			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ expressions.Text(cfg.Label, expressions.From(ctx).Rating.Label) }</span>
+			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ expressionutil.Text(cfg.Label, expressions.From(ctx).Rating.Label) }</span>
 		}
 		<div class={ cfg.controlClasses() }>
 			for i := 1; i <= cfg.resolvedMax(); i++ {

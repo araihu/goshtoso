@@ -8,6 +8,8 @@ package banner
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "github.com/araihu/goshtoso/internal/expressionutil"
+
 import "github.com/araihu/goshtoso/expressions"
 
 // Banner renders a banner component based on PenguinUI
@@ -171,7 +173,7 @@ func simpleBanner(cfg Config) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 52, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 54, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -194,7 +196,7 @@ func simpleBanner(cfg Config) templ.Component {
 				var templ_7745c5c3_Var10 templ.SafeURL
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(cfg.CTA.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 54, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 56, Col: 38}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -220,7 +222,7 @@ func simpleBanner(cfg Config) templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.CTA.ActionLabel)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 55, Col: 27}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 57, Col: 27}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -261,7 +263,7 @@ func simpleBanner(cfg Config) templ.Component {
 					var templ_7745c5c3_Var15 string
 					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.CTA.OnClick)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 62, Col: 31}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 64, Col: 31}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 					if templ_7745c5c3_Err != nil {
@@ -285,7 +287,7 @@ func simpleBanner(cfg Config) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.CTA.ActionLabel)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 66, Col: 27}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 68, Col: 27}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -326,7 +328,7 @@ func simpleBanner(cfg Config) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 71, Col: 51}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 73, Col: 51}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -343,9 +345,9 @@ func simpleBanner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var20 string
-			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Banner.DismissLabel)
+			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Banner.DismissAriaLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 77, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 79, Col: 61}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 			if templ_7745c5c3_Err != nil {
@@ -358,7 +360,7 @@ func simpleBanner(cfg Config) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.ResolveAttributeValue(dismissAction)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 78, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 80, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 			if templ_7745c5c3_Err != nil {
@@ -432,9 +434,9 @@ func cookieBanner(cfg CookieBannerConfig) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var25 string
-		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Banner.ConsentLabel)
+		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Banner.ConsentAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 97, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 99, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var25)
 		if templ_7745c5c3_Err != nil {
@@ -464,9 +466,9 @@ func cookieBanner(cfg CookieBannerConfig) templ.Component {
 			}
 		}
 		var templ_7745c5c3_Var26 string
-		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(expressions.Text(cfg.Title, expressions.From(ctx).Banner.Title))
+		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(expressionutil.Text(cfg.Title, expressions.From(ctx).Banner.Title))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 107, Col: 69}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 109, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
@@ -479,7 +481,7 @@ func cookieBanner(cfg CookieBannerConfig) templ.Component {
 		var templ_7745c5c3_Var27 string
 		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 113, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 115, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 		if templ_7745c5c3_Err != nil {
@@ -497,7 +499,7 @@ func cookieBanner(cfg CookieBannerConfig) templ.Component {
 			var templ_7745c5c3_Var28 string
 			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.RejectAction)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 122, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 124, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var28)
 			if templ_7745c5c3_Err != nil {
@@ -519,9 +521,9 @@ func cookieBanner(cfg CookieBannerConfig) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var29 string
-		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(expressions.Text(cfg.RejectLabel, expressions.From(ctx).Banner.RejectLabel))
+		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(expressionutil.Text(cfg.RejectLabel, expressions.From(ctx).Banner.RejectLabel))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 126, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 128, Col: 84}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 		if templ_7745c5c3_Err != nil {
@@ -539,7 +541,7 @@ func cookieBanner(cfg CookieBannerConfig) templ.Component {
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.AcceptAction)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 132, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 134, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var30)
 			if templ_7745c5c3_Err != nil {
@@ -561,9 +563,9 @@ func cookieBanner(cfg CookieBannerConfig) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var31 string
-		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(expressions.Text(cfg.AcceptLabel, expressions.From(ctx).Banner.AcceptLabel))
+		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(expressionutil.Text(cfg.AcceptLabel, expressions.From(ctx).Banner.AcceptLabel))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 136, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/banner/banner.templ`, Line: 138, Col: 84}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 		if templ_7745c5c3_Err != nil {

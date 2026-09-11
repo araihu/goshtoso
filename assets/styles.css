@@ -1695,6 +1695,9 @@
   .list-inside {
     list-style-position: inside;
   }
+  .list-decimal {
+    list-style-type: decimal;
+  }
   .list-disc {
     list-style-type: disc;
   }
@@ -3498,6 +3501,9 @@
   }
   .pl-5 {
     padding-left: calc(var(--spacing) * 5);
+  }
+  .pl-6 {
+    padding-left: calc(var(--spacing) * 6);
   }
   .pl-7 {
     padding-left: calc(var(--spacing) * 7);

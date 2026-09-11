@@ -26,14 +26,6 @@ func From(ctx context.Context) Set {
 	return Merge(English(), overrides(ctx))
 }
 
-// Text selects an explicit component value before its inherited expression.
-func Text(explicit, inherited string) string {
-	if explicit != "" {
-		return explicit
-	}
-	return inherited
-}
-
 // Renderer supplies application defaults beneath request and component overrides.
 // A renderer can be shared by concurrent requests if its message functions are
 // safe for concurrent use. Updating configuration means constructing a new renderer.

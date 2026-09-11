@@ -3,11 +3,12 @@ package combobox
 import (
 	"context"
 	"github.com/araihu/goshtoso/expressions"
+	"github.com/araihu/goshtoso/internal/expressionutil"
 )
 
 func (cfg Config) withExpressions(ctx context.Context) Config {
 	text := expressions.From(ctx).Combobox
-	cfg.Placeholder = expressions.Text(cfg.Placeholder, text.Placeholder)
+	cfg.Placeholder = expressionutil.Text(cfg.Placeholder, text.Placeholder)
 	return cfg
 }
 
@@ -19,5 +20,5 @@ func expressionTriggerLabel(ctx context.Context, cfg Config, state State) string
 }
 func selectedLabels(ctx context.Context, state State) string {
 	count := len(state.Options) + len(state.Selected)
-	return expressions.CountLabels(count, expressions.From(ctx).Combobox.SelectedLabel)
+	return expressionutil.CountLabels(count, expressions.From(ctx).Combobox.SelectedLabel)
 }

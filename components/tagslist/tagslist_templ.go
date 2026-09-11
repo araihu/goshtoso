@@ -107,9 +107,9 @@ func tagsListTemplate(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).TagsList.RemoveLabel)
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).TagsList.RemoveAriaLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tagslist/tagslist.templ`, Line: 35, Col: 62}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/tagslist/tagslist.templ`, Line: 35, Col: 66}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {

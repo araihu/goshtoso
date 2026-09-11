@@ -62,7 +62,7 @@ templ defaultModal(cfg Config) {
 				<!-- Dialog Header -->
 				<div class={ cfg.headerClasses() }>
 					<h3 id={ titleID } class="font-semibold tracking-wide text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.Title }</h3>
-					<button x-on:click={ fmt.Sprintf("%s = false", stateVar) } aria-label={ expressions.From(ctx).Modal.CloseLabel }>
+					<button x-on:click={ fmt.Sprintf("%s = false", stateVar) } aria-label={ expressions.From(ctx).Modal.CloseAriaLabel }>
 						@closeIcon()
 					</button>
 				</div>
@@ -122,7 +122,7 @@ templ alertDialog(cfg AlertDialogConfig) {
 					<div class={ cfg.iconBadgeClasses() }>
 						@alertIcon(cfg.Tone)
 					</div>
-					<button x-on:click={ fmt.Sprintf("%s = false", stateVar) } aria-label={ expressions.From(ctx).Modal.CloseLabel }>
+					<button x-on:click={ fmt.Sprintf("%s = false", stateVar) } aria-label={ expressions.From(ctx).Modal.CloseAriaLabel }>
 						@closeIcon()
 					</button>
 				</div>

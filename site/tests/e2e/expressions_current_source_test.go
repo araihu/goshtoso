@@ -30,16 +30,16 @@ func expressionFixture(t *testing.T) *httptest.Server {
 	mux := http.NewServeMux()
 	mux.Handle("GET /assets/", assets.Handler())
 	mux.HandleFunc("GET /fragment", func(w http.ResponseWriter, r *http.Request) {
-		ctx := expressions.With(r.Context(), expressions.Set{Pagination: expressions.Pagination{NextText: "Continuar", NextLabel: "Próxima página"}})
+		ctx := expressions.With(r.Context(), expressions.Set{Pagination: expressions.Pagination{NextLabel: "Continuar", NextAriaLabel: "Próxima página"}})
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = renderer.Render(ctx, w, pagination.Pagination(pagination.Config{Mode: pagination.ModeSimple, CurrentPage: 1, TotalPages: 2}))
 	})
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		ctx := expressions.With(r.Context(), expressions.Set{
 			Combobox:   expressions.Combobox{Placeholder: "Escolha", ClearLabel: "Limpar", SelectedLabel: func(n int) string { return fmt.Sprintf("Escolhidos: %d 'itens'", n) }},
-			Carousel:   expressions.Carousel{PauseLabel: "Pausar", PlayLabel: "Reproduzir", SlideLabel: func(n int) string { return fmt.Sprintf("Imagem %d", n) }},
-			Navbar:     expressions.Navbar{OpenMenuLabel: `Abrir "menu"`, CloseMenuLabel: `Fechar 'menu'`},
-			SchemaForm: expressions.SchemaForm{RequiredLabel: "Obrigatório"},
+			Carousel:   expressions.Carousel{PauseAriaLabel: "Pausar", PlayAriaLabel: "Reproduzir", SlideLabel: func(n int) string { return fmt.Sprintf("Imagem %d", n) }},
+			Navbar:     expressions.Navbar{OpenMenuAriaLabel: `Abrir "menu"`, CloseMenuAriaLabel: `Fechar 'menu'`},
+			SchemaForm: expressions.SchemaForm{RequiredAriaLabel: "Obrigatório"},
 			FileInput:  expressions.FileInput{EmptyText: `Nenhum "arquivo"`},
 		})
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -138,4 +138,48 @@ func assertExpressionSelection(t *testing.T, page playwright.Page) {
 	require.NoError(t, err)
 	_, err = page.WaitForFunction(`() => document.querySelector('#choices-trigger-label').textContent === "Escolhidos: 2 'itens'"`, nil)
 	require.NoError(t, err)
+}
+
+func TestExpressions_LiveDocumentation(t *testing.T) {
+	_, browser, cleanup := setupPlaywright(t)
+	defer cleanup()
+	cases := []struct{ language, option, title, browse, next, copied string }{
+		{"pt", "Português", "Ainda não há nada aqui", "Procurar", "Próxima", "Copiado!"},
+		{"es", "Español", "Todavía no hay nada aquí", "Examinar", "Siguiente", "¡Copiado!"},
+		{"zh", "简体中文", "这里还没有内容", "浏览文件", "下一页", "已复制！"},
+		{"de", "Deutsch", "Hier gibt es noch nichts", "Durchsuchen", "Weiter", "Kopiert!"},
+		{"en", "English", "Nothing here yet", "Browse", "Next", "Copied!"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.language, func(t *testing.T) {
+			page := newPage(t, browser)
+			// Begin with a different selection to verify automatic request submission.
+			initial := "en"
+			if tc.language == initial {
+				initial = "pt"
+			}
+			_, err := page.Goto(baseURL + "/docs/internationalization/examples?language=" + initial)
+			require.NoError(t, err)
+			require.NoError(t, page.Locator("#expression-language-trigger").Click())
+			require.NoError(t, page.GetByRole("option", playwright.PageGetByRoleOptions{Name: tc.option, Exact: new(true)}).Click())
+			require.NoError(t, page.WaitForURL("**/docs/internationalization/examples?language="+tc.language))
+			title, err := page.Locator("#translated-empty-state").TextContent()
+			require.NoError(t, err)
+			require.Contains(t, title, tc.title)
+			picker, err := page.Locator("#translated-file-picker").TextContent()
+			require.NoError(t, err)
+			require.Contains(t, picker, tc.browse)
+			require.NoError(t, page.Locator("#translated-pagination a").Filter(playwright.LocatorFilterOptions{HasText: tc.next}).Click())
+			require.NoError(t, page.WaitForURL("**page=3*"))
+			require.Contains(t, page.URL(), "language="+tc.language)
+			_, err = page.Evaluate(`() => Object.defineProperty(navigator, 'clipboard', {configurable: true, value: {writeText: () => Promise.resolve()}})`)
+			require.NoError(t, err)
+			require.NoError(t, page.Locator("button[data-code-block-target='request-translated-code']").Click())
+			_, err = page.WaitForFunction(`want => document.querySelector("button[data-code-block-target='request-translated-code']").textContent.includes(want)`, tc.copied)
+			require.NoError(t, err)
+			sibling, err := page.Locator("#english-sibling-preview").TextContent()
+			require.NoError(t, err)
+			require.Contains(t, sibling, "Nothing here yet")
+		})
+	}
 }

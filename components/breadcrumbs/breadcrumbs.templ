@@ -15,7 +15,7 @@ import "github.com/araihu/goshtoso/expressions"
 templ breadcrumbsTemplate(cfg Config) {
 	<nav
 		class={ "text-sm font-medium text-on-surface dark:text-on-surface-dark" + extraClass(cfg.NavClass) }
-		aria-label={ expressions.From(ctx).Breadcrumbs.Label }
+		aria-label={ expressions.From(ctx).Breadcrumbs.AriaLabel }
 		{ cfg.NavAttrs... }
 	>
 		<ol class={ listClasses(cfg.Separator) }>

@@ -168,9 +168,9 @@ func dialogTemplate(cfg DialogConfig) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Modal.DialogCloseLabel)
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Modal.DialogCloseAriaLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/dialog.templ`, Line: 29, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/modal/dialog.templ`, Line: 29, Col: 86}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 			if templ_7745c5c3_Err != nil {

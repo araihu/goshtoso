@@ -1,0 +1,45 @@
+package docspages
+
+import "github.com/araihu/goshtoso/components/codeblock"
+
+templ internationalizationContent() {
+	<div id="internationalization-fragment" class="mx-auto max-w-4xl space-y-10">
+		<header class="space-y-3">
+			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Internationalization</h1>
+			<p class="text-on-surface dark:text-on-surface-dark">Goshtoso uses English for built-in labels and messages. To use another language, supply an expressions.Set with text from your application’s translations or configuration. Each field belongs to a component, so you can replace a few labels or provide a complete set.</p>
+			<p class="text-on-surface dark:text-on-surface-dark">See the <a class="underline" href="/docs/internationalization/examples">live examples</a> to try five languages and compare request, application, and component settings.</p>
+		</header>
+		<section id="configure-application-defaults-once" class="space-y-4">
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Application defaults</h2>
+			@codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "Configure application defaults once", Code: "import \"github.com/araihu/goshtoso/expressions\"\n\nrenderer := expressions.NewRenderer(expressions.Set{\n    Pagination: expressions.Pagination{\n        PreviousLabel:  \"Anterior\",\n        PreviousAriaLabel: \"Página anterior\",\n        NextLabel:      \"Próxima\",\n        NextAriaLabel:     \"Próxima página\",\n    },\n    CodeBlock: expressions.CodeBlock{\n        CopyLabel:   \"Copiar\",\n        CopiedLabel: \"Copiado!\",\n        ErrorText:   \"Não foi possível copiar\",\n    },\n})\n\n// Reuse the renderer in HTTP handlers, background rendering, or static generation.\nerr := renderer.Render(r.Context(), w, Page())"})
+			<p class="text-on-surface dark:text-on-surface-dark">Create a renderer with the defaults you want to share across your application. It fills any missing expressions with English. The same renderer can serve multiple requests; if you update its configuration, replace it using your application’s usual concurrency controls.</p>
+		</section>
+		<section id="override-per-request" class="space-y-4">
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Request preferences</h2>
+			<p class="text-on-surface dark:text-on-surface-dark">Choose the user’s expressions in your request handler and add them to the context. These values take precedence over the renderer’s defaults for that render.</p>
+			@codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "Override per request", Code: "ctx := expressions.With(r.Context(), userExpressions)\nerr := renderer.Render(ctx, w, Page())"})
+			<p class="text-on-surface dark:text-on-surface-dark">You can layer system, tenant, and user preferences with successive expressions.With calls. Each call replaces only the fields you supply. Ordinary component.Render(ctx, w) also reads these values, so a configured renderer is optional.</p>
+			<p class="text-on-surface dark:text-on-surface-dark">For HTMX, pass the same expressions to every page and fragment handler. A renderer’s defaults apply only when you render through it; handlers that render directly need both system defaults and user overrides in their request context. Middleware is a convenient place to set them.</p>
+		</section>
+		<section id="override-one-component" class="space-y-4">
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Component overrides</h2>
+			<p class="text-on-surface dark:text-on-surface-dark">Use WithExpressions when a component needs its own wording. The method returns a new component value, leaving the original unchanged.</p>
+			@codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "Override one component", Code: "control := pagination.Pagination(pagination.Config{\n    CurrentPage: 2,\n    TotalPages:  10,\n}).WithExpressions(expressions.Pagination{\n    NextLabel: \"Continue\",\n})"})
+			<p class="text-on-surface dark:text-on-surface-dark">An explicit label in a component’s config takes precedence over WithExpressions. For example, search.Config.Placeholder still controls that search field. The navbar.SecondaryRow helper uses SecondaryConfig.AriaLabel for its label.</p>
+			<p class="text-on-surface dark:text-on-surface-dark">Each expression is resolved in this order:</p>
+			<ol class="list-decimal pl-6 space-y-2 text-on-surface dark:text-on-surface-dark"><li>An existing explicit component config field, where one exists.</li><li>The nearest component’s WithExpressions value.</li><li>Request/render-context expressions.</li><li>Configured renderer defaults.</li><li>Built-in English.</li></ol>
+			<p class="text-on-surface dark:text-on-surface-dark">Overrides also apply to nested components. A child can supply its own values; siblings outside that component keep their defaults. Empty strings and nil functions mean “inherit.” Use the component’s content or visibility options to hide content.</p>
+		</section>
+		<section id="complete-dynamic-messages" class="space-y-4">
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Counts and changing messages</h2>
+			<p class="text-on-surface dark:text-on-surface-dark">For messages that include a count or page number, supply a function that returns the whole message. Your translation library can handle plural rules, number formatting, and word order inside that function.</p>
+			@codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "Complete dynamic messages", Code: "set := expressions.Set{\n    Combobox: expressions.Combobox{\n        SelectedLabel: func(count int) string {\n            return translator.SelectedCount(count)\n        },\n    },\n    Pagination: expressions.Pagination{\n        PageAriaLabel: func(page int) string {\n            return translator.PageAriaLabel(page)\n        },\n    },\n}"})
+			<p class="text-on-surface dark:text-on-surface-dark">Carousel and client-side Combobox prepare their possible count messages during rendering, then use them as the user interacts. Count functions must handle zero and positive counts. Render the component again when its available options change. Copy-button feedback, mobile navigation, and file-selection messages also use the text supplied during rendering.</p>
+			<p class="text-on-surface dark:text-on-surface-dark">When the user changes languages, render the page or affected fragments again. Existing browser content keeps its previous text until it is replaced. Keep any state captured by message functions immutable, or synchronize access when sharing it between requests.</p>
+		</section>
+		<section id="scope" class="space-y-4">
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Application content</h2>
+			<p class="text-on-surface dark:text-on-surface-dark">Expressions cover the text built into Goshtoso components. Your application still supplies its own titles, navigation items, table data, and validation messages, and handles language selection and right-to-left layout.</p>
+		</section>
+	</div>
+}

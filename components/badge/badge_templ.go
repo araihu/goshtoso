@@ -407,9 +407,9 @@ func animatingDotTemplate(tone Tone) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var20 string
-		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Badge.NotificationLabel)
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Badge.NotificationAriaLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/badge/badge.templ`, Line: 108, Col: 144}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/badge/badge.templ`, Line: 108, Col: 148}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 		if templ_7745c5c3_Err != nil {
