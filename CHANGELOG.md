@@ -2,6 +2,33 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.3.3] - 2026-09-11
+
+### Component text
+
+- Allow applications to override built-in labels, status messages, and accessible
+  names through typed expression sets. Configure application defaults, apply
+  request-scoped overrides, or override an individual component. English remains
+  the default; applications choose languages and provide translations.
+- Load expression sets from JSON or YAML bytes, files, and Go filesystems,
+  including embedded files. Validate properties and named placeholders, and use
+  the generated JSON Schema for editor completion and validation.
+
+### Documentation and examples
+
+- Add an internationalization guide, file-format reference with SchemaTree, and
+  live examples in English, Portuguese, Spanish, Simplified Chinese, and German.
+- Simplify documentation and navigation, and add a Deployment Console example
+  with its own navbar, responsive sidebar, search, creation, and approval flow.
+  The example simulates deployments and preserves its state in the URL.
+
+### Fixes
+
+- Escape request text in demo HTML handlers to prevent reflected HTML injection.
+- Correct standalone example dependency checksums and browser-test navigation.
+- Existing applications can keep their current component configuration. No
+  runtime asset upgrade or migration is required for this patch.
+
 ## [v0.3.2] - 2026-09-11
 
 ### Release images
