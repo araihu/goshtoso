@@ -14,6 +14,7 @@ var handlerIdentities = map[string][]string{
 	"button_handler.go":          {"button"},
 	"carousel_handler.go":        {"carousel"},
 	"chat_handler.go":            {"example_chat"},
+	"deployments_handler.go":     {"example_deployments"},
 	"dropdown_handler.go":        {"dropdown"},
 	"expense_handler.go":         {"example_expense"},
 	"form_handler.go":            {"form"},

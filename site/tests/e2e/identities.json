@@ -230,6 +230,126 @@
       ]
     },
     {
+      "name": "example_chat",
+      "files": [
+        "chat_test.go"
+      ],
+      "tests": [
+        "TestChat_Broadcast",
+        "TestChat_ComposerClearsOnSend",
+        "TestChat_ElizaDeterministic",
+        "TestChat_EnterToSend",
+        "TestChat_FragmentNavNoErrors",
+        "TestChat_OwnMessageAligned",
+        "TestChat_Presence",
+        "TestChat_Rename",
+        "TestChat_ScrollsToBottomOnSend",
+        "TestChat_SidebarPresent"
+      ]
+    },
+    {
+      "name": "example_deployments",
+      "files": [
+        "deployment_console_test.go"
+      ],
+      "tests": [
+        "TestDeploymentConsoleFlow"
+      ]
+    },
+    {
+      "name": "example_expense",
+      "files": [
+        "expense_example_test.go"
+      ],
+      "tests": [
+        "TestExpenseExample_AddAndTotal",
+        "TestExpenseExample_CategoryFilter",
+        "TestExpenseExample_ClearAllModal",
+        "TestExpenseExample_DeleteUndo",
+        "TestExpenseExample_FragmentNavNoErrors",
+        "TestExpenseExample_Pagination",
+        "TestExpenseExample_RejectsBadAmount",
+        "TestExpenseExample_SearchFilter",
+        "TestExpenseExample_SidebarPresent",
+        "TestExpenseExample_ValidSubmitClearsInputs"
+      ]
+    },
+    {
+      "name": "example_logs",
+      "files": [
+        "logs_test.go"
+      ],
+      "tests": [
+        "TestLogFeed_AutoScrollFollowsStream",
+        "TestLogFeed_ClearEmptiesFeed",
+        "TestLogFeed_FilterHidesLowerLevels",
+        "TestLogFeed_FragmentNavNoErrors",
+        "TestLogFeed_PauseStopsAndResumes",
+        "TestLogFeed_SidebarScrollPreservedDuringStream",
+        "TestLogFeed_StatusReachesConnected",
+        "TestLogFeed_StreamsRows"
+      ]
+    },
+    {
+      "name": "example_profile",
+      "files": [
+        "profile_test.go"
+      ],
+      "tests": [
+        "TestProfileAvatarUploadPersists",
+        "TestProfileDarkToggle",
+        "TestProfileFragmentNavNoConsoleErrors",
+        "TestProfileIdentityPersists",
+        "TestProfileOversizeRejected",
+        "TestProfileRemoveModal",
+        "TestProfileThemePicker"
+      ]
+    },
+    {
+      "name": "example_ticker",
+      "files": [
+        "ticker_test.go"
+      ],
+      "tests": [
+        "TestTicker_CardsUpdateLive",
+        "TestTicker_FragmentNavNoErrors",
+        "TestTicker_PauseStopsUpdates",
+        "TestTicker_ProviderBootstrapsFirstPaint",
+        "TestTicker_StreamUpdatesCells",
+        "TestTicker_TableFilterServerSide"
+      ]
+    },
+    {
+      "name": "example_todo",
+      "files": [
+        "todo_example_test.go"
+      ],
+      "tests": [
+        "TestTodoExample_AddAndCount",
+        "TestTodoExample_ClearCompleted",
+        "TestTodoExample_ClearCompletedDisabled",
+        "TestTodoExample_Filters",
+        "TestTodoExample_FragmentNavNoErrors",
+        "TestTodoExample_ReorderButtons",
+        "TestTodoExample_SidebarPresent",
+        "TestTodoExample_ToggleDelete",
+        "TestTodoExample_UndoDelete"
+      ]
+    },
+    {
+      "name": "example_wizard",
+      "files": [
+        "wizard_test.go"
+      ],
+      "tests": [
+        "TestWizard_BackPreservesData",
+        "TestWizard_ForwardPath",
+        "TestWizard_SidebarNavNoErrors",
+        "TestWizard_SidebarPresent",
+        "TestWizard_ValidationBlocks"
+      ]
+    },
+    {
       "name": "fileinput",
       "files": [
         "fileinput_coverage_test.go",
@@ -538,15 +658,6 @@
       ]
     },
     {
-      "name": "splitbutton",
-      "files": [
-        "splitbutton_test.go"
-      ],
-      "tests": [
-        "TestSplitButton_Primitives"
-      ]
-    },
-    {
       "name": "spinner",
       "files": [
         "spinner_coverage_test.go",
@@ -555,6 +666,15 @@
       "tests": [
         "TestSpinnerComponentDemoVariants",
         "TestSpinnerCoverageDemo"
+      ]
+    },
+    {
+      "name": "splitbutton",
+      "files": [
+        "splitbutton_test.go"
+      ],
+      "tests": [
+        "TestSplitButton_Primitives"
       ]
     },
     {
@@ -741,127 +861,19 @@
         "TestTooltip_Positions",
         "TestTooltip_RichTooltip"
       ]
-    },
-    {
-      "name": "example_chat",
-      "files": [
-        "chat_test.go"
-      ],
-      "tests": [
-        "TestChat_Broadcast",
-        "TestChat_ComposerClearsOnSend",
-        "TestChat_ElizaDeterministic",
-        "TestChat_EnterToSend",
-        "TestChat_FragmentNavNoErrors",
-        "TestChat_OwnMessageAligned",
-        "TestChat_Presence",
-        "TestChat_Rename",
-        "TestChat_ScrollsToBottomOnSend",
-        "TestChat_SidebarPresent"
-      ]
-    },
-    {
-      "name": "example_expense",
-      "files": [
-        "expense_example_test.go"
-      ],
-      "tests": [
-        "TestExpenseExample_AddAndTotal",
-        "TestExpenseExample_CategoryFilter",
-        "TestExpenseExample_ClearAllModal",
-        "TestExpenseExample_DeleteUndo",
-        "TestExpenseExample_FragmentNavNoErrors",
-        "TestExpenseExample_Pagination",
-        "TestExpenseExample_RejectsBadAmount",
-        "TestExpenseExample_SearchFilter",
-        "TestExpenseExample_SidebarPresent",
-        "TestExpenseExample_ValidSubmitClearsInputs"
-      ]
-    },
-    {
-      "name": "example_logs",
-      "files": [
-        "logs_test.go"
-      ],
-      "tests": [
-        "TestLogFeed_AutoScrollFollowsStream",
-        "TestLogFeed_ClearEmptiesFeed",
-        "TestLogFeed_FilterHidesLowerLevels",
-        "TestLogFeed_FragmentNavNoErrors",
-        "TestLogFeed_PauseStopsAndResumes",
-        "TestLogFeed_SidebarScrollPreservedDuringStream",
-        "TestLogFeed_StatusReachesConnected",
-        "TestLogFeed_StreamsRows"
-      ]
-    },
-    {
-      "name": "example_profile",
-      "files": [
-        "profile_test.go"
-      ],
-      "tests": [
-        "TestProfileAvatarUploadPersists",
-        "TestProfileDarkToggle",
-        "TestProfileFragmentNavNoConsoleErrors",
-        "TestProfileIdentityPersists",
-        "TestProfileOversizeRejected",
-        "TestProfileRemoveModal",
-        "TestProfileThemePicker"
-      ]
-    },
-    {
-      "name": "example_ticker",
-      "files": [
-        "ticker_test.go"
-      ],
-      "tests": [
-        "TestTicker_CardsUpdateLive",
-        "TestTicker_FragmentNavNoErrors",
-        "TestTicker_PauseStopsUpdates",
-        "TestTicker_ProviderBootstrapsFirstPaint",
-        "TestTicker_StreamUpdatesCells",
-        "TestTicker_TableFilterServerSide"
-      ]
-    },
-    {
-      "name": "example_todo",
-      "files": [
-        "todo_example_test.go"
-      ],
-      "tests": [
-        "TestTodoExample_AddAndCount",
-        "TestTodoExample_ClearCompleted",
-        "TestTodoExample_ClearCompletedDisabled",
-        "TestTodoExample_Filters",
-        "TestTodoExample_FragmentNavNoErrors",
-        "TestTodoExample_ReorderButtons",
-        "TestTodoExample_SidebarPresent",
-        "TestTodoExample_ToggleDelete",
-        "TestTodoExample_UndoDelete"
-      ]
-    },
-    {
-      "name": "example_wizard",
-      "files": [
-        "wizard_test.go"
-      ],
-      "tests": [
-        "TestWizard_BackPreservesData",
-        "TestWizard_ForwardPath",
-        "TestWizard_SidebarNavNoErrors",
-        "TestWizard_SidebarPresent",
-        "TestWizard_ValidationBlocks"
-      ]
     }
   ],
   "full_only": {
     "name": "full_only",
     "files": [
-      "application_patterns_test.go",
       "component_docs_smoke_test.go",
       "component_interaction_contrast_test.go",
       "components_test.go",
+      "core_docs_navigation_test.go",
+      "docs_prose_test.go",
       "e2e_shutdown_test.go",
+      "examples_overview_test.go",
+      "expressions_current_source_test.go",
       "getting_started_test.go",
       "javascript_extraction_batch2_test.go",
       "javascript_extraction_batch3_lane_f_test.go",
@@ -885,8 +897,6 @@
       "TestActionGroupFragmentNavigationUsesBundledProvider",
       "TestAllComponentDocsDirectLoad",
       "TestAllComponentDocsFragmentNavigation",
-      "TestApplicationPatternsPageAndResponsiveRecipes",
-      "TestApplicationPatternsSearchNavigatesToRecipePage",
       "TestAttributionsDisplaysCanonicalRuntimePinsAndEmbeddedPaths",
       "TestBrowserStorageNoticeCanDisableDemoCookies",
       "TestBrowserStorageNoticeOffersChoice",
@@ -899,8 +909,14 @@
       "TestComponentDocsThemeMatrix",
       "TestComponent_DarkMode",
       "TestCoreActionAndHelperContrastAcrossAcceptanceThemes",
+      "TestCoreDocsContainsAgentsAndIcons",
+      "TestDocsProseInlineSpacing",
       "TestE2ECoverPkgIncludesServerMainPackage",
       "TestErrorHandling",
+      "TestExamplesOverviewNavigation",
+      "TestExpressions_CurrentSourceBrowser",
+      "TestExpressions_LiveDocumentation",
+      "TestExpressions_SchemaDocumentation",
       "TestFilterIgnorableOnlyDropsIntentionalAvatarFixtureNoise",
       "TestGettingStarted_StarterRepoAndLiveOutcome",
       "TestIntegration",
