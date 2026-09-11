@@ -264,8 +264,7 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// OOB swap: update sort headers so icons and next-sort URLs reflect current state.
-	// Wrapped in <template> so the HTML parser doesn't strip <thead>/<tr> elements
-	// when they appear alongside tbody <tr> rows in the response.
+	// hx-partial preserves table markup and explicitly targets the header in htmx 4.
 	if tableID != "" {
 		_ = tableHeadOOBFragment(
 			resolvedTableID(cfg)+"-thead",

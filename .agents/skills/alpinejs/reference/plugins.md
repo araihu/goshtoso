@@ -1,13 +1,13 @@
 # Alpine.js Plugins & Advanced
 
-Crawled from alpinejs.dev (v3.x). For CDN use, **plugin script tags must load BEFORE the core Alpine script.** Versions below are illustrative — treat as latest 3.x.
+Alpine 3.17.2 baseline; pin plugin and core versions. For CDN use, **plugin script tags must load BEFORE the core Alpine script.** See [installation](https://alpinejs.dev/essentials/installation).
 
 ## Plugins
 
 ### persist — state survives page loads (localStorage)
 ```html
-<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.17.2/dist/cdn.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.17.2/dist/cdn.min.js"></script>
 ```
 ```bash
 npm install @alpinejs/persist
@@ -66,6 +66,9 @@ npm install @alpinejs/persist
 - Wildcards: `*` any char, `a` letters, `9` numbers.
 
 ### morph — morph an element into new HTML, preserving DOM + Alpine state
+
+This standalone Alpine plugin remains useful for explicit `Alpine.morph()` calls. For htmx 4 built-in morph swaps, use [hx-alpine-compat](htmx4.md); do not add this plugin solely for that integration.
+
 ```js
 Alpine.morph(el, `
     <div x-data="{ message: 'hi' }">
@@ -108,7 +111,7 @@ Alpine awaits async functions anywhere it accepts sync ones:
 ```
 
 ## CSP build
-The CSP-friendly build forbids `eval`-style inline evaluation: **no arrow functions, destructuring, template literals, or global access in attributes.** Move all logic into `Alpine.data()` components (getters/methods); keep attributes to plain property references.
+`@alpinejs/csp` is an alternative core build that avoids unsafe-eval and supports many inline expressions, including literals, operators and method calls. It is not a drop-in guarantee for arbitrary JavaScript. Prefer registered methods for complex behavior and verify syntax against the [tagged parser/tests](https://github.com/alpinejs/alpine/tree/v3.17.2/packages/csp) and [CSP docs](https://alpinejs.dev/advanced/csp); rolling docs can lag release fixes. Changing to this build is a separate decision from upgrading standard Alpine. Register the provider below before Alpine initialization.
 ```html
 <div x-data="userManager" x-show="hasActiveAdmins"></div>
 <script nonce="...">

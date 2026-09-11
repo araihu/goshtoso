@@ -61,7 +61,7 @@ func TestConfig_DepsSelector(t *testing.T) {
 }
 
 func TestConfig_HXIncludeSelector(t *testing.T) {
-	base := "closest [data-combobox] input[type=hidden]"
+	base := "closest [data-combobox]"
 	assert.Equal(t, base, Config{}.hxIncludeSelector())
 	assert.Equal(t, base+",[name='provider']", Config{DependsOn: []string{"provider"}}.hxIncludeSelector())
 }

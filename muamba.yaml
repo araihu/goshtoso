@@ -1,7 +1,7 @@
 schema: 1
 resources:
   alpinejs:
-    version: "3.14.9"
+    version: 3.17.2
     downloads:
       collapse-js:
         url: https://unpkg.com/@alpinejs/collapse@${version}/dist/cdn.min.js
@@ -10,94 +10,98 @@ resources:
       collapse-package:
         url: https://unpkg.com/@alpinejs/collapse@${version}/package.json
         path: assets/js/runtime/alpinejs-collapse/${version}/package.json
-        integrity: sha384-1QeOrgxq0AdAEwIpHTsM/omCCQOYObl0SIsQXuUpZ2rPIr6mj4J4p7nXpHNmeNWN
+        integrity: sha384-1lmQWRIGbzg5wsT5523R77NvpwEclnsGiA8jaZq+8qvOP9LGn8bnPLZY3AKQcTOt
       collapse-license:
         url: https://raw.githubusercontent.com/alpinejs/alpine/v${version}/LICENSE.md
         path: assets/js/runtime/alpinejs-collapse/${version}/LICENSE.txt
-        integrity: sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON
+        integrity: sha384-mPDeTwJRT4aRsEPcFO8TKeh7q5BLRuVhTpyUvCHsKe5BZIXSpXRdyCVbkoZ2budt
       focus-js:
         url: https://unpkg.com/@alpinejs/focus@${version}/dist/cdn.min.js
         path: assets/js/runtime/alpinejs-focus/${version}/alpine-focus.min.js
-        integrity: sha384-bKXNU7o2Y3Uk/F2PB6U0bMyGZf6pLDnePM70U7sTE3cXUQ+JLgzrr/kwipEh0p23
+        integrity: sha384-ysJcnHb6oCzqAGKdoTm+IqKqmPKgxHT+ApZCawkyWOJfMq15WvzW3RRmHl7tWpEY
       focus-package:
         url: https://unpkg.com/@alpinejs/focus@${version}/package.json
         path: assets/js/runtime/alpinejs-focus/${version}/package.json
-        integrity: sha384-5l2aWHtBPo/rrIxhZ8Im61JbiVF0FkgTYdulyz4trswjhER/MMGlw6xKn19ZajNv
+        integrity: sha384-uzydPcgv2swHp7TrvzjHW/2gYk4nfyX9tBBVPz26NfI/4ITRTnvBTSa/nu+0sHP4
       focus-license:
         url: https://raw.githubusercontent.com/alpinejs/alpine/v${version}/LICENSE.md
         path: assets/js/runtime/alpinejs-focus/${version}/LICENSE.txt
-        integrity: sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON
+        integrity: sha384-mPDeTwJRT4aRsEPcFO8TKeh7q5BLRuVhTpyUvCHsKe5BZIXSpXRdyCVbkoZ2budt
       mask-js:
         url: https://unpkg.com/@alpinejs/mask@${version}/dist/cdn.min.js
         path: assets/js/runtime/alpinejs-mask/${version}/alpine-mask.min.js
-        integrity: sha384-SGhOy1rqh2lYeihPkBYcEUWXaDP+024QNlkQuAn11pcP3NQ2QAdI3zWIN1iAslFe
+        integrity: sha384-/KspnSacpGaqcz8joSHdVfpHZ88hbPkiK9WAHDalFjff9wBO4VQWravNauBX2g88
       mask-package:
         url: https://unpkg.com/@alpinejs/mask@${version}/package.json
         path: assets/js/runtime/alpinejs-mask/${version}/package.json
-        integrity: sha384-w+P3qD7IoaTS3qwShSIhDLOsSO54oguxDcOFG6fj4LgNT8MqMWEWD/RJNykq3c23
+        integrity: sha384-+d5nIsy4d5UD2eOYTRPOc5pFxHXFypVNRwbui3BT+Hp2kzxkYfGbi0WIf8HqBlKt
       mask-license:
         url: https://raw.githubusercontent.com/alpinejs/alpine/v${version}/LICENSE.md
         path: assets/js/runtime/alpinejs-mask/${version}/LICENSE.txt
-        integrity: sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON
+        integrity: sha384-mPDeTwJRT4aRsEPcFO8TKeh7q5BLRuVhTpyUvCHsKe5BZIXSpXRdyCVbkoZ2budt
       core-js:
         url: https://unpkg.com/alpinejs@${version}/dist/cdn.min.js
         path: assets/js/runtime/alpinejs/${version}/alpine.min.js
-        integrity: sha384-9Ax3MmS9AClxJyd5/zafcXXjxmwFhZCdsT6HJoJjarvCaAkJlk5QDzjLJm+Wdx5F
+        integrity: sha384-lcaMFHdvRVsEXVuhit4fTnbxq6eTLm5HPdNzO7vXNZjr8HOCMouPmv4hSGF3PCJV
       core-package:
         url: https://unpkg.com/alpinejs@${version}/package.json
         path: assets/js/runtime/alpinejs/${version}/package.json
-        integrity: sha384-93cBdHwIn/lWQdKuHyN3js4uXvOU8C8Do2CQ+gfDl6kroambz+tW/9LeskiFVusA
+        integrity: sha384-XGq88Emt85xGzErYAPZe8PFtG/NPjenEJZlu1cdlEwtiMTAyEIzzEdvAZlFS4BYz
       core-license:
         url: https://raw.githubusercontent.com/alpinejs/alpine/v${version}/LICENSE.md
         path: assets/js/runtime/alpinejs/${version}/LICENSE.txt
-        integrity: sha384-Y6dxHEddBHHsUhJgYmslNCPdAFtqf9WSuVpfaPYbnhv+AzMvFvJJwRadNZ9/mdON
+        integrity: sha384-mPDeTwJRT4aRsEPcFO8TKeh7q5BLRuVhTpyUvCHsKe5BZIXSpXRdyCVbkoZ2budt
   htmx:
-    version: "2.0.8"
+    version: 4.0.0
     downloads:
       core-js:
         url: https://unpkg.com/htmx.org@${version}/dist/htmx.min.js
         path: assets/js/runtime/htmx.org/${version}/htmx.min.js
-        integrity: sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz
+        integrity: sha384-BvJpBiO8Kh31EqtJe5DRIeWrHWnCGkwytKs9NKFi86Hhw96dEqdEMzZDeK9iEGTc
       package:
         url: https://unpkg.com/htmx.org@${version}/package.json
         path: assets/js/runtime/htmx.org/${version}/package.json
-        integrity: sha384-NHRsoCB1k9O/hjsUudBAHt4Sh2XxPOVIr9cxNwrCo1hIr/M3if4YiXFLEexC6q9H
+        integrity: sha384-CBE29LVf7Ec4X9XYQJtzE4zD4EsQi+ME5dBc4Fg1byz4y9uNbWZz+06Qzz/yBUIt
       license:
         url: https://unpkg.com/htmx.org@${version}/LICENSE
         path: assets/js/runtime/htmx.org/${version}/LICENSE.txt
         integrity: sha384-hU3SbIwDRi3Fq5qi+gLVwm7zNVOKB3ddD795kmN4Dg7C86VuGoDrWKa/TPGW6BWA
+      alpine-compat-js:
+        url: https://unpkg.com/htmx.org@${version}/dist/ext/hx-alpine-compat.js
+        path: assets/js/runtime/htmx.org/${version}/hx-alpine-compat.js
+        integrity: sha384-8Lujltc+yuNRRb8vLl0eLeXEzwGhFXOUkWieQ172LgJye+aU/qd/XyhkX5xWwHM9
   htmx-ext-sse:
-    version: "2.2.3"
+    version: 4.0.0
     downloads:
       runtime-js:
-        url: https://unpkg.com/htmx-ext-sse@${version}/dist/sse.min.js
+        url: https://unpkg.com/htmx.org@${version}/dist/ext/hx-sse.js
         path: assets/js/runtime/htmx-ext-sse/${version}/htmx-ext-sse.min.js
-        integrity: sha384-Y4gc0CK6Kg+hmulDc6rZPJu0tqvk7EWlih0Oh+2OkAi1ZDlCbBDCQEE2uVk472Ky
+        integrity: sha384-O9jqsFi4oKUTwu9V0DTXGP+lKOx/8Y4exCbAo4C259mlwITM1xPC3s3Nb4VPQvzj
       package:
-        url: https://unpkg.com/htmx-ext-sse@${version}/package.json
+        url: https://unpkg.com/htmx.org@${version}/package.json
         path: assets/js/runtime/htmx-ext-sse/${version}/package.json
-        integrity: sha384-207L8WXQ4YzBbq9olqS6+o3/Zg1zNlV4IQGUrkRWzGjzaa0I26iTpHPeA+TzOYTn
+        integrity: sha384-CBE29LVf7Ec4X9XYQJtzE4zD4EsQi+ME5dBc4Fg1byz4y9uNbWZz+06Qzz/yBUIt
       license:
-        url: https://unpkg.com/htmx-ext-sse@${version}/LICENSE
+        url: https://unpkg.com/htmx.org@${version}/LICENSE
         path: assets/js/runtime/htmx-ext-sse/${version}/LICENSE.txt
-        integrity: sha384-oTkMp4+HooLc5pBZJ20QldWAgewTPXjxHjSD3my+oulQNRIwISxGjEzaXGM/UefT
+        integrity: sha384-hU3SbIwDRi3Fq5qi+gLVwm7zNVOKB3ddD795kmN4Dg7C86VuGoDrWKa/TPGW6BWA
   htmx-ext-ws:
-    version: "2.0.3"
+    version: 4.0.0
     downloads:
       runtime-js:
-        url: https://unpkg.com/htmx-ext-ws@${version}/ws.js
+        url: https://unpkg.com/htmx.org@${version}/dist/ext/hx-ws.js
         path: assets/js/runtime/htmx-ext-ws/${version}/htmx-ext-ws.js
-        integrity: sha384-IeVkDiDIU+Zsabm4HnVf7ifa7LYLSoUCAYrFIjsn+0voIDaflLAalBqJ4CeEZodl
+        integrity: sha384-+NHXUaKKyfnYOM95fSYshyGKQO/frrPZKfBS6Untkcz1qvEOcMTaMYqDCThSfVUS
       package:
-        url: https://unpkg.com/htmx-ext-ws@${version}/package.json
+        url: https://unpkg.com/htmx.org@${version}/package.json
         path: assets/js/runtime/htmx-ext-ws/${version}/package.json
-        integrity: sha384-tCXvVmJJVdA8qM2S8c5m7ieSVjAdK/HvycooMC28nsjLHTKmbtjxxIZWEjpnRhVR
+        integrity: sha384-CBE29LVf7Ec4X9XYQJtzE4zD4EsQi+ME5dBc4Fg1byz4y9uNbWZz+06Qzz/yBUIt
       license:
-        url: https://unpkg.com/htmx-ext-ws@${version}/LICENSE
+        url: https://unpkg.com/htmx.org@${version}/LICENSE
         path: assets/js/runtime/htmx-ext-ws/${version}/LICENSE.txt
-        integrity: sha384-oTkMp4+HooLc5pBZJ20QldWAgewTPXjxHjSD3my+oulQNRIwISxGjEzaXGM/UefT
+        integrity: sha384-hU3SbIwDRi3Fq5qi+gLVwm7zNVOKB3ddD795kmN4Dg7C86VuGoDrWKa/TPGW6BWA
   tailwindcss:
-    version: "4.3.3"
+    version: 4.3.3
     downloads:
       license:
         url: https://raw.githubusercontent.com/tailwindlabs/tailwindcss/v${version}/LICENSE

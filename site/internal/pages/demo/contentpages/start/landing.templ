@@ -1,11 +1,11 @@
 package startpages
 
 import (
-	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/card"
 	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/components/head"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/components/toggle"
@@ -68,11 +68,8 @@ templ LandingPage() {
 			// theme on navigation. Shares localStorage key 'theme' / 'darkMode'.
 			<script src={ siteassets.LandingPlaygroundBundleURL }></script>
 			<script src={ siteassets.DemoBundleURL }></script>
-			<link rel="stylesheet" href="/assets/styles.css"/>
+			@head.DependenciesMinimal(head.WithLocalRuntime())
 			<link rel="stylesheet" href="/componentdocshell/assets/araihu.css"/>
-			<script defer src={ assets.FirstPartyBundleURL }></script>
-			<script defer src={ assets.AlpineJSURL }></script>
-			<script src={ assets.HTMXURL }></script>
 			<style>[x-cloak] { display: none !important; }</style>
 		</head>
 		<body class="min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
@@ -93,10 +90,8 @@ templ LandingPlaygroundPage() {
 			<meta name="robots" content="noindex"/>
 			<title>Goshtoso theme playground</title>
 			<script src={ siteassets.LandingPlaygroundBundleURL }></script>
-			<link rel="stylesheet" href="/assets/styles.css"/>
+			@head.DependenciesMinimal(head.WithLocalRuntime())
 			<link rel="stylesheet" href="/componentdocshell/assets/araihu.css"/>
-			<script defer src={ assets.AlpineJSURL }></script>
-			<script src={ assets.HTMXURL }></script>
 		</head>
 		<body class="m-0 overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
 			@landingPlaygroundSurface()
@@ -299,10 +294,10 @@ templ landingContent() {
 				<div class="mb-8 max-w-3xl">
 					<p class="mb-3 text-xs font-bold uppercase text-primary dark:text-primary-dark">Optional modules</p>
 					<h2 id="extensions-title" class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Extend the system, keep the Go workflow.</h2>
-				<p class="mt-4 text-base leading-7 text-on-surface dark:text-on-surface-dark">Companion modules add specialized capabilities without expanding Goshtoso's core dependency surface.</p>
-			</div>
-			<div>
-				<article class="overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark">
+					<p class="mt-4 text-base leading-7 text-on-surface dark:text-on-surface-dark">Companion modules add specialized capabilities without expanding Goshtoso's core dependency surface.</p>
+				</div>
+				<div>
+					<article class="overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark">
 						<div class="flex flex-col gap-4 border-b border-outline p-5 dark:border-outline-dark sm:flex-row sm:items-end sm:justify-between sm:p-6">
 							<div>
 								<p class="text-xs font-bold uppercase text-primary dark:text-primary-dark">Interactive visualization</p>
@@ -331,16 +326,16 @@ templ landingContent() {
 							<span class="sr-only">Loading Goshtoso Charts preview</span>
 						</div>
 					</article>
-			</div>
+				</div>
 			</section>
 			<!-- Arai Hû product gallery -->
 			<section id="examples" class="mb-28 sm:mb-32">
-			<div class="mb-8">
+				<div class="mb-8">
 					<div>
 						<h2 class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Built with Goshtoso</h2>
 						<p class="mt-3 max-w-2xl text-on-surface dark:text-on-surface-dark">Real Arai Hû products using Goshtoso across API publishing, monitoring, orchestration, and the organization site itself.</p>
 					</div>
-			</div>
+				</div>
 				<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6" role="region" aria-label="Arai Hû products">
 					for _, app := range getShowcaseApps() {
 						<a href={ templ.SafeURL(app.URL) } target="_blank" rel="noopener" data-product-card class="group mx-auto block h-full w-full max-w-xl rounded-radius focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface dark:focus-visible:ring-primary-dark dark:focus-visible:ring-offset-surface-dark sm:max-w-none">
@@ -363,7 +358,8 @@ templ landingContent() {
 				<div class="flex items-center gap-3">
 					<img src="/assets/images/goshtoso-mark.svg" alt="" aria-hidden="true" class="size-9 rounded-radius"/>
 					<p class="text-on-surface dark:text-on-surface-dark">
-						<span class="font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Goshtoso</span><br/>
+						<span class="font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Goshtoso</span>
+						<br/>
 						<span class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">
 							{ componentCount() } components · { themes.Count() } themes · an
 							<a href="https://araihu.com" target="_blank" rel="noopener" class="font-medium underline underline-offset-2 transition-colors motion-reduce:transition-none hover:text-primary dark:hover:text-primary-dark">Arai Hû</a>

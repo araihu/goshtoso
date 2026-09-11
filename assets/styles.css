@@ -305,6 +305,7 @@
     --tracking-tight: -0.025em;
     --tracking-wide: 0.025em;
     --tracking-wider: 0.05em;
+    --tracking-widest: 0.1em;
     --leading-tight: 1.25;
     --leading-relaxed: 1.625;
     --radius-xs: 0.125rem;
@@ -767,6 +768,9 @@
   }
   .left-full {
     left: 100%;
+  }
+  .isolate {
+    isolation: isolate;
   }
   .z-10 {
     z-index: 10;
@@ -3399,6 +3403,9 @@
   .py-14 {
     padding-block: calc(var(--spacing) * 14);
   }
+  .py-16 {
+    padding-block: calc(var(--spacing) * 16);
+  }
   .py-20 {
     padding-block: calc(var(--spacing) * 20);
   }
@@ -3467,6 +3474,9 @@
   }
   .pb-10 {
     padding-bottom: calc(var(--spacing) * 10);
+  }
+  .pb-16 {
+    padding-bottom: calc(var(--spacing) * 16);
   }
   .pb-\[max\(0\.5rem\,env\(safe-area-inset-bottom\)\)\] {
     padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
@@ -3637,6 +3647,10 @@
   .tracking-wider {
     --tw-tracking: var(--tracking-wider);
     letter-spacing: var(--tracking-wider);
+  }
+  .tracking-widest {
+    --tw-tracking: var(--tracking-widest);
+    letter-spacing: var(--tracking-widest);
   }
   .text-balance {
     text-wrap: balance;
@@ -5095,6 +5109,12 @@
   .has-\[\:checked\]\:border-primary:has(:is(:checked)) {
     border-color: var(--color-primary);
   }
+  .has-\[\:checked\]\:bg-primary\/5:has(:is(:checked)) {
+    background-color: color-mix(in srgb, oklch(62.7% 0.265 303.9) 5%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-primary) 5%, transparent);
+    }
+  }
   .has-\[\:checked\]\:ring-1:has(:is(:checked)) {
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -5280,8 +5300,8 @@
     .sm\:h-\[28rem\] {
       height: 28rem;
     }
-    .sm\:h-auto {
-      height: auto;
+    .sm\:h-fit {
+      height: fit-content;
     }
     .sm\:max-h-\[90dvh\] {
       max-height: 90dvh;
@@ -5334,9 +5354,6 @@
     .sm\:grid-cols-\[8rem_1fr\] {
       grid-template-columns: 8rem 1fr;
     }
-    .sm\:grid-cols-\[9rem_1fr\] {
-      grid-template-columns: 9rem 1fr;
-    }
     .sm\:grid-cols-\[9rem_minmax\(0\,1fr\)\] {
       grid-template-columns: 9rem minmax(0,1fr);
     }
@@ -5378,6 +5395,9 @@
     }
     .sm\:rounded-radius {
       border-radius: var(--radius-radius);
+    }
+    .sm\:p-2 {
+      padding: calc(var(--spacing) * 2);
     }
     .sm\:p-5 {
       padding: calc(var(--spacing) * 5);
@@ -6893,6 +6913,15 @@
   }
   .dark\:has-checked\:text-on-surface-dark-strong:where(.dark, .dark *):has(:checked) {
     color: var(--color-on-surface-dark-strong);
+  }
+  .dark\:has-\[\:checked\]\:border-primary-dark:where(.dark, .dark *):has(:is(:checked)) {
+    border-color: var(--color-primary-dark);
+  }
+  .dark\:has-\[\:checked\]\:bg-primary-dark\/5:where(.dark, .dark *):has(:is(:checked)) {
+    background-color: color-mix(in srgb, oklch(71.4% 0.203 305.504) 5%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-primary-dark) 5%, transparent);
+    }
   }
   @supports (backdrop-filter: var(--tw)) {
     .dark\:supports-\[backdrop-filter\]\:bg-surface-dark\/60:where(.dark, .dark *) {

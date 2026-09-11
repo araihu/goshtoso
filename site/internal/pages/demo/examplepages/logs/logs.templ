@@ -28,17 +28,19 @@ func levelBadge(l logs.Level) badge.Tone {
 // pure-CSS min-severity filter; the row text (time · source · message) is
 // hand-rolled because no component models a log line.
 templ LogRow(line logs.LogLine) {
-	<div class={ "log-row log-level-" + line.Level.String(),
-		"flex items-center gap-3 border-b border-outline/50 px-3 py-1.5 font-mono text-xs dark:border-outline-dark/50" }>
+	<div
+		class={ "log-row log-level-" + line.Level.String(),
+		"flex items-center gap-3 border-b border-outline/50 px-3 py-1.5 font-mono text-xs dark:border-outline-dark/50" }
+	>
 		<time class="shrink-0 tabular-nums text-on-surface-muted dark:text-on-surface-dark-muted">
 			{ line.Time.Format("15:04:05") }
 		</time>
 		<span class="w-16 shrink-0">
 			@badge.Badge(badge.Config{
-				Tone: levelBadge(line.Level),
+				Tone:       levelBadge(line.Level),
 				Appearance: badge.AppearanceSoft,
-				Size:    badge.SizeSM,
-				Label:    line.Level.String(),
+				Size:       badge.SizeSM,
+				Label:      line.Level.String(),
 			})
 		</span>
 		<span class="w-20 shrink-0 truncate text-on-surface-muted dark:text-on-surface-dark-muted">{ line.Source }</span>
@@ -61,8 +63,9 @@ templ LogsApp() {
 	<div
 		id="logs-fragment"
 		x-data="logFeed"
-		x-on:htmx:sse-open="connected = true"
-		x-on:htmx:sse-error="connected = false"
+		x-on:htmx:after:swap="onSwap($event)"
+		x-on:htmx:sse:after:connection="connected = true"
+		x-on:htmx:sse:error="connected = false"
 		class="mx-auto max-w-3xl"
 	>
 		<header class="mb-6">
@@ -80,8 +83,8 @@ templ LogsApp() {
 				<div class="flex flex-wrap items-end gap-3">
 					<div class="w-40">
 						@selectfield.Select(selectfield.Config{
-							ID:          "log-filter",
-							Label:       "Minimum level",
+							ID:     "log-filter",
+							Label:  "Minimum level",
 							Alpine: &selectfield.AlpineConfig{Model: "minLevel"},
 							Options: []selectfield.Option{
 								{Value: "all", Label: "All", Selected: true},
@@ -123,9 +126,7 @@ templ LogsApp() {
 				</div>
 				<!-- SSE connector: removed on pause (closes EventSource), targets the persistent feed -->
 				<template x-if="!paused">
-					<div hx-ext="sse" sse-connect="/api/examples/logs/stream">
-						<div sse-swap="message" hx-target="#log-feed" hx-swap="beforeend" hidden></div>
-					</div>
+					<div data-log-connector x-init="connect($el)" hx-sse:connect="/api/examples/logs/stream" hx-target="#log-feed" hx-swap="beforeend" hidden></div>
 				</template>
 			</div>
 		</div>

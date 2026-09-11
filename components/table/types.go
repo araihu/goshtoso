@@ -321,7 +321,8 @@ type Filter struct {
 	Options []FilterOption
 	// OptionsHTMX loads select options dynamically via HTMX on load
 	OptionsHTMX *FilterOptionsHTMXConfig
-	// DefaultValue is the initial value
+	// DefaultValue is the initial value. Toggles use "true" for checked;
+	// "false" and the empty value are unchecked.
 	DefaultValue string
 }
 
@@ -462,6 +463,25 @@ func (cfg Config) htmxEndpointValue() string {
 
 func (cfg Config) filterEndpointURL() string {
 	return tableURL(cfg.htmxEndpointValue(), map[string]string{"table_id": cfg.getID()}, "")
+}
+
+// filterRequestURL owns fixed filter parameters; live controls are included by htmx.
+func (cfg Config) filterRequestURL() string {
+	params := map[string]string{"_filter": "1", "page": ""}
+	// Explicit extra query parameters historically override the pagination size.
+	extras := parseExtraQuery(cfg.ExtraQueryParams)
+	if _, supplied := extras["per_page"]; !supplied {
+		if perPage := filterPerPage(cfg); perPage != "" {
+			params["per_page"] = perPage
+		}
+	}
+	return tableURL(cfg.filterEndpointURL(), params, cfg.ExtraQueryParams)
+}
+
+func (cfg Config) filterIncludeSelector() string {
+	// Quote an attribute selector, keeping consumer IDs out of executable code.
+	id := strings.NewReplacer(`\`, `\\`, `"`, `\"`, "\n", `\a `, "\r", `\d `, "\x00", "�").Replace(cfg.filterBarID())
+	return `[id="` + id + `"]`
 }
 
 func (cfg Config) htmxTargetValue() string {

@@ -12,7 +12,7 @@ import (
 )
 
 // gotoChat navigates to the chat page, waits for Alpine + the message log, then
-// for the ws extension to have opened the socket. ws-send silently no-ops if the
+// for the ws extension to have opened the socket. hx-ws:send silently no-ops if the
 // socket is not yet open, so the readiness wait is load-bearing before any send.
 func gotoChat(t *testing.T, page playwright.Page) {
 	t.Helper()
@@ -30,37 +30,20 @@ func gotoChat(t *testing.T, page playwright.Page) {
 	waitWSOpen(t, page)
 }
 
-// waitWSOpen blocks until the htmx ws extension has an OPEN socket. htmx stores
-// the live socket on the connecting element's internal data; we probe its
-// readyState via htmx's API. Falls back to a presence-driven readiness signal:
-// once the server's own "joined" presence frame has landed in our DOM, the
-// round-trip is proven open. We wait on either signal.
+// waitWSOpen waits for a server presence frame, proving the socket round-trip.
 func waitWSOpen(t *testing.T, page playwright.Page) {
 	t.Helper()
-	_, err := page.WaitForFunction(
-		`() => {
-			const el = document.querySelector('[ws-connect]');
-			if (!el) return false;
-			try {
-				const api = window.htmx && htmx.find ? el : null;
-				const internal = el['htmx-internal-data'];
-				if (internal && internal.webSocket && internal.webSocket.readyState === 1) return true;
-			} catch (e) {}
-			// Fallback: the server's "joined" system line in the log proves a
-			// frame already round-tripped (presence is now in-chat, not a toast).
-			return !!document.querySelector('#chat-log > div');
-		}`,
-		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
-	require.NoError(t, err, "websocket should open (ws extension bound + socket open)")
+	_, err := page.WaitForFunction(`() => !!document.querySelector('#chat-log > div')`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
+	require.NoError(t, err, "websocket should deliver its initial presence frame")
 }
 
-// sendChat types into the composer and submits via the ws-send form. Fill sets
-// the textarea value; ws-send reads the field value on submit, so a click on the
+// sendChat types into the composer and submits via the hx-ws:send form. Fill sets
+// the textarea value; hx-ws:send reads the field value on submit, so a click on the
 // form's submit button serializes and sends the frame.
 func sendChat(t *testing.T, page playwright.Page, msg string) {
 	t.Helper()
 	require.NoError(t, page.Locator("#chat-message").Fill(msg))
-	require.NoError(t, page.Locator("form[ws-send] button[type='submit']").Click())
+	require.NoError(t, page.Locator("form[ hx-ws\\:send] button[type='submit']").Click())
 }
 
 // logHas builds a JS predicate asserting some #chat-log message-bubble body
@@ -140,7 +123,7 @@ func TestChat_EnterToSend(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, true, noBubble, "Shift+Enter should not broadcast a message")
 
-	// Enter SENDS without clicking the submit button. The ws-send rebind race can
+	// Enter SENDS without clicking the submit button. The hx-ws:send rebind race can
 	// drop the first submit after the socket binds, so re-fire Enter until the
 	// bubble round-trips (a lost send produces no bubble, so re-pressing is safe).
 	require.NoError(t, page.Locator("#chat-message").Fill("enter-sends-me"))
@@ -150,7 +133,7 @@ func TestChat_EnterToSend(t *testing.T) {
 			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)}); err == nil {
 			return
 		}
-		// ws-send does not reset the textarea, so the value persists; re-fill
+		// hx-ws:send does not reset the textarea, so the value persists; re-fill
 		// defensively in case a prior keystroke mutated it.
 		_ = page.Locator("#chat-message").Fill("enter-sends-me")
 	}
@@ -247,19 +230,21 @@ func TestChat_FragmentNavNoErrors(t *testing.T) {
 	require.NoError(t, err)
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	require.NoError(t, err)
+	// Examples has its own navigation family, reached through the top navbar.
+	require.NoError(t, page.GetByRole("link", playwright.PageGetByRoleOptions{Name: "Examples", Exact: new(true)}).Click())
 	require.NoError(t, page.Locator("a[href='/examples/chat']").First().Click())
 	_, err = page.WaitForFunction("() => !!document.querySelector('#chat-log')", nil)
 	require.NoError(t, err)
 	waitWSOpen(t, page)
 
 	// Send a message through the fragment-loaded page and confirm it round-trips.
-	// The FIRST ws-send right after a fragment swap can be lost to the htmx
-	// rebind race (htmx wires the swapped-in ws-send form a beat after it lands
+	// The FIRST hx-ws:send right after a fragment swap can be lost to the htmx
+	// rebind race (htmx wires the swapped-in hx-ws:send form a beat after it lands
 	// in the DOM; a send fired in that window dispatches no frame). A lost send
 	// produces no bubble, so re-firing is safe — clickUntil re-submits until the
 	// message round-trips. The textarea value persists across clicks.
 	require.NoError(t, page.Locator("#chat-message").Fill("frag-nav-msg"))
-	clickUntil(t, page, page.Locator("form[ws-send] button[type='submit']"), logHas("frag-nav-msg"))
+	clickUntil(t, page, page.Locator("form[ hx-ws\\:send] button[type='submit']"), logHas("frag-nav-msg"))
 
 	require.Empty(t, jsErrors, "no JS console/page errors on fragment-nav chat page: %v", jsErrors)
 }
@@ -274,7 +259,7 @@ func TestChat_SidebarPresent(t *testing.T) {
 }
 
 // TestChat_ComposerClearsOnSend verifies the composer textarea empties after a
-// message is sent (htmx ws-send does not reset the form; a wsAfterSend listener does).
+// message is sent (htmx hx-ws:send does not reset the form; a htmx:ws:after:message:outgoing listener does).
 func TestChat_ComposerClearsOnSend(t *testing.T) {
 	page := newIsolatedPage(t)
 	gotoChat(t, page)
@@ -288,7 +273,7 @@ func TestChat_ComposerClearsOnSend(t *testing.T) {
 }
 
 // TestChat_ScrollsToBottomOnSend verifies the log auto-scrolls to the newest
-// message as messages are sent (an htmx:oobAfterSwap listener pins it to bottom).
+// message as messages are sent (an htmx:after:swap listener pins it to bottom).
 func TestChat_ScrollsToBottomOnSend(t *testing.T) {
 	page := newIsolatedPage(t)
 	gotoChat(t, page)
@@ -300,7 +285,7 @@ func TestChat_ScrollsToBottomOnSend(t *testing.T) {
 			playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(5000)})
 		require.NoError(t, err)
 	}
-	// The htmx:oobAfterSwap listener pins the log to the bottom on each append.
+	// The htmx:after:swap listener pins the log to the bottom on each append.
 	_, err := page.WaitForFunction(
 		"() => { var l=document.getElementById('chat-log'); return l.scrollHeight - l.clientHeight - l.scrollTop < 4; }",
 		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})

@@ -180,18 +180,18 @@ func TestJavaScriptBatch2_ProviderLifecycleCleansOwnedResources(t *testing.T) {
 		const nativeAdd = EventTarget.prototype.addEventListener;
 		const nativeRemove = EventTarget.prototype.removeEventListener;
 		EventTarget.prototype.addEventListener = function (type, listener, options) {
-			if ((type === 'htmx:sseBeforeMessage' || type === 'htmx:sseError') &&
+			if ((type === 'htmx:sse:before:message' || type === 'htmx:sse:error') &&
 				this instanceof Element && this.closest('#ticker-fragment')) {
 				this.__batch2TickerProvider = true;
 				stats.tickerAdds += 1;
 			}
-			if ((type === 'htmx:wsAfterSend' || type === 'htmx:oobAfterSwap') && this === document) {
+			if ((type === 'htmx:ws:after:message:outgoing' || type === 'htmx:ws:after:message:incoming') && this === document) {
 				stats.chatAdds += 1;
 			}
 			return nativeAdd.call(this, type, listener, options);
 		};
 		EventTarget.prototype.removeEventListener = function (type, listener, options) {
-			if ((type === 'htmx:sseBeforeMessage' || type === 'htmx:sseError') && this.__batch2TickerProvider) {
+			if ((type === 'htmx:sse:before:message' || type === 'htmx:sse:error') && this.__batch2TickerProvider) {
 				stats.tickerRemoves += 1;
 			}
 			return nativeRemove.call(this, type, listener, options);

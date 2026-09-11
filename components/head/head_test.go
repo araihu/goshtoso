@@ -223,7 +223,7 @@ func TestDependenciesDefaultsToPinnedCDNWithLocalFallback(t *testing.T) {
 		t.Fatalf("Dependencies() must use the ordered dependency loader\n%s", out)
 	}
 	cfg := parseLoaderConfig(t, out)
-	wantOrder := []string{"alpine-collapse", "alpine-focus", "alpine-mask", "first-party", "alpine", "htmx"}
+	wantOrder := []string{"alpine-collapse", "alpine-focus", "alpine-mask", "first-party", "htmx", "htmx-alpine-compat", "alpine"}
 	if len(cfg.Dependencies) != len(wantOrder) {
 		t.Fatalf("loader dependencies = %#v, want %v", cfg.Dependencies, wantOrder)
 	}
@@ -251,8 +251,8 @@ func TestDependenciesDefaultsToPinnedCDNWithLocalFallback(t *testing.T) {
 			t.Errorf("%s missing SHA-384 subresource integrity: %#v", tc.name, entry)
 		}
 	}
-	if !loaderEntry(t, cfg, "htmx").WaitForWindowLoaded {
-		t.Error("HTMX must wait for window load when inserted dynamically so its bootstrap cannot miss DOMContentLoaded")
+	if loaderEntry(t, cfg, "htmx").WaitForWindowLoaded {
+		t.Error("HTMX 4 must load before Alpine without a window-load gate")
 	}
 }
 
@@ -282,7 +282,7 @@ func TestDependenciesRenderFromPublicManifestCopy(t *testing.T) {
 	if got := loaderEntry(t, loader, "alpine-collapse"); got.PrimaryURL != "https://primary.example/alpine-collapse.js" || got.FallbackURL != "/contract/alpine-collapse.js" {
 		t.Fatalf("collapse entry = %#v", got)
 	}
-	if got := loaderEntry(t, loader, "htmx"); got.PrimaryURL != "https://override.example/htmx.js" || got.FallbackURL != "/contract/htmx.js" || got.Integrity != "sha384-override" || !got.WaitForWindowLoaded {
+	if got := loaderEntry(t, loader, "htmx"); got.PrimaryURL != "https://override.example/htmx.js" || got.FallbackURL != "/contract/htmx.js" || got.Integrity != "sha384-override" || got.WaitForWindowLoaded {
 		t.Fatalf("option-adjusted HTMX entry = %#v", got)
 	}
 }
@@ -297,7 +297,7 @@ func TestDependenciesMinimalFiltersPublicManifestOrder(t *testing.T) {
 	}
 	loader := parseLoaderConfig(t, render(t, dependenciesMinimalTemplate(cfg)))
 
-	want := []string{"alpine-collapse", "alpine", "htmx"}
+	want := []string{"alpine-collapse", "htmx", "htmx-alpine-compat", "alpine"}
 	got := make([]string, 0, len(loader.Dependencies))
 	for _, dependency := range loader.Dependencies {
 		got = append(got, dependency.Name)
@@ -335,7 +335,7 @@ func TestDependenciesLocalRuntimeUsesPublicManifestOrderAndDefer(t *testing.T) {
 		t.Fatalf("local runtime must not execute bootstrap loader\n%s", out)
 	}
 	if !strings.Contains(out, `<script src="/contract/htmx.js"`) {
-		t.Fatalf("HTMX must preserve non-deferred direct tag semantics\n%s", out)
+		t.Fatalf("HTMX must execute before synchronous extension scripts\n%s", out)
 	}
 	if !strings.Contains(out, `<script defer src="/contract/alpine.js"`) {
 		t.Fatalf("Alpine must preserve deferred direct tag semantics\n%s", out)
@@ -372,8 +372,8 @@ func customRuntimeManifest() assets.RuntimeManifest {
 
 func TestDependenciesFunctionalOptionsOverrideIndividualSources(t *testing.T) {
 	out := render(t, Dependencies(
-		WithDependencyCDNURL(DependencyHTMX, "https://cdn.example.test/htmx-2.0.8.js"),
-		WithDependencyLocalURL(DependencyHTMX, "/static/vendor/htmx-2.0.8.js"),
+		WithDependencyCDNURL(DependencyHTMX, "https://cdn.example.test/htmx-4.0.0.js"),
+		WithDependencyLocalURL(DependencyHTMX, "/static/vendor/htmx-4.0.0.js"),
 		WithDependencyIntegrity(DependencyHTMX, "sha384-custom"),
 		WithStylesheetURL("/static/goshtoso.css"),
 		WithComboboxURL("/static/combobox.js"),
@@ -389,7 +389,7 @@ func TestDependenciesFunctionalOptionsOverrideIndividualSources(t *testing.T) {
 	}
 	cfg := parseLoaderConfig(t, out)
 	htmx := loaderEntry(t, cfg, "htmx")
-	if htmx.PrimaryURL != "https://cdn.example.test/htmx-2.0.8.js" || htmx.FallbackURL != "/static/vendor/htmx-2.0.8.js" || htmx.Integrity != "sha384-custom" {
+	if htmx.PrimaryURL != "https://cdn.example.test/htmx-4.0.0.js" || htmx.FallbackURL != "/static/vendor/htmx-4.0.0.js" || htmx.Integrity != "sha384-custom" {
 		t.Errorf("HTMX override not applied: %#v", htmx)
 	}
 	if combobox := loaderEntry(t, cfg, "combobox"); combobox.PrimaryURL != "/static/combobox.js" {
@@ -522,7 +522,7 @@ func TestDependenciesPropagatesTemplNonceToLoader(t *testing.T) {
 func TestDependenciesPropagatesTemplNonceToEveryLocalScript(t *testing.T) {
 	ctx := templ.WithNonce(context.Background(), "offline-nonce-456")
 	out := renderWithContext(t, ctx, Dependencies(WithLocalRuntime()))
-	if got, want := strings.Count(out, `nonce="offline-nonce-456"`), 6; got != want {
+	if got, want := strings.Count(out, `nonce="offline-nonce-456"`), 7; got != want {
 		t.Fatalf("WithLocalRuntime() nonce count = %d, want %d\n%s", got, want, out)
 	}
 }

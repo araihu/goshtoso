@@ -400,13 +400,9 @@ func ExpenseList(s expense.State, oob bool) templ.Component {
 	})
 }
 
-// ExpenseAddForm is the "add an expense" form. It posts to /add and swaps the
-// inner HTML of its ancestor #expense-add-region. Preservation is htmx-native via
-// hx-preserve: on a rejected add the handler re-renders this form WITH preserve
-// (so htmx keeps the existing form element — values, caret, and focus intact);
-// on success it re-renders WITHOUT preserve, so the live form is replaced by this
-// blank one. The list/total update out-of-band on the add path.
-func ExpenseAddForm(preserve bool) templ.Component {
+// ExpenseAddForm renders a fresh form after a successful add. Rejected adds
+// return OOB updates only, leaving the user's input and focus intact.
+func ExpenseAddForm() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -427,17 +423,7 @@ func ExpenseAddForm(preserve bool) templ.Component {
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<form id=\"expense-add-form\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if preserve {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, " hx-preserve=\"true\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " class=\"flex flex-col gap-3\" hx-post=\"/api/examples/expense/add\" hx-target=\"#expense-add-region\" hx-swap=\"innerHTML\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<form id=\"expense-add-form\" class=\"flex flex-col gap-3\" hx-post=\"/api/examples/expense/add\" hx-target=\"#expense-add-region\" hx-swap=\"innerHTML\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -445,7 +431,7 @@ func ExpenseAddForm(preserve bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"flex flex-col gap-3 sm:flex-row sm:items-end\"><div class=\"sm:w-36\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"flex flex-col gap-3 sm:flex-row sm:items-end\"><div class=\"sm:w-36\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -462,7 +448,7 @@ func ExpenseAddForm(preserve bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div><div class=\"sm:w-48\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</div><div class=\"sm:w-48\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -470,7 +456,7 @@ func ExpenseAddForm(preserve bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div><div class=\"sm:w-44\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div><div class=\"sm:w-44\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -478,7 +464,7 @@ func ExpenseAddForm(preserve bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div><div class=\"sm:ml-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div><div class=\"sm:ml-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -494,7 +480,7 @@ func ExpenseAddForm(preserve bool) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "Add expense")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "Add expense")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -504,7 +490,7 @@ func ExpenseAddForm(preserve bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div></div></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -535,7 +521,7 @@ func ExpenseApp(s expense.State) templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div id=\"expense-fragment\" class=\"mx-auto max-w-3xl\"><header class=\"mb-6\"><h1 class=\"text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Expense Tracker</h1><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">A small spend log built entirely from Goshtoso components. State lives in a cookie (the server keeps nothing in memory), and every change is an HTMX round-trip that returns rendered HTML, not JSON.</p><ul class=\"mt-3 list-disc pl-5 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><li>Server-side state in a cookie, zero in-memory persistence</li><li>HTMX fragment swaps with an out-of-band live total and toast undo</li><li>Combobox, Modal, Pagination, Toast, Badge, TextInput, Radio, and Button in a real screen</li><li>Search and category filter, paginated results, and a confirm-to-clear dialog</li><li>Money handled as integer cents end to end (no floating point)</li></ul></header><div class=\"rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><div class=\"flex items-center justify-between\"><h2 class=\"text-lg font-semibold text-on-surface dark:text-on-surface-dark\">Your expenses</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div id=\"expense-fragment\" class=\"mx-auto max-w-3xl\"><header class=\"mb-6\"><h1 class=\"text-2xl font-bold text-on-surface dark:text-on-surface-dark\">Expense Tracker</h1><p class=\"mt-2 text-on-surface-muted dark:text-on-surface-dark-muted\">A small spend log built entirely from Goshtoso components. State lives in a cookie (the server keeps nothing in memory), and every change is an HTMX round-trip that returns rendered HTML, not JSON.</p><ul class=\"mt-3 list-disc pl-5 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><li>Server-side state in a cookie, zero in-memory persistence</li><li>HTMX fragment swaps with an out-of-band live total and toast undo</li><li>Combobox, Modal, Pagination, Toast, Badge, TextInput, Radio, and Button in a real screen</li><li>Search and category filter, paginated results, and a confirm-to-clear dialog</li><li>Money handled as integer cents end to end (no floating point)</li></ul></header><div class=\"rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\"><div class=\"flex flex-col gap-4 p-4\"><div class=\"flex items-center justify-between\"><h2 class=\"text-lg font-semibold text-on-surface dark:text-on-surface-dark\">Your expenses</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -543,15 +529,15 @@ func ExpenseApp(s expense.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</div><div id=\"expense-add-region\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div><div id=\"expense-add-region\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = ExpenseAddForm(false).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ExpenseAddForm().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div><form class=\"flex flex-col gap-3 border-t border-outline pt-3 dark:border-outline-dark\" hx-post=\"/api/examples/expense/filter\" hx-target=\"#expense-list\" hx-swap=\"outerHTML\" hx-trigger=\"input changed delay:300ms, change\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div><form class=\"flex flex-col gap-3 border-t border-outline pt-3 dark:border-outline-dark\" hx-post=\"/api/examples/expense/filter\" hx-target=\"#expense-list\" hx-swap=\"outerHTML\" hx-trigger=\"input delay:300ms, change\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -559,7 +545,7 @@ func ExpenseApp(s expense.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<div class=\"flex flex-wrap gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<div class=\"flex flex-wrap gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -591,7 +577,7 @@ func ExpenseApp(s expense.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</div></form><div class=\"flex items-center justify-end\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div></form><div class=\"flex items-center justify-end\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -613,7 +599,7 @@ func ExpenseApp(s expense.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -621,7 +607,7 @@ func ExpenseApp(s expense.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -629,7 +615,7 @@ func ExpenseApp(s expense.State) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

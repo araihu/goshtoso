@@ -140,6 +140,7 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 
 	root := t.TempDir()
 	sources := map[string]string{
+		"assets/js/src/components/requests.js":         `(() => {window.requestsFixture=true})();`,
 		"assets/js/src/combobox.js":                    `(() => { window.comboboxFixture = true })();`,
 		"assets/js/src/components/combobox-client.js":  `(() => { window.comboboxClientFixture = true })();`,
 		"assets/js/src/action-group.js":                `(() => { window.actionGroupFixture = true })();`,
@@ -156,6 +157,7 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 		"assets/js/src/components/dropdown.js":         `(() => { window.dropdownFixture = true })();`,
 		"assets/js/src/components/palette.js":          `(() => { window.paletteFixture = true })();`,
 		"assets/js/src/components/select.js":           `(() => { window.selectFixture = true })();`,
+		"assets/js/src/components/toast.js":            `(() => { window.toastFixture = true })();`,
 		"assets/js/src/components/tabs.js":             `(() => { window.tabsFixture = true })();`,
 		"assets/js/src/components/scroll-region.js":    `(() => { window.scrollRegionFixture = true })();`,
 		"site/assets/js/src/site-bootstrap.js":         `(() => { window.siteBootstrapFixture = true })();`,
@@ -167,6 +169,8 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 		"site/assets/js/src/action-group.js":           `(() => { window.actionGroupDemoFixture = true })();`,
 		"site/assets/js/src/avatar-showcase.js":        `(() => { window.avatarShowcaseFixture = true })();`,
 		"site/assets/js/src/icon-catalog.js":           `(() => { window.iconCatalogFixture = true })();`,
+		"site/assets/js/src/shell-preview.js":          `(() => { window.shellPreviewFixture = true })();`,
+		"site/assets/js/src/content-editor.js":         `(() => { window.contentEditorFixture = true })();`,
 		"site/assets/js/src/log-feed.js":               `(() => { window.logFeedFixture = true })();`,
 		"site/assets/js/src/chat.js":                   `(() => { window.chatFixture = true })();`,
 		"site/assets/js/src/profile-images.js":         `(() => { window.profileImagesFixture = true })();`,

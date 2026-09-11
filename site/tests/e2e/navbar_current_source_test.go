@@ -189,8 +189,8 @@ const focusCurrent = () => requestAnimationFrame(() => {
   row?.querySelector('a[aria-current="page"], a[aria-current="location"]')?.focus();
 });
 const restoreUnrelatedFocus = () => requestAnimationFrame(() => requestAnimationFrame(() => document.getElementById(window.__navbarFocusByPath[historyKey(window.location.href)])?.focus({preventScroll: true})));
-document.body.addEventListener("htmx:afterSettle", (event) => {
-  if (event.detail?.target?.id === "navbar-secondary-row") focusCurrent();
+document.body.addEventListener("htmx:after:settle", (event) => {
+  if ((event.detail?.ctx?.target || event.detail?.task?.target)?.id === "navbar-secondary-row") focusCurrent();
   else restoreUnrelatedFocus();
   const active = document.activeElement;
   if (active?.id) window.__navbarFocusByPath[historyKey(window.location.href)] = active.id;
@@ -204,7 +204,7 @@ const isSecondaryHistoryPath = (path) => {
     return false;
   }
 };
-document.body.addEventListener("htmx:historyRestore", (event) => {
+document.body.addEventListener("htmx:before:history:restore", (event) => {
   const path = event.detail?.path || "";
   window.__navbarHistoryEvents.push({
     path,

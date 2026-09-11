@@ -6,10 +6,10 @@ moves toward a stable release line.
 
 ## Alpha Stability Policy
 
-- Tags use `v0.0.x` while the API is still being refined.
-- Only the latest `v0.0.x` tag is supported during alpha. See
+- Tags use `v0.x.y` while the API is still being refined.
+- Only the latest `v0.x.y` tag is supported during alpha. See
   [SECURITY.md](SECURITY.md) for the security support policy.
-- Breaking component API changes may ship in `v0.0.x`, but they should be
+- Breaking component API changes may ship in `v0.x.y`, but they should be
   intentional, documented in the release notes, and reflected in demos, tests,
   and generated references.
 - Generated files are part of the published module. Consumers should not need to
@@ -17,12 +17,13 @@ moves toward a stable release line.
 - Runtime JavaScript and CSS should stay locally bundled and versioned through
   the asset pipeline, not CDN-dependent at page load time.
 
-## Path to v0.1
+## Path to v1.0
 
-The first `v0.1.x` line should mean the core component APIs are coherent enough
-for early adopters to upgrade with normal release-note guidance.
+The `v0.3.x` line establishes HTMX 4 and Alpine 3.17 as the runtime baseline.
+The first stable `v1.x` line should provide consistent public APIs and predictable
+upgrade guidance.
 
-Before `v0.1.0`, the project should have:
+Before `v1.0.0`, the project should have:
 
 - Stable naming conventions across public component config fields.
 - Current component demos, API tables, and E2E coverage for the supported

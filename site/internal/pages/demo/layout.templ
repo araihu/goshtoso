@@ -562,7 +562,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 	sections := []sidebar.Section{}
 	sectionIndex := map[string]int{}
 	for _, page := range catalog.ComponentPages() {
-		if page.Active == "app-shell" {
+		if page.Active == "app-shell" || page.Active == "icon" {
 			continue
 		}
 		index, ok := sectionIndex[page.Section]
@@ -577,19 +577,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 		)
 	}
 
-	return append(sections, sidebar.Section{
-		Title:       "Examples",
-		Collapsible: true,
-		Items: []sidebar.Item{
-			sItem("ticker", "Live Ticker", "/examples/ticker", activeComponent),
-			sItem("todo", "Todo List", "/examples/todo", activeComponent),
-			sItem("expense", "Expense Tracker", "/examples/expense", activeComponent),
-			sItem("chat", "Chat", "/examples/chat", activeComponent),
-			sItem("logs", "Live Log Feed", "/examples/logs", activeComponent),
-			sItem("profile", "Profile", "/examples/profile", activeComponent),
-			sItem("wizard", "Onboarding Wizard", "/examples/wizard", activeComponent),
-		},
-	})
+	return sections
 }
 
 // componentNavLink represents a prev/next link for component navigation

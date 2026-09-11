@@ -177,7 +177,7 @@ func WithAlpine(alpine *AlpineConfig) Option {
 
 // WithLoadingText sets text shown while this button or an ancestor HTMX form is
 // requesting. When the button owns the HTMX request it is disabled automatically;
-// ancestor forms should set hx-disabled-elt="find button[type='submit']".
+// ancestor forms should set hx-disable="find button[type='submit']".
 func WithLoadingText(text string) Option {
 	return optionFunc(func(cfg *config) {
 		cfg.loadingText = text

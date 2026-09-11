@@ -29,7 +29,7 @@ import "github.com/araihu/goshtoso/components/accordion"  // package accordion
 | `Items` | `[]AccordionItem` | Items are the accordion sections |
 | `AllowMultiple` | `bool` | AllowMultiple allows multiple items to be open simultaneously If false (default), only one item can be open at a time |
 | `Appearance` | `Appearance` | Appearance determines the visual treatment. |
-| `ID` | `string` | ID is the root element ID only; it does not namespace item controls or regions. |
+| `ID` | `string` | ID namespaces the root and implicit item IDs. If empty, a unique render ID is generated. |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the accordion root. |
 
 **AccordionItem**
@@ -753,6 +753,7 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `Action` | `string` | Action is the POST action URL for native form submission |
 | `Method` | `string` | Method is the HTTP method ("post" default, "get", "dialog") |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the form element. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs adds root attributes, including status-specific htmx policies. |
 | `HTMX` | `*HTMXConfig` | HTMX enables HTMX-based submission (alternative to native Action) |
 | `PreventEnterSubmit` | `*bool` | PreventEnterSubmit prevents Enter key from submitting the form. Default true — set to false to allow Enter submission. |
 | `Footer` | `*FooterConfig` | Footer renders responsive Cancel + Submit actions at the bottom. Actions stack at full width on narrow screens and return to an inline row at sm. Nil = no footer (useful for modal forms where the modal provides buttons). |
@@ -837,6 +838,8 @@ import "github.com/araihu/goshtoso/components/form"  // package form
 | `Target` | `string` | hx-target |
 | `Swap` | `string` | hx-swap |
 | `Encoding` | `string` | hx-encoding (e.g. "multipart/form-data") |
+| `Sync` | `string` | Sync controls request admission (hx-sync); use drop for duplicate submits. |
+| `Disable` | `string` | Disable selects controls owned by this request (hx-disable). Exclude :disabled controls so htmx does not re-enable consumer-disabled controls. |
 
 **SectionConfig**
 
@@ -917,7 +920,7 @@ import "github.com/araihu/goshtoso/components/head"  // package head
 
 **Options:** `WithActionGroupURL(url string)` · `WithComboboxURL(url string)` · `WithDependencyCDNURL(dependency Dependency, url string)` · `WithDependencyIntegrity(dependency Dependency, integrity string)` · `WithDependencyLocalURL(dependency Dependency, url string)` · `WithLoaderURL(url string)` · `WithLocalRuntime()` · `WithRuntimeManifest(manifest assets.RuntimeManifest)` · `WithStylesheetOnly()` · `WithStylesheetURL(url string)` · `WithoutDependency(dependency Dependency)` · `WithoutLocalFallback()`
 
-- **Dependency** — DependencyAlpineJS = "alpinejs", DependencyAlpineCollapse = "alpinejs-collapse", DependencyAlpineFocus = "alpinejs-focus", DependencyAlpineMask = "alpinejs-mask", DependencyHTMX = "htmx"
+- **Dependency** — DependencyAlpineJS = "alpinejs", DependencyAlpineCollapse = "alpinejs-collapse", DependencyAlpineFocus = "alpinejs-focus", DependencyAlpineMask = "alpinejs-mask", DependencyHTMX = "htmx", DependencyHTMXAlpineCompat = "htmx-alpine-compat"
 - **OpenGraphType** — OpenGraphTypeWebsite = "website"
 - **TwitterCard** — TwitterCardSummary = "summary", TwitterCardSummaryLargeImage = "summary_large_image"
 
@@ -1959,7 +1962,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | `Placeholder` | `string` | Placeholder for search/select inputs |
 | `Options` | `[]FilterOption` | Options for select-type filters (static) |
 | `OptionsHTMX` | `*FilterOptionsHTMXConfig` | OptionsHTMX loads select options dynamically via HTMX on load |
-| `DefaultValue` | `string` | DefaultValue is the initial value |
+| `DefaultValue` | `string` | DefaultValue is the initial value. Toggles use "true" for checked; "false" and the empty value are unchecked. |
 
 **FilterConfig**
 

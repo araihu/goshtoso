@@ -211,11 +211,16 @@
     }
   }
 
-  function restoreAllClientRoots() {
-    document
-      .querySelectorAll('[data-combobox][data-combobox-mode="client"]')
-      .forEach(restoreSelected);
-  }
+  // Alpine owns first-mount restoration, including roots inserted by htmx.
+  window.goshtosoComboboxClient = function (root) {
+    return {
+      isOpen: false,
+      openedWithKeyboard: false,
+      focusIndex: -1,
+      init: function () { restoreSelected(root); },
+      restoreSelection: function () { restoreSelected(root); },
+    };
+  };
 
   document.addEventListener(
     "click",
@@ -240,10 +245,4 @@
     true,
   );
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", restoreAllClientRoots, { once: true });
-  } else {
-    restoreAllClientRoots();
-  }
-  window.addEventListener("pageshow", restoreAllClientRoots);
 })();

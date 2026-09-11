@@ -178,7 +178,7 @@ func TestDependenciesEmitsAllRuntimeAssets(t *testing.T) {
 
 	local := renderString(t, Dependencies(WithLocalRuntime()))
 	if !strings.Contains(local, `<script src="/assets/js/runtime/htmx.org/`) {
-		t.Errorf("WithLocalRuntime() must load HTMX without defer")
+		t.Errorf("WithLocalRuntime() must load HTMX before synchronous extension scripts")
 	}
 	if !strings.Contains(local, `<script defer src="/assets/js/runtime/alpinejs/`) {
 		t.Errorf("WithLocalRuntime() must defer Alpine core")

@@ -89,8 +89,7 @@ func (h *comboHandler) serveToggle(w http.ResponseWriter, r *http.Request) {
 	state := State{Options: opts, Selected: selected, Search: search, Deps: deps}
 	writeHXTrigger(w, h.cfg.ID, selected)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = body(h.cfg, state).Render(r.Context(), w)
-	_ = triggerLabelOOB(h.cfg, state).Render(r.Context(), w)
+	_ = Combobox(h.cfg, state).Render(r.Context(), w)
 }
 
 func (h *comboHandler) serveClear(w http.ResponseWriter, r *http.Request) {
@@ -103,8 +102,7 @@ func (h *comboHandler) serveClear(w http.ResponseWriter, r *http.Request) {
 	state := State{Options: opts, Selected: nil, Search: search, Deps: deps}
 	writeHXTrigger(w, h.cfg.ID, nil)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = body(h.cfg, state).Render(r.Context(), w)
-	_ = triggerLabelOOB(h.cfg, state).Render(r.Context(), w)
+	_ = Combobox(h.cfg, state).Render(r.Context(), w)
 }
 
 func toggleMembership(selected []string, value string) []string {

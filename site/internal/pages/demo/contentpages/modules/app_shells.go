@@ -1,6 +1,6 @@
 package modulespages
 
-const appShellsVersion = "v0.1.6"
+const appShellsVersion = "v0.1.9-0.20260910224508-5b2222e54637"
 
 func appShellsComponentPageCode() string {
 	return `@componentpage.Page(componentpage.Config{
@@ -69,7 +69,7 @@ func appShellsComponentDocsShellFragmentCode() string {
     page componentdocshell.Page,
 ) {
     view := componentdocshell.Layout(cfg, page)
-    if request.Header.Get("HX-Request") == "true" {
+    if request.Header.Get("HX-Request-Type") == "partial" {
         view = componentdocshell.Fragment(cfg, page)
     }
     if err := view.Render(request.Context(), writer); err != nil {
@@ -122,7 +122,7 @@ func appShellsConsoleShellFragmentCode() string {
     page consoleshell.Page,
 ) {
     view := consoleshell.Layout(cfg, page)
-    if request.Header.Get("HX-Request") == "true" {
+    if request.Header.Get("HX-Request-Type") == "partial" {
         view = consoleshell.Fragment(cfg, page)
     }
     if err := view.Render(request.Context(), writer); err != nil {

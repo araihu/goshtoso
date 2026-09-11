@@ -1,5 +1,22 @@
 // demo-layout.js — Alpine providers plus HTMX navigation and TOC lifecycle.
 (function () {
+  // hx-sse 4.0.0 aborts before cancelling its reader, which rejects the
+  // extension's unobserved cancel() promise. Close the reader first. This uses
+  // the connection exposed by the SSE event and keeps upstream assets intact.
+  document.addEventListener("htmx:sse:after:connection", function (event) {
+    var connection = event.detail.connection;
+    var controller = connection.abortController;
+    var abort = controller.abort.bind(controller);
+    controller.abort = function () {
+      if (connection.reader) {
+        connection.reader.cancel().catch(function (error) {
+          if (error.name !== "AbortError") console.error(error);
+        });
+      }
+      abort();
+    };
+  });
+
   function storageAllowed() {
     return !window.goshtosoStorageConsent || window.goshtosoStorageConsent.allowed();
   }
@@ -45,13 +62,8 @@
         theme: readTheme(),
         sidebarOpen: false,
         showThemeDropdown: false,
-        _stopThemeWatch: null,
         init: function () {
-          this._stopThemeWatch = this.$watch("theme", persistTheme);
-        },
-        destroy: function () {
-          if (typeof this._stopThemeWatch === "function") this._stopThemeWatch();
-          this._stopThemeWatch = null;
+          this.$watch("theme", persistTheme);
         },
         setTheme: function (name) {
           this.theme = name;
@@ -80,19 +92,21 @@
     if (nav) nav.path = window.location.pathname;
   }
 
+  function shellOwnsNavigation() {
+    return !!document.querySelector(".component-doc-shell-root");
+  }
+
   function rememberSidebarScroll() {
+    if (shellOwnsNavigation()) return;
     var sidebar = document.querySelector(".sidebar-scroll");
     if (sidebar) sidebarScrollTop = sidebar.scrollTop;
   }
 
   function handleAfterSwap(event) {
-    var target = event && event.detail && event.detail.target;
-    if (target && window.Alpine && Alpine.initTree) Alpine.initTree(target);
+    if (shellOwnsNavigation()) return;
+    var target = event && event.detail && event.detail.ctx && event.detail.ctx.target;
     if (!target || target.id !== "main-content") return;
 
-    var sidebarContent = document.getElementById("sidebar-nav-content");
-    if (sidebarContent && window.Alpine && Alpine.initTree) Alpine.initTree(sidebarContent);
-    if (sidebarContent && window.htmx && htmx.process) htmx.process(sidebarContent);
     var sidebar = document.querySelector(".sidebar-scroll");
     if (sidebar) sidebar.scrollTop = sidebarScrollTop;
     var pageScroll = document.getElementById("page-scroll");
@@ -139,6 +153,7 @@
   }
 
   function buildTOC() {
+    if (shellOwnsNavigation()) { disconnectTOC(); return; }
     var rail = document.getElementById("toc-rail");
     var nav = document.getElementById("toc-list");
     var pageScroll = document.getElementById("page-scroll");
@@ -164,7 +179,7 @@
         "block border-l border-transparent py-1.5 pl-4 -ml-px text-sm text-on-surface-muted transition-colors hover:text-on-surface-strong dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-strong";
       link.addEventListener("click", function (event) {
         event.preventDefault();
-        heading.scrollIntoView({ behavior: "smooth", block: "start" });
+        heading.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
         history.replaceState(null, "", "#" + heading.id);
         setActive(nav, heading.id);
       });
@@ -196,15 +211,15 @@
   function teardownRuntime(event) {
     if (event && event.persisted) return;
     disconnectTOC();
-    document.removeEventListener("htmx:pushedIntoHistory", updateNavPath);
-    document.removeEventListener("htmx:beforeSwap", rememberSidebarScroll);
-    document.removeEventListener("htmx:afterSwap", handleAfterSwap);
+    document.removeEventListener("htmx:after:history:push", updateNavPath);
+    document.removeEventListener("htmx:before:swap", rememberSidebarScroll);
+    document.removeEventListener("htmx:after:swap", handleAfterSwap);
   }
 
   window.buildTOC = buildTOC;
-  document.addEventListener("htmx:pushedIntoHistory", updateNavPath);
-  document.addEventListener("htmx:beforeSwap", rememberSidebarScroll);
-  document.addEventListener("htmx:afterSwap", handleAfterSwap);
+  document.addEventListener("htmx:after:history:push", updateNavPath);
+  document.addEventListener("htmx:before:swap", rememberSidebarScroll);
+  document.addEventListener("htmx:after:swap", handleAfterSwap);
   window.addEventListener("pagehide", teardownRuntime, { once: true });
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", buildTOC, { once: true });

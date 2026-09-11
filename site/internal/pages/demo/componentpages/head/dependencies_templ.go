@@ -8,9 +8,7 @@ package headpage
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"github.com/araihu/goshtoso/site/internal/pages/demo"
-)
+import "github.com/araihu/goshtoso/site/internal/pages/demo"
 
 // DependenciesDemoPage renders the head.Dependencies component demo.
 func DependenciesDemoPage() templ.Component {
@@ -143,8 +141,8 @@ mux.Handle("GET /assets/", assets.Handler())`,
 
 // Or customize the resilient mode:
 @head.Dependencies(
-    head.WithDependencyCDNURL(head.DependencyHTMX, "https://cdn.example.com/htmx-2.0.8.min.js"),
-    head.WithDependencyLocalURL(head.DependencyHTMX, "/static/htmx-2.0.8.min.js"),
+    head.WithDependencyCDNURL(head.DependencyHTMX, "https://cdn.example.com/htmx-4.0.0.min.js"),
+    head.WithDependencyLocalURL(head.DependencyHTMX, "/static/htmx-4.0.0.min.js"),
     head.WithDependencyIntegrity(head.DependencyHTMX, "sha384-..."),
 )`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -236,7 +234,7 @@ func dependenciesFullPreview() templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("@head.Dependencies()\n\nCDN: pinned Alpine + HTMX\nFallback: /assets/js/runtime/*\nLoader: /assets/js/dependency-loader.js")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/head/dependencies.templ`, Line: 116, Col: 270}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/head/dependencies.templ`, Line: 114, Col: 270}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

@@ -138,9 +138,20 @@ templ bannerVariantsPreview() {
 	</div>
 }
 
-// bannerCookiePreview renders the fixed cookie-consent dialog.
+// Keep this presentation override local to the centered documentation preview.
 templ bannerCookiePreview() {
-	<div id="banner-cookie" class="w-full max-w-2xl mx-auto">
+	<style>
+		#banner-cookie > [role="dialog"] {
+			top: 50%;
+			left: 50%;
+			right: auto;
+			bottom: auto;
+			transform: translate(-50%, -50%);
+			width: calc(100% - 2rem);
+			max-width: 24rem;
+		}
+	</style>
+	<div id="banner-cookie" class="w-full max-w-2xl mx-auto" style="contain: layout paint; min-height: 24rem;">
 		@banner.CookieBanner(banner.CookieBannerConfig{
 			Title:        "Cookie Time!",
 			Description:  "We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.",

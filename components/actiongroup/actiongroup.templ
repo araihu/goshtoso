@@ -13,6 +13,10 @@ templ actionGroupTemplate(cfg Config) {
 	{{ sections, counts := overflowSections(cfg.Secondary) }}
 	<div
 		data-goshtoso-action-group
+		x-action-group
+		if _, initialized := cfg.RootAttrs["x-init"]; !initialized {
+			x-init
+		}
 		data-action-group-overflow-counts={ overflowCountsValue(counts) }
 		class={ cfg.rootClasses() }
 		role="group"

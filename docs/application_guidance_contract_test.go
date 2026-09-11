@@ -392,7 +392,7 @@ func TestRoundTwoConsumerGuidancePublishesRecoveredContracts(t *testing.T) {
 		"Go 1.27.0 or newer",
 		"go mod tidy",
 		"link.AppearanceButton",
-		"htmx:beforeSwap",
+		"htmx:before:swap",
 		"adjacent text",
 	} {
 		if !strings.Contains(skill, want) {

@@ -11,15 +11,8 @@
         connected: false,
         minLevel: "all",
         init: function () {
-          this.handleAfterSwap = this.onSwap.bind(this);
-          this.$root.addEventListener("htmx:afterSwap", this.handleAfterSwap);
           this.$watch("minLevel", this.applyFilter.bind(this));
           this.applyFilter(this.minLevel);
-        },
-        destroy: function () {
-          if (this.handleAfterSwap) {
-            this.$root.removeEventListener("htmx:afterSwap", this.handleAfterSwap);
-          }
         },
         applyFilter: function (value) {
           var wrap = this.$refs.feedWrap;
@@ -28,7 +21,7 @@
           wrap.classList.add("flt-" + value);
         },
         onSwap: function (event) {
-          var swapTarget = event.detail && event.detail.target;
+          var swapTarget = event.detail && event.detail.ctx && event.detail.ctx.target;
           var eventTarget = event.target instanceof Element ? event.target : null;
           var affectedFeed =
             (swapTarget && swapTarget.id === "log-feed") ||
@@ -50,9 +43,10 @@
             this.connected = false;
             return;
           }
+        },
+        connect: function (element) {
           this.$nextTick(function () {
-            var element = document.querySelector("#logs-fragment [sse-connect]");
-            if (element && window.htmx) window.htmx.process(element);
+            if (element.isConnected && window.htmx) window.htmx.process(element);
           });
         },
         clearFeed: function () {

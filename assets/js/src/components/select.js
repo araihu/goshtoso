@@ -1,4 +1,5 @@
 // Select Alpine factories. Data comes from JSON attributes, not executable Go.
+// Options/defaults belong to the mount: replace the root when server config changes.
 (function () {
   if (window.goshtosoSelect && window.goshtosoSelectShell) return;
 
@@ -21,7 +22,6 @@
       openedWithKeyboard: false,
       activeIndex: Number(config.activeIndex) || 0,
       alpineModel: config.alpineModel || "",
-      modelUnwatches: [],
       get selectedOption() {
         if (this.selectedValues.length === 0) return null;
         var value = this.selectedValues[0];
@@ -29,23 +29,20 @@
       },
       init: function () {
         if (!this.alpineModel || !window.Alpine) return;
+        // Alpine owns watcher disposal. The explicit bridge preserves empty-parent
+        // server defaults and sanitizes invalid parent values; native modelable
+        // entanglement has different initialization precedence.
         var state = this;
-        this.modelUnwatches.push(this.$watch("selectedOption", function (option) {
+        this.$watch("selectedOption", function (option) {
           window.Alpine.evaluate(root, state.alpineModel + " = value", { scope: { value: option ? option.value : "" } });
-        }));
-        this.modelUnwatches.push(this.$watch(this.alpineModel, function (value) {
+        });
+        this.$watch(this.alpineModel, function (value) {
           var current = state.selectedValues.length ? state.selectedValues[0] : "";
           if (value === current) return;
           state.syncFromInput(value || "");
-        }));
+        });
         var initial = window.Alpine.evaluate(root, this.alpineModel);
         if (initial) this.syncFromInput(initial);
-      },
-      destroy: function () {
-        this.modelUnwatches.forEach(function (unwatch) {
-          if (typeof unwatch === "function") unwatch();
-        });
-        this.modelUnwatches = [];
       },
       selectOption: function (option) {
         this.selectedValues = [option.value];

@@ -1,8 +1,6 @@
 package headpage
 
-import (
-	"github.com/araihu/goshtoso/site/internal/pages/demo"
-)
+import "github.com/araihu/goshtoso/site/internal/pages/demo"
 
 // DependenciesDemoPage renders the head.Dependencies component demo.
 templ DependenciesDemoPage() {
@@ -75,11 +73,11 @@ mux.Handle("GET /assets/", assets.Handler())`,
 
 // Or customize the resilient mode:
 @head.Dependencies(
-    head.WithDependencyCDNURL(head.DependencyHTMX, "https://cdn.example.com/htmx-2.0.8.min.js"),
-    head.WithDependencyLocalURL(head.DependencyHTMX, "/static/htmx-2.0.8.min.js"),
+    head.WithDependencyCDNURL(head.DependencyHTMX, "https://cdn.example.com/htmx-4.0.0.min.js"),
+    head.WithDependencyLocalURL(head.DependencyHTMX, "/static/htmx-4.0.0.min.js"),
     head.WithDependencyIntegrity(head.DependencyHTMX, "sha384-..."),
 )`,
-			)
+		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Typed manifest ownership",

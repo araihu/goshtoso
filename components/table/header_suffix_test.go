@@ -12,7 +12,7 @@ func TestHeaderSuffixSurvivesHeaderFragments(t *testing.T) {
 			html := renderT(t, component)
 			mustContainAll(t, html, `scope="col"`, `Pinned`, `aria-label="Pinning help"`)
 			if sortable {
-				mustContainAll(t, html, `x-on:click.stop`, `hx-disinherit="*"`)
+				mustContainAll(t, html, `x-on:click.stop`)
 			}
 		}
 	}

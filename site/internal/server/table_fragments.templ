@@ -1,17 +1,16 @@
 package server
 
 templ tableHeadOOBFragment(id string, sortBy string, sortDir string, content templ.Component) {
-	<template>
+	<hx-partial hx-target={ "#" + id } hx-swap="outerHTML">
 		<thead
 			id={ id }
-			hx-swap-oob="outerHTML"
 			data-table-sort-by={ sortBy }
 			data-table-sort-dir={ sortDir }
 			class={ tableHeadClasses }
 		>
 			@content
 		</thead>
-	</template>
+	</hx-partial>
 }
 
 templ tablePaginationOOBFragment(id string, page int, totalPages int, navigation templ.Component) {

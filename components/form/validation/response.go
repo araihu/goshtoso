@@ -21,12 +21,12 @@ func RenderFieldResponse(ctx context.Context, w http.ResponseWriter, result Resu
 
 	// Render dependent fields with OOB swap
 	for _, dep := range result.Dependents {
-		dep.FieldGroup.OOB = true
-		if err := form.FieldGroup(*dep.FieldGroup).Render(ctx, w); err != nil {
-			dep.FieldGroup.OOB = false
+		// Routing belongs to this response, not the reusable field definition.
+		field := *dep.FieldGroup
+		field.OOB = true
+		if err := form.FieldGroup(field).Render(ctx, w); err != nil {
 			return err
 		}
-		dep.FieldGroup.OOB = false
 	}
 
 	return nil

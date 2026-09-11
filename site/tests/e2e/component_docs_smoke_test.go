@@ -137,8 +137,8 @@ func installComponentDocsHTMXProof(t *testing.T, page playwright.Page) string {
 		`sentinel => {
 			const proof = { sentinel, mainContentSwaps: 0 };
 			window.__componentDocsHTMXProof = proof;
-			document.addEventListener("htmx:afterSwap", event => {
-				if (event.detail?.target?.id === "main-content") {
+			document.addEventListener("htmx:after:swap", event => {
+				if ((event.detail?.ctx?.target || event.detail?.task?.target)?.id === "main-content") {
 					proof.mainContentSwaps += 1;
 				}
 			});
@@ -174,7 +174,7 @@ func requireComponentDocsHTMXProof(
 		t,
 		actualSwapCount,
 		previousMainContentSwapCount,
-		"component docs navigation did not increment the #main-content htmx:afterSwap count for this click",
+		"component docs navigation did not increment the #main-content htmx:after:swap count for this click",
 	)
 	return actualSwapCount
 }

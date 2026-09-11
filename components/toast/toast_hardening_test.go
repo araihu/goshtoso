@@ -51,21 +51,21 @@ func TestToast_RenderedDismissExpressionsUseGeneratedSafeID(t *testing.T) {
 
 	assert.Contains(t, browserHTML, `id="server-toast-1"`)
 	assert.Contains(t, browserHTML, `data-toast-id="server-toast-1"`)
-	assert.Contains(t, browserHTML, `x-on:toast-dismiss.window="if ($event.detail.id === 'server-toast-1') { $el.remove() }"`)
-	assert.Contains(t, browserHTML, `x-on:click="isVisible = false; $dispatch('toast-dismiss', { id: 'server-toast-1' })"`)
+	assert.Contains(t, browserHTML, `x-on:toast-dismiss.window="if ($event.detail.id === 'server-toast-1') dismiss()"`)
+	assert.Contains(t, browserHTML, `x-on:click="dismiss()"`)
 }
 
 func TestSingleToastAlpineData_UsesNumericDuration(t *testing.T) {
 	data := singleToastAlpineData(1250, false)
 
-	assert.Contains(t, data, "}, 1250);")
+	assert.Contains(t, data, "goshtosoToast($el, 1250, false)")
 	assert.NotContains(t, data, "}, '1250');")
 }
 
 func TestSingleToastAlpineData_PersistentHasNoAutoDismiss(t *testing.T) {
 	data := singleToastAlpineData(1250, true)
 
-	assert.Contains(t, data, "isVisible: true")
+	assert.Contains(t, data, "goshtosoToast($el, 1250, true)")
 	assert.NotContains(t, data, "setTimeout")
 	assert.NotContains(t, data, "toast-dismiss")
 }

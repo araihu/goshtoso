@@ -59,7 +59,7 @@ func TestCodeBlockStandaloneRuntimeWithoutAlpineOrHTMX(t *testing.T) {
 		const fragment = document.createElement("div");
 		fragment.innerHTML = '<button hidden data-code-block-copy data-code-block-target="late"><span data-code-block-copy-status>Copy</span></button><div id="late">late fragment</div>';
 		document.querySelector("#mount").append(fragment);
-		fragment.dispatchEvent(new CustomEvent("htmx:afterSwap", { bubbles: true }));
+		fragment.dispatchEvent(new CustomEvent("htmx:after:process", { bubbles: true }));
 	}`, nil)
 	require.NoError(t, err)
 	lateHidden, err := page.Locator("#mount > div:last-child [data-code-block-copy]").IsHidden()

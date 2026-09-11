@@ -85,6 +85,8 @@
     root.style.flexWrap = "nowrap";
 
     var queued = false;
+    var frame = 0;
+    var disposed = false;
     var layoutRevision = 0;
     function commitLayout(collapsed) {
       var state = layoutState(collapsed);
@@ -95,7 +97,8 @@
 
     function measure() {
       queued = false;
-      if (!root.isConnected || root.getBoundingClientRect().width <= 0) return;
+      frame = 0;
+      if (disposed || !root.isConnected || root.getBoundingClientRect().width <= 0) return;
 
       var activeInOverflow = overflow.contains(document.activeElement);
       secondary.forEach(function (wrapper) {
@@ -156,20 +159,42 @@
     }
 
     function schedule() {
-      if (queued) return;
+      if (disposed || queued) return;
       queued = true;
       root.dataset.actionGroupLayoutState = "pending";
-      window.requestAnimationFrame(measure);
+      frame = window.requestAnimationFrame(measure);
     }
 
     var observer = new ResizeObserver(schedule);
     observer.observe(root);
     root._goshtosoActionGroupObserver = observer;
+    root._goshtosoActionGroupCleanup = function () {
+      disposed = true;
+      observer.disconnect();
+      if (frame) window.cancelAnimationFrame(frame);
+      delete root.dataset.actionGroupInitialized;
+      delete root._goshtosoActionGroupObserver;
+      delete root._goshtosoActionGroupCleanup;
+    };
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(schedule);
     }
     schedule();
   }
+
+  function registerLifecycle() {
+    window.Alpine.directive("action-group", function (root, binding, utilities) {
+      initialize(root);
+      utilities.cleanup(function () {
+        if (root._goshtosoActionGroupCleanup) root._goshtosoActionGroupCleanup();
+      });
+    });
+  }
+  if (window.Alpine) registerLifecycle();
+  else document.addEventListener("alpine:init", registerLifecycle, { once: true });
+  document.addEventListener("htmx:before:cleanup", function (event) {
+    if (event.target._goshtosoActionGroupCleanup) event.target._goshtosoActionGroupCleanup();
+  });
 
   function initializeWithin(node) {
     if (!node || node.nodeType !== Node.ELEMENT_NODE) return;
@@ -189,7 +214,7 @@
     initializeDocument();
   }
 
-  document.addEventListener("htmx:afterSwap", function (event) {
+  document.addEventListener("htmx:after:process", function (event) {
     initializeWithin(event.target);
   });
 })();

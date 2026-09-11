@@ -1,4 +1,6 @@
 // Search factories. Per-instance values come from inert data attributes.
+// Replace this root when changing source/configuration so its cached results
+// and pending request are disposed alongside the old search session.
 (function () {
   "use strict";
 

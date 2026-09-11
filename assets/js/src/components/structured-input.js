@@ -1,4 +1,6 @@
 // structured-input.js — Alpine factory for repeatable structured rows.
+// Columns/defaults and indexed drafts share a mount; server schema/reset changes
+// replace this root rather than morphing new columns onto old row arrays.
 (function () {
   if (window.structuredInput) return;
 

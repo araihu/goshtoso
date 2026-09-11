@@ -159,7 +159,7 @@ func (a *application) operationsList(w http.ResponseWriter, r *http.Request) {
 		Table:      operationsTable(a.operations, prefs),
 		Appearance: prefs,
 	}
-	if r.Header.Get("HX-Request") == "true" {
+	if r.Header.Get("HX-Request-Type") == "partial" {
 		render(w, r, http.StatusOK, operationsStatePanel(view))
 		return
 	}

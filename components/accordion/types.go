@@ -23,7 +23,7 @@ type AccordionConfig struct {
 	AllowMultiple bool
 	// Appearance determines the visual treatment.
 	Appearance Appearance
-	// ID is the root element ID only; it does not namespace item controls or regions.
+	// ID namespaces the root and implicit item IDs. If empty, a unique render ID is generated.
 	ID string
 	// RootClass allows additional CSS classes on the accordion root.
 	RootClass string

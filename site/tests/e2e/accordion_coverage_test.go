@@ -99,7 +99,7 @@ func TestAccordionCoverageDemo(t *testing.T) {
 
 	for _, msg := range consoleErrors {
 		require.False(t, strings.Contains(msg, "Alpine Expression Error"), "unexpected console error: %s", msg)
-		require.False(t, strings.Contains(msg, "htmx:swapError"), "unexpected console error: %s", msg)
+		require.False(t, strings.Contains(msg, "htmx:"), "unexpected console error: %s", msg)
 	}
 }
 

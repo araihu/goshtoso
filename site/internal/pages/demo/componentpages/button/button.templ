@@ -100,7 +100,7 @@ templ buttonDemoContent() {
 			`<form
     hx-post="/save"
     hx-target="#save-result"
-    hx-disabled-elt="find button[type='submit']">
+    hx-disable="find button[type='submit']">
     @button.Button(
         button.WithType("submit"),
         button.WithLoadingText("Saving…"),
@@ -123,7 +123,7 @@ templ buttonFormLoadingPreview() {
 		hx-post="/api/hello?delay_ms=400"
 		hx-target="#button-form-loading-result"
 		hx-swap="innerHTML"
-		hx-disabled-elt="find button[type='submit']"
+		hx-disable="find button[type='submit']"
 	>
 		@button.Button(
 			button.WithType("submit"),

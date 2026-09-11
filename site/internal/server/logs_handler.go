@@ -83,7 +83,7 @@ func streamLogs(ctx context.Context, w http.ResponseWriter, flusher http.Flusher
 // output is multi-line, but a `data:` field is single-line, so each output
 // line becomes its own `data:` field; the htmx SSE ext rejoins them with "\n".
 func writeSSEMessage(w http.ResponseWriter, html string) error {
-	if _, err := fmt.Fprint(w, "event: message\n"); err != nil {
+	if _, err := fmt.Fprint(w, ": log message\n"); err != nil {
 		return err
 	}
 	for line := range strings.SplitSeq(strings.TrimRight(html, "\n"), "\n") {

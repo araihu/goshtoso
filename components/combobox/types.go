@@ -145,9 +145,9 @@ func (c Config) depsSelector() string {
 }
 
 // HXIncludeSelector returns the full hx-include selector for toggle/search requests:
-// own hidden inputs plus all dependency hidden inputs.
+// own named controls (selection and query) plus dependency inputs.
 func (c Config) hxIncludeSelector() string {
-	base := "closest [data-combobox] input[type=hidden]"
+	base := "closest [data-combobox]"
 	if deps := c.depsSelector(); deps != "" {
 		return base + "," + deps
 	}

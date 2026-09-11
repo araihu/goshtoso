@@ -31,7 +31,7 @@ func TestTicker_ProviderBootstrapsFirstPaint(t *testing.T) {
 	_, err = page.WaitForFunction(`() => {
 		const root = document.querySelector('#ticker-fragment');
 		return typeof Alpine !== 'undefined' && Alpine.__tickerPaneRegistered === true &&
-			root && root._x_dataStack && typeof Alpine.$data(root).connect === 'function';
+			root && root._x_dataStack && Alpine.$data(root).connected === true;
 	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
 	require.NoError(t, err, "external tickerPane provider should initialize on first paint")
 }

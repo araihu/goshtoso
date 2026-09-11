@@ -31,7 +31,7 @@ func (s *Server) renderProfilePage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := profilepage.ProfileApp(st)
 	meta := demoregistry.MetaForKey("examples/profile")
-	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
+	if r.Header.Get("HX-Request-Type") == "partial" {
 		_ = demo.ComponentDocsFragment(meta, "profile", content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}

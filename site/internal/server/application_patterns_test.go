@@ -22,7 +22,7 @@ func TestApplicationPatternsRouteRendersDirectlyAndAsFragment(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			req := httptest.NewRequest(http.MethodGet, "/docs/application-patterns", nil)
 			if tc.hxRequest {
-				req.Header.Set("HX-Request", "true")
+				req.Header.Set("HX-Request-Type", "partial")
 			}
 			rec := httptest.NewRecorder()
 

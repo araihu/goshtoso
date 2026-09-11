@@ -543,7 +543,7 @@ func TestRenderInfiniteScrollSentinel(t *testing.T) {
 	mustContainAll(t, body,
 		`id="table-sentinel"`,
 		`data-table-scroll-sentinel`,
-		"data-hx-get=",
+		"hx-get=",
 		"variant=infinite",
 	)
 	mustNotContain(t, body, "<script", "IntersectionObserver")
@@ -662,7 +662,7 @@ func TestRenderFilterBarVariants(t *testing.T) {
 	mustContainAll(t, html,
 		`data-table-filters`,
 		`x-data="goshtosoTableFilters($el)"`,
-		`data-table-filter-endpoint="/api/components/table/rows?table_id=filtered"`,
+		`hx-get="/api/components/table/rows?_filter=1&amp;table_id=filtered"`,
 		`id="filtered-filters"`,      // filter bar id
 		`@click="filtersExpanded`,    // collapsible toggle
 		`type="search"`,              // search input

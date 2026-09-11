@@ -62,7 +62,7 @@ func (s *Server) renderTodoPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	content := todopage.TodoApp(st)
 	meta := demoregistry.MetaForKey("examples/todo")
-	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true" {
+	if r.Header.Get("HX-Request-Type") == "partial" {
 		_ = demo.ComponentDocsFragment(meta, "todo", content, storageAllowed(r)).Render(r.Context(), w)
 		return
 	}

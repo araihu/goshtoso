@@ -38,16 +38,14 @@ func TestFormValidation_MergedIntoFormPage(t *testing.T) {
 	assert.Equal(t, 0, count, "Form Validation should not be a separate sidebar component")
 }
 
-// fillAndTriggerValidation sets a field value and triggers HTMX field-level
-// validation via htmx.ajax(). Uses htmx.ajax() directly because the native
-// change event -> hx-trigger pipeline produces empty XHR responses in
-// headless Chromium (the outerHTML swap receives 0 bytes despite a 200 status).
+// fillAndTriggerValidation submits a field-level request and awaits the full
+// htmx request/swap promise before assertions. Native change is covered separately.
 func fillAndTriggerValidation(t *testing.T, page playwright.Page, fieldName, value string) {
 	t.Helper()
 
 	// Collect all current form values and override the target field
 	fieldID := "goshtoso-field-" + fieldName
-	js := fmt.Sprintf(`() => new Promise(resolve => {
+	js := fmt.Sprintf(`async () => {
 		const form = document.querySelector('#demo-validation');
 		const fd = new FormData(form);
 		const vals = {};
@@ -60,22 +58,15 @@ func fillAndTriggerValidation(t *testing.T, page playwright.Page, fieldName, val
 		if (input) input.value = %q;
 
 		const targetID = %q;
-		const onAfterSettle = event => {
-			if (event.detail?.target?.id === targetID) {
-				document.body.removeEventListener('htmx:afterSettle', onAfterSettle);
-				resolve();
-			}
-		};
-		document.body.addEventListener('htmx:afterSettle', onAfterSettle);
 		const el = document.getElementById(targetID);
-		htmx.ajax('POST', '/api/components/form-validation', {
+		Object.assign(vals, JSON.parse(el.getAttribute('hx-vals')));
+		await htmx.ajax('POST', '/api/components/form-validation', {
 			source: el,
 			target: el,
 			swap: 'outerHTML',
-			values: vals,
-			headers: {'HX-Trigger-Name': %q}
+			values: vals
 		});
-	})`, fieldName, value, fieldName, value, fieldID, fieldName)
+	}`, fieldName, value, fieldName, value, fieldID)
 
 	_, err := page.Evaluate(js)
 	require.NoError(t, err)
@@ -306,4 +297,16 @@ func TestFormValidation_ErrorClearing(t *testing.T) {
 	count, err := nameErrors.Count()
 	require.NoError(t, err)
 	assert.Equal(t, 0, count, "name field should have no error messages after correction")
+}
+
+func TestFormValidation_NativeChangeCarriesFieldIdentity(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	navigateToFormValidation(t, page)
+	input := page.Locator("#demo-validation input[name='name']")
+	require.NoError(t, input.Fill("ab"))
+	require.NoError(t, input.Press("Tab"))
+	require.NoError(t, page.Locator("#goshtoso-field-name [id$='-errors'] .text-danger-text").First().WaitFor())
+	text, err := page.Locator("#goshtoso-field-name").InnerText()
+	require.NoError(t, err)
+	require.Contains(t, strings.ToLower(text), "at least 3 characters")
 }

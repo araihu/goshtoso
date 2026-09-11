@@ -535,41 +535,24 @@ func TestTable_Pagination(t *testing.T) {
 	})
 
 	t.Run("Prev_Button_Disabled_On_First_Page", func(t *testing.T) {
-		paginationNav := page.Locator("#paginated-table-pagination")
-		prevBtn := paginationNav.Locator("button:has-text('Prev'), button:has-text('Previous'), button:has-text('←')")
-		count, err := prevBtn.Count()
+		previous := page.Locator("#paginated-table-pagination span[aria-disabled='true']:has-text('Previous')")
+		count, err := previous.Count()
 		require.NoError(t, err)
-
-		if count > 0 {
-			disabled, _ := prevBtn.First().GetAttribute("disabled")
-			assert.NotNil(t, disabled, "Prev button should be disabled on first page")
-			t.Log("✓ Prev button is disabled on first page")
-		} else {
-			t.Log("No prev button found — pagination may use different controls")
-		}
+		require.Equal(t, 1, count, "previous page must be disabled on page 1")
 	})
 
 	t.Run("Clicking_Next_Page_Fetches_Data", func(t *testing.T) {
-		paginationNav := page.Locator("#paginated-table-pagination")
-		nextBtn := paginationNav.Locator("button:has-text('Next'), button:has-text('2'), button:has-text('→')")
-		count, err := nextBtn.Count()
+		next := page.Locator("#paginated-table-pagination a[aria-label='next page']")
+		require.NoError(t, next.Click())
+		_, err := page.WaitForFunction(`() => {
+const pagination = document.getElementById('paginated-table-pagination');
+return pagination.textContent.includes('Page 2 of 4') &&
+ pagination.querySelector('a[aria-current="page"]').getAttribute('aria-label') === 'page 2';
+}`, nil)
+		require.NoError(t, err, "next page must fetch and select page 2")
+		rows, err := page.Locator("#paginated-table tbody tr").Count()
 		require.NoError(t, err)
-
-		if count == 0 {
-			t.Skip("No next/page-2 button found")
-		}
-
-		err = nextBtn.First().Click()
-		require.NoError(t, err)
-		time.Sleep(50 * time.Millisecond)
-
-		paginatedTable := page.Locator("#paginated-table")
-		rows := paginatedTable.Locator("tbody tr")
-		count, err = rows.Count()
-		require.NoError(t, err)
-		assert.Greater(t, count, 0, "should have rows after clicking page 2")
-
-		t.Log("✓ Clicking page button fetches new data")
+		require.Greater(t, rows, 0, "page 2 must contain rows")
 	})
 }
 
@@ -595,15 +578,14 @@ func TestTable_InfiniteScroll(t *testing.T) {
 	t.Run("Infinite_Scroll_Has_Sentinel", func(t *testing.T) {
 		infiniteTable := page.Locator("#infinite-table")
 
-		// Should have a script-driven sentinel row for the next page.
-		sentinel := infiniteTable.Locator("tr#infinite-table-sentinel[data-hx-get]")
+		// Should have a native intersection sentinel row for the next page.
+		sentinel := infiniteTable.Locator("tr#infinite-table-sentinel[hx-get]")
 		count, err := sentinel.Count()
 		require.NoError(t, err)
 		require.Equal(t, 1, count, "should have one scroll sentinel row")
 
-		// Sentinel should point at the next page. The URL is stored in data-hx-get
-		// because the component drives htmx.ajax from IntersectionObserver.
-		hxGet, err := sentinel.GetAttribute("data-hx-get")
+		// Sentinel should point at the next page through native hx-get.
+		hxGet, err := sentinel.GetAttribute("hx-get")
 		require.NoError(t, err)
 		assert.Contains(t, hxGet, "page=2", "sentinel should request page 2")
 

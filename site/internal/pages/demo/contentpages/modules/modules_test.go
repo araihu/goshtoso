@@ -53,7 +53,7 @@ func TestAppShellsModuleReferencesCurrentPackagesAndCompositionRecipe(t *testing
 	html := buffer.String()
 	for _, want := range []string{
 		`Goshtoso App Shells`,
-		`v0.1.6`,
+		`v0.1.9-0.20260910224508-5b2222e54637`,
 		`Application frames and shells`,
 		`Build the frame once`,
 		`Frames`,
@@ -81,9 +81,9 @@ func TestAppShellsPackagePagesRenderCurrentAPISurface(t *testing.T) {
 		want []string
 	}{
 		{name: "frame", page: appShellsComponentPageContent, want: []string{"Component Page", "componentpage", "data-component-page"}},
-		{name: "component docs shell", page: appShellsComponentDocsShellContent, want: []string{"Component Docs Shell", "componentdocshell", "Live proof"}},
+		{name: "component docs shell", page: appShellsComponentDocsShellContent, want: []string{"Component Docs Shell", "componentdocshell", "componentdocshell live example"}},
 		{name: "console shell", page: appShellsConsoleShellContent, want: []string{"Console Shell", "consoleshell", "NavigationOOB"}},
-		{name: "landing shell", page: appShellsLandingShellContent, want: []string{"Landing Shell", "landingshell", "Hero slot"}},
+		{name: "landing shell", page: appShellsLandingShellContent, want: []string{"Landing Shell", "landingshell", "landingshell live example"}},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -108,7 +108,7 @@ func TestAppShellsPackagePagesDocumentRequiredSetup(t *testing.T) {
 			name: "component page",
 			page: appShellsComponentPageContent,
 			want: []string{
-				`go get github.com/araihu/goshtoso-app-shells/componentpage@v0.1.6`,
+				`go get github.com/araihu/goshtoso-app-shells/componentpage@v0.1.9-0.20260910224508-5b2222e54637`,
 				`document shell owns runtime and asset mounting`,
 			},
 		},
@@ -116,7 +116,7 @@ func TestAppShellsPackagePagesDocumentRequiredSetup(t *testing.T) {
 			name: "component docs shell",
 			page: appShellsComponentDocsShellContent,
 			want: []string{
-				`go get github.com/araihu/goshtoso-app-shells/componentdocshell@v0.1.6`,
+				`go get github.com/araihu/goshtoso-app-shells/componentdocshell@v0.1.9-0.20260910224508-5b2222e54637`,
 				`github.com/araihu/goshtoso-app-shells/componentdocshell/assets`,
 				`mux.Handle("GET /componentdocshell/assets/", shellassets.Handler())`,
 			},
@@ -125,7 +125,7 @@ func TestAppShellsPackagePagesDocumentRequiredSetup(t *testing.T) {
 			name: "console shell",
 			page: appShellsConsoleShellContent,
 			want: []string{
-				`go get github.com/araihu/goshtoso-app-shells/consoleshell@v0.1.6`,
+				`go get github.com/araihu/goshtoso-app-shells/consoleshell@v0.1.9-0.20260910224508-5b2222e54637`,
 				`github.com/araihu/goshtoso-app-shells/consoleshell/assets`,
 				`mux.Handle("GET /consoleshell/assets/", shellassets.Handler())`,
 			},
@@ -134,7 +134,7 @@ func TestAppShellsPackagePagesDocumentRequiredSetup(t *testing.T) {
 			name: "landing shell",
 			page: appShellsLandingShellContent,
 			want: []string{
-				`go get github.com/araihu/goshtoso-app-shells/landingshell@v0.1.6`,
+				`go get github.com/araihu/goshtoso-app-shells/landingshell@v0.1.9-0.20260910224508-5b2222e54637`,
 				`github.com/araihu/goshtoso-app-shells/landingshell/assets`,
 				`mux.Handle("GET /landingshell/assets/", shellassets.Handler())`,
 			},
@@ -166,7 +166,7 @@ func TestAppShellHTMXPagesDocumentFragmentResponseContract(t *testing.T) {
 			page: appShellsComponentDocsShellContent,
 			want: []string{
 				`Full documents and HTMX fragments`,
-				`request.Header.Get("HX-Request") == "true"`,
+				`request.Header.Get("HX-Request-Type") == "partial"`,
 				`componentdocshell.Fragment(cfg, page)`,
 				`main content, scoped sidebar, and family navigation`,
 			},
@@ -176,7 +176,7 @@ func TestAppShellHTMXPagesDocumentFragmentResponseContract(t *testing.T) {
 			page: appShellsConsoleShellContent,
 			want: []string{
 				`Full documents and HTMX fragments`,
-				`request.Header.Get("HX-Request") == "true"`,
+				`request.Header.Get("HX-Request-Type") == "partial"`,
 				`consoleshell.Fragment(cfg, page)`,
 				`NavigationOOB`,
 			},
@@ -212,7 +212,7 @@ func TestAppShellsOverviewExplainsFragmentAvailability(t *testing.T) {
 	require.NoError(t, appShellsModuleContent().Render(context.Background(), &buffer))
 	html := buffer.String()
 	require.Contains(t, html, `Fragment support`)
-	require.Contains(t, html, `Only the documentation and console shells expose HTMX fragment responses in v0.1.6.`)
+	require.Contains(t, html, `Only the documentation and console shells expose HTMX fragment responses in v0.1.9-0.20260910224508-5b2222e54637.`)
 	require.Contains(t, html, `Component Page is embedded inside a document; Landing Shell renders complete public pages.`)
 }
 

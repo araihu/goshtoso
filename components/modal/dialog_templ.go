@@ -32,7 +32,7 @@ func dialogTemplate(cfg DialogConfig) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{"fixed inset-0 m-auto p-0 open:flex open:flex-col overflow-hidden border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark backdrop:bg-backdrop/50", templ.KV("h-dvh max-h-dvh w-screen max-w-none rounded-none sm:h-auto sm:max-h-[90dvh] sm:w-[48rem] sm:max-w-[calc(100vw-2rem)] sm:rounded-radius", cfg.FullscreenMobile && !cfg.Compact), templ.KV("max-h-[90dvh] w-[48rem] max-w-[calc(100vw-2rem)] rounded-radius", !cfg.FullscreenMobile && !cfg.Compact), templ.KV("mt-[5dvh] max-h-[85dvh] w-[40rem] max-w-[calc(100vw-2rem)] rounded-radius", cfg.Compact)}
+		var templ_7745c5c3_Var2 = []any{"fixed inset-0 m-auto p-0 open:flex open:flex-col overflow-hidden border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark backdrop:bg-backdrop/50", templ.KV("h-dvh max-h-dvh w-screen max-w-none rounded-none sm:h-fit sm:max-h-[90dvh] sm:w-[48rem] sm:max-w-[calc(100vw-2rem)] sm:rounded-radius", cfg.FullscreenMobile && !cfg.Compact), templ.KV("max-h-[90dvh] w-[48rem] max-w-[calc(100vw-2rem)] rounded-radius", !cfg.FullscreenMobile && !cfg.Compact), templ.KV("mt-[5dvh] max-h-[85dvh] w-[40rem] max-w-[calc(100vw-2rem)] rounded-radius", cfg.Compact)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

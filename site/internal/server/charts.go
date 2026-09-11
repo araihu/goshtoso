@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/a-h/templ"
@@ -108,13 +109,13 @@ func chartsPage(path, active, title, description string, render func(bool) templ
 }
 
 func chartsFragmentRequest(r *http.Request) bool {
-	return r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Boosted") != "true"
+	return r.Header.Get("HX-Request-Type") == "partial"
 }
 
 func (s *Server) handleChartsPage(w http.ResponseWriter, r *http.Request, route chartsPageRoute) {
 	if route.Active == "charts-chart-controls" && chartsFragmentRequest(r) {
 		examples := charts.ParseChartControlExamples(r.URL.Query())
-		if example, ok := charts.ChartControlExampleForTarget(examples, r.Header.Get("HX-Target")); ok {
+		if example, ok := charts.ChartControlExampleForTarget(examples, htmxTargetID(r.Header.Get("HX-Target"))); ok {
 			renderChartsComponent(w, r, example)
 			return
 		}
@@ -214,4 +215,12 @@ func availabilitySnapshot(now time.Time, step int) interactive.CartesianSnapshot
 		series[state].Values[index] = 1
 	}
 	return interactive.CartesianSnapshot{Categories: categories, Series: series}
+}
+
+// htmxTargetID extracts the element ID from an htmx 4 tag#id target.
+func htmxTargetID(target string) string {
+	if _, id, ok := strings.Cut(target, "#"); ok {
+		return id
+	}
+	return ""
 }

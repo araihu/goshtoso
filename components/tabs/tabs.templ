@@ -109,20 +109,22 @@ templ staticTabPanel(panelID string, tab Tab) {
 }
 
 // htmxTabPanel renders a tab panel that lazy-loads content via HTMX.
-// The panel fires hx-get once when it becomes visible (x-show + x-intersect).
+// The selected panel owns one request; a failed request retries on reselection.
 templ htmxTabPanel(panelID string, tab Tab) {
 	{{ swap := tab.HTMX.Swap }}
 	{{ if swap == "" { swap = "innerHTML" } }}
-	{{ loadExpr := fmt.Sprintf("if (selectedTab === '%s' && !$el.dataset.loaded && window.htmx) { $el.dataset.loaded = 'true'; htmx.ajax('GET', '%s', {target: '#%s', swap: '%s'}); }", jsEscapeSingle(tab.ID), jsEscapeSingle(tab.HTMX.Get), jsEscapeSingle(panelID), jsEscapeSingle(swap)) }}
+
 	<div
 		x-cloak
 		x-show={ fmt.Sprintf("selectedTab === '%s'", jsEscapeSingle(tab.ID)) }
-		x-effect={ loadExpr }
+		x-effect={ fmt.Sprintf("if (selectedTab === '%s') loadPanel($el)", jsEscapeSingle(tab.ID)) }
+		x-on:htmx:finally:request="finishPanel($el, $event)"
 		id={ panelID }
 		role="tabpanel"
 		aria-label={ tab.Label }
 		hx-get={ tab.HTMX.Get }
-		hx-trigger="intersect once"
+		hx-trigger="goshtoso-tab-load"
+		hx-target="this"
 		hx-swap={ swap }
 		if tab.HTMX.Indicator != "" {
 			hx-indicator={ tab.HTMX.Indicator }

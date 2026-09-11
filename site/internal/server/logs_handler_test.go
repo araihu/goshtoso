@@ -14,7 +14,7 @@ func TestStreamLogsFraming(t *testing.T) {
 	streamLogs(context.Background(), rec, rec, time.Millisecond, 3)
 
 	body := rec.Body.String()
-	if got := strings.Count(body, "event: message"); got != 3 {
+	if got := strings.Count(body, ": log message"); got != 3 {
 		t.Fatalf("expected 3 events, got %d\n%s", got, body)
 	}
 	// Every payload line is a `data:` field (SSE framing); no bare HTML lines.
@@ -22,7 +22,7 @@ func TestStreamLogsFraming(t *testing.T) {
 		if line == "" {
 			continue
 		}
-		if !strings.HasPrefix(line, "event:") && !strings.HasPrefix(line, "data:") {
+		if !strings.HasPrefix(line, ":") && !strings.HasPrefix(line, "data:") {
 			t.Fatalf("unframed SSE line: %q", line)
 		}
 	}
@@ -35,10 +35,10 @@ func TestWriteSSEMessageFraming(t *testing.T) {
 	cases := []struct {
 		name, in, want string
 	}{
-		{"single", "hello", "event: message\ndata: hello\n\n"},
-		{"trailing newline", "a\n", "event: message\ndata: a\n\n"},
-		{"interior blank", "a\n\nb", "event: message\ndata: a\ndata: \ndata: b\n\n"},
-		{"empty", "", "event: message\ndata: \n\n"},
+		{"single", "hello", ": log message\ndata: hello\n\n"},
+		{"trailing newline", "a\n", ": log message\ndata: a\n\n"},
+		{"interior blank", "a\n\nb", ": log message\ndata: a\ndata: \ndata: b\n\n"},
+		{"empty", "", ": log message\ndata: \n\n"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

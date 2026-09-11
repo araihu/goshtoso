@@ -30,7 +30,7 @@ func TestRenderPreservesRuntimeContracts(t *testing.T) {
 		{"DependencyLoaderURL", `"/assets/js/dependency-loader.js"`},
 		{"AlpineJSCDNURL", `"https://example.test/alpinejs/core-js"`},
 		{"AlpineJSIntegrity", `"sha384-fixture"`},
-		{"runtimeVersionHTMX", `"2.0.8"`},
+		{"runtimeVersionHTMX", `"4.0.0"`},
 	} {
 		pattern := regexp.MustCompile(regexp.QuoteMeta(want.name) + `\s*=\s*` + regexp.QuoteMeta(want.value))
 		if !pattern.MatchString(vendor) {

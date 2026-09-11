@@ -66,11 +66,11 @@ func TestSizeSelectors_FragmentNavigationClicksKeepContent(t *testing.T) {
 				if (!window.__sizeSelectorHtmxProbeInstalled) {
 					window.__sizeSelectorHtmxProbeInstalled = true;
 					[
-						'htmx:beforeRequest',
-						'htmx:configRequest',
-						'htmx:beforeSwap',
-						'htmx:afterSwap',
-						'htmx:responseError',
+						'htmx:before:request',
+						'htmx:config:request',
+						'htmx:before:swap',
+						'htmx:after:swap',
+						'htmx:response:error',
 					].forEach((name) => {
 						document.body.addEventListener(name, (event) => {
 							const detail = event.detail || {};

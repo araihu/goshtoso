@@ -58,6 +58,17 @@ func TestBannerCoverageDemo(t *testing.T) {
 	require.NoError(t, cookieDialog.WaitFor(playwright.LocatorWaitForOptions{
 		State: playwright.WaitForSelectorStateVisible,
 	}))
+	for _, width := range []int{390, 1162} {
+		require.NoError(t, page.SetViewportSize(width, 1240))
+		require.NoError(t, page.Locator("#banner-cookie").ScrollIntoViewIfNeeded())
+		contained, err := cookieDialog.Evaluate(`e => {
+			const box = document.querySelector('#banner-cookie').getBoundingClientRect();
+			const dialog = e.getBoundingClientRect();
+			return dialog.width > 0 && dialog.height > 0 && dialog.left >= box.left && dialog.right <= box.right && dialog.top >= box.top && dialog.bottom <= box.bottom;
+		}`, nil)
+		require.NoError(t, err)
+		require.Equal(t, true, contained, "cookie banner must remain inside its preview at width %d", width)
+	}
 	require.NoError(t, cookieDialog.Locator("button").Filter(playwright.LocatorFilterOptions{
 		HasText: "Sounds Good!",
 	}).Click())

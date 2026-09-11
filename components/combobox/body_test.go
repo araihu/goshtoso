@@ -125,11 +125,11 @@ func TestOptionsList_LiHasHXAttributesForToggle(t *testing.T) {
 	html := buf.String()
 
 	assert.Contains(t, html, `hx-post="/ui/combobox/status/toggle"`)
-	assert.Contains(t, html, `hx-target="closest [data-combobox-body]"`)
-	assert.Contains(t, html, `hx-swap="outerHTML"`)
+	assert.Contains(t, html, `hx-target="closest [data-combobox]"`)
+	assert.Contains(t, html, `hx-swap="outerMorph"`)
 	assert.Contains(t, html, `hx-vals`)
 	assert.Contains(t, html, `&#34;value&#34;:&#34;running&#34;`)
-	assert.Contains(t, html, `hx-include="closest [data-combobox] input[type=hidden],[name=&#39;provider&#39;]"`)
+	assert.Contains(t, html, `hx-include="closest [data-combobox],[name=&#39;provider&#39;]"`)
 }
 
 func TestBody_SearchInput_RenderedWhenEnabled(t *testing.T) {
@@ -176,7 +176,7 @@ func TestBody_ClearAllButton(t *testing.T) {
 		html := buf.String()
 		assert.Contains(t, html, `data-combobox-clear-all`)
 		assert.Contains(t, html, `hx-post="/ui/combobox/t/clear"`)
-		assert.Contains(t, html, `hx-target="closest [data-combobox-body]"`)
+		assert.Contains(t, html, `hx-target="closest [data-combobox]"`)
 	})
 
 	t.Run("absent when selection empty", func(t *testing.T) {
@@ -207,7 +207,7 @@ func TestCombobox_OuterShell_HasAlpineDataAndContainsBody(t *testing.T) {
 	html := buf.String()
 
 	assert.Contains(t, html, `data-combobox`)
-	assert.Contains(t, html, `x-data="{isOpen:false, openedWithKeyboard:false, focusIndex:-1}"`)
+	assert.Contains(t, html, `x-data="goshtosoComboboxClient($el)"`)
 	assert.Contains(t, html, `id="status-body"`, "body partial embedded inside shell")
 	assert.NotContains(t, html, `allOptions`, "no data state in Alpine")
 	assert.NotContains(t, html, `selectedValues`, "no data state in Alpine")
@@ -244,7 +244,6 @@ func TestCombobox_ClientMode_RootHasMarker(t *testing.T) {
 	html := buf.String()
 
 	assert.Contains(t, html, `data-combobox-mode="client"`)
-	assert.Contains(t, html, `hx-disinherit="hx-replace-url"`)
 	assert.Contains(t, html, `data-combobox-name="status"`)
 	assert.Contains(t, html, `data-combobox-multi="true"`)
 }

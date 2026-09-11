@@ -52,14 +52,22 @@ import (
 //	    InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
 //	})
 templ tableTemplate(cfg Config) {
+	<div data-table-requests class="contents" hx-on::before:request="goshtosoRequests.table(this,event)">
+		@tableContent(cfg)
+	</div>
+}
+
+templ tableContent(cfg Config) {
 	if cfg.hasFilters() {
 		<div
 			data-table-filters
-			data-table-filter-endpoint={ cfg.filterEndpointURL() }
-			data-table-filter-per-page={ filterPerPage(cfg) }
-			data-table-filter-extra-query={ cfg.ExtraQueryParams }
-			data-table-filter-target={ cfg.Filters.resolvedHXTarget(cfg) }
-			data-table-filter-swap={ cfg.Filters.resolvedHXSwap() }
+			hx-get={ cfg.filterRequestURL() }
+			hx-trigger="table-filter"
+			hx-target={ cfg.Filters.resolvedHXTarget(cfg) }
+			hx-swap={ cfg.Filters.resolvedHXSwap() }
+			hx-sync="closest [data-table-requests]:replace"
+			hx-include:inherited={ cfg.filterIncludeSelector() }
+			x-on:htmx:config:request="configureRequest($event)"
 			data-table-filters-expanded={ fmt.Sprint(filtersInitiallyExpanded(cfg)) }
 			x-data="goshtosoTableFilters($el)"
 		>
@@ -216,6 +224,7 @@ templ filterSearchInput(cfg Config, filter Filter) {
 		</svg>
 		<input
 			id={ filterControlID(cfg, filter) }
+			name={ filter.Key }
 			data-table-filter-key={ filter.Key }
 			data-table-filter-default={ filter.DefaultValue }
 			hx-preserve="true"
@@ -232,6 +241,7 @@ templ filterSearchInput(cfg Config, filter Filter) {
 templ filterSelectInput(cfg Config, filter Filter) {
 	<select
 		id={ filterControlID(cfg, filter) }
+		name={ filter.Key }
 		data-table-filter-key={ filter.Key }
 		data-table-filter-default={ filter.DefaultValue }
 		hx-preserve="true"
@@ -259,10 +269,12 @@ templ filterToggleInput(cfg Config, filter Filter) {
 	<label class="inline-flex cursor-pointer items-center gap-2">
 		<input
 			id={ filterControlID(cfg, filter) }
+			name={ filter.Key }
 			data-table-filter-key={ filter.Key }
 			data-table-filter-default={ filter.DefaultValue }
 			hx-preserve="true"
 			type="checkbox"
+			value="true"
 			x-model="filters[$el.dataset.tableFilterKey]"
 			@change="applyFilters()"
 			class="peer sr-only"
@@ -288,7 +300,9 @@ templ tableHeadRow(cfg Config) {
 			} else {
 				<th scope="col" class={ columnHeaderClasses(col) }>
 					if col.HeaderSuffix != nil {
-						<div class="flex items-center gap-2"><span>{ col.Label }</span>@col.HeaderSuffix</div>
+						<div class="flex items-center gap-2">
+							<span>{ col.Label }</span>@col.HeaderSuffix
+						</div>
 					} else {
 						{ col.Label }
 					}
@@ -623,7 +637,9 @@ templ sortableHeader(cfg Config, col Column) {
 	<th
 		scope="col"
 		class={ cfg.sortableHeaderClasses(col.Key) }
+		data-table-sort-request
 		hx-get={ cfg.SortURL(col.Key) }
+		hx-sync="closest [data-table-requests]:replace"
 		hx-target={ "#" + cfg.tbodyID() }
 		hx-swap="innerHTML"
 	>
@@ -631,7 +647,7 @@ templ sortableHeader(cfg Config, col Column) {
 			<span>{ col.Label }</span>
 			@sortIcon(cfg, col.Key)
 			if col.HeaderSuffix != nil {
-				<div x-data hx-disinherit="*" x-on:click.stop x-on:keydown.stop>
+				<div x-data x-on:click.stop x-on:keydown.stop>
 					@col.HeaderSuffix
 				</div>
 			}
@@ -658,15 +674,24 @@ templ sortIcon(cfg Config, key string) {
 	}
 }
 
+// Keep the root selector grouped: htmx splits bare commas into separate
+// extended selectors, which could otherwise select an unrelated page scroller.
 templ scrollSentinel(cfg Config) {
 	<tr
 		id={ cfg.getID() + "-sentinel" }
 		data-table-scroll-sentinel
-		data-hx-get={ cfg.NextPageURL() }
-		aria-hidden="true"
+		hx-get={ cfg.NextPageURL() }
+		hx-trigger={ `intersect once root:"closest :is(.overflow-y-auto,[style*=overflow-y])" rootMargin:"400px 0px", click` }
+		hx-target="this"
+		hx-swap="outerHTML settle:200ms"
+		hx-sync="this:drop"
+		hx-disable="find button:not(:disabled)"
+		hx-status:4xx="swap:none"
+		hx-status:5xx="swap:none"
 	>
 		<td colspan={ fmt.Sprintf("%d", cfg.colCount()) } class="p-4 text-center">
 			@loadingIndicator()
+			<button type="button" class="text-sm underline">Load more</button>
 		</td>
 	</tr>
 }
@@ -676,6 +701,8 @@ templ tablePagination(cfg Config) {
 	if cfg.Pagination != nil {
 		<div
 			id={ cfg.paginationID() }
+			data-table-pages
+			hx-sync:inherited="closest [data-table-requests]:replace"
 			class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark"
 			hidden?={ cfg.Pagination.TotalPages <= 1 }
 		>

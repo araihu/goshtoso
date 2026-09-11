@@ -574,11 +574,11 @@ For queue/detail fragments, treat selection as one invariant rather than a CSS
 highlight: after each swap, the URL, detail identity, focus, selected-row style,
 and `aria-current` or `aria-selected` must all name the same record. Rerender the
 collection from server truth when practical; otherwise synchronize every
-representation together on `htmx:afterSettle` and test Back/Forward as well.
+representation together on `htmx:after:settle` and test Back/Forward as well.
 
 `button.WithLoadingText` works when HTMX lives on the Button or on an ancestor
 form. For form-owned mutations, also set
-`hx-disabled-elt="find button[type='submit']"` on the form and prove the pending
+`hx-disable="find button[type='submit']"` on the form and prove the pending
 label and disabled state by holding a real request. After PRG, compare the DOM
 restored by Back with current server truth; use `Cache-Control: no-store` or a
 `pageshow` refresh when a persisted task document may be stale.
@@ -786,26 +786,25 @@ HTML, then cover important browser behavior with Playwright or your preferred
 E2E tool. The Goshtoso repository's `components/*/*_test.go` and
 `site/tests/e2e/*_test.go` files are useful examples.
 
-For HTMX validation or mutation fragments, restore focus on
-`htmx:afterSettle`, after the replacement has become reliably focusable. Prefer
-an explicit `[data-autofocus]` target or the rendered `FormErrors` summary, and
-assert the live `document.activeElement`; `htmx:afterSwap` can be too early.
+For HTMX validation or mutation fragments, restore focus to a rendered target
+on `htmx:after:settle`. Prefer an explicit `[data-autofocus]` target or the
+rendered `FormErrors` summary, and assert the live `document.activeElement`.
+For targets created by Alpine, wait for `htmx:after:swap` and Alpine's next tick;
+htmx 4 processes inserted content after the per-target settle event.
 
 ## Known Pitfalls
 
-### HTMX History Cache vs Alpine.js State
+### HTMX History and Alpine.js State
 
-When using HTMX SPA navigation (`hx-get` + `hx-target="#main-content-area"` + `hx-push-url`), HTMX caches the raw `document.body.innerHTML` for back-button history restore. The problem: Alpine-generated DOM nodes (from `x-for`, `x-text`, etc.) are saved in the cache, but Alpine scope objects are lost. On back-button restore, the page shows stale Alpine-generated elements with no reactivity — combobox dropdowns with blank items, broken toggles, etc.
+htmx 4 re-fetches history by default. Return a full document when
+`HX-Request-Type` is `full`, including Back/Forward navigation. The bundled
+`hx-alpine-compat` extension coordinates Alpine mutation processing during
+swaps; avoid blanket `Alpine.initTree(document.body)` calls after navigation.
 
-**Recommended approaches (pick one per use case):**
-
-1. **`LinkMode: LinkBoost`** on table rows - swaps the full `<body>` via `hx-select="body"` + `hx-target="body"`. Back-button re-fetches from server, so Alpine re-initializes cleanly. No stale cache.
-
-2. **`LinkMode: LinkFull`** on table rows - plain `window.location.href` navigation. Simplest, safest. Use when the target page has complex Alpine state.
-
-3. **`hx-history="false"`** on a container - tells HTMX not to cache this page. Back-button will fetch from server. Useful when you can't control the navigation source.
-
-4. **Alpine re-init on history restore** - listen for `htmx:historyRestore` and call `Alpine.initTree(document.body)`. Works in theory but is fragile: HTMX strips `<script>` tags from cached HTML, so Alpine data registrations may be missing.
+Use `LinkMode: LinkBoost` for htmx navigation or `LinkMode: LinkFull` for ordinary
+page navigation. Test the URL, focus and reactive controls after Back/Forward.
+If you opt into the separate history-cache extension, also test restoration
+with Alpine-generated DOM and the matching Alpine compatibility extension.
 
 ```go
 // Example: table rows with boost mode (recommended for lists → detail navigation)

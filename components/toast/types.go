@@ -196,10 +196,11 @@ func (cfg Config) titleClass() string {
 func containerAlpineData(cfg ContainerConfig) string {
 	return fmt.Sprintf(`{
         notifications: [],
+        sequence: 0,
         displayDuration: %d,
 
         addNotification(data) {
-            var id = Date.now();
+            var id = this.$el.id + '-' + (++this.sequence);
             var kind = data.kind === 'message-toast' ? 'message-toast' : 'toast';
             var notification = { id: id, kind: kind, tone: data.tone || 'info', sender: data.sender || null, title: data.title || null, message: data.message || null };
 
@@ -210,28 +211,16 @@ func containerAlpineData(cfg ContainerConfig) string {
             this.notifications.push(notification);
         },
         removeNotification(id) {
-            setTimeout(() => {
-                this.notifications = this.notifications.filter(
-                    (notification) => notification.id !== id
-                );
-            }, 400);
+            this.notifications = this.notifications.filter(
+                (notification) => notification.id !== id
+            );
         }
     }`, cfg.effectiveDuration())
 }
 
 // singleToastAlpineData returns the Alpine.js x-data for an individual toast item
 func singleToastAlpineData(duration int, persistent bool) string {
-	if persistent {
-		return `{ isVisible: true }`
-	}
-	return fmt.Sprintf(`{
-        isVisible: false,
-        timeout: null,
-        init() {
-            this.$nextTick(() => { this.isVisible = true });
-            this.timeout = setTimeout(() => { this.isVisible = false; this.$dispatch('toast-dismiss', { id: this.$el.dataset.toastId }); }, %d);
-        }
-    }`, duration)
+	return fmt.Sprintf(`goshtosoToast($el, %d, %t)`, duration, persistent)
 }
 
 // jsEscapeSingle escapes single quotes and backslashes for safe JS string embedding

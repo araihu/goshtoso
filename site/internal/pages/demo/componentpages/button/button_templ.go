@@ -174,7 +174,7 @@ func buttonDemoContent() templ.Component {
 			`<form
     hx-post="/save"
     hx-target="#save-result"
-    hx-disabled-elt="find button[type='submit']">
+    hx-disable="find button[type='submit']">
     @button.Button(
         button.WithType("submit"),
         button.WithLoadingText("Saving…"),
@@ -268,7 +268,7 @@ func buttonFormLoadingPreview() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form id=\"button-form-loading\" class=\"mx-auto flex w-full max-w-3xl flex-col gap-3 sm:flex-row sm:items-center\" hx-post=\"/api/hello?delay_ms=400\" hx-target=\"#button-form-loading-result\" hx-swap=\"innerHTML\" hx-disabled-elt=\"find button[type='submit']\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form id=\"button-form-loading\" class=\"mx-auto flex w-full max-w-3xl flex-col gap-3 sm:flex-row sm:items-center\" hx-post=\"/api/hello?delay_ms=400\" hx-target=\"#button-form-loading-result\" hx-swap=\"innerHTML\" hx-disable=\"find button[type='submit']\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

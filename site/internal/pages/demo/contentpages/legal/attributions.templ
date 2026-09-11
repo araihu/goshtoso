@@ -1,11 +1,11 @@
 package legalpages
 
 import (
+	"github.com/araihu/goshtoso/assets"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	"net/http"
 	"net/http/httptest"
 	"path"
-	"github.com/araihu/goshtoso/assets"
-	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
 templ AttributionsPage() {
@@ -14,19 +14,19 @@ templ AttributionsPage() {
 
 // attribution is one credited dependency rendered as a table row.
 type attribution struct {
-	Name    string
-	Href    string
-	Version string
-	LocalURL string
-	License string
+	Name       string
+	Href       string
+	Version    string
+	LocalURL   string
+	License    string
 	LicenseURL string
-	Note    string
+	Note       string
 }
 
 type runtimeAttributionDefinition struct {
-	Attribution attribution
-	Role assets.RuntimeAssetRole
-	Version func() string
+	Attribution      attribution
+	Role             assets.RuntimeAssetRole
+	Version          func() string
 	FallbackLocalURL string
 }
 
@@ -44,6 +44,9 @@ func runtimeAttributionRows() []attribution {
 		row.LocalURL = linkedURLs[definition.Role]
 		if row.LocalURL == "" {
 			row.LocalURL = definition.FallbackLocalURL
+		}
+		if row.LocalURL == "" {
+			continue
 		}
 		licenseURL := path.Join(path.Dir(row.LocalURL), "LICENSE.txt")
 		if linkedAssetServes(licenseURL) {
@@ -81,16 +84,13 @@ templ attributionsContent() {
 				texts are retained and linked below.
 			</p>
 		</div>
-
 		@attrSection("Design & components", "The design system and component set Goshtoso draws from.", []attribution{
 			{Name: "PenguinUI", Href: "https://www.penguinui.com", License: "Source", Note: "Design system Goshtoso is based on; reinterpreted in Go templ"},
 			{Name: "Heroicons v2.2.0", Href: "https://github.com/tailwindlabs/heroicons/tree/0435d4ca364a608cc75e2f8683d374e55abbae26", License: "MIT", Note: "Third-party UI icons pinned to upstream commit 0435d4ca364a608cc75e2f8683d374e55abbae26; bundled sprite at /assets/icons/heroicons.svg, consumer-local sidebar pack at /assets/icons/heroicons/sprite.svg, and retained notice at /assets/icons/HEROICONS_LICENSE.txt"},
 			{Name: "Arai Hu Assets v0.1.1 catalog", Href: "https://araihu.com/assets/releases/v0.1.1/catalog.json", License: "Catalog", Note: "Immutable schema-v1 catalog that records the Heroicons provenance and symbols; Arai Hu Assets does not author Heroicons"},
 			{Name: "Bootstrap Icons", Href: "https://icons.getbootstrap.com", License: "MIT", Note: "Some icons sourced from this set"},
 		})
-
 		@runtimeAttrSection(runtimeAttributionRows())
-
 		@attrSection("Go modules", "Direct dependencies from go.mod.", []attribution{
 			{Name: "a-h/templ", Href: "https://github.com/a-h/templ", License: "MIT", Note: "HTML template generation (.templ → .go)"},
 			{Name: "alecthomas/chroma", Href: "https://github.com/alecthomas/chroma", License: "MIT", Note: "Syntax highlighting (code blocks)"},
@@ -98,7 +98,6 @@ templ attributionsContent() {
 			{Name: "mxschmitt/playwright-go", Href: "https://github.com/mxschmitt/playwright-go", License: "MIT", Note: "E2E testing (dev only)"},
 			{Name: "stretchr/testify", Href: "https://github.com/stretchr/testify", License: "MIT", Note: "Test assertions (dev only)"},
 		})
-
 		<div class="pb-8">
 			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
 				Spotted a missing credit or licensing issue? Open an issue at

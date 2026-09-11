@@ -9,7 +9,7 @@ description: Use when writing, debugging, or reviewing Alpine.js markup — any 
 
 Alpine is a lightweight declarative framework: you sprinkle reactive behavior onto plain HTML via `x-*` attributes — no build step, no virtual DOM. Mental model: "Tailwind for JavaScript." Expressions in attributes are evaluated against the nearest `x-data` scope, which cascades to descendants.
 
-Reference crawled from alpinejs.dev (Alpine v3.x).
+Target **Alpine 3.17.2**, verified 2026-09-10 against the [official release](https://github.com/alpinejs/alpine/releases/tag/v3.17.2) and npm registry. Pin core and the bundled collapse/focus/mask plugins to 3.17.2 when upgrading. Recheck releases for future tasks.
 
 ## When to use
 
@@ -17,9 +17,9 @@ Reference crawled from alpinejs.dev (Alpine v3.x).
 - Registering reusable behavior with `Alpine.data()`, global state with `Alpine.store()`, or attribute bundles with `Alpine.bind()`.
 - Using magics (`$refs`, `$dispatch`, `$watch`, `$nextTick`, `$store`, `$id`) or the `init()` / `destroy()` lifecycle.
 - Adding an Alpine plugin (persist, intersect, collapse, focus, mask, morph) or extending Alpine (`Alpine.directive`, `Alpine.magic`).
-- Debugging why a component silently does nothing (Alpine swallows expression parse failures with no console error — usually attribute escaping; see gotchas).
+- Debugging expression errors, initialization order, state loss, and cleanup across htmx swaps.
 
-**This repo (Goshtoso) uses Alpine v3 + templ + htmx.** Alpine is bundled locally at `assets/js/vendor/`. Read `reference/gotchas.md` whenever Alpine markup is generated through templ or combined with htmx — templ escaping and fragment-nav registration silently break Alpine.
+**Goshtoso runtime:** Alpine 3.17.2 with htmx 4.0.0 and `hx-alpine-compat`, locked in `muamba.yaml`. Assets live under `assets/js/runtime/<module>/<version>/`; `assets/runtime.overlay.yaml` controls loading. Read [htmx 4 integration](reference/htmx4.md) before changing loading or swap lifecycle, and [gotchas](reference/gotchas.md) for templ and fragment registration.
 
 ## The core: data + behavior on one element
 
@@ -94,6 +94,7 @@ document.addEventListener('alpine:init', () => {
 
 ## Detailed references (load when needed)
 
+- **[htmx 4 integration](reference/htmx4.md)** — exact extension, load order, state preservation, lifecycle and migration link.
 - **`reference/directives.md`** — every directive with full syntax, all modifiers, and gotchas.
 - **`reference/magics-globals.md`** — every magic, the three globals, and the full lifecycle (`alpine:init`, `alpine:initialized`, `init()`, `destroy()`, `x-init`, manual `Alpine.start()`).
 - **`reference/plugins.md`** — persist, intersect, collapse, focus, mask, morph (install + usage), plus extending (`Alpine.directive`/`Alpine.magic`), reactivity primitives, async expressions, and the CSP build.
@@ -101,8 +102,8 @@ document.addEventListener('alpine:init', () => {
 
 ## Common mistakes
 
-- **Silent dead component, no console error.** Alpine swallows expression parse failures. #1 cause in this repo: templ escapes `"`/`'`/`&` inside `x-data` (`&quot;`). Inspect rendered HTML in devtools. See `reference/gotchas.md`.
-- **`json.Marshal` into an HTML attribute.** Produces double-quoted JSON; templ escapes the quotes; Alpine sees broken syntax. Build single-quoted JS, or register via `Alpine.data()` in a `<script>`.
+- **Dead component or expression error.** Inspect the browser console and live attribute value, then check registration order and expression syntax. See `reference/gotchas.md`.
+- **Complex generated expressions.** Follow Goshtoso’s provider/escaping conventions; avoid manual concatenation of untrusted JavaScript. Normal HTML entity escaping alone does not prove an expression is broken.
 - **`null` arrays.** `json.Marshal([]T(nil))` → `null`; Alpine `.includes()` throws. Guard to `[]`.
 - **`x-for` / `x-if` not on `<template>`,** or with more than one root element — won't work. Add `:key` to `x-for`.
 - **Forgetting `x-cloak`** on initially-hidden elements → flash of content before Alpine boots.

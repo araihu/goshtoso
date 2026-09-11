@@ -29,6 +29,7 @@ var defaultArtifacts = []artifact{
 	{
 		output: "assets/js/combobox.js",
 		inputs: []string{
+			"assets/js/src/components/requests.js",
 			"assets/js/src/combobox.js",
 			"assets/js/src/components/combobox-client.js",
 		},
@@ -40,6 +41,7 @@ var defaultArtifacts = []artifact{
 	{
 		output: "assets/js/goshtoso.min.js",
 		inputs: []string{
+			"assets/js/src/components/requests.js",
 			"assets/js/src/combobox.js",
 			"assets/js/src/components/combobox-client.js",
 			"assets/js/src/action-group.js",
@@ -57,6 +59,7 @@ var defaultArtifacts = []artifact{
 			"assets/js/src/components/palette.js",
 			"assets/js/src/components/select.js",
 			"assets/js/src/components/tabs.js",
+			"assets/js/src/components/toast.js",
 			"assets/js/src/components/scroll-region.js",
 		},
 	},
@@ -71,6 +74,8 @@ var defaultArtifacts = []artifact{
 			"site/assets/js/src/avatar-showcase.js",
 			"site/assets/js/src/icon-catalog.js",
 			"site/assets/js/src/log-feed.js",
+			"site/assets/js/src/content-editor.js",
+			"site/assets/js/src/shell-preview.js",
 			"site/assets/js/src/chat.js",
 			"site/assets/js/src/profile-images.js",
 			"site/assets/js/src/ticker-pane.js",

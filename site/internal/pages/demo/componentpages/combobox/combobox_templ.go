@@ -235,7 +235,7 @@ var IndustryCfg = combobox.Config{
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Server Mode (lazy search)",
-				Description: "Use a non-empty LazyEndpoint to select server mode, then set Toggle/Options/Clear endpoints for HTMX selection, search, and clearing. The current LazyEndpoint value is a mode marker; OptionsEndpoint is the URL actually requested.",
+				Description: "Use a non-empty LazyEndpoint to select server mode, then set Toggle/Options/Clear endpoints for HTMX selection, search, and clearing. The current LazyEndpoint value is a mode marker; OptionsEndpoint is the URL actually requested. Updating a selection keeps the menu open and preserves your search draft.",
 			},
 			comboboxUsersPreview(),
 			`var UsersCfg = combobox.Config{

@@ -70,7 +70,7 @@ func TestCoverageRenderContainerUsesConfiguredIDsAndDuration(t *testing.T) {
 		`id="custom-toasts-oob"`,
 		`displayDuration: 1500`,
 		`x-on:notify.window="addNotification($event.detail)"`,
-		`x-on:toast-dismiss.window="removeNotification($event.detail.id)"`,
+		`data-toast-container`,
 		`notification.kind === 'toast' && notification.tone === 'success'`,
 		`notification.kind === 'message-toast'`,
 		`var kind = data.kind === 'message-toast' ? 'message-toast' : 'toast'`,
@@ -101,8 +101,8 @@ func TestCoverageRenderOOBToastWithActionHTMX(t *testing.T) {
 		`id="toast-container-oob" hx-swap-oob="beforeend"`,
 		`id="server-toast-1"`,
 		`data-toast-id="server-toast-1"`,
-		`x-data="{`,
-		`}, 2500);`,
+		`x-data="goshtosoToast($el,`,
+		`goshtosoToast($el, 2500, false)`,
 		`border-warning`,
 		`bg-warning/10`,
 		`text-warning`,
@@ -131,7 +131,7 @@ func TestCoverageRenderPersistentMessageToast(t *testing.T) {
 
 	for _, want := range []string{
 		`id="server-toast-1"`,
-		`x-data="{ isVisible: true }"`,
+		`x-data="goshtosoToast($el, 8000, true)"`,
 		`border-outline bg-surface`,
 		`src="/assets/avatar.webp"`,
 		`Avery`,

@@ -7,7 +7,7 @@ responsible disclosure.
 
 | Version | Supported |
 |---------|-----------|
-| `v0.0.x` (alpha) | ✅ latest tag only |
+| `v0.x.y` (alpha) | ✅ latest tag only |
 | older | ❌ |
 
 During alpha, only the most recent tagged release receives fixes.
