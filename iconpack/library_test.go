@@ -125,8 +125,13 @@ func assertLibraryManifestAndDeterminism(t *testing.T, opts Options, result Resu
 	if _, err := Generate(t.Context(), second); err != nil {
 		t.Fatal(err)
 	}
-	for name, data := range readFixtureTree(t, second.OutputDir) {
-		if !bytes.Equal(first[name], data) {
+	secondFiles := readFixtureTree(t, second.OutputDir)
+	if len(first) != len(secondFiles) {
+		t.Fatalf("nondeterministic output count: %d != %d", len(first), len(secondFiles))
+	}
+	for name, data := range first {
+		other, ok := secondFiles[name]
+		if !ok || !bytes.Equal(data, other) {
 			t.Fatalf("nondeterministic output: %s", name)
 		}
 	}

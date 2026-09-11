@@ -11,7 +11,7 @@ The general contract uses Muamba as a Go library; consumers do not install a
 Muamba executable and the command never searches for or changes `muamba.yaml`,
 `.muamba.yaml`, or `.muamba.lock.yaml`. The generated Muamba adapter
 declaration is kept in memory. Only the explicit `.iconpack.lock.yaml` and the
-consumer-owned output are durable. The Goshtoso integration uses Muamba
+consumer-owned output are durable. The Goshtoso integration uses Muamba through
 the `source.Engine.Walk` API; the adapter never creates a
 `.iconpack.engine.yaml` file.
 
