@@ -161,10 +161,10 @@ func TestNonGitSourceWithoutPackNameUsesNormalizedPath(t *testing.T) {
 	if resolved.PackName != "" {
 		t.Fatalf("non-Git fallback pack name = %q, want empty path-prefix marker", resolved.PackName)
 	}
-	families, assets, err := buildMuambaAssets([]resolvedConfigSource{resolved}, map[string][]byte{
+	families, assets, err := buildMuambaAssets(t.Context(), []resolvedConfigSource{resolved}, memoryFiles(map[string][]byte{
 		"bootstrap-source/LICENSE":         []byte("MIT"),
 		"bootstrap-source/icons/alarm.svg": []byte(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"/>`),
-	})
+	}))
 	if err != nil {
 		t.Fatal(err)
 	}

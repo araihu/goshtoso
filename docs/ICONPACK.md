@@ -11,8 +11,18 @@ The general contract uses Muamba as a Go library; consumers do not install a
 Muamba executable and the command never searches for or changes `muamba.yaml`,
 `.muamba.yaml`, or `.muamba.lock.yaml`. The generated Muamba adapter
 declaration is kept in memory. Only the explicit `.iconpack.lock.yaml` and the
-consumer-owned output are durable. The Goshtoso integration uses Muamba
-`v0.0.5` or newer; the adapter never creates a `.iconpack.engine.yaml` file.
+consumer-owned output are durable. The Goshtoso integration uses Muamba through
+the `source.Engine.Walk` API; the adapter never creates a
+`.iconpack.engine.yaml` file.
+
+Muamba-backed sources are captured to private temporary disk storage, one
+verified file at a time. Library generation retains source metadata and the
+catalog, validates one image at a time, and streams image bytes to unpublished
+output staging while checking their size and SHA-256 again. Checking an
+existing output also hashes files individually. Neither path retains the PNG
+collection in memory. The catalog, provenance, manifest, ordering, and refusal
+to overwrite an existing different output remain unchanged. Temporary source
+and output staging are removed on errors or cancellation.
 
 For Arai Hû Assets, the input is an extracted release root or release archive.
 A Goshtoso checkout, GitHub source archive, `internal/acquisition/vendor` tree,

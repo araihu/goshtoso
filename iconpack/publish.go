@@ -1,10 +1,11 @@
 package iconpack
 
 import (
-	"bytes"
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -14,6 +15,18 @@ import (
 )
 
 func publishOutput(ctx context.Context, requested string, files map[string][]byte, check bool) (bool, string, error) {
+	return publishFileOutput(ctx, requested, memoryFiles(files), check)
+}
+
+func memoryFiles(files map[string][]byte) map[string]fileData {
+	result := make(map[string]fileData, len(files))
+	for name, data := range files {
+		result[name] = memoryFile(data)
+	}
+	return result
+}
+
+func publishFileOutput(ctx context.Context, requested string, files map[string]fileData, check bool) (bool, string, error) {
 	location, err := resolveOutputLocation(requested)
 	if err != nil {
 		return false, "", err
@@ -27,7 +40,7 @@ func publishOutput(ctx context.Context, requested string, files map[string][]byt
 		_ = lock.Close()
 	}()
 
-	identical, exists, err := compareOwnedOutput(location.output, files)
+	identical, exists, err := compareFileOutput(ctx, location.output, files)
 	if err != nil {
 		return false, "", err
 	}
@@ -43,7 +56,7 @@ func publishOutput(ctx context.Context, requested string, files map[string][]byt
 		}
 		return false, "", fmt.Errorf("output %s already exists with different or unrelated files; refusing to overwrite", location.output)
 	}
-	if err := stageAndPublish(location, files); err != nil {
+	if err := stageFilesAndPublish(ctx, location, files, nil); err != nil {
 		return false, "", err
 	}
 	return true, location.output, nil
@@ -91,11 +104,11 @@ func acquireOutputLock(ctx context.Context, location outputLocation) (*flock.Flo
 	return lock, nil
 }
 
-func stageAndPublish(location outputLocation, files map[string][]byte) error {
-	return stageAndPublishWithHook(location, files, nil)
+func stageAndPublishWithHook(location outputLocation, files map[string][]byte, beforeFinalize func() error) error {
+	return stageFilesAndPublish(context.Background(), location, memoryFiles(files), beforeFinalize)
 }
 
-func stageAndPublishWithHook(location outputLocation, files map[string][]byte, beforeFinalize func() error) error {
+func stageFilesAndPublish(ctx context.Context, location outputLocation, files map[string]fileData, beforeFinalize func() error) error {
 	staging, err := os.MkdirTemp(location.parent, "."+location.base+".tmp-*")
 	if err != nil {
 		return fmt.Errorf("create staged output directory: %w", err)
@@ -112,7 +125,7 @@ func stageAndPublishWithHook(location outputLocation, files map[string][]byte, b
 	}
 	sort.Strings(paths)
 	for _, relative := range paths {
-		if err := writeStagedFile(staging, relative, files[relative]); err != nil {
+		if err := writeStagedData(ctx, staging, relative, files[relative]); err != nil {
 			return err
 		}
 	}
@@ -124,6 +137,9 @@ func stageAndPublishWithHook(location outputLocation, files map[string][]byte, b
 			return fmt.Errorf("prepare final output publication: %w", err)
 		}
 	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	if err := renameNoReplace(staging, location.output); err != nil {
 		return fmt.Errorf("atomically publish output directory without replacement: %w", err)
 	}
@@ -131,7 +147,7 @@ func stageAndPublishWithHook(location outputLocation, files map[string][]byte, b
 	return nil
 }
 
-func writeStagedFile(staging, relative string, contents []byte) error {
+func writeStagedData(ctx context.Context, staging, relative string, contents fileData) error {
 	if err := safeRelativePath(relative); err != nil {
 		return fmt.Errorf("generated output path: %w", err)
 	}
@@ -143,7 +159,7 @@ func writeStagedFile(staging, relative string, contents []byte) error {
 	if err != nil {
 		return fmt.Errorf("create staged output %q: %w", relative, err)
 	}
-	if _, err := file.Write(contents); err != nil {
+	if err := contents.copy(ctx, file); err != nil {
 		_ = file.Close()
 		return fmt.Errorf("write staged output %q: %w", relative, err)
 	}
@@ -157,7 +173,7 @@ func writeStagedFile(staging, relative string, contents []byte) error {
 	return nil
 }
 
-func compareOwnedOutput(output string, expected map[string][]byte) (bool, bool, error) {
+func compareFileOutput(ctx context.Context, output string, expected map[string]fileData) (bool, bool, error) {
 	info, err := os.Lstat(output)
 	if os.IsNotExist(err) {
 		return false, false, nil
@@ -171,41 +187,13 @@ func compareOwnedOutput(output string, expected map[string][]byte) (bool, bool, 
 	if err := validateOwnedMarker(output); err != nil {
 		return false, true, err
 	}
-	actual, err := readOutputFiles(output)
-	if err != nil {
-		return false, true, err
-	}
-	if len(actual) != len(expected) {
-		return false, true, nil
-	}
-	for relative, contents := range expected {
-		if !bytes.Equal(actual[relative], contents) {
-			return false, true, nil
-		}
-	}
-	return true, true, nil
-}
-
-func validateOwnedMarker(output string) error {
-	manifestBytes, err := os.ReadFile(filepath.Join(output, "manifest.json"))
-	if err != nil {
-		return fmt.Errorf("output exists without readable iconpack manifest; refusing to overwrite")
-	}
-	var marker struct {
-		SchemaVersion int    `json:"schemaVersion"`
-		Tool          string `json:"tool"`
-	}
-	if err := json.Unmarshal(manifestBytes, &marker); err != nil || marker.SchemaVersion != OutputSchemaVersion || marker.Tool != toolName {
-		return fmt.Errorf("output manifest is not owned by %s; refusing to overwrite", toolName)
-	}
-	return nil
-}
-
-func readOutputFiles(output string) (map[string][]byte, error) {
-	actual := map[string][]byte{}
-	err := filepath.WalkDir(output, func(path string, entry os.DirEntry, walkErr error) error {
+	count, identical := 0, true
+	err = filepath.WalkDir(output, func(path string, entry os.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
+		}
+		if err := ctx.Err(); err != nil {
+			return err
 		}
 		if path == output {
 			return nil
@@ -227,15 +215,52 @@ func readOutputFiles(output string) (map[string][]byte, error) {
 		if err != nil {
 			return err
 		}
-		contents, err := os.ReadFile(path)
+		want, ok := expected[filepath.ToSlash(relative)]
+		count++
+		if !ok || info.Size() != want.size {
+			identical = false
+			return nil
+		}
+		matches, err := matchesFile(ctx, path, want)
 		if err != nil {
 			return err
 		}
-		actual[filepath.ToSlash(relative)] = contents
+		if !matches {
+			identical = false
+		}
 		return nil
 	})
 	if err != nil {
-		return nil, fmt.Errorf("inspect owned output: %w", err)
+		return false, true, fmt.Errorf("inspect owned output: %w", err)
 	}
-	return actual, nil
+	return identical && count == len(expected), true, nil
+}
+
+func validateOwnedMarker(output string) error {
+	manifestBytes, err := os.ReadFile(filepath.Join(output, "manifest.json"))
+	if err != nil {
+		return fmt.Errorf("output exists without readable iconpack manifest; refusing to overwrite")
+	}
+	var marker struct {
+		SchemaVersion int    `json:"schemaVersion"`
+		Tool          string `json:"tool"`
+	}
+	if err := json.Unmarshal(manifestBytes, &marker); err != nil || marker.SchemaVersion != OutputSchemaVersion || marker.Tool != toolName {
+		return fmt.Errorf("output manifest is not owned by %s; refusing to overwrite", toolName)
+	}
+	return nil
+}
+
+func matchesFile(ctx context.Context, path string, want fileData) (bool, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return false, err
+	}
+	defer func() { _ = file.Close() }()
+	h := sha256.New()
+	size, err := io.Copy(h, cancelReader{ctx, io.LimitReader(file, want.size+1)})
+	if err != nil {
+		return false, err
+	}
+	return size == want.size && fmt.Sprintf("%x", h.Sum(nil)) == want.hash, nil
 }

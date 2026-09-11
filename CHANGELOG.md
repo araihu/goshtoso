@@ -2,6 +2,18 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.3.1] - 2026-09-11
+
+### Iconpack memory and integrity
+
+- Generate icon libraries from verified disk-backed sources, reading and
+  copying one image at a time instead of retaining the complete pack in memory.
+- Preserve deterministic catalog, manifest, provenance, licensing and image
+  bytes, with hash verification during publication and no overwrite of output.
+- Capture source provenance under the mutation lock and propagate cancellation
+  through source acquisition and cache publication using Muamba v0.0.6.
+- Existing iconpack consumers require no configuration or API migration.
+
 ## [v0.3.0] - 2026-09-10
 
 ### Breaking runtime migration
