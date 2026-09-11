@@ -1,6 +1,7 @@
 ---
 name: using-goshtoso
-description: Use when building, designing, redesigning, integrating, or updating an external Go/templ application in the Goshtoso ecosystem. Triggers for discovery and reuse of Goshtoso components, Goshtoso Charts, Margo Markdown/document rendering, Goshtoso App Shells, consumer icon packs, application shells, dashboards, operations lists, detail pages, settings, onboarding, workflows, public content, metadata, social previews, component selection, visual direction, state design, asset serving, Tailwind CSS, Alpine.js, HTMX, or component API debugging. Requires checking supported ecosystem solutions before writing custom HTML, CSS, or JavaScript.
+description: Build, integrate, or upgrade external Go/templ applications using Goshtoso components, assets, HTMX, and Alpine.js. Discover supported App Shells, Charts, Margo, and Iconpack APIs before adding custom UI. Use for consumer applications, not library maintenance.
+license: MIT
 ---
 
 # Using Goshtoso
@@ -12,6 +13,14 @@ as a library dependency: consumers import pre-generated components, serve the
 embedded assets, and run `templ generate` only for their own `.templ` files.
 This skill is for integrating Goshtoso into external applications, not for
 modifying the Goshtoso component library or demo site itself.
+
+## Release baseline
+
+This skill targets **Goshtoso v0.3.0**, with **htmx 4.0.0** and
+**Alpine.js 3.17.2**. For a new application, start with this explicit release;
+for an existing application, inspect `go.mod` before changing dependencies.
+Read [the v0.3.0 migration reference](references/migration-v0.3.0.md) when
+upgrading a 0.2.x consumer. Do not add HTMX 2 compatibility shims to a v0.3.0 app.
 
 ## When to Use
 
@@ -68,7 +77,7 @@ Use this path unless the app deliberately owns a custom Tailwind build.
 Goshtoso requires **Go 1.27.0 or newer**.
 
 ```bash
-GOSHTOSO_VERSION="${GOSHTOSO_VERSION:?set an explicit Goshtoso release}"
+GOSHTOSO_VERSION=v0.3.0
 go get github.com/araihu/goshtoso@"$GOSHTOSO_VERSION"
 go get github.com/a-h/templ
 TEMPL_VERSION="$(go list -m -f '{{.Version}}' github.com/a-h/templ)"
@@ -139,7 +148,7 @@ safe default social image. Render metadata in initial HTML, not through client
 JavaScript or HTMX fragments.
 
 `head.Dependencies()` emits Goshtoso CSS and an ordered loader for Alpine.js,
-its collapse/focus/mask plugins, HTMX, and the first-party
+its collapse/focus/mask plugins, HTMX 4, `hx-alpine-compat`, and the first-party
 `/assets/js/goshtoso.min.js` bundle. Third-party dependencies try
 version-pinned CDN URLs first and create a fresh script for the exact embedded
 version when a CDN download fails. Keep `assets.Handler()` mounted even when
@@ -202,7 +211,7 @@ density. Keep multiline manifests and source examples at default density:
 @codeblock.CodeBlock(codeblock.Config{
 	Language: "bash",
 	Label: "Install",
-	Code: "go get github.com/araihu/goshtoso@v0.2.6",
+	Code: "go get github.com/araihu/goshtoso@v0.3.0",
 	Density: codeblock.DensityCompact,
 })
 
