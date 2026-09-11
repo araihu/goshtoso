@@ -35,9 +35,9 @@ func TestIconpackDocumentationPageBrowserProof(t *testing.T) {
 	body, err := page.Locator("body").TextContent()
 	require.NoError(t, err)
 	for _, expected := range []string{
-		"Generate from a verified Assets release",
-		"Serve the sprite and render the generated symbols",
-		"A generated pack keeps the same icon contract",
+		"Generate from an Assets release",
+		"Serve and render icons",
+		"Example: Bootstrap Icons",
 		"IconBrandDeveloperIconsTRPC",
 		"appicons.Lookup",
 		"manifest.json",

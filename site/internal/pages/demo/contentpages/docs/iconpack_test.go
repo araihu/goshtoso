@@ -16,10 +16,10 @@ func TestIconpackDocsRenderConsumerSurface(t *testing.T) {
 
 	for _, expected := range []string{
 		"Icon Packs",
-		"Generate from a verified Assets release",
+		"Generate from an Assets release",
 		"Define sources with .iconpack.yaml",
-		"A generated pack keeps the same icon contract",
-		"Bootstrap Icons source",
+		"Example: Bootstrap Icons",
+		"https://icons.getbootstrap.com/",
 		".iconpack.lock.yaml",
 		"source-manifest",
 		"brand-developer-icons-tRPC",
