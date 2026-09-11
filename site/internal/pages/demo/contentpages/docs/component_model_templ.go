@@ -63,19 +63,7 @@ func componentModelContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"component-model-fragment\" class=\"mx-auto max-w-4xl space-y-10\"><header class=\"space-y-3\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Component API</p><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Working with Goshtoso Components</h1><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">Public component constructors return concrete renderable values. Those values work anywhere a templ component is accepted and expose stable identity when generic code needs it.</p></header><section id=\"public-interface\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">A common renderable interface</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Every public component value implements <code class=\"font-mono\">components.Component</code>. The interface embeds <code class=\"font-mono\">templ.Component</code> and adds stable component identity through <code class=\"font-mono\">Kind()</code>.</p>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
-			Language: "go",
-			Label:    "Public interface",
-			Code:     componentModelInterfaceExample(),
-		}).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Render returned values normally in templ. Keep the concrete return value when code uses component-specific behavior; use the common interface when a collection contains different components.</p></section><section id=\"constructor-styles\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Constructor styles</h2><p class=\"text-on-surface dark:text-on-surface-dark\">There is no shared configuration type. Each package exposes only the fields or options supported by that component. The versioned pkg.go.dev link on every component page is the source of truth for exact constructor signatures.</p><div class=\"grid gap-6 lg:grid-cols-2\"><div class=\"space-y-3\"><div><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Configuration structs</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Components with structured data use package-specific config structs.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"component-model-fragment\" class=\"mx-auto max-w-4xl space-y-10\"><header class=\"space-y-3\"><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Component Model</h1><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">Create a component by calling its package’s constructor, then render it in a templ template or through its Render method. Each constructor returns a Go value that implements templ.Component.</p></header><section id=\"constructor-styles\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Configure a component</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Each package defines its own configuration. Most constructors accept a config struct; Button, Link, Kbd, and Tooltip use option functions. The examples below create a badge and a submit button.</p><div class=\"grid gap-6 lg:grid-cols-2\"><div class=\"space-y-3\"><div><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Configuration structs</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Set the fields you need in the component’s config struct.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -87,7 +75,7 @@ func componentModelContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"space-y-3\"><div><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Functional options</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Button, Link, Kbd, and Tooltip use functional options instead of config structs.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div class=\"space-y-3\"><div><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Functional options</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Pass option functions to set individual properties.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -99,7 +87,48 @@ func componentModelContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div></section><section id=\"concrete-values\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Concrete return values</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Constructors return exported values such as <code class=\"font-mono\">button.Instance</code>, <code class=\"font-mono\">modal.AlertDialogInstance</code>, and <code class=\"font-mono\">table.Instance</code>. They still satisfy both common renderable interfaces.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div></section><section id=\"rendering\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Render a component</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Use templ’s <code class=\"font-mono\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("@")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/component_model.templ`, Line: 52, Col: 99}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</code> syntax to include a component in a template. Components that accept child content, such as Button, render the content inside the following block.</p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "Save button in a templ file", Code: `package views
+
+import "github.com/araihu/goshtoso/components/button"
+
+templ SaveButton() {
+    @button.Button(button.WithType("submit")) {
+        Save changes
+    }
+}`}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p class=\"text-on-surface dark:text-on-surface-dark\">From a Go handler, call <code class=\"font-mono\">SaveButton().Render(r.Context(), w)</code> and handle the returned error. The template supplies the button’s label; the component supplies its markup and behavior.</p></section><section id=\"public-interface\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Use a shared interface</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Use <code class=\"font-mono\">templ.Component</code> when a function only needs to render a component. Goshtoso also defines <code class=\"font-mono\">components.Component</code>, which adds <code class=\"font-mono\">Kind()</code> to identify the component type.</p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
+			Language: "go",
+			Label:    "Public interface",
+			Code:     componentModelInterfaceExample(),
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Every public Goshtoso component implements this interface, so a slice of components.Component can hold buttons, tables, dialogs, and other component types.</p></section><section id=\"concrete-values\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Keep the concrete type when needed</h2><p class=\"text-on-surface dark:text-on-surface-dark\">A constructor returns a concrete type, such as <code class=\"font-mono\">button.Instance</code> or <code class=\"font-mono\">table.Instance</code>. Keep that type when you need its additional methods. Assigning the value to an interface lets you share rendering code, but only the interface’s methods are available through that variable.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -111,19 +140,19 @@ func componentModelContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</section><section id=\"runtime-identity\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Use Kind in generic Go code</h2><p class=\"text-on-surface dark:text-on-surface-dark\">A <code class=\"font-mono\">[]components.Component</code> can contain values from different packages. Call <code class=\"font-mono\">component.Kind()</code> when a registry, diagnostic, or switch needs the stable identity of a component.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</section><section id=\"runtime-identity\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Identify a component</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Call <code class=\"font-mono\">Kind()</code> when logging or other shared code needs to distinguish component types. For example, this function counts tables in a collection.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
 			Language: "go",
-			Label:    "Switch on Kind",
+			Label:    "Count tables in a collection",
 			Code:     componentModelKindSwitchExample(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Kind values are stable kebab-case identifiers. They are not CSS classes or HTML element names.</p></section><section id=\"defaults\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Rendered defaults</h2><p class=\"text-on-surface dark:text-on-surface-dark\">A zero-valued field may render a documented default. Component pages demonstrate the rendered behavior; their versioned pkg.go.dev links document exported constructors, fields, options, and methods.</p><p class=\"text-on-surface dark:text-on-surface-dark\">For examples, compare the <a href=\"/components/button\" hx-get=\"/components/button\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Button API</a> with the config-heavy <a href=\"/components/table\" hx-get=\"/components/table\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Table API</a>.</p></section><section id=\"related-guides\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Related guides</h2><div class=\"grid gap-4 sm:grid-cols-2\"><a href=\"/getting-started\" hx-get=\"/getting-started\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"rounded-radius border border-outline bg-surface-alt p-4 transition-colors motion-reduce:transition-none hover:border-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:hover:border-primary-dark\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Getting Started</span> <span class=\"mt-1 block text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Install the module, serve its assets, and render your first component.</span></a> <a href=\"/docs/theme\" hx-get=\"/docs/theme\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"rounded-radius border border-outline bg-surface-alt p-4 transition-colors motion-reduce:transition-none hover:border-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:hover:border-primary-dark\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Themes</span> <span class=\"mt-1 block text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Configure tokens, dark mode, and application-wide styling.</span></a></div></section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Kind values use stable kebab-case names, such as table and alert-dialog. Compare them with the constants in the components package.</p></section><section id=\"defaults\" class=\"space-y-3\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Defaults and API reference</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Leaving a field unset may select a component default. Check the component’s examples for the rendered result and its Go API reference for the meaning of each field, option, and method.</p><p class=\"text-on-surface dark:text-on-surface-dark\">For examples, compare the <a href=\"/components/button\" hx-get=\"/components/button\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Button API</a> and <a href=\"/components/table\" hx-get=\"/components/table\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"text-primary underline underline-offset-2 dark:text-primary-dark\">Table API</a>.</p></section><section id=\"related-guides\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Related guides</h2><div class=\"grid gap-4 sm:grid-cols-2\"><a href=\"/getting-started\" hx-get=\"/getting-started\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"rounded-radius border border-outline bg-surface-alt p-4 transition-colors motion-reduce:transition-none hover:border-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:hover:border-primary-dark\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Getting Started</span> <span class=\"mt-1 block text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Install the module, serve its assets, and render your first component.</span></a> <a href=\"/docs/theme\" hx-get=\"/docs/theme\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\" class=\"rounded-radius border border-outline bg-surface-alt p-4 transition-colors motion-reduce:transition-none hover:border-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:hover:border-primary-dark\"><span class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Themes</span> <span class=\"mt-1 block text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Configure tokens, dark mode, and application-wide styling.</span></a></div></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -163,13 +192,14 @@ var renderable templ.Component = saveButton`
 }
 
 func componentModelKindSwitchExample() string {
-	return `for _, component := range pageComponents {
-    switch component.Kind() {
-    case components.KindAlertDialog:
-        // Alert-dialog orchestration.
-    case components.KindTable:
-        // Table orchestration.
+	return `func countTables(items []components.Component) int {
+    count := 0
+    for _, item := range items {
+        if item.Kind() == components.KindTable {
+            count++
+        }
     }
+    return count
 }`
 }
 
