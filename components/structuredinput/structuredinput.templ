@@ -1,9 +1,12 @@
 package structuredinput
 
+import "github.com/araihu/goshtoso/expressions"
+
 // StructuredInput renders repeatable structured form rows powered by Alpine.js.
 //
 // Submitted hidden inputs use name[index][columnKey]=value.
 templ structuredInputTemplate(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	{{ columns := cfg.normalizedColumns() }}
 	<div
 		if cfg.ID != "" {
@@ -39,7 +42,7 @@ templ structuredInputTemplate(cfg Config) {
 						type="button"
 						x-on:click="entries.splice(index, 1)"
 						class="shrink-0 p-2 rounded-radius text-on-surface-muted dark:text-on-surface-dark-muted hover:bg-outline/20 dark:hover:bg-outline-dark/20 hover:text-on-surface-strong dark:hover:text-on-surface-dark-strong transition motion-reduce:transition-none"
-						aria-label="Remove row"
+						aria-label={ expressions.From(ctx).StructuredInput.RemoveAriaLabel }
 					>
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
 					</button>

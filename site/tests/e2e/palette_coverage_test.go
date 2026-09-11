@@ -62,14 +62,14 @@ func TestPalette_HoverShowsLabel(t *testing.T) {
 	page := newPage(t, browser)
 	gotoPalette(t, page)
 
-	label := page.Locator(`#demo-palette span[x-text="hovered || 'Pick a color'"]`)
+	label := page.Locator(`#demo-palette span[data-placeholder]`)
 	require.NoError(t, label.WaitFor(playwright.LocatorWaitForOptions{
 		State: playwright.WaitForSelectorStateVisible, Timeout: playwright.Float(2000),
 	}))
 
 	require.NoError(t, page.Locator(`#demo-palette button[data-cls="green-500"]`).Hover())
 	_, err := page.WaitForFunction(
-		`() => document.querySelector('#demo-palette span[x-text="hovered || \'Pick a color\'"]').textContent.trim() === 'green-500'`,
+		`() => document.querySelector('#demo-palette span[data-placeholder]').textContent.trim() === 'green-500'`,
 		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)})
 	require.NoError(t, err, "hovering a swatch should update the hovered label")
 }

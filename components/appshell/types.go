@@ -48,13 +48,6 @@ func (cfg Config) mainID() string {
 	return "main-content"
 }
 
-func (cfg Config) skipLinkLabel() string {
-	if label := strings.TrimSpace(cfg.SkipLinkLabel); label != "" {
-		return label
-	}
-	return "Skip to main content"
-}
-
 func (cfg Config) rootClasses() string {
 	return appendClass(
 		"relative flex min-h-screen flex-col overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark",

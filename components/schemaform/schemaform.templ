@@ -1,5 +1,7 @@
 package schemaform
 
+import "github.com/araihu/goshtoso/expressions"
+
 import (
 	"fmt"
 
@@ -56,7 +58,7 @@ templ field(f Field, prefix string) {
 			<label for={ inputName } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark">
 				<span>{ f.Label }</span>
 				if f.Required {
-					<span class="text-danger" aria-label="required">*</span>
+					<span class="text-danger" aria-label={ expressions.From(ctx).SchemaForm.RequiredAriaLabel }>*</span>
 				}
 				if f.Managed {
 					@managedBadge()
@@ -145,7 +147,7 @@ templ booleanInput(f Field, name string) {
 		/>
 		<span class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
 			if f.Default != "" {
-				default: { f.Default }
+				{ expressions.From(ctx).SchemaForm.DefaultLabel(f.Default) }
 			}
 		</span>
 	</label>
@@ -182,8 +184,8 @@ templ arrayInput(f Field, name string) {
 		ID:          name,
 		Name:        name,
 		Values:      f.ArrayDefault,
-		Placeholder: "item",
-		AddActionLabel:    "+ Add item",
+		Placeholder: expressions.From(ctx).SchemaForm.ItemPlaceholder,
+		AddActionLabel: expressions.From(ctx).SchemaForm.AddLabel,
 		Disabled:    f.Managed,
 	})
 }
@@ -214,11 +216,11 @@ templ unknownFallback(f Field, name string) {
 }
 
 templ managedBadge() {
-	<span class="inline-flex items-center gap-1 rounded-full bg-surface-alt px-1.5 py-0.5 text-[10px] font-medium text-on-surface-muted dark:bg-surface-dark-alt dark:text-on-surface-dark-muted" title="Managed by platform — cannot override">
+	<span class="inline-flex items-center gap-1 rounded-full bg-surface-alt px-1.5 py-0.5 text-[10px] font-medium text-on-surface-muted dark:bg-surface-dark-alt dark:text-on-surface-dark-muted" title={ expressions.From(ctx).SchemaForm.ManagedTitle }>
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3" aria-hidden="true">
 			<path fill-rule="evenodd" d="M8 1a3 3 0 0 0-3 3v2H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-1V4a3 3 0 0 0-3-3Zm1.5 5V4a1.5 1.5 0 0 0-3 0v2h3Z" clip-rule="evenodd"></path>
 		</svg>
-		managed
+		{ expressions.From(ctx).SchemaForm.ManagedLabel }
 	</span>
 }
 

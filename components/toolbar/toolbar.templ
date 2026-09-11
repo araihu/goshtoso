@@ -3,6 +3,7 @@ package toolbar
 // Toolbar renders search, filter, and action regions as an accessible control
 // group that wraps on narrow screens.
 templ toolbarTemplate(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<div
 		class={ cfg.rootClasses() }
 		role="toolbar"

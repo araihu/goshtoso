@@ -246,13 +246,6 @@ func (cfg DisplayConfig) resolvedValue() int {
 	return min(max(cfg.Value, 0), cfg.resolvedMax())
 }
 
-func (cfg DisplayConfig) resolvedLabel() string {
-	if cfg.Label != "" {
-		return cfg.Label
-	}
-	return "Rating"
-}
-
 func (cfg DisplayConfig) rootClasses() string {
 	base := "inline-flex flex-col gap-2"
 	if cfg.RootClass != "" {
@@ -299,20 +292,6 @@ func (cfg DisplayConfig) isActive(value int) bool {
 		return cfg.resolvedValue() == value
 	}
 	return value <= cfg.resolvedValue()
-}
-
-func (cfg DisplayConfig) valueLabel(value int) string {
-	if cfg.Appearance == AppearanceEmoji {
-		for _, opt := range defaultEmojiOptions {
-			if opt.Value == value {
-				return opt.Label
-			}
-		}
-	}
-	if value == 1 {
-		return "one star"
-	}
-	return fmt.Sprintf("%d stars", value)
 }
 
 func (cfg DisplayConfig) emojiIcon(value int) string {

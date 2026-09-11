@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/components"
+	"github.com/araihu/goshtoso/expressions"
 	"io"
 )
 
@@ -23,7 +24,10 @@ type DialogConfig struct {
 }
 
 // DialogInstance is a renderable content dialog.
-type DialogInstance struct{ cfg DialogConfig }
+type DialogInstance struct {
+	expressionOverrides expressions.Modal
+	cfg                 DialogConfig
+}
 
 // Dialog renders arbitrary content in a native dialog above other overlays.
 // Dispatch modal:open or modal:close with detail.id matching Config.ID.
@@ -34,7 +38,14 @@ func (DialogInstance) Kind() components.Kind { return components.KindModal }
 
 // Render writes the dialog markup.
 func (i DialogInstance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Modal: i.expressionOverrides})
 	return dialogTemplate(i.cfg).Render(ctx, w)
 }
 
 var _ components.Component = DialogInstance{}
+
+// WithExpressions returns a copy with component-scoped expression overrides.
+func (i DialogInstance) WithExpressions(values expressions.Modal) DialogInstance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Modal: i.expressionOverrides}, expressions.Set{Modal: values}).Modal
+	return i
+}

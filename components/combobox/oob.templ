@@ -6,6 +6,7 @@ package combobox
 // The Alpine shell around the body is NOT swapped — its ephemeral state
 // (isOpen, focusIndex) survives the update.
 templ bodyOOB(cfg Config, state State) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<div data-combobox-body id={ cfg.ID + "-body" } hx-swap-oob="outerHTML" class="flex flex-col">
 		@bodyInner(cfg, state)
 	</div>
@@ -16,5 +17,6 @@ templ bodyOOB(cfg Config, state State) {
 // doesn't reach it — emit the trigger label alongside the body so the chip
 // reflects new selection state.
 templ triggerLabelOOB(cfg Config, state State) {
-	<span id={ cfg.ID + "-trigger-label" } hx-swap-oob="true" data-combobox-trigger-label-outer class={ "truncate text-sm " + triggerLabelClass(state) }>{ triggerLabelText(cfg, state) }</span>
+ {{ cfg = cfg.withExpressions(ctx) }}
+	<span id={ cfg.ID + "-trigger-label" } hx-swap-oob="true" data-combobox-trigger-label-outer class={ "truncate text-sm " + triggerLabelClass(state) }>{ expressionTriggerLabel(ctx, cfg, state) }</span>
 }

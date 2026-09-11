@@ -1,5 +1,9 @@
 package carousel
 
+import "github.com/araihu/goshtoso/internal/expressionutil"
+
+import "github.com/araihu/goshtoso/expressions"
+
 import "fmt"
 
 // Carousel renders a carousel component based on PenguinUI.
@@ -169,7 +173,7 @@ templ htmxCarousel(cfg Config) {
 				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 				<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 			</svg>
-			Loading carousel...
+			{ expressions.From(ctx).Carousel.LoadingText }
 		</div>
 	</div>
 }
@@ -179,7 +183,7 @@ templ prevButton() {
 	<button
 		type="button"
 		class={ "left-5 " + navButtonClasses() }
-		aria-label="previous slide"
+		aria-label={ expressions.From(ctx).Carousel.PreviousAriaLabel }
 		x-on:click="previous()"
 	>
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="3" class="size-5 md:size-6 pr-0.5" aria-hidden="true">
@@ -193,7 +197,7 @@ templ nextButton() {
 	<button
 		type="button"
 		class={ "right-5 " + navButtonClasses() }
-		aria-label="next slide"
+		aria-label={ expressions.From(ctx).Carousel.NextAriaLabel }
 		x-on:click="next()"
 	>
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="3" class="size-5 md:size-6 pl-0.5" aria-hidden="true">
@@ -212,14 +216,15 @@ templ indicators(cfg Config) {
 	<div
 		class={ indicatorContainerClasses(cfg) }
 		role="group"
-		aria-label="slides"
+		aria-label={ expressions.From(ctx).Carousel.SlidesAriaLabel }
+ data-slide-labels={ expressionutil.CountLabels(len(cfg.Slides), expressions.From(ctx).Carousel.SlideLabel) }
 	>
 		<template x-for="(slide, index) in slides">
 			<button
 				class="size-2 rounded-full transition motion-reduce:transition-none"
 				x-on:click={ clickExpr }
 				x-bind:class={ classBinding }
-				x-bind:aria-label="'slide ' + (index + 1)"
+				x-bind:aria-label="JSON.parse($el.parentElement.dataset.slideLabels)[index + 1]"
 			></button>
 		</template>
 	</div>
@@ -230,7 +235,10 @@ templ autoplayButton() {
 	<button
 		type="button"
 		class="absolute bottom-5 right-5 z-20 rounded-full text-on-surface-dark opacity-50 transition motion-reduce:transition-none hover:opacity-80 focus-visible:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-dark active:outline-offset-0"
-		aria-label="pause carousel"
+		aria-label={ expressions.From(ctx).Carousel.PauseAriaLabel }
+ data-pause-label={ expressions.From(ctx).Carousel.PauseAriaLabel }
+ data-play-label={ expressions.From(ctx).Carousel.PlayAriaLabel }
+ x-bind:aria-label="isPaused ? $el.dataset.playLabel : $el.dataset.pauseLabel"
 		x-on:click="(isPaused = !isPaused), setAutoplayInterval(autoplayIntervalTime)"
 		x-bind:aria-pressed="isPaused"
 	>

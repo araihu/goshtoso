@@ -8,6 +8,7 @@ import (
 
 // SplitButton renders a consumer-owned primary action beside a Dropdown menu.
 templ splitButtonTemplate(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<div
 		data-split-button
 		if cfg.ID != "" {
@@ -31,6 +32,7 @@ templ splitButtonTemplate(cfg Config) {
 }
 
 templ primaryAction(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	if cfg.Primary.isButton() || cfg.Primary.Href == "" {
 		@button.Button(primaryButtonOptions(cfg, cfg.Primary)...) {
 			<span class="inline-flex items-center gap-1.5">
@@ -61,6 +63,7 @@ templ splitDivider() {
 }
 
 templ menuTrigger(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	@button.Button(
 		button.WithTone(cfg.tone()),
 		button.WithSize(cfg.size()),

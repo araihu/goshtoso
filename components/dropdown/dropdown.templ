@@ -1,5 +1,9 @@
 package dropdown
 
+import "github.com/araihu/goshtoso/internal/expressionutil"
+
+import "github.com/araihu/goshtoso/expressions"
+
 import "github.com/araihu/goshtoso/components/popover"
 
 // Dropdown renders a dropdown menu component based on PenguinUI
@@ -102,7 +106,7 @@ templ triggerButton(cfg Config) {
 		aria-haspopup="true"
 		class={ cfg.buttonClasses() }
 		if cfg.useIconOnlyTrigger() {
-			aria-label={ triggerAriaLabel(cfg) }
+			aria-label={ expressionutil.Text(cfg.Label, expressions.From(ctx).Dropdown.OpenMenuAriaLabel) }
 		}
 			x-bind:class="triggerClass"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
@@ -127,7 +131,7 @@ templ hoverTriggerButton(cfg Config) {
 		aria-haspopup="true"
 			class={ cfg.buttonClasses() }
 		if cfg.useIconOnlyTrigger() {
-			aria-label={ triggerAriaLabel(cfg) }
+			aria-label={ expressionutil.Text(cfg.Label, expressions.From(ctx).Dropdown.OpenMenuAriaLabel) }
 		}
 			x-bind:class="triggerClass"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
@@ -149,7 +153,7 @@ templ contextTriggerButton(cfg Config) {
 	<button
 		x-ref="trigger"
 		type="button"
-		aria-label="context menu"
+		aria-label={ expressions.From(ctx).Dropdown.ContextMenuAriaLabel }
 		aria-haspopup="true"
 		class={ cfg.buttonClasses() }
 			x-bind:class="triggerClass"
@@ -366,14 +370,7 @@ func itemClassList(cfg Config, item Item) string {
 	return out
 }
 
-// triggerAriaLabel returns the aria-label for an icon-only trigger button.
-// Falls back to a generic "open menu" label when Label is empty.
-func triggerAriaLabel(cfg Config) string {
-	if cfg.Label != "" {
-		return cfg.Label
-	}
-	return "open menu"
-}
+
 
 
 // chevronIcon renders the dropdown chevron SVG

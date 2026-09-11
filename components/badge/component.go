@@ -4,12 +4,15 @@ import (
 	"context"
 	"io"
 
+	"github.com/araihu/goshtoso/expressions"
+
 	"github.com/araihu/goshtoso/components"
 )
 
 // Instance is a renderable badge component.
 type Instance struct {
-	cfg Config
+	expressionOverrides expressions.Badge
+	cfg                 Config
 }
 
 // Badge returns a renderable badge component.
@@ -24,12 +27,14 @@ func (Instance) Kind() components.Kind {
 
 // Render writes the badge markup.
 func (i Instance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Badge: i.expressionOverrides})
 	return badgeTemplate(i.cfg).Render(ctx, w)
 }
 
 // NotificationBadgeInstance is a renderable notification count badge.
 type NotificationBadgeInstance struct {
-	count int
+	expressionOverrides expressions.Badge
+	count               int
 }
 
 // NotificationBadge returns a renderable notification count badge.
@@ -44,6 +49,7 @@ func (NotificationBadgeInstance) Kind() components.Kind {
 
 // Render writes the notification badge markup.
 func (i NotificationBadgeInstance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Badge: i.expressionOverrides})
 	return notificationBadgeTemplate(i.count).Render(ctx, w)
 }
 
@@ -67,7 +73,8 @@ func (NotificationDotInstance) Render(ctx context.Context, w io.Writer) error {
 
 // AnimatingDotInstance is a renderable animated notification dot.
 type AnimatingDotInstance struct {
-	tone Tone
+	expressionOverrides expressions.Badge
+	tone                Tone
 }
 
 // AnimatingDot returns a renderable animated notification dot.
@@ -82,6 +89,7 @@ func (AnimatingDotInstance) Kind() components.Kind {
 
 // Render writes the animated notification dot markup.
 func (i AnimatingDotInstance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Badge: i.expressionOverrides})
 	return animatingDotTemplate(i.tone).Render(ctx, w)
 }
 
@@ -91,3 +99,24 @@ var (
 	_ components.Component = NotificationDotInstance{}
 	_ components.Component = AnimatingDotInstance{}
 )
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i Instance) WithExpressions(values expressions.Badge) Instance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Badge: i.expressionOverrides}, expressions.Set{Badge: values}).Badge
+	return i
+}
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i NotificationBadgeInstance) WithExpressions(values expressions.Badge) NotificationBadgeInstance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Badge: i.expressionOverrides}, expressions.Set{Badge: values}).Badge
+	return i
+}
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i AnimatingDotInstance) WithExpressions(values expressions.Badge) AnimatingDotInstance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Badge: i.expressionOverrides}, expressions.Set{Badge: values}).Badge
+	return i
+}

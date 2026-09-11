@@ -1,9 +1,12 @@
 package selectfield
 
+import "github.com/araihu/goshtoso/expressions"
+
 // Select renders a custom dropdown select with Alpine.js, matching
 // the combobox component styling. Supports validation states,
 // disabled/readonly, Alpine.js binding, and hidden input for form submission.
 templ selectTemplate(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<div class={ cfg.containerClasses() }>
 		if cfg.Label != "" {
 			<label for={ cfg.ID + "-trigger" } class={ cfg.labelClasses() }>
@@ -121,7 +124,7 @@ templ selectTemplate(cfg Config) {
 				if cfg.Shell {
 					id={ cfg.ID + "-listbox" }
 					role="listbox"
-					aria-label={ cfg.Label + " list" }
+					aria-label={ expressions.From(ctx).Select.ListAriaLabel(cfg.Label) }
 				}
 				if cfg.Shell {
 					x-trap="openedWithKeyboard"
@@ -134,7 +137,7 @@ templ selectTemplate(cfg Config) {
 						id={ cfg.ID + "-listbox" }
 						class="flex max-h-52 flex-col overflow-y-auto py-1"
 						role="listbox"
-						aria-label={ cfg.Label + " list" }
+						aria-label={ expressions.From(ctx).Select.ListAriaLabel(cfg.Label) }
 					>
 						<template x-for="(item, index) in allOptions" x-bind:key="item.value">
 							<li

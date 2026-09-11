@@ -1,5 +1,7 @@
 package badge
 
+import "github.com/araihu/goshtoso/expressions"
+
 import "fmt"
 
 // Badge renders a badge component based on PenguinUI
@@ -103,7 +105,7 @@ templ animatingDotTemplate(tone Tone) {
 			{{ colorClass = "bg-danger" }}
 	}
 	
-	<span class={ "flex size-3 items-center justify-center rounded-full " + colorClass } aria-label="notification">
+	<span class={ "flex size-3 items-center justify-center rounded-full " + colorClass } aria-label={ expressions.From(ctx).Badge.NotificationAriaLabel }>
 		<span class={ "size-3 animate-ping rounded-full motion-reduce:animate-none " + colorClass }></span>
 	</span>
 }

@@ -25,14 +25,15 @@ const (
 )
 
 type config struct {
-	id           string
-	label        string
-	description  string
-	position     Position
-	activation   Activation
-	triggerLabel string
-	trigger      templ.Component
-	portal       bool
+	id              string
+	label           string
+	description     string
+	position        Position
+	activation      Activation
+	triggerLabel    string
+	triggerLabelSet bool
+	trigger         templ.Component
+	portal          bool
 }
 
 // WithPortal keeps tooltips outside ancestor overflow clipping using the
@@ -79,6 +80,7 @@ func WithActivation(activation Activation) Option {
 func WithTriggerLabel(label string) Option {
 	return optionFunc(func(cfg *config) {
 		cfg.triggerLabel = label
+		cfg.triggerLabelSet = label != ""
 	})
 }
 
@@ -91,11 +93,11 @@ func WithTrigger(trigger templ.Component) Option {
 
 func newConfig(id, label string, options []Option) config {
 	cfg := config{
+		triggerLabel: "Hover Me",
 		id:           id,
 		label:        label,
 		position:     PositionTop,
 		activation:   ActivationHover,
-		triggerLabel: "Hover Me",
 	}
 	for _, option := range options {
 		if option != nil {

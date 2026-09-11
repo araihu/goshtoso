@@ -4,12 +4,15 @@ import (
 	"context"
 	"io"
 
+	"github.com/araihu/goshtoso/expressions"
+
 	"github.com/araihu/goshtoso/components"
 )
 
 // Instance is a renderable sidebar component.
 type Instance struct {
-	cfg Config
+	expressionOverrides expressions.Sidebar
+	cfg                 Config
 }
 
 // Sidebar returns a renderable sidebar component.
@@ -24,12 +27,14 @@ func (Instance) Kind() components.Kind {
 
 // Render writes the sidebar markup.
 func (i Instance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Sidebar: i.expressionOverrides})
 	return sidebarTemplate(i.cfg).Render(ctx, w)
 }
 
 // OverlayInstance is a renderable sidebar overlay.
 type OverlayInstance struct {
-	cfg OverlayConfig
+	expressionOverrides expressions.Sidebar
+	cfg                 OverlayConfig
 }
 
 // Overlay returns a renderable sidebar overlay.
@@ -44,6 +49,7 @@ func (OverlayInstance) Kind() components.Kind {
 
 // Render writes the sidebar overlay markup.
 func (i OverlayInstance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Sidebar: i.expressionOverrides})
 	return overlayTemplate(i.cfg).Render(ctx, w)
 }
 
@@ -51,3 +57,17 @@ var (
 	_ components.Component = Instance{}
 	_ components.Component = OverlayInstance{}
 )
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i Instance) WithExpressions(values expressions.Sidebar) Instance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Sidebar: i.expressionOverrides}, expressions.Set{Sidebar: values}).Sidebar
+	return i
+}
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i OverlayInstance) WithExpressions(values expressions.Sidebar) OverlayInstance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Sidebar: i.expressionOverrides}, expressions.Set{Sidebar: values}).Sidebar
+	return i
+}

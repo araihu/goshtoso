@@ -71,6 +71,7 @@ func (c FormErrorsConfig) getTitle() string {
 //	    },
 //	})
 templ formErrorsTemplate(cfg FormErrorsConfig) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	if len(cfg.Items) > 0 {
 		<div
 			id={ cfg.getID() }

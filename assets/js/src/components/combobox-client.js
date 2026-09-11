@@ -18,6 +18,7 @@
       persist: root.getAttribute("data-combobox-persist") !== "false",
       closeOnSelect: root.getAttribute("data-combobox-close-on-select") === "true",
       placeholder: root.getAttribute("data-combobox-placeholder") || "",
+ selectedLabels: JSON.parse(root.getAttribute("data-combobox-selected-labels") || "null"),
     };
   }
 
@@ -58,7 +59,9 @@
       }
       return selected[0];
     }
-    return selected.length + " selected";
+    return config.selectedLabels && config.selectedLabels[selected.length] !== undefined
+ ? config.selectedLabels[selected.length]
+ : selected.length + " selected";
   }
 
   function setHiddenInputs(root, name, selected) {
@@ -204,7 +207,17 @@
       if (!raw) return;
       var selected = JSON.parse(raw);
       if (!Array.isArray(selected)) return;
-      setHiddenInputs(root, config.name, selected.map(String));
+      // A stored snapshot can outlive its options. Keep current and explicitly
+      // rendered selections, and deduplicate before choosing prepared count text.
+      var allowed = new Set(readSelected(root, config.name));
+      root.querySelectorAll("[data-combobox-option]").forEach(function (option) {
+        allowed.add(option.getAttribute("data-value"));
+      });
+      selected = Array.from(new Set(selected.map(String))).filter(function (value) {
+        return allowed.has(value);
+      });
+      if (!config.multi) selected = selected.slice(0, 1);
+      setHiddenInputs(root, config.name, selected);
       updateUI(root);
     } catch (error) {
       // Invalid or unavailable storage must not break the component.

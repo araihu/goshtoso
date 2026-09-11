@@ -4,13 +4,16 @@ import (
 	"context"
 	"io"
 
+	"github.com/araihu/goshtoso/expressions"
+
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/components"
 )
 
 // Instance is a renderable navbar component.
 type Instance struct {
-	cfg Config
+	expressionOverrides expressions.Navbar
+	cfg                 Config
 }
 
 // Navbar returns a renderable navbar component.
@@ -38,6 +41,7 @@ func (Instance) Kind() components.Kind {
 
 // Render writes the navbar markup.
 func (i Instance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Navbar: i.expressionOverrides})
 	if err := i.cfg.Validate(); err != nil {
 		return err
 	}
@@ -45,3 +49,10 @@ func (i Instance) Render(ctx context.Context, w io.Writer) error {
 }
 
 var _ components.Component = Instance{}
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i Instance) WithExpressions(values expressions.Navbar) Instance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Navbar: i.expressionOverrides}, expressions.Set{Navbar: values}).Navbar
+	return i
+}
