@@ -111,3 +111,31 @@ jobs:
         env:
           GITHUB_RELEASE_TOKEN: ${{ github.token }}
           GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+
+  publish-image:
+    name: Publish release image and latest
+    needs: publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    concurrency:
+      group: publish-goshtoso-release-image
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.ref }}
+          persist-credentials: false
+      - name: Build, test and publish released image
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: bash scripts/publish-release-image
+      - name: Preserve immutable release image for GitOps
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        with:
+          name: image-goshtoso-release
+          path: image-goshtoso-release.txt
+          retention-days: 90
