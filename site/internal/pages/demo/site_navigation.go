@@ -6,10 +6,8 @@ func componentDocsFamily(active string) string {
 	switch active {
 	case "internationalization", "internationalization-examples", "internationalization-files":
 		return "internationalization"
-	case "agents":
-		return "agents"
-	case "icon", "icon-catalog", "iconpack":
-		return "icon-packs"
+	case "agents", "icon", "icon-catalog", "iconpack":
+		return "core"
 	case "module-charts":
 		return "charts"
 	case "module-app-shells":

@@ -534,6 +534,8 @@ func getSidebarTopItems(activeComponent string) []sidebar.Item {
 		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineArrowDownTray, Decorative: true}), Active: activeComponent == "", LinkAttrs: navHxAttrs("/getting-started", "")},
 		{ID: "component-model", Label: "Component Model", Href: "/docs/component-model", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineCube, Decorative: true}), Active: activeComponent == "component-model", LinkAttrs: navHxAttrs("/docs/component-model", "")},
 		{ID: "application-patterns", Label: "Application Patterns", Href: "/docs/application-patterns", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineQueueList, Decorative: true}), Active: activeComponent == "application-patterns", LinkAttrs: navHxAttrs("/docs/application-patterns", "")},
+		{ID: "agents", Label: "AI Agents", Href: "/docs/agents", Icon: iconsSidebarIcon(sidebaricons.IconHeroiconsOptimized24OutlineCube), Active: activeComponent == "agents", LinkAttrs: navHxAttrs("/docs/agents", "AI Agents")},
+		iconsSidebarItem(activeComponent),
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebaricons.Icon(sidebaricons.Config{Symbol: sidebaricons.IconHeroiconsOptimized24OutlineSwatch, Decorative: true}), Active: activeComponent == "theme", LinkAttrs: navHxAttrs("/docs/theme", "")},
 	}
 }
@@ -601,16 +603,6 @@ func getSearchItems(activeFamily ...string) []searchfield.Item {
 	for _, item := range getSidebarTopItems("") {
 		appendItem(searchItemFromSidebar(item, "Docs"))
 	}
-	appendItem(searchfield.Item{
-		ID:          "search-agents",
-		Title:       "AI Agents",
-		Description: "Use Goshtoso with AI coding agents through documented component and project conventions.",
-		Href:        "/docs/agents",
-		Section:     "AI Agents",
-		Scope:       "agents",
-		Keywords:    []string{"agents", "ai"},
-		Attrs:       navHxAttrs("/docs/agents", ""),
-	})
 
 	appendItem(searchItemFromLink("internationalization", "Internationalization", "Configure translations, application defaults, request expressions, and component labels.", "/docs/internationalization", "Internationalization", "translation", "language", "expressions"))
 	appendItem(searchItemFromLink("internationalization-files", "Expression files", "Load JSON and YAML expressions, embed translation files, and browse the JSON Schema reference.", "/docs/internationalization/files", "Internationalization", "json", "yaml", "schema", "embed"))
@@ -684,9 +676,9 @@ func searchItemFromLink(id, title, description, href, section string, keywords .
 
 func normalizeSearchScope(scope string) string {
 	switch scope {
-	case "icon-packs":
-		return "icons"
-	case "internationalization", "charts", "app-shells", "examples", "agents", "icons", "core":
+	case "icon-packs", "icons", "agents":
+		return "core"
+	case "internationalization", "charts", "app-shells", "examples", "core":
 		return scope
 	default:
 		return "core"
@@ -695,12 +687,10 @@ func normalizeSearchScope(scope string) string {
 
 func searchScopeForPath(path string) string {
 	switch {
-	case path == "/components/icon", path == "/docs/icon-catalog", path == "/docs/iconpack":
-		return "icons"
+	case path == "/components/icon", path == "/docs/icon-catalog", path == "/docs/iconpack", path == "/docs/agents":
+		return "core"
 	case path == "/docs/internationalization", strings.HasPrefix(path, "/docs/internationalization/"):
 		return "internationalization"
-	case path == "/docs/agents":
-		return "agents"
 	case strings.HasPrefix(path, "/modules/charts"):
 		return "charts"
 	case strings.HasPrefix(path, "/modules/app-shells"):
@@ -840,7 +830,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var28 templ.SafeURL
 				templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(prev.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 628, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 618, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 				if templ_7745c5c3_Err != nil {
@@ -861,7 +851,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var29 string
 				templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(prev.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 635, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 625, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 				if templ_7745c5c3_Err != nil {
@@ -886,7 +876,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var30 templ.SafeURL
 				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(next.Href))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 643, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 633, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 				if templ_7745c5c3_Err != nil {
@@ -907,7 +897,7 @@ func componentNavFooter(activeComponent string) templ.Component {
 				var templ_7745c5c3_Var31 string
 				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(next.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 647, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/layout.templ`, Line: 637, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 				if templ_7745c5c3_Err != nil {
