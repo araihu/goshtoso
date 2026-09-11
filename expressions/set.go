@@ -1,5 +1,6 @@
 // Package expressions supplies application-owned UI text to Goshtoso renders.
-// It does not select languages, load translations, or maintain global defaults.
+// It parses application-supplied expression files without selecting languages
+// or maintaining global defaults.
 package expressions
 
 import "strconv"

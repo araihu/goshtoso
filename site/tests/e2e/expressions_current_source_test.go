@@ -183,3 +183,34 @@ func TestExpressions_LiveDocumentation(t *testing.T) {
 		})
 	}
 }
+
+func TestExpressions_SchemaDocumentation(t *testing.T) {
+	_, browser, cleanup := setupPlaywright(t)
+	defer cleanup()
+	for _, theme := range []string{"araihu", "minimal"} {
+		for _, dark := range []bool{false, true} {
+			t.Run(fmt.Sprintf("%s-dark-%t", theme, dark), func(t *testing.T) {
+				page := newPage(t, browser)
+				_, err := page.Goto(baseURL + "/docs/internationalization")
+				require.NoError(t, err)
+				_, err = page.Evaluate(`([theme,dark]) => { document.documentElement.dataset.theme=theme; document.documentElement.classList.toggle('dark',dark); }`, []any{theme, dark})
+				require.NoError(t, err)
+				require.NoError(t, page.Locator("#expression-schema summary").Filter(playwright.LocatorFilterOptions{HasText: "Pagination"}).Click())
+				require.NoError(t, page.Locator(`#expression-schema [title="Pagination.PageAriaLabel"]`).WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+				text, err := page.Locator("#expression-schema").TextContent()
+				require.NoError(t, err)
+				require.Contains(t, text, "{page}")
+				require.Contains(t, text, "page {page}")
+				require.Contains(t, text, "NextAriaLabel")
+			})
+		}
+	}
+	response, err := http.Get(baseURL + "/schemas/expressions.schema.json")
+	require.NoError(t, err)
+	defer response.Body.Close()
+	require.Equal(t, http.StatusOK, response.StatusCode)
+	require.Equal(t, "application/schema+json", response.Header.Get("Content-Type"))
+	data, err := io.ReadAll(response.Body)
+	require.NoError(t, err)
+	require.Equal(t, expressions.JSONSchema(), data)
+}

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://goshtoso.araihu.com/schemas/expressions.schema.json
+EmptyState:
+  Title: "这里还没有内容"
+  Description: "有可用项目时，它们会显示在这里。"
+FileInput:
+  BrowseLabel: "浏览文件"
+  DropText: " 或将文件拖放到这里"
+  EmptyText: "未选择文件"
+CodeBlock:
+  CopyLabel: "复制"
+  CopiedLabel: "已复制！"
+  ErrorText: "无法复制"
+  CopyAriaLabel: "复制{label}"
+Pagination:
+  AriaLabel: "分页"
+  PreviousLabel: "上一页"
+  NextLabel: "下一页"
+  PreviousAriaLabel: "上一页"
+  NextAriaLabel: "下一页"
+  MoreAriaLabel: "更多页"
+  PageAriaLabel: "第 {page} 页"

@@ -17,6 +17,7 @@ import (
 	chartassets "github.com/araihu/goshtoso-charts/assets"
 	libraryassets "github.com/araihu/goshtoso/assets"
 	combobox "github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/expressions"
 	siteassets "github.com/araihu/goshtoso/site/assets"
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
@@ -108,6 +109,11 @@ func (s *Server) setupRoutes() {
 	s.mux.Handle("/api/components/combobox/clusters/toggle", clustersHandler)
 	s.mux.Handle("/api/components/combobox/clusters/clear", clustersHandler)
 
+	// Expression schema is served locally for editor integration; no remote lookup.
+	s.mux.HandleFunc("GET /schemas/expressions.schema.json", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/schema+json")
+		_, _ = w.Write(expressions.JSONSchema())
+	})
 	// Docs pages
 	s.mux.HandleFunc("/docs/internationalization/examples", func(w http.ResponseWriter, r *http.Request) {
 		s.renderDemo(w, docspages.WithExpressionDemo(r), "docs/internationalization/examples")

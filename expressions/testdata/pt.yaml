@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../schema.json
+Pagination:
+  NextLabel: Próxima
+  PageAriaLabel: Página {page}
+CodeBlock:
+  CopyLabel: Copiar
+  CopyAriaLabel: Copiar {label}

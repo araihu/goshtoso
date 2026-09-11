@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://goshtoso.araihu.com/schemas/expressions.schema.json
+EmptyState:
+  Title: "Hier gibt es noch nichts"
+  Description: "Elemente werden hier angezeigt, sobald sie verfügbar sind."
+FileInput:
+  BrowseLabel: "Durchsuchen"
+  DropText: " oder Dateien hierher ziehen"
+  EmptyText: "Keine Datei ausgewählt"
+CodeBlock:
+  CopyLabel: "Kopieren"
+  CopiedLabel: "Kopiert!"
+  ErrorText: "Kopieren fehlgeschlagen"
+  CopyAriaLabel: "{label} kopieren"
+Pagination:
+  AriaLabel: "Seitennavigation"
+  PreviousLabel: "Zurück"
+  NextLabel: "Weiter"
+  PreviousAriaLabel: "Vorherige Seite"
+  NextAriaLabel: "Nächste Seite"
+  MoreAriaLabel: "Weitere Seiten"
+  PageAriaLabel: "Seite {page}"

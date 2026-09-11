@@ -63,7 +63,15 @@ func internationalizationContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p class=\"text-on-surface dark:text-on-surface-dark\">Carousel and client-side Combobox prepare their possible count messages during rendering, then use them as the user interacts. Count functions must handle zero and positive counts. Render the component again when its available options change. Copy-button feedback, mobile navigation, and file-selection messages also use the text supplied during rendering.</p><p class=\"text-on-surface dark:text-on-surface-dark\">When the user changes languages, render the page or affected fragments again. Existing browser content keeps its previous text until it is replaced. Keep any state captured by message functions immutable, or synchronize access when sharing it between requests.</p></section><section id=\"scope\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Application content</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Expressions cover the text built into Goshtoso components. Your application still supplies its own titles, navigation items, table data, and validation messages, and handles language selection and right-to-left layout.</p></section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p class=\"text-on-surface dark:text-on-surface-dark\">Carousel and client-side Combobox prepare their possible count messages during rendering, then use them as the user interacts. Count functions must handle zero and positive counts. Render the component again when its available options change. Copy-button feedback, mobile navigation, and file-selection messages also use the text supplied during rendering.</p><p class=\"text-on-surface dark:text-on-surface-dark\">When the user changes languages, render the page or affected fragments again. Existing browser content keeps its previous text until it is replaced. Keep any state captured by message functions immutable, or synchronize access when sharing it between requests.</p></section>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = internationalizationFiles().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<section id=\"scope\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Application content</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Expressions cover the text built into Goshtoso components. Your application still supplies its own titles, navigation items, table data, and validation messages, and handles language selection and right-to-left layout.</p></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

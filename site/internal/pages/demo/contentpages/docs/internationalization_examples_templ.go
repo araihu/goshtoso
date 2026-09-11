@@ -39,7 +39,7 @@ func internationalizationExamplesContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<section id=\"request-language\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Choose a language per request</h2><p class=\"text-on-surface dark:text-on-surface-dark\">The selector submits a new request with a language parameter. The handler chooses the matching expressions and renders the preview again. In your application, the language could come from a user profile or session instead. This shorter example translates the copy control; the live preview also supplies empty-state, file-picker, and pagination expressions.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<section id=\"request-language\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Choose a language per request</h2><p class=\"text-on-surface dark:text-on-surface-dark\">The live previews load their expression sets from embedded YAML files at startup. The selector submits a new request with a language parameter. The handler chooses the matching expressions and renders the preview again. In your application, the language could come from a user profile or session instead. This shorter example translates the copy control; the live preview also supplies empty-state, file-picker, and pagination expressions.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
