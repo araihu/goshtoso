@@ -42,10 +42,9 @@ templ ApplicationPatternsPage() {
 templ applicationPatternsContent() {
 	<div id="application-patterns-fragment" class="mx-auto max-w-6xl">
 		<header class="max-w-4xl space-y-4 pb-10">
-			<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Application recipes</p>
-			<h1 class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Compose product surfaces, not component piles</h1>
+			<h1 class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Application Patterns</h1>
 			<p class="max-w-3xl text-lg leading-relaxed text-on-surface dark:text-on-surface-dark">
-				Four server-rendered recipes show how Goshtoso components become durable application structure. Each recipe separates reusable UI from the routing, policy, queries, and domain state that belong to your app.
+				These four examples combine Goshtoso components into common application layouts: navigation, a searchable list, a detail page, and a multi-step form. Each includes a preview, component links, and guidance for responsive behavior, accessibility, and server state. Your application supplies the routes, data, permissions, and business rules.
 			</p>
 		</header>
 		@applicationSurfaceBrief()
@@ -57,16 +56,15 @@ templ applicationPatternsContent() {
 			@applicationPatternIndexLink("+", "App Shells module", "/modules/app-shells")
 		</nav>
 		<div class="divide-y divide-outline dark:divide-outline-dark">
-			@applicationPatternSection("01", "app-shell", "App Shell", "Give every task a stable place to start.", applicationPatternAppShellPreview(), applicationPatternAppShellContract())
-			@applicationPatternSection("02", "operations-list", "Operations List", "Help operators scan, narrow, select, and act without losing context.", operationsListPreview(), operationsListContract())
-			@applicationPatternSection("03", "detail-workspace", "Detail Workspace", "Keep identity, status, actions, and deeper context in one navigable workspace.", detailWorkspacePreview(), detailWorkspaceContract())
-			@applicationPatternSection("04", "multi-step-workflow", "Multi-step Workflow", "Make progress, validation, review, and recovery explicit.", multiStepWorkflowPreview(), multiStepWorkflowContract())
+			@applicationPatternSection("01", "app-shell", "App Shell", "Share navigation and account controls across pages.", applicationPatternAppShellPreview(), applicationPatternAppShellContract())
+			@applicationPatternSection("02", "operations-list", "Operations List", "Search, filter, and act on a list of records.", operationsListPreview(), operationsListContract())
+			@applicationPatternSection("03", "detail-workspace", "Detail Workspace", "Show a record’s status, actions, and related information.", detailWorkspacePreview(), detailWorkspaceContract())
+			@applicationPatternSection("04", "multi-step-workflow", "Multi-step Workflow", "Split a form into steps with validation and a final review.", multiStepWorkflowPreview(), multiStepWorkflowContract())
 		</div>
 		<section class="border-t border-outline py-10 dark:border-outline-dark" aria-labelledby="app-shells-module-reference-title">
-			<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Packaged alternative</p>
 			<h2 id="app-shells-module-reference-title" data-toc-heading class="mt-2 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Start from Goshtoso App Shells</h2>
-			<p class="mt-3 max-w-3xl text-sm leading-6 text-on-surface dark:text-on-surface-dark">Use the optional module when its complete documentation or console frame matches the product. Keep the composition recipes above when the application needs a different shell.</p>
-			<a href="/modules/app-shells" class="mt-4 inline-block text-sm font-semibold text-primary underline underline-offset-2 dark:text-primary-dark">Open the App Shells module showcase</a>
+			<p class="mt-3 max-w-3xl text-sm leading-6 text-on-surface dark:text-on-surface-dark">The optional App Shells module provides ready-made layouts for documentation and console applications. Use one as a starting point, or compose your own shell with the components shown above.</p>
+			<a href="/modules/app-shells" class="mt-4 inline-block text-sm font-semibold text-primary underline underline-offset-2 dark:text-primary-dark">Browse App Shells</a>
 		</section>
 		@fieldProvenApplicationPatterns()
 	</div>
@@ -74,56 +72,25 @@ templ applicationPatternsContent() {
 
 templ applicationSurfaceBrief() {
 	<section id="surface-brief" class="mb-14 border-y border-outline py-8 dark:border-outline-dark" aria-labelledby="surface-brief-title">
-		<div class="grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)]">
-			<header class="space-y-2">
-				<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Before components</p>
-				<h2 id="surface-brief-title" data-toc-heading class="scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Write the surface brief</h2>
-				<p class="text-sm leading-6 text-on-surface dark:text-on-surface-dark">Use product context and task truth to make a strong reversible first pass. Do not turn the domain name into a palette, font, or layout preset.</p>
-			</header>
-			<dl class="grid gap-x-8 gap-y-5 sm:grid-cols-2">
-				@applicationBriefItem("Task and scene", "Name the primary user, outcome, environment, constraints, and information priority.")
-				@applicationBriefItem("Register and archetype", "Choose product or brand; then operations, dashboard, detail, workflow, settings, onboarding, or content/marketing.")
-				@applicationBriefItem("State and navigation", "Name direct or HTMX navigation and every consequential loading, empty, error, permission, interruption, and success state.")
-				@applicationBriefItem("Visual direction", "Record density, hierarchy, geometry, type roles, semantic color, and motion—never only “clean” or “modern.”")
-			</dl>
-		</div>
-		<p class="mt-6 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">The installable skill includes the complete design-intelligence brief, anti-reflex critique, primitive mapping, and evidence contract.</p>
-		@applicationWorkedDashboardBrief()
+		<h2 id="surface-brief-title" data-toc-heading class="scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Choose a pattern</h2>
+		<p class="mt-4 max-w-3xl leading-6 text-on-surface dark:text-on-surface-dark">Start with the task the page needs to support. A list helps users find and compare records; a detail page brings one record’s information and actions together; a multi-step form guides a longer submission. An app shell provides navigation around any of these layouts.</p>
+		<p class="mt-4 max-w-3xl leading-6 text-on-surface dark:text-on-surface-dark">Decide what users need to see first, which actions they can take, and how the page behaves while loading or when data is missing. Plan for errors and permission changes as well as successful requests. Keep the same reading order on small screens, with secondary information below the main task.</p>
+		<h3 class="mt-6 font-title text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Example: an incident dashboard</h3>
+		<p class="mt-3 max-w-3xl leading-6 text-on-surface dark:text-on-surface-dark">Combine an app shell with an operations list to put active incidents first. Use a Table for incidents, Badges for severity, and an Alert when data is stale or incomplete. Open a detail page for investigation and actions. Place service trends after the incident queue so they remain available without delaying urgent work.</p>
 	</section>
-}
-
-templ applicationWorkedDashboardBrief() {
-	<div class="mt-8 border-t border-outline pt-6 dark:border-outline-dark">
-		<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Completed route</p>
-		<h3 class="mt-2 font-title text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Reliability dashboard → actionable incident queue</h3>
-		<dl class="mt-4 grid gap-x-8 gap-y-4 text-sm sm:grid-cols-2">
-			@applicationBriefItem("Task and priority", "A reliability lead scans in under 30 seconds. Active incidents outrank degraded services; stable trends are context, not the page grid.")
-			@applicationBriefItem("Pattern and primitives", "App Shell + Operations List with PageHeader, Toolbar, Alert, Table, Badge, Panel, EmptyState, and Skeleton.")
-			@applicationBriefItem("States and direction", "Compact density; stale, partial, permission, empty, retry, and success states; restrained dividers and semantic state color without elevation.")
-			@applicationBriefItem("No-match decision", "A compact trend strip remains application-owned because Goshtoso has no public chart primitive; it needs a labeled range and textual equivalent.")
-		</dl>
-	</div>
-}
-
-templ applicationBriefItem(term, description string) {
-	<div>
-		<dt class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ term }</dt>
-		<dd class="mt-1 text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">{ description }</dd>
-	</div>
 }
 
 templ fieldProvenApplicationPatterns() {
 	<section class="border-t border-outline py-14 dark:border-outline-dark sm:py-20" aria-labelledby="field-proven-title">
 		<div class="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)]">
 			<header class="space-y-3">
-				<p class="text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark">Field-proven extensions</p>
-				<h2 id="field-proven-title" data-toc-heading class="scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Patterns recovered from independent apps</h2>
-				<p class="text-on-surface dark:text-on-surface-dark">Three blind consumer builds pushed the four base recipes into finance, warehouse, and editorial work. Reuse the decision structure; keep the domain voice.</p>
+				<h2 id="field-proven-title" data-toc-heading class="scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Combine patterns</h2>
+				<p class="text-on-surface dark:text-on-surface-dark">A page can combine these patterns when users need to move between related tasks. Keep the selected record and pending changes clear as they move between views.</p>
 			</header>
 			<div class="divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark">
-				@fieldProvenPattern("Decision Queue", "Operations List + Detail Workspace", "Keep the queue, selected record, risk or policy context, decision form, and audit history visible together. Stack the selected record after the queue at 390 px.")
-				@fieldProvenPattern("Interruption-safe Workflow", "Multi-step Workflow + bounded draft", "Default the common case, edit exceptions only, review exact changes, preserve a short-lived draft, and make retries idempotent. Sticky actions must not cover focused fields.")
-				@fieldProvenPattern("Content-first Review", "Queue + reading surface + decision rail", "Let typography and rhythm belong to the publication. Keep author, deadline, channel, status, and handoff note next to the decision instead of converting prose into dashboard cards.")
+				@fieldProvenPattern("Review queue", "Operations List + Detail Workspace", "Show a queue beside the selected record, with the information needed to approve or reject it. On narrow screens, place the selected record below the queue and provide a clear way back.")
+				@fieldProvenPattern("Resumable workflow", "Multi-step Workflow + saved draft", "Save progress so users can leave and return. Show the exact changes before submission, explain when drafts expire, and make retries safe from duplicate writes. Keep focused fields visible above sticky actions.")
+				@fieldProvenPattern("Editorial review", "Operations List + Detail Workspace", "Give the article enough room to read. Keep its author, deadline, publication channel, status, and reviewer notes near the approval controls.")
 			</div>
 		</div>
 	</section>
@@ -186,7 +153,7 @@ templ applicationPatternContractDetails(contract applicationPatternContract) {
 					@applicationPatternList(contract.States)
 				</div>
 				<div data-pattern-app-specific class="space-y-3">
-					<h3 class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">What stays app-specific</h3>
+					<h3 class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Application code</h3>
 					@applicationPatternList(contract.AppSpecific)
 				</div>
 			</div>
@@ -206,7 +173,7 @@ templ applicationPatternContractDetails(contract applicationPatternContract) {
 					@applicationPatternList(contract.Accessibility)
 				</div>
 				<div data-pattern-done class="space-y-3">
-					<h3 class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Done when</h3>
+					<h3 class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Check the implementation</h3>
 					<ul class="space-y-2">
 						for _, item := range contract.Done {
 							<li class="flex gap-2 text-sm text-on-surface dark:text-on-surface-dark">
@@ -223,7 +190,7 @@ templ applicationPatternContractDetails(contract applicationPatternContract) {
 		<div data-pattern-source-map class="border-t border-outline py-7 dark:border-outline-dark">
 			@codeblock.CodeBlock(codeblock.Config{
 				Language: "text",
-				Label:    "Source map",
+				Label:    "Suggested file organization",
 				Code:     contract.SourceMap,
 			})
 		</div>
@@ -368,17 +335,17 @@ templ operationsListPreview() {
 			</div>
 		</div>
 		@table.Table(table.Config{
-					ID:           "operations-pattern-table",
-					Caption:      "Deployments awaiting operational review",
-					ShowCheckbox: true,
-					Columns: []table.Column{
-						{Key: "service", Label: "Service", Width: "min-w-36"},
-						{Key: "release", Label: "Release", Width: "min-w-20"},
-						{Key: "environment", Label: "Environment", Width: "min-w-28"},
-						{Key: "status", Label: "Status", Width: "min-w-36"},
-						{Key: "owner", Label: "Owner", Width: "min-w-28"},
-					},
-					Rows: operationsPatternRows(),
+			ID:           "operations-pattern-table",
+			Caption:      "Deployments awaiting operational review",
+			ShowCheckbox: true,
+			Columns: []table.Column{
+				{Key: "service", Label: "Service", Width: "min-w-36"},
+				{Key: "release", Label: "Release", Width: "min-w-20"},
+				{Key: "environment", Label: "Environment", Width: "min-w-28"},
+				{Key: "status", Label: "Status", Width: "min-w-36"},
+				{Key: "owner", Label: "Owner", Width: "min-w-28"},
+			},
+			Rows: operationsPatternRows(),
 		})
 		<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Showing 3 of 18 deployments. Selection remains stable while filters update from the server.</p>
 	</div>
@@ -610,11 +577,11 @@ templ multiStepWorkflowPreview() {
 
 func applicationPatternAppShellContract() applicationPatternContract {
 	return applicationPatternContract{
-		Problem: "Repeated page chrome drifts quickly. The shell must own global navigation, responsive positioning, identity, and page framing while each route supplies only its task content.",
+		Problem: "Put shared navigation, account controls, and responsive layout in one shell. Each route supplies its page content, so changes to navigation apply consistently across the application.",
 		Components: []applicationPatternComponent{
 			{Name: "Navbar", Href: "/components/navbar", Role: "Global brand, primary navigation, account menu, and compact actions."},
 			{Name: "Sidebar", Href: "/components/sidebar", Role: "Persistent desktop navigation and current-route orientation."},
-			{Name: "Button", Href: "/components/button", Role: "One decisive global action with familiar states."},
+			{Name: "Button", Href: "/components/button", Role: "Primary action available across pages."},
 			{Name: "Badge", Href: "/components/badge", Role: "Compact environment and system-state signals."},
 		},
 		States: []string{
@@ -652,12 +619,12 @@ app/navigation.go        -> routes, labels, permissions, active state`,
 
 func operationsListContract() applicationPatternContract {
 	return applicationPatternContract{
-		Problem: "Operational lists fail when filters, selection, status, and row actions are designed separately. Compose them as one server-backed task with explicit query and selection ownership.",
+		Problem: "Keep search, filters, sorting, pagination, and row selection consistent across requests. The server resolves the query and checks permissions before applying row or bulk actions.",
 		Components: []applicationPatternComponent{
 			{Name: "Table", Href: "/components/table", Role: "Rows, accessible caption, selection, sorting, pagination, and HTMX updates."},
 			{Name: "Text Input", Href: "/components/text-input", Role: "Search with a persistent label and server query value."},
 			{Name: "Select", Href: "/components/select", Role: "Bounded filters with a visible current value."},
-			{Name: "Badge", Href: "/components/badge", Role: "Text-backed semantic status in dense rows."},
+			{Name: "Badge", Href: "/components/badge", Role: "Status labels with text and color."},
 			{Name: "Button", Href: "/components/button", Role: "Create, clear, review, and bulk actions."},
 		},
 		States: []string{
@@ -696,12 +663,12 @@ app/deployments/list.templ -> toolbar, columns, empty and error states`,
 
 func detailWorkspaceContract() applicationPatternContract {
 	return applicationPatternContract{
-		Problem: "A detail route must answer what this is, what state it is in, what can happen next, and where deeper evidence lives without forcing users through separate pages.",
+		Problem: "Identify the record and show its current status and available actions in the header. Use tabs for related views such as changes and activity, while keeping essential context visible.",
 		Components: []applicationPatternComponent{
 			{Name: "Breadcrumbs", Href: "/components/breadcrumbs", Role: "Hierarchy and a reliable path back to the parent list."},
-			{Name: "Tabs", Href: "/components/tabs", Role: "Keyboardable views of overview, changes, and activity."},
+			{Name: "Tabs", Href: "/components/tabs", Role: "Overview, changes, and activity views with keyboard navigation."},
 			{Name: "Badge", Href: "/components/badge", Role: "Current lifecycle state next to the resource identity."},
-			{Name: "Alert", Href: "/components/alert", Role: "Decision-critical context before the primary action."},
+			{Name: "Alert", Href: "/components/alert", Role: "Warnings and information needed before taking an action."},
 			{Name: "Button", Href: "/components/button", Role: "Primary and secondary resource actions."},
 		},
 		States: []string{
@@ -733,14 +700,14 @@ app/releases/detail.templ -> header, tab panels, context rail`,
 			"The route communicates identity, status, and next action before the first tab.",
 			"Refreshing or deep-linking restores the correct resource and tab.",
 			"Actions remain correct when permissions or resource state change.",
-			"At both target widths, context follows the task instead of competing with it.",
+			"At both target widths, the record and its actions appear before secondary information.",
 		},
 	}
 }
 
 func multiStepWorkflowContract() applicationPatternContract {
 	return applicationPatternContract{
-		Problem: "Long forms hide progress and make recovery expensive. A workflow should expose the current step, validate on the server, preserve safe draft data, and present a final review before commitment.",
+		Problem: "Show the current step, validate submitted values on the server, and save the draft so users can resume. Before the final submission, let users review their choices and return to earlier steps.",
 		Components: []applicationPatternComponent{
 			{Name: "Steps", Href: "/components/steps", Role: "Ordered progress with completed, current, and upcoming states."},
 			{Name: "Text Input", Href: "/components/text-input", Role: "Typed values, constraints, helper text, and validation feedback."},

@@ -93,7 +93,7 @@ func applicationPatternsContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"application-patterns-fragment\" class=\"mx-auto max-w-6xl\"><header class=\"max-w-4xl space-y-4 pb-10\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Application recipes</p><h1 class=\"font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">Compose product surfaces, not component piles</h1><p class=\"max-w-3xl text-lg leading-relaxed text-on-surface dark:text-on-surface-dark\">Four server-rendered recipes show how Goshtoso components become durable application structure. Each recipe separates reusable UI from the routing, policy, queries, and domain state that belong to your app.</p></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"application-patterns-fragment\" class=\"mx-auto max-w-6xl\"><header class=\"max-w-4xl space-y-4 pb-10\"><h1 class=\"font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl\">Application Patterns</h1><p class=\"max-w-3xl text-lg leading-relaxed text-on-surface dark:text-on-surface-dark\">These four examples combine Goshtoso components into common application layouts: navigation, a searchable list, a detail page, and a multi-step form. Each includes a preview, component links, and guidance for responsive behavior, accessibility, and server state. Your application supplies the routes, data, permissions, and business rules.</p></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -129,23 +129,23 @@ func applicationPatternsContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = applicationPatternSection("01", "app-shell", "App Shell", "Give every task a stable place to start.", applicationPatternAppShellPreview(), applicationPatternAppShellContract()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = applicationPatternSection("01", "app-shell", "App Shell", "Share navigation and account controls across pages.", applicationPatternAppShellPreview(), applicationPatternAppShellContract()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = applicationPatternSection("02", "operations-list", "Operations List", "Help operators scan, narrow, select, and act without losing context.", operationsListPreview(), operationsListContract()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = applicationPatternSection("02", "operations-list", "Operations List", "Search, filter, and act on a list of records.", operationsListPreview(), operationsListContract()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = applicationPatternSection("03", "detail-workspace", "Detail Workspace", "Keep identity, status, actions, and deeper context in one navigable workspace.", detailWorkspacePreview(), detailWorkspaceContract()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = applicationPatternSection("03", "detail-workspace", "Detail Workspace", "Show a record’s status, actions, and related information.", detailWorkspacePreview(), detailWorkspaceContract()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = applicationPatternSection("04", "multi-step-workflow", "Multi-step Workflow", "Make progress, validation, review, and recovery explicit.", multiStepWorkflowPreview(), multiStepWorkflowContract()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = applicationPatternSection("04", "multi-step-workflow", "Multi-step Workflow", "Split a form into steps with validation and a final review.", multiStepWorkflowPreview(), multiStepWorkflowContract()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><section class=\"border-t border-outline py-10 dark:border-outline-dark\" aria-labelledby=\"app-shells-module-reference-title\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Packaged alternative</p><h2 id=\"app-shells-module-reference-title\" data-toc-heading class=\"mt-2 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Start from Goshtoso App Shells</h2><p class=\"mt-3 max-w-3xl text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Use the optional module when its complete documentation or console frame matches the product. Keep the composition recipes above when the application needs a different shell.</p><a href=\"/modules/app-shells\" class=\"mt-4 inline-block text-sm font-semibold text-primary underline underline-offset-2 dark:text-primary-dark\">Open the App Shells module showcase</a></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><section class=\"border-t border-outline py-10 dark:border-outline-dark\" aria-labelledby=\"app-shells-module-reference-title\"><h2 id=\"app-shells-module-reference-title\" data-toc-heading class=\"mt-2 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Start from Goshtoso App Shells</h2><p class=\"mt-3 max-w-3xl text-sm leading-6 text-on-surface dark:text-on-surface-dark\">The optional App Shells module provides ready-made layouts for documentation and console applications. Use one as a starting point, or compose your own shell with the components shown above.</p><a href=\"/modules/app-shells\" class=\"mt-4 inline-block text-sm font-semibold text-primary underline underline-offset-2 dark:text-primary-dark\">Browse App Shells</a></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -182,139 +182,7 @@ func applicationSurfaceBrief() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<section id=\"surface-brief\" class=\"mb-14 border-y border-outline py-8 dark:border-outline-dark\" aria-labelledby=\"surface-brief-title\"><div class=\"grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)]\"><header class=\"space-y-2\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Before components</p><h2 id=\"surface-brief-title\" data-toc-heading class=\"scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Write the surface brief</h2><p class=\"text-sm leading-6 text-on-surface dark:text-on-surface-dark\">Use product context and task truth to make a strong reversible first pass. Do not turn the domain name into a palette, font, or layout preset.</p></header><dl class=\"grid gap-x-8 gap-y-5 sm:grid-cols-2\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = applicationBriefItem("Task and scene", "Name the primary user, outcome, environment, constraints, and information priority.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = applicationBriefItem("Register and archetype", "Choose product or brand; then operations, dashboard, detail, workflow, settings, onboarding, or content/marketing.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = applicationBriefItem("State and navigation", "Name direct or HTMX navigation and every consequential loading, empty, error, permission, interruption, and success state.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = applicationBriefItem("Visual direction", "Record density, hierarchy, geometry, type roles, semantic color, and motion—never only “clean” or “modern.”").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</dl></div><p class=\"mt-6 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The installable skill includes the complete design-intelligence brief, anti-reflex critique, primitive mapping, and evidence contract.</p>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = applicationWorkedDashboardBrief().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</section>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func applicationWorkedDashboardBrief() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"mt-8 border-t border-outline pt-6 dark:border-outline-dark\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Completed route</p><h3 class=\"mt-2 font-title text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Reliability dashboard → actionable incident queue</h3><dl class=\"mt-4 grid gap-x-8 gap-y-4 text-sm sm:grid-cols-2\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = applicationBriefItem("Task and priority", "A reliability lead scans in under 30 seconds. Active incidents outrank degraded services; stable trends are context, not the page grid.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = applicationBriefItem("Pattern and primitives", "App Shell + Operations List with PageHeader, Toolbar, Alert, Table, Badge, Panel, EmptyState, and Skeleton.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = applicationBriefItem("States and direction", "Compact density; stale, partial, permission, empty, retry, and success states; restrained dividers and semantic state color without elevation.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = applicationBriefItem("No-match decision", "A compact trend strip remains application-owned because Goshtoso has no public chart primitive; it needs a labeled range and textual equivalent.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</dl></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func applicationBriefItem(term, description string) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var5 == nil {
-			templ_7745c5c3_Var5 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div><dt class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(term)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 110, Col: 90}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</dt><dd class=\"mt-1 text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(description)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 111, Col: 104}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</dd></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<section id=\"surface-brief\" class=\"mb-14 border-y border-outline py-8 dark:border-outline-dark\" aria-labelledby=\"surface-brief-title\"><h2 id=\"surface-brief-title\" data-toc-heading class=\"scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Choose a pattern</h2><p class=\"mt-4 max-w-3xl leading-6 text-on-surface dark:text-on-surface-dark\">Start with the task the page needs to support. A list helps users find and compare records; a detail page brings one record’s information and actions together; a multi-step form guides a longer submission. An app shell provides navigation around any of these layouts.</p><p class=\"mt-4 max-w-3xl leading-6 text-on-surface dark:text-on-surface-dark\">Decide what users need to see first, which actions they can take, and how the page behaves while loading or when data is missing. Plan for errors and permission changes as well as successful requests. Keep the same reading order on small screens, with secondary information below the main task.</p><h3 class=\"mt-6 font-title text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Example: an incident dashboard</h3><p class=\"mt-3 max-w-3xl leading-6 text-on-surface dark:text-on-surface-dark\">Combine an app shell with an operations list to put active incidents first. Use a Table for incidents, Badges for severity, and an Alert when data is stale or incomplete. Open a detail page for investigation and actions. Place service trends after the incident queue so they remain available without delaying urgent work.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -338,28 +206,28 @@ func fieldProvenApplicationPatterns() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<section class=\"border-t border-outline py-14 dark:border-outline-dark sm:py-20\" aria-labelledby=\"field-proven-title\"><div class=\"grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)]\"><header class=\"space-y-3\"><p class=\"text-sm font-semibold uppercase tracking-wide text-primary dark:text-primary-dark\">Field-proven extensions</p><h2 id=\"field-proven-title\" data-toc-heading class=\"scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Patterns recovered from independent apps</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Three blind consumer builds pushed the four base recipes into finance, warehouse, and editorial work. Reuse the decision structure; keep the domain voice.</p></header><div class=\"divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<section class=\"border-t border-outline py-14 dark:border-outline-dark sm:py-20\" aria-labelledby=\"field-proven-title\"><div class=\"grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)]\"><header class=\"space-y-3\"><h2 id=\"field-proven-title\" data-toc-heading class=\"scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Combine patterns</h2><p class=\"text-on-surface dark:text-on-surface-dark\">A page can combine these patterns when users need to move between related tasks. Keep the selected record and pending changes clear as they move between views.</p></header><div class=\"divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = fieldProvenPattern("Decision Queue", "Operations List + Detail Workspace", "Keep the queue, selected record, risk or policy context, decision form, and audit history visible together. Stack the selected record after the queue at 390 px.").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = fieldProvenPattern("Review queue", "Operations List + Detail Workspace", "Show a queue beside the selected record, with the information needed to approve or reject it. On narrow screens, place the selected record below the queue and provide a clear way back.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = fieldProvenPattern("Interruption-safe Workflow", "Multi-step Workflow + bounded draft", "Default the common case, edit exceptions only, review exact changes, preserve a short-lived draft, and make retries idempotent. Sticky actions must not cover focused fields.").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = fieldProvenPattern("Resumable workflow", "Multi-step Workflow + saved draft", "Save progress so users can leave and return. Show the exact changes before submission, explain when drafts expire, and make retries safe from duplicate writes. Keep focused fields visible above sticky actions.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = fieldProvenPattern("Content-first Review", "Queue + reading surface + decision rail", "Let typography and rhythm belong to the publication. Keep author, deadline, channel, status, and handoff note next to the decision instead of converting prose into dashboard cards.").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = fieldProvenPattern("Editorial review", "Operations List + Detail Workspace", "Give the article enough room to read. Keep its author, deadline, publication channel, status, and reviewer notes near the approval controls.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div></div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -383,51 +251,51 @@ func fieldProvenPattern(title, composition, guidance string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<article data-field-proven-pattern class=\"grid gap-3 py-6 sm:grid-cols-[12rem_minmax(0,1fr)]\"><div><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<article data-field-proven-pattern class=\"grid gap-3 py-6 sm:grid-cols-[12rem_minmax(0,1fr)]\"><div><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 string
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 135, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 102, Col: 92}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</h3><p class=\"mt-1 text-xs font-medium uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(composition)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 136, Col: 130}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</h3><p class=\"mt-1 text-xs font-medium uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</p></div><p class=\"text-sm leading-6 text-on-surface dark:text-on-surface-dark\">")
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(composition)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 103, Col: 130}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(guidance)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 138, Col: 83}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</p></div><p class=\"text-sm leading-6 text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</p></article>")
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(guidance)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 105, Col: 83}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</p></article>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -451,51 +319,51 @@ func applicationPatternIndexLink(number, label, href string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var13 == nil {
-			templ_7745c5c3_Var13 = templ.NopComponent
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var14 templ.SafeURL
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(href))
+		var templ_7745c5c3_Var10 templ.SafeURL
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(href))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 143, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 110, Col: 30}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" class=\"group flex items-baseline gap-3 px-4 py-4 transition-colors motion-reduce:transition-none hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark lg:border-r lg:border-outline lg:last:border-r-0 lg:dark:border-outline-dark\"><span class=\"font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var15 string
-		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(number)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 144, Col: 96}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" class=\"group flex items-baseline gap-3 px-4 py-4 transition-colors motion-reduce:transition-none hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:hover:bg-surface-dark-alt dark:focus-visible:outline-primary-dark lg:border-r lg:border-outline lg:last:border-r-0 lg:dark:border-outline-dark\"><span class=\"font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</span> <span class=\"font-semibold text-on-surface-strong group-hover:text-primary dark:text-on-surface-dark-strong dark:group-hover:text-primary-dark\">")
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(number)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 111, Col: 96}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var16 string
-		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(label)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 145, Col: 153}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</span> <span class=\"font-semibold text-on-surface-strong group-hover:text-primary dark:text-on-surface-dark-strong dark:group-hover:text-primary-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span></a>")
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(label)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 112, Col: 153}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span></a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -519,77 +387,77 @@ func applicationPatternSection(number, id, title, description string, preview te
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var17 == nil {
-			templ_7745c5c3_Var17 = templ.NopComponent
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<section data-application-pattern=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<section data-application-pattern=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 117, Col: 39}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" class=\"py-14 sm:py-20\"><header class=\"mb-8 grid gap-3 sm:grid-cols-[3rem_minmax(0,1fr)] sm:items-start\"><p class=\"font-mono text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var15 string
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(number)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 119, Col: 94}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</p><div class=\"space-y-2\"><h2 id=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 121, Col: 15}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" data-toc-heading class=\"scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var17 string
+		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 121, Col: 149}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</h2><p class=\"max-w-2xl text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var18 string
-		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
+		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 150, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 122, Col: 80}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\" class=\"py-14 sm:py-20\"><header class=\"mb-8 grid gap-3 sm:grid-cols-[3rem_minmax(0,1fr)] sm:items-start\"><p class=\"font-mono text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var19 string
-		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(number)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 152, Col: 94}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</p><div class=\"space-y-2\"><h2 id=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var20 string
-		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.ResolveAttributeValue(id)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 154, Col: 15}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" data-toc-heading class=\"scroll-mt-20 font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var21 string
-		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(title)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 154, Col: 149}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</h2><p class=\"max-w-2xl text-on-surface dark:text-on-surface-dark\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var22 string
-		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(description)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 155, Col: 80}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</p></div></header><div data-pattern-preview class=\"overflow-hidden rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</p></div></header><div data-pattern-preview class=\"overflow-hidden rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -597,7 +465,7 @@ func applicationPatternSection(number, id, title, description string, preview te
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -605,7 +473,7 @@ func applicationPatternSection(number, id, title, description string, preview te
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -629,74 +497,74 @@ func applicationPatternContractDetails(contract applicationPatternContract) temp
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var23 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var23 == nil {
-			templ_7745c5c3_Var23 = templ.NopComponent
+		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var19 == nil {
+			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div data-pattern-contract class=\"mt-8 border-t border-outline dark:border-outline-dark\"><div data-pattern-problem class=\"grid gap-2 py-6 md:grid-cols-[11rem_minmax(0,1fr)]\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Problem</h3><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div data-pattern-contract class=\"mt-8 border-t border-outline dark:border-outline-dark\"><div data-pattern-problem class=\"grid gap-2 py-6 md:grid-cols-[11rem_minmax(0,1fr)]\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Problem</h3><p class=\"max-w-3xl text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var24 string
-		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(contract.Problem)
+		var templ_7745c5c3_Var20 string
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(contract.Problem)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 169, Col: 84}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 136, Col: 84}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</p></div><div class=\"grid border-t border-outline dark:border-outline-dark lg:grid-cols-2 lg:divide-x lg:divide-outline lg:dark:divide-outline-dark\"><div class=\"space-y-7 py-7 lg:pr-8\"><div data-pattern-components class=\"space-y-3\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Goshtoso components</h3><ul class=\"space-y-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</p></div><div class=\"grid border-t border-outline dark:border-outline-dark lg:grid-cols-2 lg:divide-x lg:divide-outline lg:dark:divide-outline-dark\"><div class=\"space-y-7 py-7 lg:pr-8\"><div data-pattern-components class=\"space-y-3\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Goshtoso components</h3><ul class=\"space-y-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, component := range contract.Components {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<li class=\"grid gap-1 sm:grid-cols-[9rem_minmax(0,1fr)]\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<li class=\"grid gap-1 sm:grid-cols-[9rem_minmax(0,1fr)]\"><a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var25 templ.SafeURL
-			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(component.Href))
+			var templ_7745c5c3_Var21 templ.SafeURL
+			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(component.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 178, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 145, Col: 47}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" class=\"font-mono text-sm text-primary underline underline-offset-2 dark:text-primary-dark\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var26 string
-			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(component.Name)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 178, Col: 157}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" class=\"font-mono text-sm text-primary underline underline-offset-2 dark:text-primary-dark\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</a> <span class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
+			var templ_7745c5c3_Var22 string
+			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(component.Name)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 145, Col: 157}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var27 string
-			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(component.Role)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 179, Col: 100}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</a> <span class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</span></li>")
+			var templ_7745c5c3_Var23 string
+			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(component.Role)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 146, Col: 100}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</span></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</ul></div><div data-pattern-states class=\"space-y-3\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">States to design</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</ul></div><div data-pattern-states class=\"space-y-3\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">States to design</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -704,7 +572,7 @@ func applicationPatternContractDetails(contract applicationPatternContract) temp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</div><div data-pattern-app-specific class=\"space-y-3\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">What stays app-specific</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div><div data-pattern-app-specific class=\"space-y-3\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Application code</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -712,33 +580,33 @@ func applicationPatternContractDetails(contract applicationPatternContract) temp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</div></div><div class=\"space-y-7 border-t border-outline py-7 dark:border-outline-dark lg:border-t-0 lg:pl-8\"><div class=\"grid gap-5 sm:grid-cols-2\"><div data-pattern-390 class=\"space-y-2\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">At 390 px</h3><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</div></div><div class=\"space-y-7 border-t border-outline py-7 dark:border-outline-dark lg:border-t-0 lg:pl-8\"><div class=\"grid gap-5 sm:grid-cols-2\"><div data-pattern-390 class=\"space-y-2\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">At 390 px</h3><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var28 string
-		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(contract.Mobile)
+		var templ_7745c5c3_Var24 string
+		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(contract.Mobile)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 197, Col: 84}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 164, Col: 84}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</p></div><div data-pattern-1440 class=\"space-y-2\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">At 1440 px</h3><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var29 string
-		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(contract.Desktop)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 201, Col: 85}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</p></div><div data-pattern-1440 class=\"space-y-2\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">At 1440 px</h3><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</p></div></div><div data-pattern-accessibility class=\"space-y-3\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Accessibility</h3>")
+		var templ_7745c5c3_Var25 string
+		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(contract.Desktop)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 168, Col: 85}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</p></div></div><div data-pattern-accessibility class=\"space-y-3\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Accessibility</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -746,42 +614,42 @@ func applicationPatternContractDetails(contract applicationPatternContract) temp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</div><div data-pattern-done class=\"space-y-3\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Done when</h3><ul class=\"space-y-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</div><div data-pattern-done class=\"space-y-3\"><h3 class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Check the implementation</h3><ul class=\"space-y-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, item := range contract.Done {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li class=\"flex gap-2 text-sm text-on-surface dark:text-on-surface-dark\"><svg class=\"mt-0.5 size-4 shrink-0 text-success\" viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M16.704 5.292a1 1 0 0 1 .004 1.416l-7.25 7.292a1 1 0 0 1-1.42.002l-3.75-3.75a1 1 0 1 1 1.414-1.414l3.04 3.039 6.542-6.58a1 1 0 0 1 1.42-.005Z\" clip-rule=\"evenodd\"></path></svg> <span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<li class=\"flex gap-2 text-sm text-on-surface dark:text-on-surface-dark\"><svg class=\"mt-0.5 size-4 shrink-0 text-success\" viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M16.704 5.292a1 1 0 0 1 .004 1.416l-7.25 7.292a1 1 0 0 1-1.42.002l-3.75-3.75a1 1 0 1 1 1.414-1.414l3.04 3.039 6.542-6.58a1 1 0 0 1 1.42-.005Z\" clip-rule=\"evenodd\"></path></svg> <span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var30 string
-			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(item)
+			var templ_7745c5c3_Var26 string
+			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(item)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 216, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 183, Col: 20}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</span></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</span></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</ul></div></div></div><div data-pattern-source-map class=\"border-t border-outline py-7 dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</ul></div></div></div><div data-pattern-source-map class=\"border-t border-outline py-7 dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
 			Language: "text",
-			Label:    "Source map",
+			Label:    "Suggested file organization",
 			Code:     contract.SourceMap,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -805,35 +673,35 @@ func applicationPatternList(items []string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var31 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var31 == nil {
-			templ_7745c5c3_Var31 = templ.NopComponent
+		templ_7745c5c3_Var27 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var27 == nil {
+			templ_7745c5c3_Var27 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<ul class=\"list-disc space-y-2 pl-5 text-sm text-on-surface dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<ul class=\"list-disc space-y-2 pl-5 text-sm text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, item := range items {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var32 string
-			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(item)
+			var templ_7745c5c3_Var28 string
+			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(item)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 236, Col: 13}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 203, Col: 13}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -857,12 +725,12 @@ func applicationPatternAppShellPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var33 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var33 == nil {
-			templ_7745c5c3_Var33 = templ.NopComponent
+		templ_7745c5c3_Var29 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var29 == nil {
+			templ_7745c5c3_Var29 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<div id=\"app-shell-preview\" class=\"bg-surface dark:bg-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div id=\"app-shell-preview\" class=\"bg-surface dark:bg-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -885,7 +753,7 @@ func applicationPatternAppShellPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<div class=\"flex min-h-[25rem]\"><div id=\"app-shell-desktop-sidebar\" class=\"hidden w-60 shrink-0 md:block\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div class=\"flex min-h-[25rem]\"><div id=\"app-shell-desktop-sidebar\" class=\"hidden w-60 shrink-0 md:block\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -912,7 +780,7 @@ func applicationPatternAppShellPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</div><main class=\"min-w-0 flex-1 p-4 sm:p-6\" aria-label=\"App shell preview content\"><div class=\"flex flex-col gap-4 border-b border-outline pb-5 dark:border-outline-dark sm:flex-row sm:items-start sm:justify-between\"><div><p class=\"text-xs font-medium uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Production workspace</p><h3 class=\"mt-1 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Operations overview</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Monitor the release train and respond to active changes.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</div><main class=\"min-w-0 flex-1 p-4 sm:p-6\" aria-label=\"App shell preview content\"><div class=\"flex flex-col gap-4 border-b border-outline pb-5 dark:border-outline-dark sm:flex-row sm:items-start sm:justify-between\"><div><p class=\"text-xs font-medium uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Production workspace</p><h3 class=\"mt-1 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Operations overview</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Monitor the release train and respond to active changes.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -920,7 +788,7 @@ func applicationPatternAppShellPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</div><div class=\"grid gap-6 py-6 lg:grid-cols-[minmax(0,1fr)_15rem]\"><section aria-labelledby=\"shell-priority-title\"><h4 id=\"shell-priority-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Needs attention</h4><div class=\"mt-3 divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</div><div class=\"grid gap-6 py-6 lg:grid-cols-[minmax(0,1fr)_15rem]\"><section aria-labelledby=\"shell-priority-title\"><h4 id=\"shell-priority-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Needs attention</h4><div class=\"mt-3 divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -936,7 +804,7 @@ func applicationPatternAppShellPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</div></section><aside class=\"border-t border-outline pt-5 dark:border-outline-dark lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0\" aria-label=\"App shell preview context\"><p class=\"text-xs font-medium uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Current shift</p><p class=\"mt-2 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Platform team</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">7 services, 2 active changes, no open incidents.</p></aside></div></main></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</div></section><aside class=\"border-t border-outline pt-5 dark:border-outline-dark lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0\" aria-label=\"App shell preview context\"><p class=\"text-xs font-medium uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Current shift</p><p class=\"mt-2 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Platform team</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">7 services, 2 active changes, no open incidents.</p></aside></div></main></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -960,12 +828,12 @@ func applicationPatternAppShellBrand() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var34 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var34 == nil {
-			templ_7745c5c3_Var34 = templ.NopComponent
+		templ_7745c5c3_Var30 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var30 == nil {
+			templ_7745c5c3_Var30 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<span class=\"font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Northstar</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<span class=\"font-title font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Northstar</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -989,12 +857,12 @@ func applicationPatternAppShellCreateAction() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var35 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var35 == nil {
-			templ_7745c5c3_Var35 = templ.NopComponent
+		templ_7745c5c3_Var31 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var31 == nil {
+			templ_7745c5c3_Var31 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var36 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var32 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -1006,13 +874,13 @@ func applicationPatternAppShellCreateAction() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<span class=\"inline-flex h-8 items-center rounded-radius border border-primary bg-primary px-3 text-on-primary transition motion-reduce:transition-none group-hover:contrast-125 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark\">New change</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<span class=\"inline-flex h-8 items-center rounded-radius border border-primary bg-primary px-3 text-on-primary transition motion-reduce:transition-none group-hover:contrast-125 dark:border-primary-dark dark:bg-primary-dark dark:text-on-primary-dark\">New change</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeSmall), button.WithRootClass("group hidden !border-transparent !bg-transparent !p-1 hover:!contrast-100 dark:!border-transparent dark:!bg-transparent sm:inline-flex")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var36), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeSmall), button.WithRootClass("group hidden !border-transparent !bg-transparent !p-1 hover:!contrast-100 dark:!border-transparent dark:!bg-transparent sm:inline-flex")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var32), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1036,25 +904,25 @@ func applicationPatternAppShellTask(name, state string, tone badge.Tone) templ.C
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var37 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var37 == nil {
-			templ_7745c5c3_Var37 = templ.NopComponent
+		templ_7745c5c3_Var33 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var33 == nil {
+			templ_7745c5c3_Var33 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<div class=\"flex items-center justify-between gap-3 py-3\"><div class=\"min-w-0\"><p class=\"truncate font-mono text-sm text-on-surface-strong dark:text-on-surface-dark-strong\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<div class=\"flex items-center justify-between gap-3 py-3\"><div class=\"min-w-0\"><p class=\"truncate font-mono text-sm text-on-surface-strong dark:text-on-surface-dark-strong\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var38 string
-		templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(name)
+		var templ_7745c5c3_Var34 string
+		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 324, Col: 103}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 291, Col: 103}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</p><p class=\"mt-0.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Updated moments ago</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</p><p class=\"mt-0.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Updated moments ago</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1062,7 +930,7 @@ func applicationPatternAppShellTask(name, state string, tone badge.Tone) templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1086,12 +954,12 @@ func operationsListPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var39 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var39 == nil {
-			templ_7745c5c3_Var39 = templ.NopComponent
+		templ_7745c5c3_Var35 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var35 == nil {
+			templ_7745c5c3_Var35 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "<div id=\"operations-list-preview\" class=\"space-y-5 bg-surface p-4 dark:bg-surface-dark sm:p-6\"><div class=\"flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between\"><div><p class=\"text-xs font-medium uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Release control</p><h3 class=\"mt-1 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Deployments</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Three changes need review before the next window closes.</p></div><div class=\"flex items-center gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<div id=\"operations-list-preview\" class=\"space-y-5 bg-surface p-4 dark:bg-surface-dark sm:p-6\"><div class=\"flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between\"><div><p class=\"text-xs font-medium uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Release control</p><h3 class=\"mt-1 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Deployments</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Three changes need review before the next window closes.</p></div><div class=\"flex items-center gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1099,7 +967,7 @@ func operationsListPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var40 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var36 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -1111,17 +979,17 @@ func operationsListPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "Create deployment")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "Create deployment")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeSmall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var40), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeSmall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var36), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</div></div><div class=\"grid gap-3 border-y border-outline py-4 dark:border-outline-dark md:grid-cols-[minmax(0,1fr)_12rem_auto]\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "</div></div><div class=\"grid gap-3 border-y border-outline py-4 dark:border-outline-dark md:grid-cols-[minmax(0,1fr)_12rem_auto]\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1148,11 +1016,11 @@ func operationsListPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "<div class=\"flex items-end\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<div class=\"flex items-end\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var41 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var37 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -1164,17 +1032,17 @@ func operationsListPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "Clear filters")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "Clear filters")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneAlternate), button.WithSize(button.SizeSmall), button.WithRootClass("w-full md:w-auto")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var41), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneAlternate), button.WithSize(button.SizeSmall), button.WithRootClass("w-full md:w-auto")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var37), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1194,7 +1062,7 @@ func operationsListPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Showing 3 of 18 deployments. Selection remains stable while filters update from the server.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">Showing 3 of 18 deployments. Selection remains stable while filters update from the server.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1256,12 +1124,12 @@ func operationsRowAction(label string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var42 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var42 == nil {
-			templ_7745c5c3_Var42 = templ.NopComponent
+		templ_7745c5c3_Var38 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var38 == nil {
+			templ_7745c5c3_Var38 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var43 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var39 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -1273,18 +1141,18 @@ func operationsRowAction(label string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			var templ_7745c5c3_Var44 string
-			templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(label)
+			var templ_7745c5c3_Var40 string
+			templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 427, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/application_patterns.templ`, Line: 394, Col: 9}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneAlternate), button.WithSize(button.SizeSmall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var43), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneAlternate), button.WithSize(button.SizeSmall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var39), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1308,12 +1176,12 @@ func detailWorkspacePreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var45 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var45 == nil {
-			templ_7745c5c3_Var45 = templ.NopComponent
+		templ_7745c5c3_Var41 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var41 == nil {
+			templ_7745c5c3_Var41 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "<div id=\"detail-workspace-preview\" class=\"space-y-5 bg-surface p-4 dark:bg-surface-dark sm:p-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "<div id=\"detail-workspace-preview\" class=\"space-y-5 bg-surface p-4 dark:bg-surface-dark sm:p-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1327,7 +1195,7 @@ func detailWorkspacePreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "<div class=\"flex flex-col gap-4 border-b border-outline pb-5 dark:border-outline-dark md:flex-row md:items-start md:justify-between\"><div class=\"min-w-0\"><div class=\"flex flex-wrap items-center gap-2\"><h3 class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">payments-api v2.18.0</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "<div class=\"flex flex-col gap-4 border-b border-outline pb-5 dark:border-outline-dark md:flex-row md:items-start md:justify-between\"><div class=\"min-w-0\"><div class=\"flex flex-wrap items-center gap-2\"><h3 class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">payments-api v2.18.0</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1335,11 +1203,11 @@ func detailWorkspacePreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "</div><p class=\"mt-2 max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Production rollout with a guarded database migration and automatic rollback threshold.</p></div><div class=\"flex gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</div><p class=\"mt-2 max-w-2xl text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Production rollout with a guarded database migration and automatic rollback threshold.</p></div><div class=\"flex gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var46 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var42 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -1351,17 +1219,17 @@ func detailWorkspacePreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "Reject")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "Reject")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneAlternate), button.WithSize(button.SizeSmall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var46), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneAlternate), button.WithSize(button.SizeSmall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var42), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var47 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var43 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -1373,17 +1241,17 @@ func detailWorkspacePreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "Approve")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "Approve")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeSmall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var47), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithSize(button.SizeSmall)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var43), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "</div></div><div class=\"grid gap-6 xl:grid-cols-[minmax(0,1fr)_16rem]\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</div></div><div class=\"grid gap-6 xl:grid-cols-[minmax(0,1fr)_16rem]\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1399,7 +1267,7 @@ func detailWorkspacePreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, "<aside class=\"border-t border-outline pt-5 dark:border-outline-dark xl:border-l xl:border-t-0 xl:pl-5 xl:pt-0\" aria-labelledby=\"detail-context-title\"><h4 id=\"detail-context-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Release context</h4><dl class=\"mt-4 space-y-4 text-sm\"><div><dt class=\"text-on-surface-muted dark:text-on-surface-dark-muted\">Environment</dt><dd class=\"mt-1 font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Production</dd></div><div><dt class=\"text-on-surface-muted dark:text-on-surface-dark-muted\">Owner</dt><dd class=\"mt-1 font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Lena Ortiz</dd></div><div><dt class=\"text-on-surface-muted dark:text-on-surface-dark-muted\">Window closes</dt><dd class=\"mt-1 font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">18:30 UTC</dd></div></dl></aside></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<aside class=\"border-t border-outline pt-5 dark:border-outline-dark xl:border-l xl:border-t-0 xl:pl-5 xl:pt-0\" aria-labelledby=\"detail-context-title\"><h4 id=\"detail-context-title\" class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Release context</h4><dl class=\"mt-4 space-y-4 text-sm\"><div><dt class=\"text-on-surface-muted dark:text-on-surface-dark-muted\">Environment</dt><dd class=\"mt-1 font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Production</dd></div><div><dt class=\"text-on-surface-muted dark:text-on-surface-dark-muted\">Owner</dt><dd class=\"mt-1 font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Lena Ortiz</dd></div><div><dt class=\"text-on-surface-muted dark:text-on-surface-dark-muted\">Window closes</dt><dd class=\"mt-1 font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">18:30 UTC</dd></div></dl></aside></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1423,12 +1291,12 @@ func detailOverviewPanel() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var48 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var48 == nil {
-			templ_7745c5c3_Var48 = templ.NopComponent
+		templ_7745c5c3_Var44 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var44 == nil {
+			templ_7745c5c3_Var44 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "<div class=\"space-y-5\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "<div class=\"space-y-5\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1440,7 +1308,7 @@ func detailOverviewPanel() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 77, "<dl class=\"grid gap-4 sm:grid-cols-2\"><div class=\"border-b border-outline pb-3 dark:border-outline-dark\"><dt class=\"text-xs uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Strategy</dt><dd class=\"mt-1 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10% canary, then progressive rollout</dd></div><div class=\"border-b border-outline pb-3 dark:border-outline-dark\"><dt class=\"text-xs uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Rollback signal</dt><dd class=\"mt-1 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Error rate above 1.5%</dd></div></dl></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "<dl class=\"grid gap-4 sm:grid-cols-2\"><div class=\"border-b border-outline pb-3 dark:border-outline-dark\"><dt class=\"text-xs uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Strategy</dt><dd class=\"mt-1 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">10% canary, then progressive rollout</dd></div><div class=\"border-b border-outline pb-3 dark:border-outline-dark\"><dt class=\"text-xs uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Rollback signal</dt><dd class=\"mt-1 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Error rate above 1.5%</dd></div></dl></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1464,12 +1332,12 @@ func detailChangesPanel() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var49 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var49 == nil {
-			templ_7745c5c3_Var49 = templ.NopComponent
+		templ_7745c5c3_Var45 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var45 == nil {
+			templ_7745c5c3_Var45 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "<div class=\"space-y-3\"><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">Twelve reviewed changes are included in this release.</p><ul class=\"list-disc space-y-2 pl-5 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><li>Add idempotency keys to capture requests.</li><li>Backfill the settlement ledger in batches.</li><li>Remove the deprecated retry flag.</li></ul></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "<div class=\"space-y-3\"><p class=\"text-sm text-on-surface dark:text-on-surface-dark\">Twelve reviewed changes are included in this release.</p><ul class=\"list-disc space-y-2 pl-5 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\"><li>Add idempotency keys to capture requests.</li><li>Backfill the settlement ledger in batches.</li><li>Remove the deprecated retry flag.</li></ul></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1493,12 +1361,12 @@ func detailActivityPanel() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var50 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var50 == nil {
-			templ_7745c5c3_Var50 = templ.NopComponent
+		templ_7745c5c3_Var46 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var46 == nil {
+			templ_7745c5c3_Var46 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 79, "<ol class=\"space-y-3 text-sm text-on-surface dark:text-on-surface-dark\"><li><span class=\"font-medium\">Sam</span> completed the security review.</li><li><span class=\"font-medium\">Lena</span> attached the rollback runbook.</li><li><span class=\"font-medium\">Automation</span> passed all preflight checks.</li></ol>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "<ol class=\"space-y-3 text-sm text-on-surface dark:text-on-surface-dark\"><li><span class=\"font-medium\">Sam</span> completed the security review.</li><li><span class=\"font-medium\">Lena</span> attached the rollback runbook.</li><li><span class=\"font-medium\">Automation</span> passed all preflight checks.</li></ol>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1522,12 +1390,12 @@ func multiStepWorkflowPreview() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var51 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var51 == nil {
-			templ_7745c5c3_Var51 = templ.NopComponent
+		templ_7745c5c3_Var47 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var47 == nil {
+			templ_7745c5c3_Var47 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 80, "<div id=\"multi-step-workflow-preview\" class=\"bg-surface p-4 dark:bg-surface-dark sm:p-6\"><div class=\"grid gap-7 lg:grid-cols-[12rem_minmax(0,1fr)]\"><div id=\"workflow-steps-mobile\" class=\"lg:hidden\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, "<div id=\"multi-step-workflow-preview\" class=\"bg-surface p-4 dark:bg-surface-dark sm:p-6\"><div class=\"grid gap-7 lg:grid-cols-[12rem_minmax(0,1fr)]\"><div id=\"workflow-steps-mobile\" class=\"lg:hidden\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1546,7 +1414,7 @@ func multiStepWorkflowPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, "</div><div id=\"workflow-steps-desktop\" class=\"hidden lg:block\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, "</div><div id=\"workflow-steps-desktop\" class=\"hidden lg:block\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1565,7 +1433,7 @@ func multiStepWorkflowPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 82, "</div><form class=\"min-w-0 space-y-6\" aria-labelledby=\"workflow-form-title\"><div class=\"border-b border-outline pb-4 dark:border-outline-dark\"><p class=\"text-xs font-medium uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Step 2 of 3</p><h3 id=\"workflow-form-title\" class=\"mt-1 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Choose deployment targets</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Select where this release can run and define the rollout limit.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, "</div><form class=\"min-w-0 space-y-6\" aria-labelledby=\"workflow-form-title\"><div class=\"border-b border-outline pb-4 dark:border-outline-dark\"><p class=\"text-xs font-medium uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Step 2 of 3</p><h3 id=\"workflow-form-title\" class=\"mt-1 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Choose deployment targets</h3><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Select where this release can run and define the rollout limit.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1577,7 +1445,7 @@ func multiStepWorkflowPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 83, "<div class=\"grid gap-4 md:grid-cols-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "<div class=\"grid gap-4 md:grid-cols-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1605,7 +1473,7 @@ func multiStepWorkflowPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 84, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 77, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1621,11 +1489,11 @@ func multiStepWorkflowPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 85, "<div class=\"flex flex-col-reverse gap-2 border-t border-outline pt-5 dark:border-outline-dark sm:flex-row sm:justify-between\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "<div class=\"flex flex-col-reverse gap-2 border-t border-outline pt-5 dark:border-outline-dark sm:flex-row sm:justify-between\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var52 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var48 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -1637,17 +1505,17 @@ func multiStepWorkflowPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 86, "Back")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 79, "Back")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneAlternate), button.WithRootClass("w-full sm:w-auto")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var52), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithTone(button.ToneAlternate), button.WithRootClass("w-full sm:w-auto")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var48), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var53 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var49 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -1659,17 +1527,17 @@ func multiStepWorkflowPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 87, "Continue to review")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 80, "Continue to review")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.WithType("submit"), button.WithRootClass("w-full sm:w-auto")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var53), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.WithType("submit"), button.WithRootClass("w-full sm:w-auto")).Render(templ.WithChildren(ctx, templ_7745c5c3_Var49), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 88, "</div></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, "</div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1679,11 +1547,11 @@ func multiStepWorkflowPreview() templ.Component {
 
 func applicationPatternAppShellContract() applicationPatternContract {
 	return applicationPatternContract{
-		Problem: "Repeated page chrome drifts quickly. The shell must own global navigation, responsive positioning, identity, and page framing while each route supplies only its task content.",
+		Problem: "Put shared navigation, account controls, and responsive layout in one shell. Each route supplies its page content, so changes to navigation apply consistently across the application.",
 		Components: []applicationPatternComponent{
 			{Name: "Navbar", Href: "/components/navbar", Role: "Global brand, primary navigation, account menu, and compact actions."},
 			{Name: "Sidebar", Href: "/components/sidebar", Role: "Persistent desktop navigation and current-route orientation."},
-			{Name: "Button", Href: "/components/button", Role: "One decisive global action with familiar states."},
+			{Name: "Button", Href: "/components/button", Role: "Primary action available across pages."},
 			{Name: "Badge", Href: "/components/badge", Role: "Compact environment and system-state signals."},
 		},
 		States: []string{
@@ -1721,12 +1589,12 @@ app/navigation.go        -> routes, labels, permissions, active state`,
 
 func operationsListContract() applicationPatternContract {
 	return applicationPatternContract{
-		Problem: "Operational lists fail when filters, selection, status, and row actions are designed separately. Compose them as one server-backed task with explicit query and selection ownership.",
+		Problem: "Keep search, filters, sorting, pagination, and row selection consistent across requests. The server resolves the query and checks permissions before applying row or bulk actions.",
 		Components: []applicationPatternComponent{
 			{Name: "Table", Href: "/components/table", Role: "Rows, accessible caption, selection, sorting, pagination, and HTMX updates."},
 			{Name: "Text Input", Href: "/components/text-input", Role: "Search with a persistent label and server query value."},
 			{Name: "Select", Href: "/components/select", Role: "Bounded filters with a visible current value."},
-			{Name: "Badge", Href: "/components/badge", Role: "Text-backed semantic status in dense rows."},
+			{Name: "Badge", Href: "/components/badge", Role: "Status labels with text and color."},
 			{Name: "Button", Href: "/components/button", Role: "Create, clear, review, and bulk actions."},
 		},
 		States: []string{
@@ -1765,12 +1633,12 @@ app/deployments/list.templ -> toolbar, columns, empty and error states`,
 
 func detailWorkspaceContract() applicationPatternContract {
 	return applicationPatternContract{
-		Problem: "A detail route must answer what this is, what state it is in, what can happen next, and where deeper evidence lives without forcing users through separate pages.",
+		Problem: "Identify the record and show its current status and available actions in the header. Use tabs for related views such as changes and activity, while keeping essential context visible.",
 		Components: []applicationPatternComponent{
 			{Name: "Breadcrumbs", Href: "/components/breadcrumbs", Role: "Hierarchy and a reliable path back to the parent list."},
-			{Name: "Tabs", Href: "/components/tabs", Role: "Keyboardable views of overview, changes, and activity."},
+			{Name: "Tabs", Href: "/components/tabs", Role: "Overview, changes, and activity views with keyboard navigation."},
 			{Name: "Badge", Href: "/components/badge", Role: "Current lifecycle state next to the resource identity."},
-			{Name: "Alert", Href: "/components/alert", Role: "Decision-critical context before the primary action."},
+			{Name: "Alert", Href: "/components/alert", Role: "Warnings and information needed before taking an action."},
 			{Name: "Button", Href: "/components/button", Role: "Primary and secondary resource actions."},
 		},
 		States: []string{
@@ -1802,14 +1670,14 @@ app/releases/detail.templ -> header, tab panels, context rail`,
 			"The route communicates identity, status, and next action before the first tab.",
 			"Refreshing or deep-linking restores the correct resource and tab.",
 			"Actions remain correct when permissions or resource state change.",
-			"At both target widths, context follows the task instead of competing with it.",
+			"At both target widths, the record and its actions appear before secondary information.",
 		},
 	}
 }
 
 func multiStepWorkflowContract() applicationPatternContract {
 	return applicationPatternContract{
-		Problem: "Long forms hide progress and make recovery expensive. A workflow should expose the current step, validate on the server, preserve safe draft data, and present a final review before commitment.",
+		Problem: "Show the current step, validate submitted values on the server, and save the draft so users can resume. Before the final submission, let users review their choices and return to earlier steps.",
 		Components: []applicationPatternComponent{
 			{Name: "Steps", Href: "/components/steps", Role: "Ordered progress with completed, current, and upcoming states."},
 			{Name: "Text Input", Href: "/components/text-input", Role: "Typed values, constraints, helper text, and validation feedback."},

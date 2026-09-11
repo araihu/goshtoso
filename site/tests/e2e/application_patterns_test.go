@@ -55,7 +55,7 @@ func TestApplicationPatternsPageAndResponsiveRecipes(t *testing.T) {
 	count, err = proofs.Count()
 	require.NoError(t, err)
 	assert.Equal(t, 3, count)
-	for _, title := range []string{"Decision Queue", "Interruption-safe Workflow", "Content-first Review"} {
+	for _, title := range []string{"Review queue", "Resumable workflow", "Editorial review"} {
 		require.NoError(t, page.GetByRole("heading", playwright.PageGetByRoleOptions{Name: title}).WaitFor())
 	}
 

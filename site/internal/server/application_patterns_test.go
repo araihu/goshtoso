@@ -31,7 +31,7 @@ func TestApplicationPatternsRouteRendersDirectlyAndAsFragment(t *testing.T) {
 			require.Equal(t, http.StatusOK, rec.Code)
 			require.Equal(t, "text/html; charset=utf-8", rec.Header().Get("Content-Type"))
 			require.Contains(t, rec.Body.String(), tc.wantMarker)
-			require.Contains(t, rec.Body.String(), "Compose product surfaces, not component piles")
+			require.Contains(t, rec.Body.String(), "Application Patterns")
 			require.Contains(t, rec.Body.String(), "Multi-step Workflow")
 		})
 	}
