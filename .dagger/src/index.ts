@@ -209,26 +209,12 @@ echo "published $TAG and badge documents"`
       .stdout()
   }
 
-  /** Dispatch the verified main SHA to the central Fly deployment repository. */
-  @func({ cache: "never" })
-  async dispatchFly(metadata: File, token: Secret, runNonce: string): Promise<string> {
-    const handoff = await this.json(metadata, ["source_repository", "source_run_id", "source_sha"])
-    const sourceSha = this.string(handoff, "source_sha")
-    const sourceRunId = this.string(handoff, "source_run_id")
-    if (!/^[0-9a-f]{40}$/.test(sourceSha)) throw new Error("invalid Fly source SHA")
-    if (!/^[1-9][0-9]*$/.test(sourceRunId)) throw new Error("invalid Fly source run ID")
-    if (this.string(handoff, "source_repository") !== "araihu/goshtoso") throw new Error("invalid Fly source repository")
-    const payload = JSON.stringify({ event_type: "goshtoso-main", client_payload: { goshtoso_ref: sourceSha, goshtoso_sha: sourceSha, goshtoso_run_id: sourceRunId, source_repository: "araihu/goshtoso" } })
-    return dag.container().from(GO_IMAGE)
-      .withExec(["apt-get", "update"])
-      .withExec(["apt-get", "install", "-y", "--no-install-recommends", "ca-certificates", "curl"])
-      .withExec(["rm", "-rf", "/var/lib/apt/lists/*"])
-      .withSecretVariable("GH_TOKEN", token)
-      .withNewFile("/tmp/payload.json", payload)
-      .withEnvVariable("GOSHTOSO_RUN_NONCE", runNonce)
-      .withExec(["bash", "-euo", "pipefail", "-c", "curl -fsS -X POST -H 'Accept: application/vnd.github+json' -H \"Authorization: Bearer $GH_TOKEN\" -H 'X-GitHub-Api-Version: 2022-11-28' --data-binary @/tmp/payload.json https://api.github.com/repos/araihu/fly-deploy/dispatches"])
-      .withExec(["echo", "Fly dispatch accepted"])
-      .stdout()
+  /** Build the homelab site image from this repository. */
+  @func()
+  siteImage(
+    @argument({ defaultPath: ".", ignore: SOURCE_EXCLUDES }) source: Directory,
+  ): Container {
+    return source.dockerBuild({ dockerfile: "Dockerfile", platform: "linux/amd64" })
   }
 
   /** Validate immutable Assets handoff, update allowlisted files, and return the patch tree. */

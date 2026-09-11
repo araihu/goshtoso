@@ -393,3 +393,26 @@ HTML/Alpine.js examples into an importable Go component library.
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Homelab container image
+
+This repository builds and publishes `ghcr.io/araihu/goshtoso` after Code CI
+passes on `main`. The image tag is the complete source commit SHA; the
+`image-goshtoso` workflow artifact contains the immutable digest for deployment.
+The package should remain private. Kubernetes uses its existing GHCR pull secret.
+
+The Docker image serves port 8090 as UID/GID 10001 and is tested with a read-only
+root filesystem and writable `/tmp`. It builds the root library and site from
+one checkout; `site/go.mod` supplies the displayed documentation version.
+
+Update `k8s/goshtoso/deployment.yaml` in `guilycst/home-lab` with the produced
+digest through a reviewed GitOps change. Argo CD owns the rollout. Publishing an
+image does not itself change the running Deployment. Roll back by reverting the
+digest pin. The old `araihu/fly-deploy` repository no longer owns this publisher.
+
+For a local check:
+
+```bash
+docker build --platform linux/amd64 -t goshtoso-site:test .
+scripts/check-site-image goshtoso-site:test
+```
