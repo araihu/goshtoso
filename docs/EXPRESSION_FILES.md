@@ -1,48 +1,87 @@
 # Expression files
 
-Expression files use the same case-sensitive group and field names as the Go API.
-Omitted fields and empty strings inherit the next layer of defaults. Loading a
-file returns a partial `Set`, ready for `NewRenderer`, `With`, or `Merge`.
+Store built-in component labels and messages in JSON or YAML, then load them as an expressions.Set. Your application chooses which set to use; Goshtoso supplies English text for fields you leave unspecified.
+
+## Load and render
+
+Create locales/pt.yaml with the text you want to replace. Group and property names match the Go API exactly, including capitalization. This file replaces the empty-state title and description, along with three pagination labels.
 
 ```yaml
 # yaml-language-server: $schema=./expressions.schema.json
-Pagination:
-  NextLabel: Próxima
-  PageAriaLabel: Página {page}
 EmptyState:
   Title: Ainda não há nada aqui
+  Description: Os itens aparecerão aqui quando estiverem disponíveis.
+Pagination:
+  NextLabel: Próxima
+  NextAriaLabel: Próxima página
+  PageAriaLabel: Página {page}
 ```
 
-Use `expressions.LoadFile("locales/pt.yaml")` for disk files and
-`expressions.LoadFS(locales, "pt.yaml")` for an `fs.FS`, including `embed.FS` and
-`os.DirFS`. Both choose JSON or YAML from the `.json`, `.yaml`, or `.yml` extension.
-When you already have bytes, use `expressions.ParseJSON(data)` or
-`expressions.ParseYAML(data)`. Every loader returns `(Set, error)`; handle the
-error before using the result. Load shared files once and choose the appropriate
-set for each request. The loaders do not watch files or select a language.
+Save the following program as main.go beside the locales directory. It embeds the YAML file in the executable, loads the expressions, and writes an empty-state component’s HTML to standard output. The rendered title and description come from the file.
 
-For callback fields, use the named placeholder in the schema, such as `{page}`,
-`{count}`, or `{label}`. `Página {page}` renders as `Página 3`. Double braces
-(`{{` and `}}`) produce literal braces. Argument text is inserted once and never
-interpreted as another placeholder or executable code. File messages perform
-simple substitution; supply Go callbacks after loading when you need plural
-rules or locale-specific number formatting.
+```go
+package main
 
-Parsing rejects unknown and duplicate properties, nulls, non-string expressions,
-invalid placeholders, and multiple documents. YAML values must be strings; quote
-numbers and booleans when they are intended as text. YAML aliases and merge keys
-are unsupported.
+import (
+    "context"
+    "embed"
+    "log"
+    "os"
 
-The [JSON Schema](../expressions/schema.json) lists all supported properties,
-English defaults, and placeholder rules. Save it beside your translation files
-for editor completion and validation. JSON documents can point to it with
-`"$schema": "./expressions.schema.json"`; YAML editors supporting schema
-associations can use the comment above. `expressions.JSONSchema()` returns a copy
-of the same schema bytes. The parser never fetches a `$schema` URL.
+    "github.com/araihu/goshtoso/components/emptystate"
+    "github.com/araihu/goshtoso/expressions"
+)
 
-The schema is generated from the public Go fields and their documentation with
-`go generate ./expressions`. A drift test keeps it aligned with the API. The
-Internationalization site's SchemaTree reads that same schema.
+//go:embed locales/pt.yaml
+var locales embed.FS
 
+func main() {
+    set, err := expressions.LoadFS(locales, "locales/pt.yaml")
+    if err != nil {
+        log.Fatal(err)
+    }
 
-See [the Internationalization guide](EXPRESSIONS.md) for defaults and override precedence.
+    renderer := expressions.NewRenderer(set)
+    component := emptystate.EmptyState(emptystate.Config{})
+    if err := renderer.Render(context.Background(), os.Stdout, component); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+In a web application, create the renderer at startup and reuse it in your handlers, passing the request context and response writer to Render. To support several languages, load each file once and choose a set for each request.
+
+See the [Internationalization guide](EXPRESSIONS.md) for application defaults, request overrides, and precedence.
+
+## Files and byte slices
+
+LoadFS accepts any fs.FS, including embed.FS and os.DirFS. Use LoadFile when you have a disk path, or ParseJSON and ParseYAML when the contents are already available as []byte. The file loaders select the format from the .json, .yaml, or .yml extension. All four functions return (Set, error); check the error before using the set.
+
+JSON uses the same groups and properties as YAML. For example, these are the pagination overrides from the YAML file above:
+
+```json
+{
+  "$schema": "./expressions.schema.json",
+  "Pagination": {
+    "NextLabel": "Próxima",
+    "NextAriaLabel": "Próxima página",
+    "PageAriaLabel": "Página {page}"
+  }
+}
+```
+
+Omitted fields and empty strings leave existing defaults in place. A loaded set contains only the supplied overrides, so it can also be passed to expressions.With or combined with another set using expressions.Merge.
+
+## Messages with values
+
+Some messages include a value supplied by the component. Pagination.PageAriaLabel uses {page}: “Página {page}” produces “Página 3” for page 3. Each message accepts only the placeholder listed in the reference below. Use {{ and }} to include literal braces.
+
+File messages substitute values as text. For plural forms or locale-specific number formatting, assign a Go callback to the field after loading the set.
+
+## Validation and property reference
+
+The loaders reject unknown or duplicate properties, nulls, non-string expressions, invalid placeholders, and multiple documents. In YAML, quote numbers and booleans when you intend them as text. YAML aliases and merge keys are not supported.
+
+[Download the JSON Schema](../expressions/schema.json) to use it in your editor. Save the schema as expressions.schema.json beside your translation files. The YAML comment and JSON $schema property shown above associate the file with the schema in editors that support it, enabling property completion and validation while you edit. You can also obtain the schema with expressions.JSONSchema(). The loaders validate the input themselves and do not fetch the $schema URL.
+
+The schema lists every supported property, its English default, and any message placeholder. The documentation site displays the same schema as an expandable tree.

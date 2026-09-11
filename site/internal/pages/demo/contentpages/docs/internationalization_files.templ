@@ -9,20 +9,55 @@ templ internationalizationFiles() {
 	<div id="internationalization-files-fragment" class="mx-auto max-w-4xl space-y-10">
 		<header class="space-y-3">
 			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Expression files</h1>
-			<p class="text-on-surface dark:text-on-surface-dark">Keep component text in JSON or YAML and load it into the same expression sets used by your Go code. Application defaults and request or component overrides are covered in the <a class="underline" href="/docs/internationalization">Internationalization guide</a>.</p>
+			<p class="text-on-surface dark:text-on-surface-dark">{ "Store built-in component labels and messages in JSON or YAML, then load them as an expressions.Set. Your application chooses which set to use; Goshtoso supplies English text for fields you leave unspecified." }</p>
 		</header>
 		<section id="expression-files" class="space-y-4">
-			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Load expressions from files</h2>
-			<p class="text-on-surface dark:text-on-surface-dark">JSON and YAML files use the same property names as the Go API. Supply only the text you want to change. Missing fields and empty strings inherit the next layer of defaults.</p>
-			@codeblock.CodeBlock(codeblock.Config{Language: "yaml", Label: "pt.yaml", Code: `# yaml-language-server: $schema=./expressions.schema.json
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Load and render</h2>
+			<p class="text-on-surface dark:text-on-surface-dark">{ "Create locales/pt.yaml with the text you want to replace. Group and property names match the Go API exactly, including capitalization. This file replaces the empty-state title and description, along with three pagination labels." }</p>
+			@codeblock.CodeBlock(codeblock.Config{Language: "yaml", Label: "locales/pt.yaml", Code: `# yaml-language-server: $schema=./expressions.schema.json
+EmptyState:
+  Title: Ainda não há nada aqui
+  Description: Os itens aparecerão aqui quando estiverem disponíveis.
 Pagination:
   NextLabel: Próxima
   NextAriaLabel: Próxima página
-  PageAriaLabel: Página {page}
-EmptyState:
-  Title: Ainda não há nada aqui
-  Description: Os itens aparecerão aqui quando estiverem disponíveis.`})
-			@codeblock.CodeBlock(codeblock.Config{Language: "json", Label: "pt.json", Code: `{
+  PageAriaLabel: Página {page}`})
+			<p class="text-on-surface dark:text-on-surface-dark">{ "Save the following program as main.go beside the locales directory. It embeds the YAML file in the executable, loads the expressions, and writes an empty-state component’s HTML to standard output. The rendered title and description come from the file." }</p>
+			@codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "main.go", Code: `package main
+
+import (
+    "context"
+    "embed"
+    "log"
+    "os"
+
+    "github.com/araihu/goshtoso/components/emptystate"
+    "github.com/araihu/goshtoso/expressions"
+)
+
+//go:embed locales/pt.yaml
+var locales embed.FS
+
+func main() {
+    set, err := expressions.LoadFS(locales, "locales/pt.yaml")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    renderer := expressions.NewRenderer(set)
+    component := emptystate.EmptyState(emptystate.Config{})
+    if err := renderer.Render(context.Background(), os.Stdout, component); err != nil {
+        log.Fatal(err)
+    }
+}`})
+			<p class="text-on-surface dark:text-on-surface-dark">{ "In a web application, create the renderer at startup and reuse it in your handlers, passing the request context and response writer to Render. To support several languages, load each file once and choose a set for each request." }</p>
+			<p class="text-on-surface dark:text-on-surface-dark">See the <a class="underline" href="/docs/internationalization">Internationalization guide</a> to configure application defaults and request overrides, or try the <a class="underline" href="/docs/internationalization/examples">live examples</a>.</p>
+		</section>
+		<section id="expression-formats" class="space-y-4">
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Files and byte slices</h2>
+			<p class="text-on-surface dark:text-on-surface-dark">{ "LoadFS accepts any fs.FS, including embed.FS and os.DirFS. Use LoadFile when you have a disk path, or ParseJSON and ParseYAML when the contents are already available as []byte. The file loaders select the format from the .json, .yaml, or .yml extension. All four functions return (Set, error); check the error before using the set." }</p>
+			<p class="text-on-surface dark:text-on-surface-dark">{ "JSON uses the same groups and properties as YAML. For example, these are the pagination overrides from the YAML file above:" }</p>
+			@codeblock.CodeBlock(codeblock.Config{Language: "json", Label: "locales/pt.json", Code: `{
   "$schema": "./expressions.schema.json",
   "Pagination": {
     "NextLabel": "Próxima",
@@ -30,15 +65,19 @@ EmptyState:
     "PageAriaLabel": "Página {page}"
   }
 }`})
-			<p class="text-on-surface dark:text-on-surface-dark">Use LoadFile for a file on disk, LoadFS for an embedded or other Go filesystem, and ParseJSON or ParseYAML when you already have bytes. Each returns a partial Set and an error. Parsing rejects unknown or duplicate properties, incorrect types, and invalid placeholders.</p>
-			@codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "Load embedded expressions", Code: "// Imports: context, embed, io, github.com/a-h/templ,\n// and github.com/araihu/goshtoso/expressions.\n\n//go:embed locales/*.yaml\nvar locales embed.FS\n\nfunc renderLocalized(ctx context.Context, w io.Writer, page templ.Component) error {\n    set, err := expressions.LoadFS(locales, \"locales/pt.yaml\")\n    if err != nil {\n        return err\n    }\n    return expressions.NewRenderer(set).Render(ctx, w, page)\n}"})
-			<p class="text-on-surface dark:text-on-surface-dark">{ "Function fields accept a string with the named placeholder shown in the reference below. For example, “Página {page}” becomes “Página 3.” Use {{ and }} for literal braces. Substituted values are treated as text and are never evaluated as code. For plural rules or locale-specific number formatting, override that field with a Go callback after loading the file." }</p>
-			<p class="text-on-surface dark:text-on-surface-dark">Load shared files at startup and reuse their sets. To change a user’s language, choose a set in the request handler and pass it through expressions.With. Files do not choose a locale or update themselves when their contents change.</p>
+			<p class="text-on-surface dark:text-on-surface-dark">{ "Omitted fields and empty strings leave existing defaults in place. A loaded set contains only the supplied overrides, so it can also be passed to expressions.With or combined with another set using expressions.Merge." }</p>
+		</section>
+		<section id="expression-messages" class="space-y-4">
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Messages with values</h2>
+			<p class="text-on-surface dark:text-on-surface-dark">{ "Some messages include a value supplied by the component. Pagination.PageAriaLabel uses {page}: “Página {page}” produces “Página 3” for page 3. Each message accepts only the placeholder listed in the reference below. Use {{ and }} to include literal braces." }</p>
+			<p class="text-on-surface dark:text-on-surface-dark">{ "File messages substitute values as text. For plural forms or locale-specific number formatting, assign a Go callback to the field after loading the set." }</p>
 		</section>
 		<section id="expression-reference" class="space-y-4">
-			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Expression reference</h2>
-			<p class="text-on-surface dark:text-on-surface-dark">Expand a component to see every property, its English default, and any message placeholder. This tree uses the same schema as the file format.</p>
-			<p class="text-on-surface dark:text-on-surface-dark"><a href="/schemas/expressions.schema.json" download="expressions.schema.json" class="underline">Download the JSON Schema</a> beside your translation files to enable editor completion and validation. JSON uses the $schema property; YAML editors that support schema associations can use the comment shown above. You can also obtain the schema bytes with expressions.JSONSchema().</p>
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Validation and property reference</h2>
+			<p class="text-on-surface dark:text-on-surface-dark">{ "The loaders reject unknown or duplicate properties, nulls, non-string expressions, invalid placeholders, and multiple documents. In YAML, quote numbers and booleans when you intend them as text. YAML aliases and merge keys are not supported." }</p>
+			<p class="text-on-surface dark:text-on-surface-dark"><a href="/schemas/expressions.schema.json" download="expressions.schema.json" class="underline">Download the JSON Schema</a> to use it in your editor.</p>
+			<p class="text-on-surface dark:text-on-surface-dark">{ "Save the schema as expressions.schema.json beside your translation files. The YAML comment and JSON $schema property shown above associate the file with the schema in editors that support it, enabling property completion and validation while you edit. You can also obtain the schema with expressions.JSONSchema(). The loaders validate the input themselves and do not fetch the $schema URL." }</p>
+			<p class="text-on-surface dark:text-on-surface-dark">{ "Expand a component below to see its supported properties, English defaults, and message placeholders." }</p>
 			@schematree.SchemaTree(schematree.Config{ID: "expression-schema", AriaLabel: "Expression file properties", Nodes: expressionSchemaNodes()})
 		</section>
 	</div>

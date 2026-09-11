@@ -34,22 +34,138 @@ func internationalizationFiles() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"internationalization-files-fragment\" class=\"mx-auto max-w-4xl space-y-10\"><header class=\"space-y-3\"><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Expression files</h1><p class=\"text-on-surface dark:text-on-surface-dark\">Keep component text in JSON or YAML and load it into the same expression sets used by your Go code. Application defaults and request or component overrides are covered in the <a class=\"underline\" href=\"/docs/internationalization\">Internationalization guide</a>.</p></header><section id=\"expression-files\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Load expressions from files</h2><p class=\"text-on-surface dark:text-on-surface-dark\">JSON and YAML files use the same property names as the Go API. Supply only the text you want to change. Missing fields and empty strings inherit the next layer of defaults.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"internationalization-files-fragment\" class=\"mx-auto max-w-4xl space-y-10\"><header class=\"space-y-3\"><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Expression files</h1><p class=\"text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "yaml", Label: "pt.yaml", Code: `# yaml-language-server: $schema=./expressions.schema.json
+		var templ_7745c5c3_Var2 string
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("Store built-in component labels and messages in JSON or YAML, then load them as an expressions.Set. Your application chooses which set to use; Goshtoso supplies English text for fields you leave unspecified.")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 12, Col: 267}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p></header><section id=\"expression-files\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Load and render</h2><p class=\"text-on-surface dark:text-on-surface-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("Create locales/pt.yaml with the text you want to replace. Group and property names match the Go API exactly, including capitalization. This file replaces the empty-state title and description, along with three pagination labels.")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 16, Col: 288}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "yaml", Label: "locales/pt.yaml", Code: `# yaml-language-server: $schema=./expressions.schema.json
+EmptyState:
+  Title: Ainda não há nada aqui
+  Description: Os itens aparecerão aqui quando estiverem disponíveis.
 Pagination:
   NextLabel: Próxima
   NextAriaLabel: Próxima página
-  PageAriaLabel: Página {page}
-EmptyState:
-  Title: Ainda não há nada aqui
-  Description: Os itens aparecerão aqui quando estiverem disponíveis.`}).Render(ctx, templ_7745c5c3_Buffer)
+  PageAriaLabel: Página {page}`}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "json", Label: "pt.json", Code: `{
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p class=\"text-on-surface dark:text-on-surface-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("Save the following program as main.go beside the locales directory. It embeds the YAML file in the executable, loads the expressions, and writes an empty-state component’s HTML to standard output. The rendered title and description come from the file.")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 25, Col: 313}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "main.go", Code: `package main
+
+import (
+    "context"
+    "embed"
+    "log"
+    "os"
+
+    "github.com/araihu/goshtoso/components/emptystate"
+    "github.com/araihu/goshtoso/expressions"
+)
+
+//go:embed locales/pt.yaml
+var locales embed.FS
+
+func main() {
+    set, err := expressions.LoadFS(locales, "locales/pt.yaml")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    renderer := expressions.NewRenderer(set)
+    component := emptystate.EmptyState(emptystate.Config{})
+    if err := renderer.Render(context.Background(), os.Stdout, component); err != nil {
+        log.Fatal(err)
+    }
+}`}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<p class=\"text-on-surface dark:text-on-surface-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("In a web application, create the renderer at startup and reuse it in your handlers, passing the request context and response writer to Render. To support several languages, load each file once and choose a set for each request.")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 53, Col: 287}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</p><p class=\"text-on-surface dark:text-on-surface-dark\">See the <a class=\"underline\" href=\"/docs/internationalization\">Internationalization guide</a> to configure application defaults and request overrides, or try the <a class=\"underline\" href=\"/docs/internationalization/examples\">live examples</a>.</p></section><section id=\"expression-formats\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Files and byte slices</h2><p class=\"text-on-surface dark:text-on-surface-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("LoadFS accepts any fs.FS, including embed.FS and os.DirFS. Use LoadFile when you have a disk path, or ParseJSON and ParseYAML when the contents are already available as []byte. The file loaders select the format from the .json, .yaml, or .yml extension. All four functions return (Set, error); check the error before using the set.")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 58, Col: 391}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</p><p class=\"text-on-surface dark:text-on-surface-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("JSON uses the same groups and properties as YAML. For example, these are the pagination overrides from the YAML file above:")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 59, Col: 183}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "json", Label: "locales/pt.json", Code: `{
   "$schema": "./expressions.schema.json",
   "Pagination": {
     "NextLabel": "Próxima",
@@ -60,28 +176,85 @@ EmptyState:
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"text-on-surface dark:text-on-surface-dark\">Use LoadFile for a file on disk, LoadFS for an embedded or other Go filesystem, and ParseJSON or ParseYAML when you already have bytes. Each returns a partial Set and an error. Parsing rejects unknown or duplicate properties, incorrect types, and invalid placeholders.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<p class=\"text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "Load embedded expressions", Code: "// Imports: context, embed, io, github.com/a-h/templ,\n// and github.com/araihu/goshtoso/expressions.\n\n//go:embed locales/*.yaml\nvar locales embed.FS\n\nfunc renderLocalized(ctx context.Context, w io.Writer, page templ.Component) error {\n    set, err := expressions.LoadFS(locales, \"locales/pt.yaml\")\n    if err != nil {\n        return err\n    }\n    return expressions.NewRenderer(set).Render(ctx, w, page)\n}"}).Render(ctx, templ_7745c5c3_Buffer)
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs("Omitted fields and empty strings leave existing defaults in place. A loaded set contains only the supplied overrides, so it can also be passed to expressions.With or combined with another set using expressions.Merge.")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 68, Col: 276}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<p class=\"text-on-surface dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</p></section><section id=\"expression-messages\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Messages with values</h2><p class=\"text-on-surface dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("Function fields accept a string with the named placeholder shown in the reference below. For example, “Página {page}” becomes “Página 3.” Use {{ and }} for literal braces. Substituted values are treated as text and are never evaluated as code. For plural rules or locale-specific number formatting, override that field with a Go callback after loading the file.")
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs("Some messages include a value supplied by the component. Pagination.PageAriaLabel uses {page}: “Página {page}” produces “Página 3” for page 3. Each message accepts only the placeholder listed in the reference below. Use {{ and }} to include literal braces.")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 35, Col: 431}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 72, Col: 326}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</p><p class=\"text-on-surface dark:text-on-surface-dark\">Load shared files at startup and reuse their sets. To change a user’s language, choose a set in the request handler and pass it through expressions.With. Files do not choose a locale or update themselves when their contents change.</p></section><section id=\"expression-reference\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Expression reference</h2><p class=\"text-on-surface dark:text-on-surface-dark\">Expand a component to see every property, its English default, and any message placeholder. This tree uses the same schema as the file format.</p><p class=\"text-on-surface dark:text-on-surface-dark\"><a href=\"/schemas/expressions.schema.json\" download=\"expressions.schema.json\" class=\"underline\">Download the JSON Schema</a> beside your translation files to enable editor completion and validation. JSON uses the $schema property; YAML editors that support schema associations can use the comment shown above. You can also obtain the schema bytes with expressions.JSONSchema().</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</p><p class=\"text-on-surface dark:text-on-surface-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("File messages substitute values as text. For plural forms or locale-specific number formatting, assign a Go callback to the field after loading the set.")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 73, Col: 212}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</p></section><section id=\"expression-reference\" class=\"space-y-4\"><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Validation and property reference</h2><p class=\"text-on-surface dark:text-on-surface-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs("The loaders reject unknown or duplicate properties, nulls, non-string expressions, invalid placeholders, and multiple documents. In YAML, quote numbers and booleans when you intend them as text. YAML aliases and merge keys are not supported.")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 77, Col: 301}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</p><p class=\"text-on-surface dark:text-on-surface-dark\"><a href=\"/schemas/expressions.schema.json\" download=\"expressions.schema.json\" class=\"underline\">Download the JSON Schema</a> to use it in your editor.</p><p class=\"text-on-surface dark:text-on-surface-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs("Save the schema as expressions.schema.json beside your translation files. The YAML comment and JSON $schema property shown above associate the file with the schema in editors that support it, enabling property completion and validation while you edit. You can also obtain the schema with expressions.JSONSchema(). The loaders validate the input themselves and do not fetch the $schema URL.")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 79, Col: 449}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</p><p class=\"text-on-surface dark:text-on-surface-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var13 string
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs("Expand a component below to see its supported properties, English defaults, and message placeholders.")
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/docs/internationalization_files.templ`, Line: 80, Col: 161}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -89,7 +262,7 @@ EmptyState:
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
