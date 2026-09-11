@@ -75,6 +75,10 @@ many of these steps, but the checklist keeps the public release story coherent.
   protected `main` branch.
 - Confirm `VERSIONS.md` has a row for the released tag.
 - Confirm the documentation site deploy completed or was intentionally skipped.
+- Confirm the release image job passed, the version tag and `latest` resolve to
+  the same GHCR digest for the latest stable release, and the
+  `image-goshtoso-release` artifact contains that digest. Image publication does
+  not perform a homelab rollout.
 - Confirm `npx skills add araihu/goshtoso --list` discovers the released
   consumer-agent skill.
 

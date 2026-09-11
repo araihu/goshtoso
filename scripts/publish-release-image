@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Called only after the release verification and GitHub publication succeed.
+[[ "$RELEASE_TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+gh api "repos/araihu/goshtoso/releases/tags/$RELEASE_TAG" \
+  --jq 'select(.draft == false and .prerelease == false) | .tag_name' | grep -Fxq "$RELEASE_TAG"
+revision=$(git rev-parse HEAD)
+image="ghcr.io/araihu/goshtoso:$RELEASE_TAG"
+docker build --platform linux/amd64 \
+  --build-arg "GOSHTOSO_DOCS_VERSION=$RELEASE_TAG" \
+  --label org.opencontainers.image.source=https://github.com/araihu/goshtoso \
+  --label "org.opencontainers.image.revision=$revision" \
+  --label "org.opencontainers.image.version=$RELEASE_TAG" \
+  -t "$image" .
+bash scripts/check-site-image "$image" "$RELEASE_TAG"
+printf '%s' "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+trap 'docker logout ghcr.io >/dev/null' EXIT
+docker push "$image"
+digest=$(docker inspect --format '{{index .RepoDigests 0}}' "$image")
+[[ "$digest" =~ ^ghcr.io/araihu/goshtoso@sha256:[0-9a-f]{64}$ ]]
+printf '%s\n' "$digest" > image-goshtoso-release.txt
+
+# Serialize this job and recheck immediately before promotion: rerunning an old
+# release must not move latest backwards. Main CI never writes this alias.
+latest=$(gh api repos/araihu/goshtoso/releases/latest --jq .tag_name)
+if [[ "$latest" == "$RELEASE_TAG" ]]; then
+  docker tag "$image" ghcr.io/araihu/goshtoso:latest
+  docker push ghcr.io/araihu/goshtoso:latest
+  printf 'Published `%s` and `latest`: `%s`\n' "$RELEASE_TAG" "$digest" >> "$GITHUB_STEP_SUMMARY"
+else
+  printf 'Published `%s`: `%s`; latest belongs to `%s`.\n' "$RELEASE_TAG" "$digest" "$latest" >> "$GITHUB_STEP_SUMMARY"
+fi
