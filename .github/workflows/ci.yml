@@ -133,3 +133,16 @@ jobs:
       - name: Propagate test status
         if: always()
         run: test "$(cat .dagger-output/status)" = 0
+
+  site-image:
+    name: Site image smoke test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Build and test site image
+        run: |
+          docker build --platform linux/amd64 -t goshtoso-site:test .
+          scripts/check-site-image goshtoso-site:test

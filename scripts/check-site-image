@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Exercise the image under the homelab Deployment's security restrictions.
+set -euo pipefail
+image=${1:?usage: check-site-image IMAGE}
+test "$(docker inspect --format '{{.Config.User}}' "$image")" = 10001:10001
+expected_version=${2:-$(awk '$1 == "github.com/araihu/goshtoso" {print $2}' site/go.mod)}
+test -n "$expected_version"
+container_id=$(docker run -d --platform linux/amd64 --read-only \
+  --user 10001:10001 --tmpfs /tmp:uid=10001,gid=10001,mode=1777 \
+  --cap-drop ALL --security-opt no-new-privileges "$image")
+trap 'docker rm -f "$container_id" >/dev/null' EXIT
+for attempt in {1..30}; do
+  if docker exec "$container_id" wget -q -O /tmp/page.html http://127.0.0.1:8090/components/accordion; then
+    docker exec "$container_id" sh -ec 'test "$(id -u)" = 10001; grep -q Accordion /tmp/page.html; test ! -e /app/go.work'
+    docker exec "$container_id" grep -q -F "$expected_version" /tmp/page.html
+    docker exec "$container_id" wget -q -O /dev/null http://127.0.0.1:8090/modules/app-shells/live/componentdocshell/overview
+    printf 'Site image HTTP and restricted runtime checks: PASS\n'
+    exit 0
+  fi
+  sleep 1
+done
+docker logs "$container_id"
+exit 1
