@@ -3,7 +3,6 @@ package iconpack
 import (
 	"cmp"
 	"context"
-	"encoding/json"
 	"fmt"
 	"maps"
 	"os"
@@ -34,50 +33,48 @@ func generateLibrary(ctx context.Context, opts Options) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
-	snapshot, err := engine.Snapshot(ctx, nil)
+	staging, err := os.MkdirTemp("", "goshtoso-library-*")
 	if err != nil {
 		return Result{}, err
 	}
-	files, _, err := captureMuambaFiles(snapshot, input.sources)
+	defer func() { _ = os.RemoveAll(staging) }()
+	files, lock, err := captureMuambaFiles(ctx, engine, input.sources, staging, input.lockPath)
 	if err != nil {
 		return Result{}, err
 	}
-	output, catalog, err := libraryOutputs(input.sources, files)
+	output, catalog, err := libraryOutputs(ctx, input.sources, files)
 	if err != nil {
 		return Result{}, err
 	}
-	lock, err := os.ReadFile(input.lockPath)
-	if err != nil {
-		return Result{}, err
-	}
-	output["PROVENANCE/config.yaml"] = input.configBytes
-	output["PROVENANCE/lock.yaml"] = lock
+	output["PROVENANCE/config.yaml"] = memoryFile(input.configBytes)
+	output["PROVENANCE/lock.yaml"] = memoryFile(lock)
 	release := "iconpack-" + hashBytes(input.configBytes)[:12]
-	catalogHash := hashBytes(output["catalog.json"])
+	catalogHash := output["catalog.json"].hash
 	manifest := outputManifest{SchemaVersion: OutputSchemaVersion, Tool: toolName, Release: release, CatalogSchemaVersion: catalog.SchemaVersion, CatalogSHA256: catalogHash, SourceKind: "muamba-snapshot", SourceConfigSHA256: hashBytes(input.configBytes), SourceLockSHA256: hashBytes(lock)}
 	for name, data := range output {
-		manifest.Files = append(manifest.Files, outputFile{Path: name, Mode: "0644", Bytes: len(data), SHA256: hashBytes(data)})
+		manifest.Files = append(manifest.Files, outputFile{Path: name, Mode: "0644", Bytes: int(data.size), SHA256: data.hash})
 	}
 	sort.Slice(manifest.Files, func(i, j int) bool { return manifest.Files[i].Path < manifest.Files[j].Path })
-	output["manifest.json"], err = marshalDocument(manifest)
+	manifestBytes, err := marshalDocument(manifest)
 	if err != nil {
 		return Result{}, err
 	}
-	published, path, err := publishOutput(ctx, opts.OutputDir, output, opts.Check)
+	output["manifest.json"] = memoryFile(manifestBytes)
+	published, path, err := publishFileOutput(ctx, opts.OutputDir, output, opts.Check)
 	return Result{Release: release, OutputDir: path, Published: published, SelectedCount: len(catalog.Icons), CatalogSHA256: catalogHash}, err
 }
 
-func libraryOutputs(sources []resolvedConfigSource, files map[string][]byte) (map[string][]byte, iconlibrary.Catalog, error) {
-	out := map[string][]byte{}
+func libraryOutputs(ctx context.Context, sources []resolvedConfigSource, files map[string]fileData) (map[string]fileData, iconlibrary.Catalog, error) {
+	out := map[string]fileData{}
 	catalog := iconlibrary.Catalog{SchemaVersion: 1}
 	seen := map[string]bool{}
 	for _, source := range sources {
-		icons, err := sourceLibraryIcons(source, files)
+		icons, err := sourceLibraryIcons(ctx, source, files)
 		if err != nil {
 			return nil, catalog, err
 		}
 		license := files[source.ID+"/"+source.LicensePath]
-		if len(license) == 0 {
+		if license.size == 0 {
 			return nil, catalog, fmt.Errorf("missing license for %s", source.ID)
 		}
 		out["LICENSES/"+source.ID+".txt"] = license
@@ -88,9 +85,16 @@ func libraryOutputs(sources []resolvedConfigSource, files map[string][]byte) (ma
 			seen[entry.ID] = true
 			for i := range entry.Variants {
 				v := &entry.Variants[i]
-				raw, ok := files[source.ID+"/"+v.Path]
+				file, ok := files[source.ID+"/"+v.Path]
 				if !ok {
 					return nil, catalog, fmt.Errorf("missing icon %s", v.Path)
+				}
+				if file.size == 0 || file.size > iconlibrary.MaxImageBytes {
+					return nil, catalog, fmt.Errorf("%s: icon must be between 1 byte and 2 MiB", v.Path)
+				}
+				raw, err := file.read(ctx)
+				if err != nil {
+					return nil, catalog, err
 				}
 				mime, w, h, err := iconlibrary.ValidateImage(raw)
 				if err != nil {
@@ -99,7 +103,7 @@ func libraryOutputs(sources []resolvedConfigSource, files map[string][]byte) (ma
 				v.MIME, v.Width, v.Height, v.SHA256 = mime, w, h, hashBytes(raw)
 				ext := map[string]string{"image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp", "image/svg+xml": ".svg"}[mime]
 				v.Path = "images/" + v.SHA256 + ext
-				out[v.Path] = raw
+				out[v.Path] = file
 			}
 			catalog.Icons = append(catalog.Icons, entry)
 		}
@@ -112,18 +116,18 @@ func libraryOutputs(sources []resolvedConfigSource, files map[string][]byte) (ma
 	if err != nil {
 		return nil, catalog, err
 	}
-	out["catalog.json"] = data
+	out["catalog.json"] = memoryFile(data)
 	var notice strings.Builder
 	for _, s := range sources {
 		fmt.Fprintf(&notice, "%s: %s\nSource: %s\nLicense: LICENSES/%s.txt\n\n", s.ID, s.License, s.URL, s.ID)
 	}
-	out["NOTICE"] = []byte(strings.TrimSpace(notice.String()) + "\n")
+	out["NOTICE"] = memoryFile([]byte(strings.TrimSpace(notice.String()) + "\n"))
 	return out, catalog, nil
 }
 
-func sourceLibraryIcons(s resolvedConfigSource, files map[string][]byte) ([]iconlibrary.Icon, error) {
+func sourceLibraryIcons(ctx context.Context, s resolvedConfigSource, files map[string]fileData) ([]iconlibrary.Icon, error) {
 	if s.MetadataFormat == "selfhst" {
-		return selfhstIcons(s, files)
+		return selfhstIcons(ctx, s, files)
 	}
 	var result []iconlibrary.Icon
 	byReference := map[string]int{}
@@ -164,9 +168,9 @@ func libraryFormat(path string) string {
 	return format
 }
 
-func selfhstIcons(s resolvedConfigSource, files map[string][]byte) ([]iconlibrary.Icon, error) {
+func selfhstIcons(ctx context.Context, s resolvedConfigSource, files map[string]fileData) ([]iconlibrary.Icon, error) {
 	var rows []struct{ Name, Reference, SVG, PNG, Light, Dark, Category, Tags string }
-	if err := json.Unmarshal(files[s.ID+"/"+s.MetadataPath], &rows); err != nil {
+	if err := files[s.ID+"/"+s.MetadataPath].decodeJSON(ctx, &rows); err != nil {
 		return nil, fmt.Errorf("selfhst metadata: %w", err)
 	}
 	formats := s.Formats

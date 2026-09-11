@@ -52,6 +52,7 @@ func TestLibraryLockedCatalogWithRasterAndVariants(t *testing.T) {
 	if manifest.Release != result.Release || manifest.CatalogSchemaVersion != catalog.SchemaVersion || manifest.CatalogSHA256 != result.CatalogSHA256 {
 		t.Fatalf("manifest does not identify its catalog: %+v", manifest)
 	}
+	assertLibraryManifestAndDeterminism(t, opts, result, manifest, root)
 	opts.Trust = false
 	opts.Check = true
 	if _, err := Generate(t.Context(), opts); err != nil {
@@ -68,7 +69,7 @@ func TestLibraryLockedCatalogWithRasterAndVariants(t *testing.T) {
 func TestLibraryGroupsFormatsDeterministically(t *testing.T) {
 	source := resolvedConfigSource{ID: "local", Formats: []string{"svg", "png"}}
 	files := map[string][]byte{"local/foo.png": {}, "local/foo.svg": {}, "local/bar.svg": {}}
-	icons, err := sourceLibraryIcons(source, files)
+	icons, err := sourceLibraryIcons(t.Context(), source, memoryFiles(files))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -98,10 +99,40 @@ func TestSelfhstAvailabilityStillRequiresDeclaredFiles(t *testing.T) {
 				files = map[string][]byte{}
 			}
 			files["selfhst/index.json"] = []byte(fmt.Sprintf(`[{"Name":"Demo","Reference":"demo","SVG":"Yes","PNG":%q,"Light":%q}]`, tc.png, tc.light))
-			icons, err := selfhstIcons(resolvedConfigSource{ID: "selfhst", MetadataPath: "index.json"}, files)
+			icons, err := selfhstIcons(t.Context(), resolvedConfigSource{ID: "selfhst", MetadataPath: "index.json"}, memoryFiles(files))
 			if (err != nil) != tc.wantError || len(icons) != tc.wantIcons {
 				t.Fatalf("icons=%+v, err=%v", icons, err)
 			}
 		})
+	}
+}
+
+func assertLibraryManifestAndDeterminism(t *testing.T, opts Options, result Result, manifest outputManifest, root string) {
+	t.Helper()
+	for _, file := range manifest.Files {
+		data := mustReadFile(t, filepath.Join(result.OutputDir, file.Path))
+		if len(data) != file.Bytes || hashBytes(data) != file.SHA256 || file.Mode != "0644" {
+			t.Fatalf("manifest mismatch: %+v", file)
+		}
+	}
+	if len(manifest.Files) != 6 {
+		t.Fatalf("unexpected output count: %d", len(manifest.Files))
+	}
+	first := readFixtureTree(t, result.OutputDir)
+	second := opts
+	second.Trust = false
+	second.OutputDir = filepath.Join(root, "second")
+	if _, err := Generate(t.Context(), second); err != nil {
+		t.Fatal(err)
+	}
+	secondFiles := readFixtureTree(t, second.OutputDir)
+	if len(first) != len(secondFiles) {
+		t.Fatalf("nondeterministic output count: %d != %d", len(first), len(secondFiles))
+	}
+	for name, data := range first {
+		other, ok := secondFiles[name]
+		if !ok || !bytes.Equal(data, other) {
+			t.Fatalf("nondeterministic output: %s", name)
+		}
 	}
 }

@@ -407,6 +407,13 @@ func readVerifiedReleaseFile(boundary releaseBoundary, relative string) ([]byte,
 		return nil, fmt.Errorf("required release file %q is absent from checksums.txt", relative)
 	}
 	b, ok := boundary.files[relative]
+	if boundary.diskFiles != nil {
+		file, exists := boundary.diskFiles[relative]
+		if !exists || file.hash != expected {
+			return nil, fmt.Errorf("required release file %q is absent or has changed identity", relative)
+		}
+		return file.read(boundary.ctx)
+	}
 	if !ok {
 		return nil, fmt.Errorf("required release file %q is absent from captured release boundary", relative)
 	}
