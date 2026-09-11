@@ -1,5 +1,7 @@
 package schematree
 
+import "github.com/araihu/goshtoso/expressions"
+
 import "strings"
 
 templ treeTemplate(cfg Config) {
@@ -63,15 +65,15 @@ templ identity(node Node) {
 	</span>
 	<span class="gs-schema-tree-states">
 		if node.Required {
-			<span class="gs-schema-tree-state" data-required="true">required</span>
+			<span class="gs-schema-tree-state" data-required="true">{ expressions.From(ctx).SchemaTree.RequiredLabel }</span>
 		} else if node.ShowOptional {
-			<span class="gs-schema-tree-state" data-required="false">optional</span>
+			<span class="gs-schema-tree-state" data-required="false">{ expressions.From(ctx).SchemaTree.OptionalLabel }</span>
 		}
 		if node.Nullable {
-			<span class="gs-schema-tree-state">nullable</span>
+			<span class="gs-schema-tree-state">{ expressions.From(ctx).SchemaTree.NullableLabel }</span>
 		}
 		if node.Deprecated {
-			<span class="gs-schema-tree-state" data-deprecated="true">deprecated</span>
+			<span class="gs-schema-tree-state" data-deprecated="true">{ expressions.From(ctx).SchemaTree.DeprecatedLabel }</span>
 		}
 	</span>
 }

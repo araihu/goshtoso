@@ -250,10 +250,8 @@ func (cfg Config) factoryDataJSON() string {
 	if cfg.Alpine != nil {
 		data.AlpineModel = cfg.Alpine.Model
 	}
-	encoded, err := json.Marshal(data)
-	if err != nil {
-		return `{"placeholder":"Please Select","options":[],"selectedValues":[],"activeIndex":0}`
-	}
+	// factoryData contains only strings, integers, booleans, and slices of those.
+	encoded, _ := json.Marshal(data)
 	return string(encoded)
 }
 

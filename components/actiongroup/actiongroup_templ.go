@@ -38,6 +38,7 @@ func actionGroupTemplate(cfg Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		cfg = cfg.withExpressions(ctx)
 		sections, counts := overflowSections(cfg.Secondary)
 		var templ_7745c5c3_Var2 = []any{cfg.rootClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
@@ -61,7 +62,7 @@ func actionGroupTemplate(cfg Config) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(overflowCountsValue(counts))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/actiongroup/actiongroup.templ`, Line: 20, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/actiongroup/actiongroup.templ`, Line: 21, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -87,7 +88,7 @@ func actionGroupTemplate(cfg Config) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.label())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/actiongroup/actiongroup.templ`, Line: 23, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/actiongroup/actiongroup.templ`, Line: 24, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -203,7 +204,7 @@ func renderAction(action Action, primary bool) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(action.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/actiongroup/actiongroup.templ`, Line: 67, Col: 17}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/actiongroup/actiongroup.templ`, Line: 68, Col: 17}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -253,7 +254,7 @@ func renderAction(action Action, primary bool) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(action.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/actiongroup/actiongroup.templ`, Line: 75, Col: 24}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/actiongroup/actiongroup.templ`, Line: 76, Col: 24}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {

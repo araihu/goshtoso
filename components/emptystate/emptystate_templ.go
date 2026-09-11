@@ -8,6 +8,12 @@ package emptystate
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "github.com/araihu/goshtoso/internal/expressionutil"
+
+import "strings"
+
+import "github.com/araihu/goshtoso/expressions"
+
 // EmptyState renders guidance and an optional next action when a collection or
 // workspace has no content.
 func emptyStateTemplate(cfg Config) templ.Component {
@@ -106,9 +112,9 @@ func emptyStateTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.title())
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(expressionutil.Text(strings.TrimSpace(cfg.Title), expressions.From(ctx).EmptyState.Title))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/emptystate/emptystate.templ`, Line: 14, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/emptystate/emptystate.templ`, Line: 20, Col: 95}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -119,9 +125,9 @@ func emptyStateTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.description())
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(expressionutil.Text(strings.TrimSpace(cfg.Description), expressions.From(ctx).EmptyState.Description))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/emptystate/emptystate.templ`, Line: 17, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/emptystate/emptystate.templ`, Line: 23, Col: 107}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {

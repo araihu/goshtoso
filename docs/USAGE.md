@@ -933,3 +933,9 @@ Help badges show a 16px question mark inside a 24px hit target. Click, Enter, or
 Space toggles the explanation. Click outside or press Escape to dismiss it.
 Tooltips use the native popover top layer to avoid table clipping and keep the
 panel inside the viewport. Other tooltips can opt in with `tooltip.WithPortal(true)`.
+
+## Built-in text overrides
+
+Use the [expression API](EXPRESSIONS.md) to configure application defaults once,
+override them per request, or customize one component. English remains the fallback;
+your application owns translation and language selection.

@@ -4,14 +4,17 @@ import (
 	"context"
 	"io"
 
+	"github.com/araihu/goshtoso/expressions"
+
 	"github.com/araihu/goshtoso/components"
 )
 
 // Instance is a renderable tooltip component.
 type Instance struct {
-	id      string
-	label   string
-	options []Option
+	expressionOverrides expressions.Tooltip
+	id                  string
+	label               string
+	options             []Option
 }
 
 // Tooltip returns a renderable tooltip component.
@@ -32,7 +35,15 @@ func (Instance) Kind() components.Kind {
 
 // Render writes the tooltip markup.
 func (i Instance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Tooltip: i.expressionOverrides})
 	return tooltipTemplate(i.id, i.label, i.options...).Render(ctx, w)
 }
 
 var _ components.Component = Instance{}
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i Instance) WithExpressions(values expressions.Tooltip) Instance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Tooltip: i.expressionOverrides}, expressions.Set{Tooltip: values}).Tooltip
+	return i
+}

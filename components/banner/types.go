@@ -187,24 +187,3 @@ func (cfg Config) ctaClasses() string {
 func (cfg CookieBannerConfig) containerClasses() string {
 	return "fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 flex flex-col gap-4 border border-outline bg-surface-alt/50 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark rounded-radius " + cfg.RootClass
 }
-
-func (cfg CookieBannerConfig) effectiveTitle() string {
-	if cfg.Title != "" {
-		return cfg.Title
-	}
-	return "Cookie Consent"
-}
-
-func (cfg CookieBannerConfig) effectiveAcceptLabel() string {
-	if cfg.AcceptLabel != "" {
-		return cfg.AcceptLabel
-	}
-	return "Accept"
-}
-
-func (cfg CookieBannerConfig) effectiveRejectLabel() string {
-	if cfg.RejectLabel != "" {
-		return cfg.RejectLabel
-	}
-	return "Decline"
-}

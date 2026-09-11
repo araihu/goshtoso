@@ -1,5 +1,7 @@
 package palette
 
+import "github.com/araihu/goshtoso/expressions"
+
 templ paletteTemplate(cfg Config) {
 	<div
 		x-data="goshtosoPalette($el)"
@@ -13,13 +15,13 @@ templ paletteTemplate(cfg Config) {
 	>
 		if !cfg.HideReset {
 			<div class="flex items-center gap-2">
-				<span class="text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate" x-text="hovered || 'Pick a color'"></span>
+				<span class="text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate" data-placeholder={ expressions.From(ctx).Palette.Placeholder } x-text="hovered || $el.dataset.placeholder"></span>
 				if !cfg.HideReset {
 					<button
 						type="button"
 						@click="pick('', null)"
 						class="ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark"
-					>Reset</button>
+					>{ expressions.From(ctx).Palette.ResetLabel }</button>
 				}
 			</div>
 		}
@@ -44,7 +46,7 @@ templ paletteTemplate(cfg Config) {
 				<label
 					data-selected-preview
 					class="relative size-7 overflow-hidden rounded border border-outline shadow-sm dark:border-outline-dark cursor-pointer"
-					title="Custom color"
+					title={ expressions.From(ctx).Palette.CustomLabel }
 					:style="{ backgroundColor: selectedHex }"
 				>
 					<input
@@ -53,7 +55,7 @@ templ paletteTemplate(cfg Config) {
 						@input="commitHex($event.target.value)"
 						@change="commitHex($event.target.value)"
 						class="absolute inset-0 size-full cursor-pointer opacity-0"
-						aria-label="Custom color"
+						aria-label={ expressions.From(ctx).Palette.CustomLabel }
 					/>
 				</label>
 				<input
@@ -85,7 +87,7 @@ templ swatchGrid(cfg Config) {
 				@focus="hovered = $el.dataset.cls"
 				@blur="hovered = ''"
 				class="h-5 w-full rounded-sm border border-outline/60 bg-white transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark"
-				title="white"
+				title={ expressions.From(ctx).Palette.WhiteLabel }
 			></button>
 			<button
 				type="button"
@@ -96,7 +98,7 @@ templ swatchGrid(cfg Config) {
 				@focus="hovered = $el.dataset.cls"
 				@blur="hovered = ''"
 				class="h-5 w-full rounded-sm border border-outline/60 bg-black transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark"
-				title="black"
+				title={ expressions.From(ctx).Palette.BlackLabel }
 			></button>
 		}
 		for _, hue := range cfg.hues() {

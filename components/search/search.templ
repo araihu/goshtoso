@@ -1,5 +1,7 @@
 package search
 
+import "github.com/araihu/goshtoso/expressions"
+
 import (
 	"fmt"
 
@@ -10,6 +12,7 @@ import (
 // Search renders a command-palette style search dialog. Results are supplied by
 // the caller; the component only handles presentation and client-side filtering.
 templ searchTemplate(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<div class={ cfg.rootClasses() }>
 		@SearchField(cfg)
 		@SearchModal(cfg)
@@ -19,6 +22,7 @@ templ searchTemplate(cfg Config) {
 // SearchField renders the compact trigger. It can be placed anywhere and linked
 // to a SearchModal with the same Config.ID.
 templ searchFieldTemplate(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	{{ id := cfg.getID() }}
 	<div
 		id={ id }
@@ -51,6 +55,7 @@ templ searchFieldTemplate(cfg Config) {
 // SearchModal renders the global dialog surface. Pair it with SearchField using
 // the same Config.ID.
 templ searchModalTemplate(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	{{ id := cfg.getID() }}
 	<div
 		x-cloak
@@ -117,7 +122,7 @@ templ searchModalTemplate(cfg Config) {
 				x-show="query.trim().length > 0"
 				class="flex max-h-[min(28rem,calc(100vh-12rem))] flex-col divide-y divide-outline overflow-hidden overflow-y-auto rounded-b-radius border border-outline bg-surface text-sm font-light dark:divide-outline-dark dark:border-outline-dark dark:bg-surface-dark-alt"
 				role="listbox"
-				aria-label={ cfg.getLabel() + " results" }
+				aria-label={ expressions.From(ctx).Search.ResultsAriaLabel(cfg.getLabel()) }
 			>
 				if cfg.ItemsURL != "" {
 					@clientResultItems()

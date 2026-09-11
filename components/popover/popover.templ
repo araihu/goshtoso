@@ -1,5 +1,7 @@
 package popover
 
+import "github.com/araihu/goshtoso/expressions"
+
 // Popover renders consumer-owned trigger and content with shared open/close
 // lifecycle, focus restoration, ARIA wiring, and CSS placement.
 templ popoverTemplate(cfg Config) {
@@ -33,7 +35,7 @@ templ popoverTemplate(cfg Config) {
 			if cfg.Trigger != nil {
 				@cfg.Trigger
 			} else {
-				<button type="button">Open</button>
+				<button type="button">{ expressions.From(ctx).Popover.TriggerLabel }</button>
 			}
 		</span>
 		<div

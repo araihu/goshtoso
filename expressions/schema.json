@@ -1,0 +1,943 @@
+{
+  "$id": "https://goshtoso.araihu.com/schemas/expressions.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Partial component text overrides. Property names match the Go API and are case-sensitive.",
+  "properties": {
+    "$schema": {
+      "description": "Optional editor schema reference. Goshtoso does not fetch this URL.",
+      "type": "string"
+    },
+    "ActionGroup": {
+      "additionalProperties": false,
+      "description": "ActionGroup expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AriaLabel": {
+          "default": "Actions",
+          "description": "AriaLabel defaults to \"Actions\".",
+          "type": "string"
+        },
+        "OverflowAriaLabel": {
+          "default": "More actions",
+          "description": "OverflowAriaLabel defaults to \"More actions\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Alert": {
+      "additionalProperties": false,
+      "description": "Alert expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "DismissAriaLabel": {
+          "default": "dismiss alert",
+          "description": "DismissAriaLabel defaults to \"dismiss alert\".",
+          "type": "string"
+        },
+        "DismissLabel": {
+          "default": "Dismiss",
+          "description": "DismissLabel defaults to \"Dismiss\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "AppShell": {
+      "additionalProperties": false,
+      "description": "AppShell expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "SkipLinkLabel": {
+          "default": "Skip to main content",
+          "description": "SkipLinkLabel defaults to \"Skip to main content\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Avatar": {
+      "additionalProperties": false,
+      "description": "Avatar expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "GroupAriaLabel": {
+          "default": "Avatar group",
+          "description": "GroupAriaLabel defaults to \"Avatar group\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Badge": {
+      "additionalProperties": false,
+      "description": "Badge expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "NotificationAriaLabel": {
+          "default": "notification",
+          "description": "NotificationAriaLabel defaults to \"notification\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Banner": {
+      "additionalProperties": false,
+      "description": "Banner expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AcceptLabel": {
+          "default": "Accept",
+          "description": "AcceptLabel defaults to \"Accept\".",
+          "type": "string"
+        },
+        "ConsentAriaLabel": {
+          "default": "Cookie consent",
+          "description": "ConsentAriaLabel defaults to \"Cookie consent\".",
+          "type": "string"
+        },
+        "DismissAriaLabel": {
+          "default": "dismiss banner",
+          "description": "DismissAriaLabel defaults to \"dismiss banner\".",
+          "type": "string"
+        },
+        "RejectLabel": {
+          "default": "Decline",
+          "description": "RejectLabel defaults to \"Decline\".",
+          "type": "string"
+        },
+        "Title": {
+          "default": "Cookie Consent",
+          "description": "Title defaults to \"Cookie Consent\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Breadcrumbs": {
+      "additionalProperties": false,
+      "description": "Breadcrumbs expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AriaLabel": {
+          "default": "breadcrumb",
+          "description": "AriaLabel defaults to \"breadcrumb\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Carousel": {
+      "additionalProperties": false,
+      "description": "Carousel expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "LoadingText": {
+          "default": "Loading carousel...",
+          "description": "LoadingText defaults to \"Loading carousel...\".",
+          "type": "string"
+        },
+        "NextAriaLabel": {
+          "default": "next slide",
+          "description": "NextAriaLabel defaults to \"next slide\".",
+          "type": "string"
+        },
+        "PauseAriaLabel": {
+          "default": "pause carousel",
+          "description": "PauseAriaLabel defaults to \"pause carousel\".",
+          "type": "string"
+        },
+        "PlayAriaLabel": {
+          "default": "play carousel",
+          "description": "PlayAriaLabel defaults to \"play carousel\".",
+          "type": "string"
+        },
+        "PreviousAriaLabel": {
+          "default": "previous slide",
+          "description": "PreviousAriaLabel defaults to \"previous slide\".",
+          "type": "string"
+        },
+        "SlideLabel": {
+          "description": "SlideLabel returns the carousel counter text for slide. Rendering prepares values\nfrom zero through the number of slides; visible slide numbers start at one. In files, use {slide} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "slide {slide}"
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{slide\\})*$",
+          "type": "string",
+          "x-parameter": "slide"
+        },
+        "SlidesAriaLabel": {
+          "default": "slides",
+          "description": "SlidesAriaLabel defaults to \"slides\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ChatBubble": {
+      "additionalProperties": false,
+      "description": "ChatBubble expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "BotLabel": {
+          "default": "BOT",
+          "description": "BotLabel defaults to \"BOT\".",
+          "type": "string"
+        },
+        "DeliveredLabel": {
+          "default": "Delivered",
+          "description": "DeliveredLabel defaults to \"Delivered\".",
+          "type": "string"
+        },
+        "SeenLabel": {
+          "default": "Seen",
+          "description": "SeenLabel defaults to \"Seen\".",
+          "type": "string"
+        },
+        "SendingLabel": {
+          "default": "Sending",
+          "description": "SendingLabel defaults to \"Sending\".",
+          "type": "string"
+        },
+        "TypingAriaLabel": {
+          "default": "typing",
+          "description": "TypingAriaLabel defaults to \"typing\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "CodeBlock": {
+      "additionalProperties": false,
+      "description": "CodeBlock expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "CopiedLabel": {
+          "default": "Copied!",
+          "description": "CopiedLabel defaults to \"Copied!\".",
+          "type": "string"
+        },
+        "CopyAriaLabel": {
+          "description": "CopyAriaLabel returns the copy button’s accessible name for the code block header\nlabel, or its ID when no label is available. In files, use {label} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "Copy {label} code"
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{label\\})*$",
+          "type": "string",
+          "x-parameter": "label"
+        },
+        "CopyLabel": {
+          "default": "Copy",
+          "description": "CopyLabel defaults to \"Copy\".",
+          "type": "string"
+        },
+        "ErrorText": {
+          "default": "Unable to copy",
+          "description": "ErrorText defaults to \"Unable to copy\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Combobox": {
+      "additionalProperties": false,
+      "description": "Combobox expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "ClearLabel": {
+          "default": "Clear all",
+          "description": "ClearLabel defaults to \"Clear all\".",
+          "type": "string"
+        },
+        "EmptyText": {
+          "default": "No matches found",
+          "description": "EmptyText defaults to \"No matches found\".",
+          "type": "string"
+        },
+        "ErrorText": {
+          "default": "Failed to load.",
+          "description": "ErrorText defaults to \"Failed to load.\".",
+          "type": "string"
+        },
+        "Placeholder": {
+          "default": "Select…",
+          "description": "Placeholder defaults to \"Select…\".",
+          "type": "string"
+        },
+        "RetryLabel": {
+          "default": "Retry",
+          "description": "RetryLabel defaults to \"Retry\".",
+          "type": "string"
+        },
+        "SearchPlaceholder": {
+          "default": "Search…",
+          "description": "SearchPlaceholder defaults to \"Search…\".",
+          "type": "string"
+        },
+        "SelectedLabel": {
+          "description": "SelectedLabel returns the complete selection summary for count selected values. It\nmust handle zero and positive counts; client components prepare all possible counts\nduring rendering. In files, use {count} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "{count} selected"
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{count\\})*$",
+          "type": "string",
+          "x-parameter": "count"
+        }
+      },
+      "type": "object"
+    },
+    "Drawer": {
+      "additionalProperties": false,
+      "description": "Drawer expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "CloseAriaLabel": {
+          "default": "Close",
+          "description": "CloseAriaLabel defaults to \"Close\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Dropdown": {
+      "additionalProperties": false,
+      "description": "Dropdown expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "ContextMenuAriaLabel": {
+          "default": "context menu",
+          "description": "ContextMenuAriaLabel defaults to \"context menu\".",
+          "type": "string"
+        },
+        "OpenMenuAriaLabel": {
+          "default": "open menu",
+          "description": "OpenMenuAriaLabel defaults to \"open menu\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "EmptyState": {
+      "additionalProperties": false,
+      "description": "EmptyState expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "Description": {
+          "default": "Items will appear here when they are available.",
+          "description": "Description defaults to \"Items will appear here when they are available.\".",
+          "type": "string"
+        },
+        "Title": {
+          "default": "Nothing here yet",
+          "description": "Title defaults to \"Nothing here yet\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "FileInput": {
+      "additionalProperties": false,
+      "description": "FileInput expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "BrowseLabel": {
+          "default": "Browse",
+          "description": "BrowseLabel defaults to \"Browse\".",
+          "type": "string"
+        },
+        "DropText": {
+          "default": " or drag and drop here",
+          "description": "DropText defaults to \" or drag and drop here\".",
+          "type": "string"
+        },
+        "EmptyText": {
+          "default": "No file selected",
+          "description": "EmptyText defaults to \"No file selected\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Form": {
+      "additionalProperties": false,
+      "description": "Form expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "DoneLabel": {
+          "default": "Done",
+          "description": "DoneLabel defaults to \"Done\".",
+          "type": "string"
+        },
+        "EditLabel": {
+          "default": "Edit",
+          "description": "EditLabel defaults to \"Edit\".",
+          "type": "string"
+        },
+        "ErrorTitle": {
+          "default": "Validation failed",
+          "description": "ErrorTitle defaults to \"Validation failed\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Modal": {
+      "additionalProperties": false,
+      "description": "Modal expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "CloseAriaLabel": {
+          "default": "close modal",
+          "description": "CloseAriaLabel defaults to \"close modal\".",
+          "type": "string"
+        },
+        "DialogCloseAriaLabel": {
+          "default": "Close dialog",
+          "description": "DialogCloseAriaLabel defaults to \"Close dialog\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Navbar": {
+      "additionalProperties": false,
+      "description": "Navbar expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AriaLabel": {
+          "default": "main navigation",
+          "description": "AriaLabel defaults to \"main navigation\".",
+          "type": "string"
+        },
+        "CloseMenuAriaLabel": {
+          "default": "Close mobile menu",
+          "description": "CloseMenuAriaLabel defaults to \"Close mobile menu\".",
+          "type": "string"
+        },
+        "OpenMenuAriaLabel": {
+          "default": "Open mobile menu",
+          "description": "OpenMenuAriaLabel defaults to \"Open mobile menu\".",
+          "type": "string"
+        },
+        "SecondaryAriaLabel": {
+          "default": "secondary navigation",
+          "description": "SecondaryAriaLabel defaults to \"secondary navigation\".",
+          "type": "string"
+        },
+        "UserMenuAriaLabel": {
+          "default": "user menu",
+          "description": "UserMenuAriaLabel defaults to \"user menu\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Pagination": {
+      "additionalProperties": false,
+      "description": "Pagination expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AriaLabel": {
+          "default": "pagination",
+          "description": "AriaLabel defaults to \"pagination\".",
+          "type": "string"
+        },
+        "MoreAriaLabel": {
+          "default": "more pages",
+          "description": "MoreAriaLabel defaults to \"more pages\".",
+          "type": "string"
+        },
+        "NextAriaLabel": {
+          "default": "next page",
+          "description": "NextAriaLabel defaults to \"next page\".",
+          "type": "string"
+        },
+        "NextLabel": {
+          "default": "Next",
+          "description": "NextLabel defaults to \"Next\".",
+          "type": "string"
+        },
+        "PageAriaLabel": {
+          "description": "PageAriaLabel returns the accessible name for a page link. Page numbers start at one. In files, use {page} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "page {page}"
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{page\\})*$",
+          "type": "string",
+          "x-parameter": "page"
+        },
+        "PreviousAriaLabel": {
+          "default": "previous page",
+          "description": "PreviousAriaLabel defaults to \"previous page\".",
+          "type": "string"
+        },
+        "PreviousLabel": {
+          "default": "Previous",
+          "description": "PreviousLabel defaults to \"Previous\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Palette": {
+      "additionalProperties": false,
+      "description": "Palette expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "BlackLabel": {
+          "default": "black",
+          "description": "BlackLabel defaults to \"black\".",
+          "type": "string"
+        },
+        "CustomLabel": {
+          "default": "Custom color",
+          "description": "CustomLabel defaults to \"Custom color\".",
+          "type": "string"
+        },
+        "Placeholder": {
+          "default": "Pick a color",
+          "description": "Placeholder defaults to \"Pick a color\".",
+          "type": "string"
+        },
+        "ResetLabel": {
+          "default": "Reset",
+          "description": "ResetLabel defaults to \"Reset\".",
+          "type": "string"
+        },
+        "WhiteLabel": {
+          "default": "white",
+          "description": "WhiteLabel defaults to \"white\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Popover": {
+      "additionalProperties": false,
+      "description": "Popover expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "TriggerLabel": {
+          "default": "Open",
+          "description": "TriggerLabel defaults to \"Open\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Rating": {
+      "additionalProperties": false,
+      "description": "Rating expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "DissatisfiedLabel": {
+          "default": "dissatisfied",
+          "description": "DissatisfiedLabel defaults to \"dissatisfied\".",
+          "type": "string"
+        },
+        "Label": {
+          "default": "Rating",
+          "description": "Label defaults to \"Rating\".",
+          "type": "string"
+        },
+        "NeutralLabel": {
+          "default": "neutral",
+          "description": "NeutralLabel defaults to \"neutral\".",
+          "type": "string"
+        },
+        "SatisfiedLabel": {
+          "default": "satisfied",
+          "description": "SatisfiedLabel defaults to \"satisfied\".",
+          "type": "string"
+        },
+        "StarLabel": {
+          "description": "StarLabel returns the complete label for a star rating value. Values include zero\nfor an unrated display and run through the configured maximum. In files, use {value} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "{value} stars"
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{value\\})*$",
+          "type": "string",
+          "x-parameter": "value"
+        },
+        "VeryDissatisfiedLabel": {
+          "default": "very dissatisfied",
+          "description": "VeryDissatisfiedLabel defaults to \"very dissatisfied\".",
+          "type": "string"
+        },
+        "VerySatisfiedLabel": {
+          "default": "very satisfied",
+          "description": "VerySatisfiedLabel defaults to \"very satisfied\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "SchemaForm": {
+      "additionalProperties": false,
+      "description": "SchemaForm expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AddLabel": {
+          "default": "+ Add item",
+          "description": "AddLabel defaults to \"+ Add item\".",
+          "type": "string"
+        },
+        "DefaultLabel": {
+          "description": "DefaultLabel returns the default-value annotation for a schema field. The argument is\nthe field’s default value as supplied by the application. In files, use {value} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "default: {value}"
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{value\\})*$",
+          "type": "string",
+          "x-parameter": "value"
+        },
+        "ItemPlaceholder": {
+          "default": "item",
+          "description": "ItemPlaceholder defaults to \"item\".",
+          "type": "string"
+        },
+        "ManagedLabel": {
+          "default": "managed",
+          "description": "ManagedLabel defaults to \"managed\".",
+          "type": "string"
+        },
+        "ManagedTitle": {
+          "default": "Managed by platform — cannot override",
+          "description": "ManagedTitle defaults to \"Managed by platform — cannot override\".",
+          "type": "string"
+        },
+        "RequiredAriaLabel": {
+          "default": "required",
+          "description": "RequiredAriaLabel defaults to \"required\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "SchemaTree": {
+      "additionalProperties": false,
+      "description": "SchemaTree expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "DeprecatedLabel": {
+          "default": "deprecated",
+          "description": "DeprecatedLabel defaults to \"deprecated\".",
+          "type": "string"
+        },
+        "NullableLabel": {
+          "default": "nullable",
+          "description": "NullableLabel defaults to \"nullable\".",
+          "type": "string"
+        },
+        "OptionalLabel": {
+          "default": "optional",
+          "description": "OptionalLabel defaults to \"optional\".",
+          "type": "string"
+        },
+        "RequiredLabel": {
+          "default": "required",
+          "description": "RequiredLabel defaults to \"required\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Search": {
+      "additionalProperties": false,
+      "description": "Search expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "EmptyText": {
+          "default": "No results found.",
+          "description": "EmptyText defaults to \"No results found.\".",
+          "type": "string"
+        },
+        "EscapeText": {
+          "default": "Esc",
+          "description": "EscapeText defaults to \"Esc\".",
+          "type": "string"
+        },
+        "Label": {
+          "default": "Search",
+          "description": "Label defaults to \"Search\".",
+          "type": "string"
+        },
+        "Placeholder": {
+          "default": "Search",
+          "description": "Placeholder defaults to \"Search\".",
+          "type": "string"
+        },
+        "ResultsAriaLabel": {
+          "description": "ResultsAriaLabel returns the results region’s accessible name from the search\ncontrol’s resolved label. In files, use {label} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "{label} results"
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{label\\})*$",
+          "type": "string",
+          "x-parameter": "label"
+        },
+        "ShortcutText": {
+          "default": "⌘ K",
+          "description": "ShortcutText defaults to \"⌘ K\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Select": {
+      "additionalProperties": false,
+      "description": "Select expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "ListAriaLabel": {
+          "description": "ListAriaLabel returns the option list’s accessible name from the select control’s\nconfigured label, which may be empty. In files, use {label} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "{label} list"
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{label\\})*$",
+          "type": "string",
+          "x-parameter": "label"
+        },
+        "Placeholder": {
+          "default": "Please Select",
+          "description": "Placeholder defaults to \"Please Select\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Sidebar": {
+      "additionalProperties": false,
+      "description": "Sidebar expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "ActiveLabel": {
+          "default": "active",
+          "description": "ActiveLabel defaults to \"active\".",
+          "type": "string"
+        },
+        "AriaLabel": {
+          "default": "sidebar navigation",
+          "description": "AriaLabel defaults to \"sidebar navigation\".",
+          "type": "string"
+        },
+        "SearchAriaLabel": {
+          "default": "Search",
+          "description": "SearchAriaLabel defaults to \"Search\".",
+          "type": "string"
+        },
+        "SkipLabel": {
+          "default": "skip to the main content",
+          "description": "SkipLabel defaults to \"skip to the main content\".",
+          "type": "string"
+        },
+        "TriggerLabel": {
+          "default": "Open sidebar",
+          "description": "TriggerLabel defaults to \"Open sidebar\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Skeleton": {
+      "additionalProperties": false,
+      "description": "Skeleton expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AriaLabel": {
+          "default": "Loading content",
+          "description": "AriaLabel defaults to \"Loading content\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "SplitButton": {
+      "additionalProperties": false,
+      "description": "SplitButton expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "MenuAriaLabel": {
+          "default": "More actions",
+          "description": "MenuAriaLabel defaults to \"More actions\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Steps": {
+      "additionalProperties": false,
+      "description": "Steps expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AriaLabel": {
+          "default": "progress",
+          "description": "AriaLabel defaults to \"progress\".",
+          "type": "string"
+        },
+        "CompletedLabel": {
+          "default": "completed",
+          "description": "CompletedLabel defaults to \"completed\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "StructuredInput": {
+      "additionalProperties": false,
+      "description": "StructuredInput expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AddLabel": {
+          "default": "Add row",
+          "description": "AddLabel defaults to \"Add row\".",
+          "type": "string"
+        },
+        "RemoveAriaLabel": {
+          "default": "Remove row",
+          "description": "RemoveAriaLabel defaults to \"Remove row\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Table": {
+      "additionalProperties": false,
+      "description": "Table expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "ActionsLabel": {
+          "default": "Actions",
+          "description": "ActionsLabel defaults to \"Actions\".",
+          "type": "string"
+        },
+        "FiltersLabel": {
+          "default": "Filters",
+          "description": "FiltersLabel defaults to \"Filters\".",
+          "type": "string"
+        },
+        "LoadMoreLabel": {
+          "default": "Load more",
+          "description": "LoadMoreLabel defaults to \"Load more\".",
+          "type": "string"
+        },
+        "LoadingText": {
+          "default": "Loading...",
+          "description": "LoadingText defaults to \"Loading...\".",
+          "type": "string"
+        },
+        "OpenRowLabel": {
+          "description": "OpenRowLabel returns the screen-reader text for opening a table row. rowID is empty\nwhen the row has no ID. In files, use {rowID} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "Open row {rowID}"
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{rowID\\})*$",
+          "type": "string",
+          "x-parameter": "rowID"
+        }
+      },
+      "type": "object"
+    },
+    "Tabs": {
+      "additionalProperties": false,
+      "description": "Tabs expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "LoadingText": {
+          "default": "Loading...",
+          "description": "LoadingText defaults to \"Loading...\".",
+          "type": "string"
+        },
+        "OptionsAriaLabel": {
+          "default": "tab options",
+          "description": "OptionsAriaLabel defaults to \"tab options\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "TagsList": {
+      "additionalProperties": false,
+      "description": "TagsList expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AddLabel": {
+          "default": "Add",
+          "description": "AddLabel defaults to \"Add\".",
+          "type": "string"
+        },
+        "Placeholder": {
+          "default": "Add a tag...",
+          "description": "Placeholder defaults to \"Add a tag...\".",
+          "type": "string"
+        },
+        "RemoveAriaLabel": {
+          "default": "Remove tag",
+          "description": "RemoveAriaLabel defaults to \"Remove tag\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "TextInput": {
+      "additionalProperties": false,
+      "description": "TextInput expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "SearchAriaLabel": {
+          "default": "search",
+          "description": "SearchAriaLabel defaults to \"search\".",
+          "type": "string"
+        },
+        "ShowPasswordAriaLabel": {
+          "default": "Show password",
+          "description": "ShowPasswordAriaLabel defaults to \"Show password\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Textarea": {
+      "additionalProperties": false,
+      "description": "Textarea expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AttachAriaLabel": {
+          "default": "Attach a file",
+          "description": "AttachAriaLabel defaults to \"Attach a file\".",
+          "type": "string"
+        },
+        "EmojiAriaLabel": {
+          "default": "Emojis",
+          "description": "EmojiAriaLabel defaults to \"Emojis\".",
+          "type": "string"
+        },
+        "SendAriaLabel": {
+          "default": "send",
+          "description": "SendAriaLabel defaults to \"send\".",
+          "type": "string"
+        },
+        "SendLabel": {
+          "default": "Send",
+          "description": "SendLabel defaults to \"Send\".",
+          "type": "string"
+        },
+        "VoiceAriaLabel": {
+          "default": "Send voice",
+          "description": "VoiceAriaLabel defaults to \"Send voice\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Toast": {
+      "additionalProperties": false,
+      "description": "Toast expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "DismissAriaLabel": {
+          "default": "dismiss notification",
+          "description": "DismissAriaLabel defaults to \"dismiss notification\".",
+          "type": "string"
+        },
+        "DismissLabel": {
+          "default": "Dismiss",
+          "description": "DismissLabel defaults to \"Dismiss\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Toolbar": {
+      "additionalProperties": false,
+      "description": "Toolbar expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AriaLabel": {
+          "default": "Page tools",
+          "description": "AriaLabel defaults to \"Page tools\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Tooltip": {
+      "additionalProperties": false,
+      "description": "Tooltip expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "TriggerLabel": {
+          "default": "Hover Me",
+          "description": "TriggerLabel defaults to \"Hover Me\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "title": "Goshtoso expressions",
+  "type": "object"
+}

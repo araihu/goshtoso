@@ -4,12 +4,15 @@ import (
 	"context"
 	"io"
 
+	"github.com/araihu/goshtoso/expressions"
+
 	"github.com/araihu/goshtoso/components"
 )
 
 // Instance is a renderable table component.
 type Instance struct {
-	cfg Config
+	expressionOverrides expressions.Table
+	cfg                 Config
 }
 
 // Table returns a renderable table component.
@@ -24,12 +27,14 @@ func (Instance) Kind() components.Kind {
 
 // Render writes the table markup.
 func (i Instance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Table: i.expressionOverrides})
 	return tableTemplate(i.cfg).Render(ctx, w)
 }
 
 // TableHeadContentInstance renders table head row content without its wrapper.
 type TableHeadContentInstance struct {
-	cfg Config
+	expressionOverrides expressions.Table
+	cfg                 Config
 }
 
 // TableHeadContent returns renderable table head row content.
@@ -44,12 +49,14 @@ func (TableHeadContentInstance) Kind() components.Kind {
 
 // Render writes the table head row content.
 func (i TableHeadContentInstance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Table: i.expressionOverrides})
 	return tableHeadContentTemplate(i.cfg).Render(ctx, w)
 }
 
 // TableRowsInstance renders table rows without a tbody wrapper.
 type TableRowsInstance struct {
-	cfg Config
+	expressionOverrides expressions.Table
+	cfg                 Config
 }
 
 // TableRows returns renderable table rows.
@@ -64,13 +71,15 @@ func (TableRowsInstance) Kind() components.Kind {
 
 // Render writes the table rows.
 func (i TableRowsInstance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Table: i.expressionOverrides})
 	return tableRowsTemplate(i.cfg).Render(ctx, w)
 }
 
 // TableRowInstance is a renderable table row.
 type TableRowInstance struct {
-	cfg Config
-	row Row
+	expressionOverrides expressions.Table
+	cfg                 Config
+	row                 Row
 }
 
 // TableRow returns a renderable table row.
@@ -85,12 +94,14 @@ func (TableRowInstance) Kind() components.Kind {
 
 // Render writes the table row markup.
 func (i TableRowInstance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Table: i.expressionOverrides})
 	return tableRowTemplate(i.cfg, i.row).Render(ctx, w)
 }
 
 // TablePaginationNavInstance is a renderable table pagination nav.
 type TablePaginationNavInstance struct {
-	cfg Config
+	expressionOverrides expressions.Table
+	cfg                 Config
 }
 
 // TablePaginationNav returns a renderable table pagination nav.
@@ -105,14 +116,16 @@ func (TablePaginationNavInstance) Kind() components.Kind {
 
 // Render writes the table pagination nav markup.
 func (i TablePaginationNavInstance) Render(ctx context.Context, w io.Writer) error {
+	ctx = expressions.With(ctx, expressions.Set{Table: i.expressionOverrides})
 	return tablePaginationNavTemplate(i.cfg).Render(ctx, w)
 }
 
 // ImageCellInstance is a renderable table image cell.
 type ImageCellInstance struct {
-	imageURL string
-	label    string
-	detail   string
+	expressionOverrides *expressions.Table
+	imageURL            string
+	label               string
+	detail              string
 }
 
 // ImageCell returns a renderable table image cell.
@@ -131,6 +144,9 @@ func (ImageCellInstance) Kind() components.Kind {
 
 // Render writes the table image cell markup.
 func (i ImageCellInstance) Render(ctx context.Context, w io.Writer) error {
+	if i.expressionOverrides != nil {
+		ctx = expressions.With(ctx, expressions.Set{Table: *i.expressionOverrides})
+	}
 	return imageCellTemplate(i.imageURL, i.label, i.detail).Render(ctx, w)
 }
 
@@ -142,3 +158,50 @@ var (
 	_ components.Component = TablePaginationNavInstance{}
 	_ components.Component = ImageCellInstance{}
 )
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i Instance) WithExpressions(values expressions.Table) Instance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Table: i.expressionOverrides}, expressions.Set{Table: values}).Table
+	return i
+}
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i TableHeadContentInstance) WithExpressions(values expressions.Table) TableHeadContentInstance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Table: i.expressionOverrides}, expressions.Set{Table: values}).Table
+	return i
+}
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i TableRowsInstance) WithExpressions(values expressions.Table) TableRowsInstance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Table: i.expressionOverrides}, expressions.Set{Table: values}).Table
+	return i
+}
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i TableRowInstance) WithExpressions(values expressions.Table) TableRowInstance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Table: i.expressionOverrides}, expressions.Set{Table: values}).Table
+	return i
+}
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i TablePaginationNavInstance) WithExpressions(values expressions.Table) TablePaginationNavInstance {
+	i.expressionOverrides = expressions.Merge(expressions.Set{Table: i.expressionOverrides}, expressions.Set{Table: values}).Table
+	return i
+}
+
+// WithExpressions returns a copy with component-scoped text overrides. Existing
+// explicit config labels take precedence. Empty fields inherit render defaults.
+func (i ImageCellInstance) WithExpressions(values expressions.Table) ImageCellInstance {
+	var current expressions.Table
+	if i.expressionOverrides != nil {
+		current = *i.expressionOverrides
+	}
+	merged := expressions.Merge(expressions.Set{Table: current}, expressions.Set{Table: values}).Table
+	i.expressionOverrides = &merged
+	return i
+}

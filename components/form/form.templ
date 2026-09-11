@@ -171,6 +171,7 @@ templ collapsibleSectionTemplate(cfg CollapsibleSectionConfig) {
 // The readView component shows the summary/read-only state.
 // Children are the editable form fields shown when the user clicks "Edit".
 templ flipSectionTemplate(cfg FlipSectionConfig, readView templ.Component) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<div
 		if cfg.ID != "" {
 			id={ cfg.ID }

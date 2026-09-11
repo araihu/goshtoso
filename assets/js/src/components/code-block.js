@@ -14,7 +14,7 @@
     button.dataset.codeBlockCopyLabel = initialLabel;
 
     var successful = state === "success";
-    if (status) status.textContent = successful ? "Copied!" : state === "error" ? "Unable to copy" : "Copy";
+    if (status) status.textContent = successful ? (button.dataset.codeBlockSuccessText || "Copied!") : state === "error" ? (button.dataset.codeBlockErrorText || "Unable to copy") : (button.dataset.codeBlockIdleText || "Copy");
     if (copyIcon) copyIcon.hidden = successful;
     if (successIcon) successIcon.hidden = !successful;
     button.setAttribute("aria-label", initialLabel);

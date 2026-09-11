@@ -1,5 +1,7 @@
 package breadcrumbs
 
+import "github.com/araihu/goshtoso/expressions"
+
 // Breadcrumbs renders a breadcrumb navigation component based on PenguinUI
 // Usage:
 //
@@ -13,7 +15,7 @@ package breadcrumbs
 templ breadcrumbsTemplate(cfg Config) {
 	<nav
 		class={ "text-sm font-medium text-on-surface dark:text-on-surface-dark" + extraClass(cfg.NavClass) }
-		aria-label="breadcrumb"
+		aria-label={ expressions.From(ctx).Breadcrumbs.AriaLabel }
 		{ cfg.NavAttrs... }
 	>
 		<ol class={ listClasses(cfg.Separator) }>

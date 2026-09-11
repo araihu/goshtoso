@@ -103,7 +103,7 @@ func TestCarousel_AutoplayCanBePaused(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, waitForCarouselIndex(page, "#carousel-autoplay-c", 1))
 
-	pause := page.Locator("#carousel-autoplay-c button[aria-label='pause carousel']")
+	pause := page.Locator("#carousel-autoplay-c button[data-pause-label]")
 	pressed, err := pause.Evaluate("el => el.getAttribute('aria-pressed')", nil)
 	require.NoError(t, err)
 	assert.Equal(t, "false", pressed)
@@ -112,6 +112,9 @@ func TestCarousel_AutoplayCanBePaused(t *testing.T) {
 	pressed, err = pause.Evaluate("el => el.getAttribute('aria-pressed')", nil)
 	require.NoError(t, err)
 	assert.Equal(t, "true", pressed)
+	label, err := pause.Evaluate("el => el.getAttribute('aria-label')", nil)
+	require.NoError(t, err)
+	assert.Equal(t, "play carousel", label)
 }
 
 func TestCarouselReducedMotionDisablesAutoplayAndSlideTransitions(t *testing.T) {

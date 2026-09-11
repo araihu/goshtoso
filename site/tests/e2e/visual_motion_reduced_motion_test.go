@@ -50,7 +50,7 @@ func TestVisualComponentsHonorReducedMotion(t *testing.T) {
 			"#carousel-default-c button[aria-label='previous slide']",
 			"#carousel-default-c button[aria-label='next slide']",
 			"#carousel-default-c button[aria-label='slide 1']",
-			"#carousel-autoplay-c button[aria-label='pause carousel']",
+			"#carousel-autoplay-c button[data-pause-label]",
 			"#carousel-cta-c a",
 			"#carousel-card-c button[aria-label='next slide']",
 		} {

@@ -1,5 +1,7 @@
 package chatbubble
 
+import "github.com/araihu/goshtoso/expressions"
+
 import (
 	"github.com/araihu/goshtoso/components/avatar"
 	"github.com/araihu/goshtoso/components/badge"
@@ -47,7 +49,7 @@ templ chatBubbleTemplate(cfg Config) {
 			</div>
 			if cfg.Status != "" {
 				<span class="px-1 text-xs text-on-surface/60 dark:text-on-surface-dark/60">
-					{ string(cfg.Status) }
+					{ expressionStatusLabel(ctx, cfg.Status) }
 				</span>
 			}
 		</div>
@@ -65,7 +67,7 @@ templ chatBubbleTemplate(cfg Config) {
 	//	    AvatarTone:     avatar.ToneInfo,
 //	})
 templ typingIndicatorTemplate(cfg Config) {
-	<div class={ cfg.rowClasses() } data-mine="false" aria-label="typing" aria-live="polite">
+	<div class={ cfg.rowClasses() } data-mine="false" aria-label={ expressions.From(ctx).ChatBubble.TypingAriaLabel } aria-live="polite">
 		if cfg.hasAvatar() {
 			@bubbleAvatar(cfg)
 		}
@@ -103,7 +105,7 @@ templ bubbleHeader(cfg Config) {
 			{ cfg.SenderName }
 		</span>
 		if cfg.IsBot {
-			@badge.Badge(badge.Config{Label: "BOT", Tone: badge.ToneInfo, Size: badge.SizeSM})
+			@badge.Badge(badge.Config{Label: expressions.From(ctx).ChatBubble.BotLabel, Tone: badge.ToneInfo, Size: badge.SizeSM})
 		}
 		if cfg.Timestamp != "" {
 			<span class="text-xs font-normal opacity-70">

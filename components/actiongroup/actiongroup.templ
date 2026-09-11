@@ -10,6 +10,7 @@ import (
 // primary action remains visible. A small first-party runtime moves trailing
 // secondary actions into one flat overflow Dropdown when width is constrained.
 templ actionGroupTemplate(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	{{ sections, counts := overflowSections(cfg.Secondary) }}
 	<div
 		data-goshtoso-action-group

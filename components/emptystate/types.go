@@ -30,20 +30,6 @@ type Config struct {
 	ActionAttrs templ.Attributes
 }
 
-func (cfg Config) title() string {
-	if title := strings.TrimSpace(cfg.Title); title != "" {
-		return title
-	}
-	return "Nothing here yet"
-}
-
-func (cfg Config) description() string {
-	if description := strings.TrimSpace(cfg.Description); description != "" {
-		return description
-	}
-	return "Items will appear here when they are available."
-}
-
 func (cfg Config) rootClasses() string {
 	return appendClass(
 		"flex min-h-48 flex-col items-center justify-center gap-3 rounded-radius border border-dashed border-outline bg-surface-alt/30 px-6 py-12 text-center text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/30 dark:text-on-surface-dark",

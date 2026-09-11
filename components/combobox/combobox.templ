@@ -1,5 +1,7 @@
 package combobox
 
+import "github.com/araihu/goshtoso/expressions"
+
 import (
 	"encoding/json"
 	"strconv"
@@ -35,12 +37,14 @@ func triggerLabelText(cfg Config, state State) string {
 // body renders the swappable region: hidden inputs + trigger label + options ul.
 // Do NOT use this directly as the top-level combobox; use Combobox which wraps it in the Alpine shell.
 templ body(cfg Config, state State) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<div data-combobox-body id={ cfg.ID + "-body" } class="flex flex-col">
 		@bodyInner(cfg, state)
 	</div>
 }
 
 templ bodyInner(cfg Config, state State) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	for _, v := range state.Selected {
 		<input type="hidden" name={ cfg.Name } value={ v }/>
 	}
@@ -54,7 +58,7 @@ templ bodyInner(cfg Config, state State) {
 					hidden
 				}
 				class="w-full px-4 py-2 text-left text-xs font-medium text-primary hover:bg-primary/5 dark:text-primary-dark dark:hover:bg-primary-dark/10"
-			>Clear all</button>
+			>{ expressions.From(ctx).Combobox.ClearLabel }</button>
 		} else if len(state.Selected) > 0 {
 			<button
 				type="button"
@@ -66,7 +70,7 @@ templ bodyInner(cfg Config, state State) {
 				hx-target="closest [data-combobox]"
 				hx-swap="outerMorph"
 				hx-include={ cfg.hxIncludeSelector() }
-			>Clear all</button>
+			>{ expressions.From(ctx).Combobox.ClearLabel }</button>
 		}
 	}
 	if cfg.EnableSearch {
@@ -78,7 +82,7 @@ templ bodyInner(cfg Config, state State) {
 				type="text"
 				data-combobox-search
 				value={ state.Search }
-				placeholder="Search…"
+				placeholder={ expressions.From(ctx).Combobox.SearchPlaceholder }
 				class="w-full bg-transparent py-2.5 pl-9 pr-3 text-sm text-on-surface placeholder:text-on-surface/40 focus:outline-none dark:text-on-surface-dark dark:placeholder:text-on-surface-dark/40"
 				hx-get={ cfg.OptionsEndpoint }
 				hx-sync="this:replace"
@@ -102,9 +106,10 @@ func hxValsJSON(value string) string {
 
 // optionsList renders just the <ul>. Swap target for search and lazy first-load.
 templ optionsList(cfg Config, state State) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<ul id={ cfg.ID + "-options" } class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox">
 		if len(state.Options) == 0 {
-			<li class="px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60">No matches found</li>
+			<li class="px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60">{ expressions.From(ctx).Combobox.EmptyText }</li>
 		}
 		for _, opt := range state.Options {
 			if cfg.isClientMode() {
@@ -117,6 +122,7 @@ templ optionsList(cfg Config, state State) {
 }
 
 templ clientOptionLI(cfg Config, state State, opt Option) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<li
 		role="option"
 		data-combobox-option
@@ -138,6 +144,7 @@ templ clientOptionLI(cfg Config, state State, opt Option) {
 }
 
 templ serverOptionLI(cfg Config, state State, opt Option) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<li
 		role="option"
 		data-combobox-option
@@ -185,6 +192,7 @@ templ optionCheckbox(selected bool) {
 // so labels, option ARIA and hidden values reconcile together. A focused search
 // draft remains user-owned; options-only search responses keep their narrow target.
 templ comboboxTemplate(cfg Config, state State) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<div
 		data-combobox
 		data-combobox-mode={ comboboxModeAttr(cfg) }
@@ -193,6 +201,9 @@ templ comboboxTemplate(cfg Config, state State) {
 		data-combobox-multi={ comboboxMultiAttr(cfg) }
 		data-combobox-close-on-select={ comboboxCloseOnSelectAttr(cfg) }
 		data-combobox-placeholder={ cfg.Placeholder }
+ if cfg.isClientMode() {
+ data-combobox-selected-labels={ selectedLabels(ctx, state) }
+ }
 		id={ cfg.ID }
 		class={ "relative " + cfg.RootClass }
 		if cfg.isClientMode() {
@@ -222,7 +233,7 @@ templ comboboxTemplate(cfg Config, state State) {
 			x-on:keydown.space.prevent="openedWithKeyboard = true; isOpen = true"
 			x-bind:aria-expanded="isOpen || openedWithKeyboard"
 		>
-			<span id={ cfg.ID + "-trigger-label" } data-combobox-trigger-label-outer class={ "truncate text-sm " + triggerLabelClass(state) }>{ triggerLabelText(cfg, state) }</span>
+			<span id={ cfg.ID + "-trigger-label" } data-combobox-trigger-label-outer class={ "truncate text-sm " + triggerLabelClass(state) }>{ expressionTriggerLabel(ctx, cfg, state) }</span>
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class={ "size-4 shrink-0 transition-transform duration-150 motion-reduce:transition-none " + chevronClass(state) } x-bind:class="isOpen ? 'rotate-180' : ''">
 				<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
 			</svg>

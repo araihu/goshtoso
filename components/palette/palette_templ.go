@@ -8,6 +8,8 @@ package palette
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "github.com/araihu/goshtoso/expressions"
+
 func paletteTemplate(cfg Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -41,7 +43,7 @@ func paletteTemplate(cfg Config) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.swatchesData())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 7, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 9, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -54,7 +56,7 @@ func paletteTemplate(cfg Config) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 8, Col: 13}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 10, Col: 13}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -85,7 +87,7 @@ func paletteTemplate(cfg Config) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.modelAssignExpr())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 11, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 13, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
@@ -101,36 +103,62 @@ func paletteTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if !cfg.HideReset {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"flex items-center gap-2\"><span class=\"text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate\" x-text=\"hovered || 'Pick a color'\"></span> ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if !cfg.HideReset {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<button type=\"button\" @click=\"pick('', null)\" class=\"ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark\">Reset</button>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		if cfg.LazyWhen != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<template x-if=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"flex items-center gap-2\"><span class=\"text-[11px] font-mono text-on-surface-muted dark:text-on-surface-dark-muted truncate\" data-placeholder=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.LazyWhen)
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Palette.Placeholder)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 27, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 18, Col: 163}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\"><div class=\"grid w-full gap-1 max-h-44 overflow-y-auto pr-1\" style=\"grid-template-columns: repeat(11, minmax(0, 1fr));\" x-html=\"swatchGridHTML()\" @click=\"handleSwatchEvent($event, 'pick')\" @mouseover=\"handleSwatchEvent($event, 'hover')\" @focusin=\"handleSwatchEvent($event, 'hover')\" @mouseleave=\"hovered = ''\" @focusout=\"if (!$event.currentTarget.contains($event.relatedTarget)) hovered = ''\"></div></template>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" x-text=\"hovered || $el.dataset.placeholder\"></span> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if !cfg.HideReset {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<button type=\"button\" @click=\"pick('', null)\" class=\"ml-auto text-[10px] font-medium text-on-surface-muted dark:text-on-surface-dark-muted hover:text-primary dark:hover:text-primary-dark\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(expressions.From(ctx).Palette.ResetLabel)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 24, Col: 48}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</button>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if cfg.LazyWhen != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<template x-if=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.LazyWhen)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 29, Col: 32}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\"><div class=\"grid w-full gap-1 max-h-44 overflow-y-auto pr-1\" style=\"grid-template-columns: repeat(11, minmax(0, 1fr));\" x-html=\"swatchGridHTML()\" @click=\"handleSwatchEvent($event, 'pick')\" @mouseover=\"handleSwatchEvent($event, 'hover')\" @focusin=\"handleSwatchEvent($event, 'hover')\" @mouseleave=\"hovered = ''\" @focusout=\"if (!$event.currentTarget.contains($event.relatedTarget)) hovered = ''\"></div></template>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -141,12 +169,38 @@ func paletteTemplate(cfg Config) templ.Component {
 			}
 		}
 		if cfg.ShowHex {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"flex items-center gap-2 pt-1\"><label data-selected-preview class=\"relative size-7 overflow-hidden rounded border border-outline shadow-sm dark:border-outline-dark cursor-pointer\" title=\"Custom color\" :style=\"{ backgroundColor: selectedHex }\"><input type=\"color\" :value=\"selectedHex\" @input=\"commitHex($event.target.value)\" @change=\"commitHex($event.target.value)\" class=\"absolute inset-0 size-full cursor-pointer opacity-0\" aria-label=\"Custom color\"></label> <input type=\"text\" x-model=\"hexInput\" pattern=\"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$\" placeholder=\"#000000\" @input=\"previewHex(hexInput)\" @change=\"commitHex(hexInput)\" @keydown.enter.prevent=\"commitHex(hexInput)\" @blur=\"commitHex(hexInput)\" :aria-invalid=\"hexInvalid ? 'true' : 'false'\" class=\"w-24 rounded-radius border border-outline bg-surface px-2 py-1 text-xs font-mono text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[invalid=true]:border-danger aria-[invalid=true]:text-danger dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:focus-visible:outline-primary-dark\"></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"flex items-center gap-2 pt-1\"><label data-selected-preview class=\"relative size-7 overflow-hidden rounded border border-outline shadow-sm dark:border-outline-dark cursor-pointer\" title=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var10 string
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Palette.CustomLabel)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 49, Col: 54}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" :style=\"{ backgroundColor: selectedHex }\"><input type=\"color\" :value=\"selectedHex\" @input=\"commitHex($event.target.value)\" @change=\"commitHex($event.target.value)\" class=\"absolute inset-0 size-full cursor-pointer opacity-0\" aria-label=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var11 string
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Palette.CustomLabel)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 58, Col: 60}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "\"></label> <input type=\"text\" x-model=\"hexInput\" pattern=\"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$\" placeholder=\"#000000\" @input=\"previewHex(hexInput)\" @change=\"commitHex(hexInput)\" @keydown.enter.prevent=\"commitHex(hexInput)\" @blur=\"commitHex(hexInput)\" :aria-invalid=\"hexInvalid ? 'true' : 'false'\" class=\"w-24 rounded-radius border border-outline bg-surface px-2 py-1 text-xs font-mono text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[invalid=true]:border-danger aria-[invalid=true]:text-danger dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:focus-visible:outline-primary-dark\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -170,37 +224,63 @@ func swatchGrid(cfg Config) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"grid w-full gap-1 max-h-44 overflow-y-auto pr-1\" style=\"grid-template-columns: repeat(11, minmax(0, 1fr));\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"grid w-full gap-1 max-h-44 overflow-y-auto pr-1\" style=\"grid-template-columns: repeat(11, minmax(0, 1fr));\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if !cfg.HideNeutral {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<button type=\"button\" data-cls=\"white\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/60 bg-white transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark\" title=\"white\"></button> <button type=\"button\" data-cls=\"black\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/60 bg-black transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark\" title=\"black\"></button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<button type=\"button\" data-cls=\"white\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/60 bg-white transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark\" title=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var13 string
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Palette.WhiteLabel)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 90, Col: 52}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\"></button> <button type=\"button\" data-cls=\"black\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/60 bg-black transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:border-outline-dark/60 dark:hover:ring-primary-dark\" title=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var14 string
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(expressions.From(ctx).Palette.BlackLabel)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 101, Col: 52}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\"></button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		for _, hue := range cfg.hues() {
 			for _, shade := range cfg.shades() {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<button type=\"button\" data-cls=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<button type=\"button\" data-cls=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(hue + "-" + shade)
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(hue + "-" + shade)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 106, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 108, Col: 33}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:hover:ring-primary-dark\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" @click=\"pick($el.dataset.cls, $el)\" @mouseenter=\"hovered = $el.dataset.cls\" @mouseleave=\"hovered = ''\" @focus=\"hovered = $el.dataset.cls\" @blur=\"hovered = ''\" class=\"h-5 w-full rounded-sm border border-outline/30 dark:border-outline-dark/30 transition-transform motion-reduce:transition-none hover:scale-125 motion-reduce:hover:scale-100 hover:ring-2 hover:ring-primary focus:scale-125 motion-reduce:focus:scale-100 dark:hover:ring-primary-dark\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -208,26 +288,26 @@ func swatchGrid(cfg Config) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " title=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " title=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(hue + "-" + shade)
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.ResolveAttributeValue(hue + "-" + shade)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 114, Col: 30}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/palette/palette.templ`, Line: 116, Col: 30}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\"></button>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\"></button>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

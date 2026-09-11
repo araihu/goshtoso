@@ -95,7 +95,7 @@ func TestCoverageRenderFullNavbarBranches(t *testing.T) {
 		`Sign out`,
 		`text-danger`,
 		`x-on:keydown.escape.window="mobileMenuIsOpen = false"`,
-		`x-bind:aria-label="mobileMenuIsOpen ? 'Close mobile menu' : 'Open mobile menu'"`,
+		`x-bind:aria-label="mobileMenuIsOpen ? $el.dataset.closeLabel : $el.dataset.openLabel"`,
 		`x-show="mobileMenuIsOpen"`,
 	} {
 		assert.Contains(t, html, want)

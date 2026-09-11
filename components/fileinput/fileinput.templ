@@ -1,5 +1,7 @@
 package fileinput
 
+import "github.com/araihu/goshtoso/expressions"
+
 // FileInput renders a drag-and-drop file input component based on PenguinUI
 // Usage:
 //
@@ -56,9 +58,9 @@ templ dropZoneInput(cfg Config) {
 						}
 						{ cfg.inputAttributes()... }
 					/>
-					Browse
+					{ expressions.From(ctx).FileInput.BrowseLabel }
 				</label>
-				 or drag and drop here
+				{ expressions.From(ctx).FileInput.DropText }
 			</div>
 			if cfg.HelperText != "" {
 				<small id={ cfg.ID + "-helper" } class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
@@ -97,9 +99,9 @@ templ uploadInput(cfg Config) {
 				{ cfg.inputAttributes()... }
 			/>
 			<span class={ cfg.uploadFileNameClasses() }>
-				<span class="truncate" x-text="fileName || 'No file selected'">No file selected</span>
+				<span class="truncate" data-empty-text={ expressions.From(ctx).FileInput.EmptyText } x-text="fileName || $el.dataset.emptyText">{ expressions.From(ctx).FileInput.EmptyText }</span>
 			</span>
-			<span aria-hidden="true" class={ cfg.uploadButtonClasses() }>Browse</span>
+			<span aria-hidden="true" class={ cfg.uploadButtonClasses() }>{ expressions.From(ctx).FileInput.BrowseLabel }</span>
 		</label>
 		if cfg.HelperText != "" {
 			<small id={ cfg.ID + "-helper" } class={ cfg.helperTextClasses() }>{ cfg.HelperText }</small>
