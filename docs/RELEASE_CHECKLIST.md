@@ -118,5 +118,5 @@ deployment, or a `site/go.mod` dependency update.
 
 ## Support Notes
 
-During alpha, only the latest `v0.0.x` tag receives fixes. Older tags remain
+During alpha, only the latest `v0.x.y` tag receives fixes. Older tags remain
 available for reproducibility but are not maintained.
