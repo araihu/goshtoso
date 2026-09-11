@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"html"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -338,7 +339,7 @@ func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(time.Duration(delay) * time.Millisecond)
 	}
 	w.Header().Set("Content-Type", "text/html")
-	_, _ = fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, r.Method, r.URL.Path)
+	_, _ = fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, html.EscapeString(r.Method), html.EscapeString(r.URL.Path))
 }
 
 func (s *Server) handleAgentsPage(w http.ResponseWriter, r *http.Request) {
