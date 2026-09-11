@@ -1,0 +1,12 @@
+package demo
+
+// ExpressionOverridesNote links component text customization to the shared guide.
+// It uses no unreleased root API, preserving the standalone site's pinned contract.
+templ ExpressionOverridesNote(group string) {
+	<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+		Built-in text: the development API provides
+		<code>{ "expressions." + group }</code>
+		{ "for application defaults, request preferences, and individual component overrides." }
+		<a class="underline" href="https://github.com/araihu/goshtoso/blob/main/docs/EXPRESSIONS.md">Read the expression guide</a>.
+	</p>
+}

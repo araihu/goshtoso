@@ -8,6 +8,10 @@ package appshell
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "strings"
+
+import "github.com/araihu/goshtoso/expressions"
+
 // AppShell renders a responsive application frame with a keyboard skip link,
 // persistent header, desktop sidebar, and one scrollable main region.
 func appShellTemplate(cfg Config) templ.Component {
@@ -64,7 +68,7 @@ func appShellTemplate(cfg Config) templ.Component {
 		var templ_7745c5c3_Var4 templ.SafeURL
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("#" + cfg.mainID()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/appshell/appshell.templ`, Line: 8, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/appshell/appshell.templ`, Line: 12, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -75,9 +79,9 @@ func appShellTemplate(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.skipLinkLabel())
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(expressions.Text(strings.TrimSpace(cfg.SkipLinkLabel), expressions.From(ctx).AppShell.SkipLinkLabel))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/appshell/appshell.templ`, Line: 11, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/appshell/appshell.templ`, Line: 15, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -183,7 +187,7 @@ func appShellTemplate(cfg Config) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.ResolveAttributeValue(cfg.mainID())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/appshell/appshell.templ`, Line: 24, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/appshell/appshell.templ`, Line: 28, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 		if templ_7745c5c3_Err != nil {

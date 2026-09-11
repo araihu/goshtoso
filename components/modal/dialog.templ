@@ -1,5 +1,7 @@
 package modal
 
+import "github.com/araihu/goshtoso/expressions"
+
 // Dialog renders a native modal in the browser top layer, including above drawers.
 // Dispatch modal:open or modal:close with {id: ID}. Escape closes only this dialog;
 // the browser restores focus to the opener. Content remains mounted while closed.
@@ -24,7 +26,7 @@ templ dialogTemplate(cfg DialogConfig) {
   } else {
   <header class="flex shrink-0 items-center justify-between gap-4 border-b border-outline p-4 dark:border-outline-dark">
    <h2 id={cfg.ID+"Title"} class="font-semibold">{cfg.Title}</h2>
-   <button type="button" aria-label="Close dialog" x-on:click="open=false" class="cursor-pointer rounded-radius p-2 focus-visible:outline-2 focus-visible:outline-primary">@closeIcon()</button>
+   <button type="button" aria-label={ expressions.From(ctx).Modal.DialogCloseLabel } x-on:click="open=false" class="cursor-pointer rounded-radius p-2 focus-visible:outline-2 focus-visible:outline-primary">@closeIcon()</button>
   </header>
   }
   <div class={"min-h-0 flex-1 overflow-y-auto",templ.KV("p-4",!cfg.Compact)}>

@@ -1,5 +1,7 @@
 package toast
 
+import "github.com/araihu/goshtoso/expressions"
+
 import "fmt"
 
 // ToastContainer renders the toast notification container.
@@ -123,7 +125,7 @@ templ clientNotification(tone string) {
 				<p x-cloak x-show="notification.message" class="text-pretty text-sm" x-text="notification.message"></p>
 			</div>
 			<!-- Dismiss Button -->
-			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click="dismiss()">
+			<button type="button" class="ml-auto" aria-label={ expressions.From(ctx).Toast.DismissAriaLabel } x-on:click="dismiss()">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-5 shrink-0" aria-hidden="true">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
 				</svg>
@@ -161,12 +163,12 @@ templ clientMessageNotification() {
 					<p x-cloak x-show="notification.message" class="text-pretty text-sm" x-text="notification.message"></p>
 					<!-- Dismiss Action -->
 					<div class="flex items-center gap-4">
-						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click="dismiss()">Dismiss</button>
+						<button type="button" class="whitespace-nowrap bg-transparent text-center text-sm font-bold tracking-wide text-on-surface transition motion-reduce:transition-none hover:opacity-75 active:opacity-100 dark:text-on-surface-dark" x-on:click="dismiss()">{ expressions.From(ctx).Toast.DismissLabel }</button>
 					</div>
 				</div>
 			</div>
 			<!-- Dismiss Button -->
-			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click="dismiss()">
+			<button type="button" class="ml-auto" aria-label={ expressions.From(ctx).Toast.DismissAriaLabel } x-on:click="dismiss()">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-5 shrink-0" aria-hidden="true">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
 				</svg>
@@ -194,6 +196,7 @@ templ toastTemplate(cfg Config) {
 
 // MessageToast renders a sender-oriented server-side toast notification.
 templ messageToastTemplate(cfg MessageConfig) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	@serverMessageToast(cfg)
 }
 
@@ -216,6 +219,7 @@ templ oobToastTemplate(cfg Config) {
 
 // OOBMessageToast renders a message toast wrapped in an OOB swap container.
 templ oobMessageToastTemplate(cfg MessageConfig) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<div id="toast-container-oob" hx-swap-oob="beforeend">
 		@messageToastTemplate(cfg)
 	</div>
@@ -289,7 +293,7 @@ templ serverToast(cfg Config) {
 				}
 			</div>
 			<!-- Dismiss Button -->
-			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click="dismiss()">
+			<button type="button" class="ml-auto" aria-label={ expressions.From(ctx).Toast.DismissAriaLabel } x-on:click="dismiss()">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-5 shrink-0" aria-hidden="true">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
 				</svg>
@@ -300,6 +304,7 @@ templ serverToast(cfg Config) {
 
 // serverMessageToast renders a single server-pushed message toast
 templ serverMessageToast(cfg MessageConfig) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	{{ toastID := fmt.Sprintf("server-toast-%d", uniqueID()) }}
 	<div
 		id={ toastID }
@@ -353,7 +358,7 @@ templ serverMessageToast(cfg MessageConfig) {
 				</div>
 			</div>
 			<!-- Dismiss Button -->
-			<button type="button" class="ml-auto" aria-label="dismiss notification" x-on:click="dismiss()">
+			<button type="button" class="ml-auto" aria-label={ expressions.From(ctx).Toast.DismissAriaLabel } x-on:click="dismiss()">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="size-5 shrink-0" aria-hidden="true">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
 				</svg>

@@ -1,5 +1,7 @@
 package drawer
 
+import "github.com/araihu/goshtoso/expressions"
+
 import "fmt"
 
 // Drawer renders a slide-over panel controlled by Alpine state.
@@ -80,7 +82,7 @@ templ drawerTemplate(cfg Config) {
 				<button
 					type="button"
 					x-on:click={ closeReq }
-					aria-label="Close"
+					aria-label={ expressions.From(ctx).Drawer.CloseLabel }
 					class="shrink-0 rounded-radius p-1.5 text-on-surface-muted hover:bg-surface-alt hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark-muted dark:hover:bg-surface-dark-alt dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark"
 				>
 					@closeIcon()

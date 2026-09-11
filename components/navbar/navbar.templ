@@ -1,5 +1,7 @@
 package navbar
 
+import "github.com/araihu/goshtoso/expressions"
+
 // Navbar renders a responsive navigation bar based on PenguinUI.
 // Supports brand, nav links, user avatar dropdown, custom actions, and mobile menu.
 //
@@ -36,7 +38,7 @@ templ primaryNavbar(cfg Config) {
 		x-on:click.away="mobileMenuIsOpen = false"
 		x-on:keydown.escape.window="mobileMenuIsOpen = false"
 		class={ cfg.navClasses() }
-		aria-label="main navigation"
+		aria-label={ expressions.From(ctx).Navbar.Label }
 		{ cfg.NavAttrs... }
 	>
 		<!-- Left Side: Brand + Left Actions -->
@@ -80,7 +82,7 @@ templ primaryNavbar(cfg Config) {
 			<button
 				x-on:click="mobileMenuIsOpen = !mobileMenuIsOpen"
 				x-bind:aria-expanded="mobileMenuIsOpen"
-				x-bind:aria-label="mobileMenuIsOpen ? 'Close mobile menu' : 'Open mobile menu'"
+				data-open-label={ expressions.From(ctx).Navbar.OpenMenuLabel } data-close-label={ expressions.From(ctx).Navbar.CloseMenuLabel } x-bind:aria-label="mobileMenuIsOpen ? $el.dataset.closeLabel : $el.dataset.openLabel"
 				x-bind:class="mobileMenuIsOpen ? 'fixed top-6 right-6 z-20' : null"
 				type="button"
 				class="flex text-on-surface dark:text-on-surface-dark sm:hidden"
@@ -99,6 +101,7 @@ templ primaryNavbar(cfg Config) {
 }
 
 templ secondaryRowTemplate(cfg SecondaryConfig) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	if cfg.hasContent() {
 		<div
 			data-navbar-secondary="true"
@@ -159,7 +162,7 @@ templ avatarDropdown(cfg Config) {
 			x-on:keydown.enter.prevent="openFromKeyboard()"
 			x-on:keydown.down.prevent="openFromKeyboard()"
 			class="cursor-pointer rounded-full transition-transform duration-150 motion-reduce:transition-none hover:scale-110 motion-reduce:hover:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95 motion-reduce:active:scale-100 dark:focus-visible:outline-primary-dark"
-			aria-label="user menu"
+			aria-label={ expressions.From(ctx).Navbar.UserMenuLabel }
 		>
 			if cfg.User.Avatar != nil {
 				@cfg.User.Avatar

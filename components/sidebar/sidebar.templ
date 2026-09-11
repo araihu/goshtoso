@@ -1,5 +1,7 @@
 package sidebar
 
+import "github.com/araihu/goshtoso/expressions"
+
 // Sidebar renders a collapsible sidebar navigation component based on PenguinUI
 // Usage:
 //
@@ -17,11 +19,11 @@ templ sidebarTemplate(cfg Config) {
 } }}
 	<nav
 		class={ cfg.containerClasses() + " " + cfg.RootClass }
-		aria-label="sidebar navigation"
+		aria-label={ expressions.From(ctx).Sidebar.Label }
 	>
 		if !cfg.DisableSkipLink {
 			<!-- Skip to main content link for accessibility -->
-			<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-on-primary">skip to the main content</a>
+			<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-on-primary">{ expressions.From(ctx).Sidebar.SkipLabel }</a>
 		}
 		<!-- Logo Section (only rendered when Logo or LogoText is provided) -->
 		if cfg.Logo != nil || cfg.LogoText != "" {
@@ -48,7 +50,7 @@ templ sidebarTemplate(cfg Config) {
 						type="search"
 						class="w-full border border-outline rounded-radius bg-surface py-1.5 pl-9 pr-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark/50 dark:focus-visible:outline-primary-dark"
 						name="search"
-						aria-label="Search"
+						aria-label={ expressions.From(ctx).Sidebar.SearchLabel }
 						placeholder={ cfg.SearchPlaceholder }
 					/>
 				</div>
@@ -94,6 +96,7 @@ templ sidebarTemplate(cfg Config) {
 // The inner panel renders a normal Sidebar so consumers keep the same item,
 // section, slot, and HTMX APIs.
 templ overlayTemplate(cfg OverlayConfig) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	{{ panelID := cfg.panelID() }}
 	<div
 		x-data="goshtosoSidebarOverlay()"
@@ -169,7 +172,7 @@ templ sidebarItem(item Item) {
 				</span>
 			}
 			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
-			<span class="sr-only">active</span>
+			<span class="sr-only">{ expressions.From(ctx).Sidebar.ActiveLabel }</span>
 		</a>
 	} else {
 		<a href={ templ.URL(item.Href) } { sidebarLinkAttrs(item)... } class="flex items-center gap-2 py-2 text-base text-on-surface transition-colors motion-reduce:transition-none hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:text-on-surface-dark-strong">
@@ -246,7 +249,7 @@ templ sidebarSectionItem(item Item, collapseChildGroups bool) {
 			if item.Badge != "" {
 				<sup class={ sidebarBadgeClasses(item, true) }>{ item.Badge }</sup>
 			}
-			<span class="sr-only">active</span>
+			<span class="sr-only">{ expressions.From(ctx).Sidebar.ActiveLabel }</span>
 		</a>
 	} else {
 		<a

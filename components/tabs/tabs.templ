@@ -1,5 +1,7 @@
 package tabs
 
+import "github.com/araihu/goshtoso/expressions"
+
 import "fmt"
 
 // Tabs renders a tabbed interface with keyboard navigation and ARIA attributes
@@ -28,7 +30,7 @@ templ tabsTemplate(cfg Config) {
 			x-on:keydown.left.prevent="moveFocus($event, -1)"
 			class="flex gap-2 overflow-x-auto border-b border-outline dark:border-outline-dark"
 			role="tablist"
-			aria-label="tab options"
+			aria-label={ expressions.From(ctx).Tabs.OptionsLabel }
 		>
 			for _, tab := range cfg.Tabs {
 				@tabButton(containerID, tab)
@@ -135,7 +137,7 @@ templ htmxTabPanel(panelID string, tab Tab) {
 				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 				<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 			</svg>
-			Loading...
+			{ expressions.From(ctx).Tabs.LoadingText }
 		</div>
 	</div>
 }

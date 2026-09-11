@@ -1,5 +1,7 @@
 package codeblock
 
+import "github.com/araihu/goshtoso/expressions"
+
 // CodeBlock renders a syntax-highlighted code block with a header bar and
 // copy button. Highlighting is done server-side via Chroma (class mode);
 // the palette is defined in css/codeblock.css.
@@ -34,7 +36,10 @@ templ codeBlockTemplate(cfg Config) {
 					hidden
 					data-code-block-copy
 					data-code-block-target={ id }
-					aria-label={ cfg.copyLabel() }
+					aria-label={ expressions.From(ctx).CodeBlock.CopyAriaLabel(expressions.Text(cfg.getLabel(), cfg.getID())) }
+ data-code-block-idle-text={ expressions.From(ctx).CodeBlock.CopyLabel }
+ data-code-block-success-text={ expressions.From(ctx).CodeBlock.CopiedLabel }
+ data-code-block-error-text={ expressions.From(ctx).CodeBlock.ErrorText }
 					aria-controls={ id }
 					class="flex items-center gap-1 text-xs text-on-surface-muted hover:text-primary transition-colors motion-reduce:transition-none dark:text-on-surface-dark-muted dark:hover:text-primary-dark"
 				>
@@ -44,7 +49,7 @@ templ codeBlockTemplate(cfg Config) {
 				<svg data-code-block-success-icon hidden xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
 				</svg>
-				<span data-code-block-copy-status role="status" aria-live="polite">Copy</span>
+				<span data-code-block-copy-status role="status" aria-live="polite">{ expressions.From(ctx).CodeBlock.CopyLabel }</span>
 				</button>
 			}
 		</div>

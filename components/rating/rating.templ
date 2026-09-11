@@ -1,5 +1,7 @@
 package rating
 
+import "github.com/araihu/goshtoso/expressions"
+
 import "fmt"
 
 // Rating renders a star or emoji rating control.
@@ -20,9 +22,9 @@ templ ratingInteractive(cfg Config) {
 		{ cfg.RootAttrs... }
 	>
 		if cfg.ShowLabel {
-			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.resolvedLabel() }</span>
+			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ expressions.Text(cfg.Label, expressions.From(ctx).Rating.Label) }</span>
 		}
-		<div class={ cfg.controlClasses() } role="radiogroup" aria-label={ cfg.resolvedLabel() }>
+		<div class={ cfg.controlClasses() } role="radiogroup" aria-label={ expressions.Text(cfg.Label, expressions.From(ctx).Rating.Label) }>
 			for i := 1; i <= cfg.resolvedMax(); i++ {
 				@ratingOption(cfg, i)
 			}
@@ -32,7 +34,7 @@ templ ratingInteractive(cfg Config) {
 
 templ ratingDisplay(cfg DisplayConfig) {
 	{{ accessibleLabel := cfg.Label }}
-	{{ if accessibleLabel == "" { accessibleLabel = cfg.valueLabel(cfg.resolvedValue()) } }}
+	{{ if accessibleLabel == "" { accessibleLabel = expressionValueLabel(ctx, cfg.Appearance, cfg.resolvedValue()) } }}
 	<div
 		id={ cfg.resolvedID() }
 		class={ cfg.rootClasses() }
@@ -41,7 +43,7 @@ templ ratingDisplay(cfg DisplayConfig) {
 		{ cfg.RootAttrs... }
 	>
 		if cfg.ShowLabel {
-			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.resolvedLabel() }</span>
+			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ expressions.Text(cfg.Label, expressions.From(ctx).Rating.Label) }</span>
 		}
 		<div class={ cfg.controlClasses() }>
 			for i := 1; i <= cfg.resolvedMax(); i++ {
@@ -59,7 +61,7 @@ templ ratingDisplay(cfg DisplayConfig) {
 
 templ ratingOption(cfg Config, value int) {
 	<label for={ cfg.inputID(value) } class="group/rating-option cursor-pointer has-disabled:cursor-not-allowed">
-		<span class="sr-only">{ cfg.valueLabel(value) }</span>
+		<span class="sr-only">{ expressionValueLabel(ctx, cfg.Appearance, value) }</span>
 		<input
 			id={ cfg.inputID(value) }
 			type="radio"

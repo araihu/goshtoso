@@ -1,5 +1,7 @@
 package avatar
 
+import "github.com/araihu/goshtoso/expressions"
+
 import "fmt"
 
 // Avatar renders a layered avatar component.
@@ -45,7 +47,7 @@ templ avatarStackTemplate(cfg StackConfig) {
 	{{
 		label := cfg.Label
 		if label == "" {
-			label = "Avatar group"
+			label = expressions.From(ctx).Avatar.GroupLabel
 		}
 		rootClasses := "flex items-center " + cfg.RootClass
 	}}

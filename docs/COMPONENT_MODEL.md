@@ -91,3 +91,20 @@ rendered output.
 
 For installation and asset wiring, see the
 [Consumer Integration Guide](USAGE.md).
+
+## Built-in expressions
+
+Components with built-in UI text expose a typed `WithExpressions` method on
+ their concrete return values. The method returns a copy and preserves `Kind`:
+
+```go
+pager := pagination.Pagination(pagination.Config{
+    CurrentPage: 2,
+    TotalPages: 10,
+}).WithExpressions(expressions.Pagination{NextText: "Continue"})
+```
+
+Existing config labels take precedence over component expressions. Request
+contexts and a configured renderer can supply inherited values so templates do
+not need to repeat overrides. English is the final fallback. See the
+[expression guide](EXPRESSIONS.md) for application defaults and dynamic messages.

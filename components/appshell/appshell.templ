@@ -1,5 +1,9 @@
 package appshell
 
+import "strings"
+
+import "github.com/araihu/goshtoso/expressions"
+
 // AppShell renders a responsive application frame with a keyboard skip link,
 // persistent header, desktop sidebar, and one scrollable main region.
 templ appShellTemplate(cfg Config) {
@@ -8,7 +12,7 @@ templ appShellTemplate(cfg Config) {
 			href={ templ.URL("#" + cfg.mainID()) }
 			class="absolute left-4 top-4 z-50 -translate-y-20 rounded-radius bg-primary px-4 py-2 text-sm font-semibold text-on-primary focus:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
 		>
-			{ cfg.skipLinkLabel() }
+			{ expressions.Text(strings.TrimSpace(cfg.SkipLinkLabel), expressions.From(ctx).AppShell.SkipLinkLabel) }
 		</a>
 		if cfg.Header != nil {
 			<header class={ cfg.headerClasses() } { cfg.HeaderAttrs... }>

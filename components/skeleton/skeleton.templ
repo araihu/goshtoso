@@ -3,6 +3,7 @@ package skeleton
 // Skeleton renders an accessible loading placeholder with motion reduced when
 // requested by the operating system.
 templ skeletonTemplate(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<div
 		class={ cfg.rootClasses() }
 		role="status"

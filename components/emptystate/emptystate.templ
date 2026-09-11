@@ -1,5 +1,9 @@
 package emptystate
 
+import "strings"
+
+import "github.com/araihu/goshtoso/expressions"
+
 // EmptyState renders guidance and an optional next action when a collection or
 // workspace has no content.
 templ emptyStateTemplate(cfg Config) {
@@ -11,10 +15,10 @@ templ emptyStateTemplate(cfg Config) {
 		}
 		<div class="max-w-md">
 			<h2 class="text-lg font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
-				{ cfg.title() }
+				{ expressions.Text(strings.TrimSpace(cfg.Title), expressions.From(ctx).EmptyState.Title) }
 			</h2>
 			<p class="mt-1 text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">
-				{ cfg.description() }
+				{ expressions.Text(strings.TrimSpace(cfg.Description), expressions.From(ctx).EmptyState.Description) }
 			</p>
 		</div>
 		if cfg.Action != nil {

@@ -1,5 +1,7 @@
 package tagslist
 
+import "github.com/araihu/goshtoso/expressions"
+
 // TagsList renders a list of removable tag chips plus an input + Add button.
 // Values submit as name[0], name[1], ... via hidden inputs.
 //
@@ -12,6 +14,7 @@ package tagslist
 //	    Placeholder: "Add a tag...",
 //	})
 templ tagsListTemplate(cfg Config) {
+ {{ cfg = cfg.withExpressions(ctx) }}
 	<div
 		if cfg.ID != "" {
 			id={ cfg.ID }
@@ -29,7 +32,7 @@ templ tagsListTemplate(cfg Config) {
 							type="button"
 							x-on:click="items.splice(i, 1)"
 							class="cursor-pointer rounded-full text-primary/80 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-primary-dark/80 dark:hover:text-primary-dark dark:focus-visible:outline-primary-dark"
-							aria-label="Remove tag"
+							aria-label={ expressions.From(ctx).TagsList.RemoveLabel }
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3" aria-hidden="true">
 								<path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"></path>

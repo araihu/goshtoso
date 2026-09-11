@@ -1,5 +1,7 @@
 package table
 
+import "github.com/araihu/goshtoso/expressions"
+
 import (
 	"fmt"
 
@@ -168,7 +170,7 @@ templ filterBar(cfg Config) {
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
 							<path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"></path>
 						</svg>
-						Filters
+						{ expressions.From(ctx).Table.FiltersLabel }
 					</span>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 transition-transform motion-reduce:transition-none" :class="filtersExpanded ? 'rotate-180' : ''">
 						<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path>
@@ -259,7 +261,7 @@ templ filterSelectInput(cfg Config, filter Filter) {
 				<option value={ opt.Value }>{ opt.Label }</option>
 			}
 		} else {
-			<option value="">Loading...</option>
+			<option value="">{ expressions.From(ctx).Table.LoadingText }</option>
 		}
 	</select>
 }
@@ -310,7 +312,7 @@ templ tableHeadRow(cfg Config) {
 			}
 		}
 		if cfg.hasActions() || cfg.hasExpandableRows() {
-			<th scope="col" class={ cfg.headerCellClasses() }><span class="sr-only">Actions</span></th>
+			<th scope="col" class={ cfg.headerCellClasses() }><span class="sr-only">{ expressions.From(ctx).Table.ActionsLabel }</span></th>
 		}
 	</tr>
 }
@@ -434,9 +436,9 @@ templ tableRowTemplate(cfg Config, row Row) {
 						if cell, ok := row.Cells[col.Key]; ok {
 							@cellContent(cell)
 						} else if row.ID != "" {
-							<span class="sr-only">Open row { row.ID }</span>
+							<span class="sr-only">{ expressions.From(ctx).Table.OpenRowLabel(row.ID) }</span>
 						} else {
-							<span class="sr-only">Open row</span>
+							<span class="sr-only">{ expressions.From(ctx).Table.OpenRowLabel("") }</span>
 						}
 					</a>
 				} else if cell, ok := row.Cells[col.Key]; ok {
@@ -691,7 +693,7 @@ templ scrollSentinel(cfg Config) {
 	>
 		<td colspan={ fmt.Sprintf("%d", cfg.colCount()) } class="p-4 text-center">
 			@loadingIndicator()
-			<button type="button" class="text-sm underline">Load more</button>
+			<button type="button" class="text-sm underline">{ expressions.From(ctx).Table.LoadMoreLabel }</button>
 		</td>
 	</tr>
 }
@@ -741,7 +743,7 @@ templ loadingIndicator() {
 			<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 			<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 		</svg>
-		<span class="text-sm">Loading...</span>
+		<span class="text-sm">{ expressions.From(ctx).Table.LoadingText }</span>
 	</div>
 }
 

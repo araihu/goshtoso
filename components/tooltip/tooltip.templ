@@ -1,5 +1,7 @@
 package tooltip
 
+import "github.com/araihu/goshtoso/expressions"
+
 templ helpTrigger(label string) {
  <button type="button" aria-label={ label } class="inline-flex size-6 shrink-0 items-center justify-center text-xs font-medium text-on-surface-muted hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark dark:focus-visible:outline-primary-dark">
   <span aria-hidden="true" class="inline-flex size-4 items-center justify-center rounded-full border border-current text-[10px]">?</span>
@@ -56,7 +58,7 @@ templ defaultTooltip(cfg config) {
 				@cfg.trigger
 			</span>
 		} else {
-			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ cfg.triggerLabel }</button>
+			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ tooltipTriggerLabel(cfg, expressions.From(ctx).Tooltip.TriggerLabel) }</button>
 		}
 		<div id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-radius bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong opacity-0 transition-all ease-out motion-reduce:transition-none peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface-strong" } role="tooltip">{ cfg.label }</div>
 	</div>
@@ -80,7 +82,7 @@ templ richTooltip(cfg config) {
 				@cfg.trigger
 			</span>
 		} else {
-			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ cfg.triggerLabel }</button>
+			<button type="button" class="peer rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id }>{ tooltipTriggerLabel(cfg, expressions.From(ctx).Tooltip.TriggerLabel) }</button>
 		}
 		<div id={ cfg.id } class={ cfg.positionClasses() + " pointer-events-none z-10 flex w-64 flex-col gap-1 rounded-radius bg-surface-dark p-2.5 text-xs text-on-surface-dark opacity-0 transition-all ease-out motion-reduce:transition-none peer-hover:opacity-100 peer-focus:opacity-100 peer-focus-within:opacity-100 dark:bg-surface dark:text-on-surface" } role="tooltip">
 			<span class="text-sm font-medium text-on-surface-dark-strong dark:text-on-surface-strong">{ cfg.label }</span>
@@ -108,7 +110,7 @@ templ clickTooltip(cfg config) {
 				@cfg.trigger
 			</span>
 		} else {
-			<button x-on:click="showTooltip = !showTooltip" type="button" class="rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id } aria-controls={ cfg.id } x-bind:aria-expanded="showTooltip">{ cfg.triggerLabel }</button>
+			<button x-on:click="showTooltip = !showTooltip" type="button" class="rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 font-medium tracking-wide text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark" aria-describedby={ cfg.id } aria-controls={ cfg.id } x-bind:aria-expanded="showTooltip">{ tooltipTriggerLabel(cfg, expressions.From(ctx).Tooltip.TriggerLabel) }</button>
 		}
 		<div x-cloak x-show="showTooltip" id={ cfg.id } class={ cfg.positionClasses() + " z-10 whitespace-nowrap rounded-radius bg-surface-dark px-2 py-1 text-center text-sm text-on-surface-dark-strong dark:bg-surface dark:text-on-surface-strong" } role="tooltip" x-transition:enter="transition ease-out motion-reduce:transition-none" x-transition:enter-start="opacity-0 motion-reduce:opacity-100" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in motion-reduce:transition-none" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 motion-reduce:opacity-100">
             if cfg.isRich() {

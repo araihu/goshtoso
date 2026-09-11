@@ -48,7 +48,7 @@ func TestCodeBlockRuntimeDeclaresProgressiveEnhancementContract(t *testing.T) {
 		`document.addEventListener("click"`,
 		`document.addEventListener("htmx:after:process"`,
 		`setState(button, "error")`,
-		`status.textContent = successful ? "Copied!"`,
+		`button.dataset.codeBlockSuccessText || "Copied!"`,
 	} {
 		if !strings.Contains(source, want) {
 			t.Fatalf("CodeBlock runtime missing progressive enhancement contract %q", want)
