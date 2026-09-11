@@ -99,8 +99,10 @@ skip navigation.
 - Return breadcrumbs or counters out of band when they belong to the shell.
 - After a navigation swap, focus `#main-content` and move its scroll position to
   the top.
-- Do not cache pages whose Alpine state cannot be reconstructed. Prefer a full
-  body boost or `hx-history="false"` for those routes.
+- HTMX 4 history snapshots require the optional `hx-history-cache` extension.
+  Keep it out of the runtime when page state cannot be safely restored; test
+  Back/Forward with the actual navigation strategy. Do not copy HTMX 2 history
+  configuration into a v0.3.0 consumer.
 
 ### Responsive contract
 
