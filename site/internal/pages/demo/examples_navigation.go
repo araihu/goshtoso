@@ -3,6 +3,7 @@ package demo
 import (
 	"github.com/araihu/goshtoso-app-shells/componentdocshell"
 	"github.com/araihu/goshtoso/components/sidebar"
+	sidebaricons "github.com/araihu/goshtoso/site/internal/demoicons/heroicons"
 )
 
 type examplesSidebarLink struct {
@@ -13,6 +14,11 @@ type examplesSidebarLink struct {
 
 func examplesDocsNavigation(active string) componentdocshell.Navigation {
 	return componentdocshell.Navigation{
+		Items: []sidebar.Item{{
+			ID: "examples", Label: "Overview", Href: "/examples", Active: active == "examples",
+			Icon:      iconsSidebarIcon(sidebaricons.IconHeroiconsOptimized24OutlineSquares2x2),
+			LinkAttrs: navHxAttrs("/examples", "Overview"),
+		}},
 		Sections: []sidebar.Section{
 			{
 				Title: "Examples",
@@ -26,6 +32,9 @@ func examplesDocsNavigation(active string) componentdocshell.Navigation {
 func examplesSidebarItems(active string) []sidebar.Item {
 	items := make([]sidebar.Item, 0, len(examplesSidebarLinks()))
 	for _, link := range examplesSidebarLinks() {
+		if link.ID == "examples" {
+			continue
+		}
 		items = append(items, sidebar.Item{
 			ID:        link.ID,
 			Label:     link.Label,

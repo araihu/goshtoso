@@ -19,8 +19,8 @@ func TestExamplesOverview(t *testing.T) {
 		s.handleExample(rec, req)
 		require.Equal(t, http.StatusOK, rec.Code)
 		require.Contains(t, rec.Body.String(), `id="examples-overview"`)
-		require.Contains(t, rec.Body.String(), `href="/examples/expense"`)
-		require.Contains(t, rec.Body.String(), `href="/examples/wizard"`)
+		require.Contains(t, rec.Body.String(), "HTMX")
+		require.Contains(t, rec.Body.String(), "WebSockets")
 		require.NotContains(t, rec.Body.String(), `href="/docs/application-patterns"`)
 	}
 }

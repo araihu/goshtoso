@@ -22,7 +22,7 @@ func TestExamplesOverviewNavigation(t *testing.T) {
 	for _, example := range []struct{ path, marker string }{
 		{"expense", "#expense-fragment"}, {"profile", "#profile-fragment"}, {"wizard", "#wizard-app"},
 	} {
-		require.NoError(t, page.Locator("#examples-overview a[href='/examples/"+example.path+"']").Click())
+		require.NoError(t, page.Locator("#componentdocshell-sidebar-content a[href='/examples/"+example.path+"']").Click())
 		require.NoError(t, page.Locator(example.marker).WaitFor())
 		require.NoError(t, page.Locator("#goshtoso-site-secondary-navigation a[href='/examples']").Click())
 		require.NoError(t, page.Locator("#examples-overview").WaitFor())
