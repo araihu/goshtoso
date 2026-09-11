@@ -146,3 +146,8 @@ jobs:
         run: |
           docker build --platform linux/amd64 -t goshtoso-site:test .
           scripts/check-site-image goshtoso-site:test
+      - name: Build and test release version override
+        run: |
+          docker build --platform linux/amd64 --build-arg GOSHTOSO_DOCS_VERSION=v0.0.0 \
+            -t goshtoso-site:release-test .
+          scripts/check-site-image goshtoso-site:release-test v0.0.0

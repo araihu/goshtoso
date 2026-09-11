@@ -2,6 +2,17 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.3.2] - 2026-09-11
+
+### Release images
+
+- Publish the documentation site image under the release version after the
+  full release gates and GitHub release publication succeed.
+- Point the GHCR `latest` tag to the latest stable GitHub release, preventing
+  older release reruns and main-branch builds from replacing it.
+- Display the released library version in release images. No consumer API,
+  runtime asset, or migration changes are required.
+
 ## [v0.3.1] - 2026-09-11
 
 ### Iconpack memory and integrity

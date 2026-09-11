@@ -1,5 +1,6 @@
 FROM --platform=$BUILDPLATFORM golang:1.27.0-bookworm@sha256:484ef6066fa69acb059fdfeda7ba2b8f7391f2ef6abc6f9b8411e669ebd56466 AS builder
 ARG TARGETARCH=amd64
+ARG GOSHTOSO_DOCS_VERSION
 
 WORKDIR /src
 
@@ -14,7 +15,7 @@ COPY site/go.mod site/go.sum ./site/
 RUN go work init . ./site && go mod download
 
 COPY . .
-RUN GOSHTOSO_DOCS_VERSION="$(cd site && GOWORK=off go list -m -f '{{.Version}}' github.com/araihu/goshtoso)" && \
+RUN GOSHTOSO_DOCS_VERSION="${GOSHTOSO_DOCS_VERSION:-$(cd site && GOWORK=off go list -m -f '{{.Version}}' github.com/araihu/goshtoso)}" && \
     CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build \
       -ldflags "-X github.com/araihu/goshtoso/site/internal/buildinfo.goDocsVersion=${GOSHTOSO_DOCS_VERSION}" \
       -o /out/server ./site/cmd/server
