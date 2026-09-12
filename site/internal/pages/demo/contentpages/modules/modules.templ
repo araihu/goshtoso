@@ -43,7 +43,7 @@ templ appShellsModuleContent() {
 		<header class="max-w-4xl space-y-4">
 			<p class="text-sm font-semibold text-primary dark:text-primary-dark">Application frames and shells · { appShellsVersion }</p>
 			<h1 class="font-title text-3xl font-bold tracking-tight text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Goshtoso App Shells</h1>
-			<p class="text-lg leading-8 text-on-surface dark:text-on-surface-dark">Build the frame once, then let each route focus on its work. Choose a frame or shell from the sidebar to explore its live example and integration guide.</p>
+			<p class="text-lg leading-8 text-on-surface dark:text-on-surface-dark">Go and templ layouts for documentation, applications, and public sites. Each package includes a live example and setup instructions.</p>
 			<div class="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
 				<a href="https://github.com/araihu/goshtoso-app-shells" target="_blank" rel="noopener noreferrer" class="text-primary underline underline-offset-2 dark:text-primary-dark">View source on GitHub</a>
 				<a href="https://pkg.go.dev/github.com/araihu/goshtoso-app-shells@v0.1.9-0.20260910224508-5b2222e54637" target="_blank" rel="noopener noreferrer" class="text-primary underline underline-offset-2 dark:text-primary-dark">Read the API docs</a>
@@ -51,16 +51,16 @@ templ appShellsModuleContent() {
 		</header>
 		<section id="frames" class="scroll-mt-8 space-y-4" aria-labelledby="frames-title">
 			<div class="space-y-2">
-				<p class="text-xs font-bold uppercase tracking-wide text-primary dark:text-primary-dark">Choose a frame when you need a consistent page shape</p>
+				<p class="text-xs font-bold uppercase tracking-wide text-primary dark:text-primary-dark">Page content</p>
 				<h2 id="frames-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Frames</h2>
-				<p class="max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">A frame standardizes the shape of a page without taking over application navigation. <code class="font-mono">componentpage</code> keeps a preview, usage source, named variants, and guidance together so every reference page follows the same reading path.</p>
+				<p class="max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">A frame arranges content inside an existing page. <code class="font-mono">componentpage</code> renders component previews, code samples, variants, and usage notes.</p>
 			</div>
 			<div class="border-y border-outline dark:border-outline-dark">
 				<a href="/modules/app-shells/frames/component-page" class="flex flex-col gap-2 py-5 transition-colors motion-reduce:transition-none hover:bg-surface-alt dark:hover:bg-surface-dark-alt sm:flex-row sm:items-start sm:justify-between sm:gap-8">
 					<span>
 						<code class="font-mono text-sm font-bold text-primary dark:text-primary-dark">componentpage</code>
 						<strong class="mt-1 block font-title text-lg text-on-surface-strong dark:text-on-surface-dark-strong">Component Page</strong>
-						<span class="mt-1 block max-w-2xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Keep the rendered preview, copyable source, named states, and application guidance in one reference page.</span>
+						<span class="mt-1 block max-w-2xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">Document a component with a preview, copyable code, and examples of its states.</span>
 					</span>
 					<span class="shrink-0 text-sm font-semibold text-primary dark:text-primary-dark">Open Component Page&nbsp;↗</span>
 				</a>
@@ -68,9 +68,9 @@ templ appShellsModuleContent() {
 		</section>
 		<section id="shells" class="scroll-mt-8 space-y-4" aria-labelledby="shells-title">
 			<div class="space-y-2">
-				<p class="text-xs font-bold uppercase tracking-wide text-primary dark:text-primary-dark">Choose a shell when the product owns the surrounding regions</p>
+				<p class="text-xs font-bold uppercase tracking-wide text-primary dark:text-primary-dark">Full pages</p>
 				<h2 id="shells-title" data-toc-heading class="font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Shells</h2>
-				<p class="max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">A shell owns the regions around a product surface—identity, navigation, responsive behavior, and page lifecycle. Your application still owns routes, permissions, data, and navigation items.</p>
+				<p class="max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">A shell renders the document, header, navigation, and responsive layout. You supply the navigation links and page content, and handle routing, permissions, and data in your application.</p>
 			</div>
 			<p class="max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">Use <code class="font-mono">componentdocshell</code> to build documentation, <code class="font-mono">consoleshell</code> to build application workspaces, and <code class="font-mono">landingshell</code> to build public pages.</p>
 		</section>
@@ -78,7 +78,7 @@ templ appShellsModuleContent() {
 			<p class="text-xs font-bold uppercase tracking-wide text-primary dark:text-primary-dark">Response model</p>
 			<h2 id="fragment-support-title" data-toc-heading class="mt-2 font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Fragment support</h2>
 			<p class="mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark">Only the documentation and console shells expose HTMX fragment responses in v0.1.9-0.20260910224508-5b2222e54637. Component Page is embedded inside a document; Landing Shell renders complete public pages.</p>
-			<p class="mt-2 max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">For enhanced links, return <code class="font-mono">Layout</code> on ordinary requests and <code class="font-mono">Fragment</code> when <code class="font-mono">HX-Request-Type</code> is <code class="font-mono">partial</code>. Each shell page documents its exact response and out-of-band contract.</p>
+			<p class="mt-2 max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted">For enhanced links, return <code class="font-mono">Layout</code> on ordinary requests and <code class="font-mono">Fragment</code> when <code class="font-mono">HX-Request-Type</code> is <code class="font-mono">partial</code>. See each shell’s setup guide for the regions updated by its fragment response.</p>
 		</section>
 		<section class="border-y border-outline py-8 dark:border-outline-dark" aria-labelledby="compose-shell-title">
 			<h2 id="compose-shell-title" data-toc-heading class="font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Build a custom layout</h2>

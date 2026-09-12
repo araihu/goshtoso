@@ -17,7 +17,7 @@ func appShellsComponentPageCode() string {
 func appShellsComponentPageStatesCode() string {
 	return `Sections: []componentpage.Example{{
     Title:       "Disabled",
-    Description: "Keep unavailable states explicit in the reference page.",
+    Description: "Disable the button when the action is unavailable.",
     Preview:     button.Button(button.Disabled()),
     Code:        "@button.Button(button.Disabled()) { Continue }",
 }}`
