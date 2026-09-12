@@ -30,6 +30,10 @@ if [[ ! "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   echo "published consumer must pin a release tag: $version" >&2
   exit 1
 fi
+if [[ $# -eq 1 && "$version" != "$1" ]]; then
+  echo "published consumer resolved $version instead of requested release $1" >&2
+  exit 1
+fi
 export GOSHTOSO_EXPECTED_VERSION="$version"
 echo "published consumer: $module@$version (GOWORK=off; isolated fixture)"
 go list -deps -test -f '{{with .Module}}{{.Path}}{{end}}' ./... > "$tmp_dir/modules"
