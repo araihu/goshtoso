@@ -12,10 +12,15 @@ func TestExamplesDocsNavigationContainsEveryExample(t *testing.T) {
 
 	navigation := examplesDocsNavigation("chat")
 
-	require.Empty(t, navigation.Items)
+	require.Len(t, navigation.Items, 1)
+	require.Equal(t, "Overview", navigation.Items[0].Label)
+	require.Equal(t, "/examples", navigation.Items[0].Href)
+	require.NotNil(t, navigation.Items[0].Icon)
+	require.True(t, examplesDocsNavigation("examples").Items[0].Active)
 	require.Len(t, navigation.Sections, 1)
 	require.Equal(t, "Examples", navigation.Sections[0].Title)
 	require.Equal(t, []string{
+		"Deployment Console",
 		"Live Ticker",
 		"Todo List",
 		"Expense Tracker",
@@ -24,8 +29,8 @@ func TestExamplesDocsNavigationContainsEveryExample(t *testing.T) {
 		"Profile",
 		"Onboarding Wizard",
 	}, sidebarItemLabels(navigation.Sections[0].Items))
-	require.Equal(t, "/examples/chat", navigation.Sections[0].Items[3].Href)
-	require.True(t, navigation.Sections[0].Items[3].Active)
+	require.Equal(t, "/examples/chat", navigation.Sections[0].Items[4].Href)
+	require.True(t, navigation.Sections[0].Items[4].Active)
 	require.False(t, navigation.Sections[0].Items[0].Active)
 	require.True(t, navigation.DisableSearch)
 

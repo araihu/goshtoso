@@ -30,14 +30,14 @@ func TestComponentDocsSecondaryNavigationUsesSiteFamilies(t *testing.T) {
 		`href="/components/icon"`,
 		`href="/modules/charts"`,
 		`href="/modules/app-shells"`,
-		`href="/examples/ticker"`,
+		`href="/examples"`,
 	} {
 		require.Contains(t, html, link)
 	}
 	require.Contains(t, html, `aria-current="location"`)
 	require.Contains(t, html, `>Core</a>`)
-	require.Contains(t, html, `>AI Agents</a>`)
-	require.Contains(t, html, `>Icons</a>`)
+	require.NotContains(t, html, `data-site-secondary-family="agents"`)
+	require.NotContains(t, html, `data-site-secondary-family="icon-packs"`)
 	require.Contains(t, html, `>Charts</a>`)
 	require.Contains(t, html, `>App Shells</a>`)
 	require.Contains(t, html, `>Examples</a>`)
@@ -59,10 +59,11 @@ func TestComponentDocsSecondaryNavigationTracksAgents(t *testing.T) {
 	require.NotEqual(t, -1, agentsStart)
 	agentsEnd := strings.Index(html[agentsStart:], `</a>`)
 	require.NotEqual(t, -1, agentsEnd)
-	require.Contains(t, html[agentsStart:agentsStart+agentsEnd], `aria-current="location"`)
+	require.Contains(t, html[agentsStart:agentsStart+agentsEnd], `aria-current="page"`)
+	require.Contains(t, html, `data-site-secondary-family="core"`)
 	require.Contains(t, html, `data-sidebar-item="AI Agents"`)
-	for _, sidebarItem := range []string{"Getting Started", "Button", "Attributions", "License"} {
-		require.NotContains(t, html, `data-sidebar-item="`+sidebarItem+`"`)
+	for _, href := range []string{"/getting-started", "/components/button"} {
+		require.Contains(t, html, `href="`+href+`"`)
 	}
 }
 
@@ -144,7 +145,7 @@ func TestComponentDocsSecondaryNavigationTracksExamplesDefault(t *testing.T) {
 	).Render(context.Background(), &page))
 
 	html := page.String()
-	examplesStart := strings.Index(html, `href="/examples/ticker"`)
+	examplesStart := strings.Index(html, `href="/examples"`)
 	require.NotEqual(t, -1, examplesStart)
 	examplesEnd := strings.Index(html[examplesStart:], `</a>`)
 	require.NotEqual(t, -1, examplesEnd)

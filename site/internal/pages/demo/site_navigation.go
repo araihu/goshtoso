@@ -4,15 +4,15 @@ import "strings"
 
 func componentDocsFamily(active string) string {
 	switch active {
-	case "agents":
-		return "agents"
-	case "icon", "icon-catalog", "iconpack":
-		return "icon-packs"
+	case "internationalization", "internationalization-examples", "internationalization-files":
+		return "internationalization"
+	case "agents", "icon", "icon-catalog", "iconpack":
+		return "core"
 	case "module-charts":
 		return "charts"
 	case "module-app-shells":
 		return "app-shells"
-	case "examples", "todo", "expense", "chat", "logs", "profile", "ticker", "wizard":
+	case "examples", "deployments", "todo", "expense", "chat", "logs", "profile", "ticker", "wizard":
 		return "examples"
 	default:
 		if strings.HasPrefix(active, "app-shells-") {

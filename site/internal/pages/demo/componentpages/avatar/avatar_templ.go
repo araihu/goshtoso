@@ -94,6 +94,10 @@ func avatarDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = demo.ExpressionOverridesNote("Avatar").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:        "Square Avatar",

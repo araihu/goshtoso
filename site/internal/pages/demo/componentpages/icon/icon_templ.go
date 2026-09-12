@@ -564,7 +564,7 @@ func iconPickerModal() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<p class=\"rounded-radius border border-outline bg-surface-alt/50 p-3 text-xs text-on-surface-muted dark:border-outline-dark dark:bg-surface-dark/30 dark:text-on-surface-dark-muted\"><code class=\"font-mono\">SpriteURL</code> is <code class=\"font-mono\">heroicons.SpriteURL</code>; <code class=\"font-mono\">ModeExternal</code> is its zero-value default.</p></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

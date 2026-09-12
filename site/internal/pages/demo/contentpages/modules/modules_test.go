@@ -64,9 +64,9 @@ func TestAppShellsModuleReferencesCurrentPackagesAndCompositionRecipe(t *testing
 		`componentpage`,
 		`consoleshell`,
 		`landingshell`,
-		`Compose a custom shell when you need a different boundary`,
+		`Build a custom layout`,
 		`href="https://github.com/araihu/goshtoso-app-shells"`,
-		`href="/docs/application-patterns#app-shell"`,
+		`href="/examples"`,
 	} {
 		require.Contains(t, html, want)
 	}

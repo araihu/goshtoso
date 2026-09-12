@@ -56,18 +56,14 @@ func componentDocsConfig(persist bool, active string) componentdocshell.Config {
 
 func componentDocsNavigation(active string) componentdocshell.Navigation {
 	switch componentDocsFamily(active) {
-	case "agents":
-		return componentdocshell.Navigation{
-			Items: []sidebar.Item{{
-				ID: "agents", Label: "AI Agents", Href: "/docs/agents",
-				Active: true, LinkAttrs: navHxAttrs("/docs/agents", "AI Agents"),
-			}},
-			DisableSearch: true,
-		}
+	case "internationalization":
+		return componentdocshell.Navigation{Items: []sidebar.Item{
+			{ID: "internationalization", Label: "Internationalization", Href: "/docs/internationalization", Active: active == "internationalization", LinkAttrs: navHxAttrs("/docs/internationalization", "Internationalization")},
+			{ID: "internationalization-files", Label: "Expression files", Href: "/docs/internationalization/files", Active: active == "internationalization-files", LinkAttrs: navHxAttrs("/docs/internationalization/files", "Expression files")},
+			{ID: "internationalization-examples", Label: "Examples", Href: "/docs/internationalization/examples", Active: active == "internationalization-examples", LinkAttrs: navHxAttrs("/docs/internationalization/examples", "Internationalization Examples")},
+		}, DisableSearch: true}
 	case "charts":
 		return chartsDocsNavigation(active)
-	case "icon-packs":
-		return iconsDocsNavigation(active)
 	case "app-shells":
 		return appShellsDocsNavigation(active)
 	case "examples":
@@ -92,11 +88,10 @@ func componentDocsSecondaryConfig(activeFamily string) navbar.SecondaryConfig {
 	return navbar.SecondaryConfig{
 		Links: []navbar.SecondaryLink{
 			{Label: "Core", Href: "/getting-started", Current: componentDocsSecondaryCurrent("core", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("core")},
-			{Label: "AI Agents", Href: "/docs/agents", Current: componentDocsSecondaryCurrent("agents", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("agents")},
-			{Label: "Icons", Href: "/components/icon", Current: componentDocsSecondaryCurrent("icon-packs", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("icon-packs")},
 			{Label: "Charts", Href: "/modules/charts", Current: componentDocsSecondaryCurrent("charts", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("charts")},
 			{Label: "App Shells", Href: "/modules/app-shells", Current: componentDocsSecondaryCurrent("app-shells", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("app-shells")},
-			{Label: "Examples", Href: "/examples/ticker", Current: componentDocsSecondaryCurrent("examples", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("examples")},
+			{Label: "Internationalization", Href: "/docs/internationalization", Current: componentDocsSecondaryCurrent("internationalization", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("internationalization")},
+			{Label: "Examples", Href: "/examples", Current: componentDocsSecondaryCurrent("examples", activeFamily), LinkAttrs: componentDocsSecondaryLinkAttrs("examples")},
 		},
 		AriaLabel:  "Goshtoso documentation",
 		Scrollable: true,

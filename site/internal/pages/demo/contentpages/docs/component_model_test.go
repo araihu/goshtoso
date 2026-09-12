@@ -19,12 +19,12 @@ func TestComponentModelDocumentsPublicAPI(t *testing.T) {
 		"components.Component",
 		"templ.Component",
 		"Kind",
-		"Concrete return values",
+		"Keep the concrete type when needed",
 		"Configuration structs",
 		"Functional options",
-		"Rendered defaults",
-		"component.Kind()",
-		"KindAlertDialog",
+		"Defaults and API reference",
+		"countTables",
+		"SaveButton",
 		"KindTable",
 		`href="/components/button"`,
 		`href="/docs/theme"`,
@@ -61,4 +61,15 @@ func TestComponentModelIsLinkedFromSiteNavigation(t *testing.T) {
 	var buf bytes.Buffer
 	require.NoError(t, startpages.Definitions[0].Content().Render(context.Background(), &buf))
 	require.Contains(t, buf.String(), `href="/docs/component-model"`)
+}
+
+func docsDefinition(t *testing.T, key string) demo.PageDefinition {
+	t.Helper()
+	for _, definition := range Definitions {
+		if definition.Key == key {
+			return definition
+		}
+	}
+	t.Fatalf("missing docs definition %q", key)
+	return demo.PageDefinition{}
 }

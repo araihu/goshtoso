@@ -32,7 +32,9 @@ templ paletteDemoContent() {
     <p>Selected: <span x-text="picked || '—'"></span></p>
 </div>`,
 			)
-			@demo.DemoSection(
+			@demo.ExpressionOverridesNote("Palette")
+
+		@demo.DemoSection(
 				demo.DemoSectionProps{
 					Title:       "Inside a Select Shell",
 					Description: "Host the palette inside a Select with Shell: true; the trigger label reflects the picked value via ValueExpr. Add LazyWhen when the full swatch grid should render only after the shell opens.",

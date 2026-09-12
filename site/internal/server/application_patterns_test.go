@@ -1,38 +1,27 @@
 package server
 
 import (
+	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
-func TestApplicationPatternsRouteRendersDirectlyAndAsFragment(t *testing.T) {
+func TestApplicationPatternsRedirectsToExamples(t *testing.T) {
 	s := &Server{}
-
-	for _, tc := range []struct {
-		name       string
-		hxRequest  bool
-		wantMarker string
-	}{
-		{name: "direct", wantMarker: "<title>Application Patterns for Goshtoso</title>"},
-		{name: "htmx fragment", hxRequest: true, wantMarker: `id="application-patterns-fragment"`},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodGet, "/docs/application-patterns", nil)
-			if tc.hxRequest {
-				req.Header.Set("HX-Request-Type", "partial")
-			}
-			rec := httptest.NewRecorder()
-
-			s.handleApplicationPatternsPage(rec, req)
-
+	for _, partial := range []bool{false, true} {
+		req := httptest.NewRequest(http.MethodGet, "/docs/application-patterns", nil)
+		if partial {
+			req.Header.Set("HX-Request", "true")
+		}
+		rec := httptest.NewRecorder()
+		s.handleApplicationPatternsPage(rec, req)
+		if partial {
 			require.Equal(t, http.StatusOK, rec.Code)
-			require.Equal(t, "text/html; charset=utf-8", rec.Header().Get("Content-Type"))
-			require.Contains(t, rec.Body.String(), tc.wantMarker)
-			require.Contains(t, rec.Body.String(), "Compose product surfaces, not component piles")
-			require.Contains(t, rec.Body.String(), "Multi-step Workflow")
-		})
+			require.Equal(t, "/examples", rec.Header().Get("HX-Redirect"))
+		} else {
+			require.Equal(t, http.StatusMovedPermanently, rec.Code)
+			require.Equal(t, "/examples", rec.Header().Get("Location"))
+		}
 	}
 }

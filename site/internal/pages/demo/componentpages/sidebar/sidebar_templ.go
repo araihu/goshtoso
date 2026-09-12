@@ -90,6 +90,10 @@ func sidebarDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = demo.ExpressionOverridesNote("Sidebar").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Sections",
@@ -483,7 +487,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/sidebar/sidebar.templ`, Line: 301, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/sidebar/sidebar.templ`, Line: 303, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -501,7 +505,7 @@ func collapsibleItem(label string, active bool) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/sidebar/sidebar.templ`, Line: 305, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/sidebar/sidebar.templ`, Line: 307, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {

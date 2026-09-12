@@ -31,9 +31,9 @@ func TestIconsDocsNavigationContainsIconCatalogAndIconPacks(t *testing.T) {
 func TestComponentDocsFamilyMapsIconPages(t *testing.T) {
 	t.Parallel()
 
-	require.Equal(t, "icon-packs", componentDocsFamily("icon"))
-	require.Equal(t, "icon-packs", componentDocsFamily("icon-catalog"))
-	require.Equal(t, "icon-packs", componentDocsFamily("iconpack"))
+	require.Equal(t, "core", componentDocsFamily("icon"))
+	require.Equal(t, "core", componentDocsFamily("icon-catalog"))
+	require.Equal(t, "core", componentDocsFamily("iconpack"))
 }
 
 func TestIconsDocsNavigationActivatesDedicatedCatalog(t *testing.T) {
@@ -44,4 +44,14 @@ func TestIconsDocsNavigationActivatesDedicatedCatalog(t *testing.T) {
 	require.False(t, navigation.Items[0].Active)
 	require.True(t, navigation.Items[1].Active)
 	require.False(t, navigation.Items[2].Active)
+}
+
+func TestCoreSidebarNestsIconDocumentation(t *testing.T) {
+	item := iconsSidebarItem("icon-catalog")
+	require.Equal(t, "Icons", item.Label)
+	require.Equal(t, "/components/icon", item.Href)
+	require.Len(t, item.Items, 2)
+	require.Equal(t, "Icon Catalog", item.Items[0].Label)
+	require.True(t, item.Items[0].Active)
+	require.Equal(t, "Icon Packs", item.Items[1].Label)
 }

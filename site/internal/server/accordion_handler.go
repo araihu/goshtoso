@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"html"
 	"net/http"
 	"strings"
 	"time"
@@ -37,7 +38,7 @@ func (s *Server) handleAccordionContent(w http.ResponseWriter, r *http.Request) 
 				<code class="text-xs">Request: GET %s</code>
 			</div>
 			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mt-2">Perfect for performance optimization - content only loads when needed!</p>
-		</div>`, time.Now().Format("15:04:05"), r.URL.Path)
+		</div>`, time.Now().Format("15:04:05"), html.EscapeString(r.URL.Path))
 	case "lazy-content-1":
 		_, _ = fmt.Fprintf(w, `<div class="space-y-2">
 			<h5 class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">Dynamic Content Loaded!</h5>
@@ -45,6 +46,6 @@ func (s *Server) handleAccordionContent(w http.ResponseWriter, r *http.Request) 
 			<p class="text-sm text-on-surface dark:text-on-surface-dark">This demonstrates how you can defer loading heavy content until the user actually needs it.</p>
 		</div>`, time.Now().Format("15:04:05"))
 	default:
-		_, _ = fmt.Fprintf(w, `<div class="text-sm text-on-surface dark:text-on-surface-dark">Unknown content ID: %s</div>`, contentID)
+		_, _ = fmt.Fprintf(w, `<div class="text-sm text-on-surface dark:text-on-surface-dark">Unknown content ID: %s</div>`, html.EscapeString(contentID))
 	}
 }

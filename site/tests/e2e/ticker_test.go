@@ -157,7 +157,9 @@ func TestTicker_FragmentNavNoErrors(t *testing.T) {
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	require.NoError(t, err)
 
-	require.NoError(t, page.Locator("a[href='/examples/ticker']").First().Click())
+	require.NoError(t, page.Locator("#goshtoso-site-secondary-navigation a[href='/examples']").Click())
+	require.NoError(t, page.Locator("#examples-overview").WaitFor())
+	require.NoError(t, page.Locator("#componentdocshell-sidebar-content a[href='/examples/ticker']").Click())
 	before := tickerCellText(t, page, "AAPL")
 	_, err = page.WaitForFunction(
 		"(b) => { const el = document.querySelector('#ticker-cell-AAPL'); return el && el.textContent.trim() !== b; }",

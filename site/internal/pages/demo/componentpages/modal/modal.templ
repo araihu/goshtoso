@@ -35,7 +35,9 @@ templ modalDemoContent() {
 })`,
 		)
 
- @demo.DemoSection(demo.DemoSectionProps{Title:"Content dialog above a drawer",Description:"Native dialog layering keeps the editor open. Escape dismisses only the picker; focus returns to its trigger."},modalContentPreview(),`@modal.Dialog(modal.DialogConfig{
+ @demo.ExpressionOverridesNote("Modal")
+
+		@demo.DemoSection(demo.DemoSectionProps{Title:"Content dialog above a drawer",Description:"Native dialog layering keeps the editor open. Escape dismisses only the picker; focus returns to its trigger."},modalContentPreview(),`@modal.Dialog(modal.DialogConfig{
     ID:               "contentPicker",
     Title:            "Choose item",
     FullscreenMobile: true,

@@ -44,3 +44,11 @@ func iconsDocsNavigation(active string) componentdocshell.Navigation {
 func iconsSidebarIcon(symbol icon.Symbol) templ.Component {
 	return sidebaricons.Icon(sidebaricons.Config{Symbol: symbol, Decorative: true})
 }
+
+func iconsSidebarItem(active string) sidebar.Item {
+	items := iconsDocsNavigation(active).Items
+	parent := items[0]
+	parent.Label = "Icons"
+	parent.Items = items[1:]
+	return parent
+}

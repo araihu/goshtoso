@@ -3,8 +3,7 @@
   "use strict";
 
   function currentFamily(pathname) {
-    if (pathname === "/docs/agents" || pathname.indexOf("/docs/agents/") === 0) return "agents";
-    if (pathname === "/components/icon" || pathname === "/docs/icon-catalog" || pathname === "/docs/iconpack") return "icon-packs";
+    if (pathname === "/docs/internationalization" || pathname.indexOf("/docs/internationalization/") === 0) return "internationalization";
     if (pathname === "/modules/charts" || pathname.indexOf("/modules/charts/") === 0) return "charts";
     if (pathname === "/modules/app-shells" || pathname.indexOf("/modules/app-shells/") === 0) return "app-shells";
     if (pathname === "/examples" || pathname.indexOf("/examples/") === 0) return "examples";

@@ -2,8 +2,8 @@ package server
 
 import (
 	"fmt"
+	"html"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -16,17 +16,5 @@ func (s *Server) handleRadioEcho(w http.ResponseWriter, r *http.Request) {
 		value = "(empty)"
 	}
 	_, _ = fmt.Fprintf(w, `Server: you picked <span class="font-mono font-semibold">%s</span> at %s.`,
-		htmlEscape(value), time.Now().Format("15:04:05.000"))
-}
-
-// htmlEscape applies a minimal HTML escape suitable for an attribute-free text fragment.
-func htmlEscape(s string) string {
-	r := strings.NewReplacer(
-		"&", "&amp;",
-		"<", "&lt;",
-		">", "&gt;",
-		"\"", "&quot;",
-		"'", "&#39;",
-	)
-	return r.Replace(s)
+		html.EscapeString(value), time.Now().Format("15:04:05.000"))
 }

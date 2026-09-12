@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"html"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -17,10 +18,12 @@ import (
 	chartassets "github.com/araihu/goshtoso-charts/assets"
 	libraryassets "github.com/araihu/goshtoso/assets"
 	combobox "github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/expressions"
 	siteassets "github.com/araihu/goshtoso/site/assets"
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 	comboboxpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/combobox"
+	docspages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/docs"
 	modulespages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/modules"
 	startpages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/start"
 	demoregistry "github.com/araihu/goshtoso/site/internal/pages/demo/registry"
@@ -107,7 +110,17 @@ func (s *Server) setupRoutes() {
 	s.mux.Handle("/api/components/combobox/clusters/toggle", clustersHandler)
 	s.mux.Handle("/api/components/combobox/clusters/clear", clustersHandler)
 
+	// Expression schema is served locally for editor integration; no remote lookup.
+	s.mux.HandleFunc("GET /schemas/expressions.schema.json", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/schema+json")
+		_, _ = w.Write(expressions.JSONSchema())
+	})
 	// Docs pages
+	s.mux.HandleFunc("/docs/internationalization/files", func(w http.ResponseWriter, r *http.Request) { s.renderDemo(w, r, "docs/internationalization/files") })
+	s.mux.HandleFunc("/docs/internationalization/examples", func(w http.ResponseWriter, r *http.Request) {
+		s.renderDemo(w, docspages.WithExpressionDemo(r), "docs/internationalization/examples")
+	})
+	s.mux.HandleFunc("/docs/internationalization", func(w http.ResponseWriter, r *http.Request) { s.renderDemo(w, r, "docs/internationalization") })
 	s.mux.HandleFunc("/docs/agents", s.handleAgentsPage)
 	s.mux.HandleFunc("/docs/application-patterns", s.handleApplicationPatternsPage)
 	s.mux.HandleFunc("/docs/component-model", s.handleComponentModelPage)
@@ -279,11 +292,9 @@ func (s *Server) handleExample(w http.ResponseWriter, r *http.Request) {
 
 	switch sub {
 	case "", "index":
-		target := "/examples/ticker"
-		if r.URL.RawQuery != "" {
-			target += "?" + r.URL.RawQuery
-		}
-		http.Redirect(w, r, target, http.StatusMovedPermanently)
+		s.renderDemo(w, r, "examples")
+	case "deployments":
+		s.renderDeploymentConsole(w, r)
 	case "todo":
 		s.renderTodoPage(w, r)
 	case "expense":
@@ -328,7 +339,7 @@ func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(time.Duration(delay) * time.Millisecond)
 	}
 	w.Header().Set("Content-Type", "text/html")
-	_, _ = fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, r.Method, r.URL.Path)
+	_, _ = fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, html.EscapeString(r.Method), html.EscapeString(r.URL.Path))
 }
 
 func (s *Server) handleAgentsPage(w http.ResponseWriter, r *http.Request) {
@@ -336,7 +347,12 @@ func (s *Server) handleAgentsPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleApplicationPatternsPage(w http.ResponseWriter, r *http.Request) {
-	s.renderDemo(w, r, "docs/application-patterns")
+	if r.Header.Get("HX-Request") == "true" || r.Header.Get("HX-Request-Type") == "partial" {
+		w.Header().Set("HX-Redirect", "/examples")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	http.Redirect(w, r, "/examples", http.StatusMovedPermanently)
 }
 
 func (s *Server) handleComponentModelPage(w http.ResponseWriter, r *http.Request) {
