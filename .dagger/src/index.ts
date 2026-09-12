@@ -74,7 +74,7 @@ export class Goshtoso {
       .withExec(["golangci-lint", "run", "--timeout", "5m"])
       .withExec(["bash", "-euo", "pipefail", "-c", "test -f go.work || go work init . ./site"])
       .withExec(["bash", "-euo", "pipefail", "-c", "cd site && go vet ./... && golangci-lint run --timeout 5m"])
-      .withExec(["bash", "-euo", "pipefail", "-c", "v=$(cd site && GOWORK=off go list -m -f '{{.Version}}' github.com/araihu/goshtoso); go build -ldflags \"-X github.com/araihu/goshtoso/site/internal/buildinfo.goDocsVersion=$v\" -o /tmp/server ./site/cmd/server"])
+      .withExec(["go", "build", "-o", "/tmp/server", "./site/cmd/server"])
       .stdout()
   }
 
@@ -116,14 +116,15 @@ scripts/run-component-coverage.sh --phase e2e-merge --impact /out/e2e-impact.jso
       .directory("/out")
   }
 
-  /** Standalone site/go.mod consumer contract (GOWORK=off). */
+  /** Site integration and published-package consumer contract (GOWORK=off). */
   @func()
   async required(
     @argument({ defaultPath: ".", ignore: SOURCE_EXCLUDES }) source: Directory,
     cachePartition: string,
   ): Promise<string> {
     return this.goProject(source, cachePartition)
-      .withExec(["scripts/check-site-module", "pinned-dependency"])
+      .withExec(["scripts/check-site-module", "current-source"])
+      .withExec(["scripts/check-published-consumer"])
       .stdout()
   }
 
@@ -139,7 +140,7 @@ scripts/run-component-coverage.sh --phase e2e-merge --impact /out/e2e-impact.jso
       .stdout()
   }
 
-  /** Full release-equivalent regeneration, both site contracts, E2E, and coverage. */
+  /** Full release-equivalent regeneration, site integration, published consumer, E2E, and coverage. */
   @func({ cache: "never" })
   releaseVerify(
     @argument({ defaultPath: ".", ignore: SOURCE_EXCLUDES }) source: Directory,
@@ -162,7 +163,7 @@ templ generate; go run ./cmd/themegen; go run ./cmd/jsbuild; go run ./cmd/skillg
 git ls-files --error-unmatch assets/styles.css assets/goshtoso-theme.css >/dev/null
 git diff --exit-code -- '*_templ.go' assets/styles.css assets/goshtoso-theme.css 'assets/js/*.js' .agents/skills/using-goshtoso/references/components-reference.md .claude/skills/using-goshtoso/components-reference.md
 scripts/check-site-module current-source
-scripts/check-site-module pinned-dependency
+scripts/check-published-consumer
 scripts/run-release-coverage.sh --local-dry-run`
     return this.browserProject(source, cachePartition)
       .withEnvVariable("GOSHTOSO_RUN_NONCE", runNonce)
@@ -183,6 +184,10 @@ scripts/run-release-coverage.sh --local-dry-run`
     const release = await this.json(metadata, ["tag"])
     const tag = this.string(release, "tag")
     if (!/^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(tag)) throw new Error(`invalid release tag: ${tag}`)
+    const consumerCheck = await this.goProject(source, "trusted-release")
+      .withEnvVariable("GOSHTOSO_RUN_NONCE", runNonce)
+      .withExec(["scripts/check-published-consumer", tag])
+      .stdout()
     const script = `set -euo pipefail
 ver=$(sed -nE '/^  tailwindcss:$/,/^  [^ ]/ s/^    version: "?([^"[:space:]]+)"?[[:space:]]*$/\\1/p' muamba.yaml)
 test -n "$ver"
@@ -199,7 +204,7 @@ color=$(cat /coverage/color.txt)
 jq -n --arg coverage "{\\"schemaVersion\\":1,\\"label\\":\\"authored coverage\\",\\"message\\":\\"$percent%\\",\\"color\\":\\"$color\\"}" --arg release "{\\"schemaVersion\\":1,\\"label\\":\\"release\\",\\"message\\":\\"$TAG\\",\\"color\\":\\"blue\\"}" '{files:{"coverage.json":{content:$coverage},"release.json":{content:$release}}}' > /tmp/gist.json
 curl -fsS -X PATCH -H 'Accept: application/vnd.github+json' -H "Authorization: Bearer $GIST_TOKEN" -H 'X-GitHub-Api-Version: 2022-11-28' --data-binary @/tmp/gist.json https://api.github.com/gists/fb3843c3a13793eb6cc0af638bc00ad4 >/dev/null
 echo "published $TAG and badge documents"`
-    return this.base(source, "trusted-release")
+    return consumerCheck + await this.base(source, "trusted-release")
       .withDirectory("/coverage", coverage)
       .withSecretVariable("GH_TOKEN", githubToken)
       .withSecretVariable("GIST_TOKEN", gistToken)

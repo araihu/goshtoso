@@ -130,6 +130,9 @@ pre-Panel historical checkpoint.
 
 ### In-repo site checks require the workspace for unreleased packages
 
+Historical note: the site now uses a checkout-local replacement as well as the
+workspace. Published compatibility is checked by a separate consumer fixture.
+
 Running the site module with `GOWORK=off` during this change resolved the
 released Goshtoso version pinned in `site/go.mod`, which cannot contain the new
 Panel package (and was also behind existing composition packages). In-repo

@@ -198,6 +198,11 @@ func requireComponentGoAPILink(t *testing.T, page playwright.Page, entry catalog
 	require.Equal(t, goshtosoDocsVersion, version)
 
 	link := reference.Locator("[data-go-api-link]")
+	if goshtosoDocsVersion == "development" {
+		require.Equal(t, 0, mustLocatorCount(t, link))
+		require.Equal(t, 1, mustLocatorCount(t, reference.Locator("[data-go-api-development]")))
+		return
+	}
 	require.Equal(t, 1, mustLocatorCount(t, link))
 	href, err := link.GetAttribute("href")
 	require.NoError(t, err)

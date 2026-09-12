@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func TestSiteModuleContractsSeparateCurrentSourceFromPinnedDependency(t *testing.T) {
+func TestSiteAndPublishedConsumerUseIndependentLibraries(t *testing.T) {
 	t.Parallel()
 
 	repoRoot, err := filepath.Abs("..")
@@ -85,19 +85,65 @@ func TestCurrentSourceOnlyFixture(t *testing.T) {
 		t.Fatalf("current-source output missing success marker:\n%s", currentOutput)
 	}
 
-	pinnedEnv := append(append([]string{}, env...), "GOFLAGS=-mod=mod")
-	pinnedOutput, pinnedErr := runContract(script, "pinned-dependency", pinnedEnv)
-	if pinnedErr == nil {
-		t.Fatalf("pinned-dependency contract should reject unavailable API:\n%s", pinnedOutput)
+	consumerDir := filepath.Join(fixture, "consumer")
+	writeFile(t, filepath.Join(consumerDir, "go.mod"), fmt.Sprintf("module example.com/consumer\n\ngo 1.27.0\n\nrequire %s %s\n", modulePath, version))
+	consumerSource := "package main\nimport (\"fmt\"; \"example.com/library\")\nfunc main() { fmt.Println(library.OldAPI()) }\n"
+	writeFile(t, filepath.Join(consumerDir, "main.go"), consumerSource)
+	tidy := exec.Command("go", "mod", "tidy")
+	tidy.Dir = consumerDir
+	tidy.Env = append(env, "GOWORK=off")
+	if out, err := tidy.CombinedOutput(); err != nil {
+		t.Fatalf("tidy consumer: %v\n%s", err, out)
 	}
-	for _, want := range [][]byte{
-		[]byte("undefined: library.NewAPI"),
-		[]byte("site pinned-dependency deployability failed during non-E2E tests"),
-	} {
-		if !bytes.Contains(pinnedOutput, want) {
-			t.Fatalf("pinned-dependency output missing %q:\n%s", want, pinnedOutput)
-		}
+	writeFile(t, filepath.Join(fixture, "go.work"), "go 1.27.0\nuse ./root\n")
+	consumerEnv := append(env, "GOWORK="+filepath.Join(fixture, "go.work"), "GOSHTOSO_CONSUMER_FIXTURE="+consumerDir, "GOSHTOSO_CONSUMER_MODULE="+modulePath)
+	publishedScript := filepath.Join(repoRoot, "scripts", "check-published-consumer")
+	runConsumer := func(args ...string) ([]byte, error) {
+		cmd := exec.Command(publishedScript, args...)
+		cmd.Env = consumerEnv
+		return cmd.CombinedOutput()
 	}
+	out, err := runConsumer()
+	if err != nil || !bytes.Contains(out, []byte("published consumer: PASS")) {
+		t.Fatalf("published consumer: %v\n%s", err, out)
+	}
+	manifestPath := filepath.Join(consumerDir, "go.mod")
+	before, err := os.ReadFile(manifestPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	writeProxyModule(t, proxyDir, modulePath, "v0.0.2", "package library\nfunc OldAPI() string { return \"second release\" }\n")
+	out, err = runConsumer("v0.0.2")
+	if err != nil || !bytes.Contains(out, []byte("PASS (example.com/library@v0.0.2)")) {
+		t.Fatalf("release override: %v\n%s", err, out)
+	}
+	after, err := os.ReadFile(manifestPath)
+	if err != nil || !bytes.Equal(before, after) {
+		t.Fatalf("release verification changed fixture manifest: %v", err)
+	}
+	// The published fixture must not accidentally pick up the checkout's NewAPI.
+	writeFile(t, filepath.Join(consumerDir, "main.go"), string(bytes.ReplaceAll([]byte(consumerSource), []byte("OldAPI"), []byte("NewAPI"))))
+	out, err = runConsumer()
+	if err == nil || !bytes.Contains(out, []byte("undefined: library.NewAPI")) {
+		t.Fatalf("consumer used checkout API: %v\n%s", err, out)
+	}
+	// An absolute replacement would remain usable after copying; reject it explicitly.
+	f, err := os.OpenFile(filepath.Join(consumerDir, "go.mod"), os.O_APPEND|os.O_WRONLY, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = fmt.Fprintf(f, "\nreplace %s => %s\n", modulePath, rootDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
+	out, err = runConsumer()
+	if err == nil || !bytes.Contains(out, []byte("must not replace")) {
+		t.Fatalf("consumer accepted replacement: %v\n%s", err, out)
+	}
+
 }
 
 func TestSiteModuleContractsRunCurrentSourceOnlyThemeFixture(t *testing.T) {
@@ -177,20 +223,6 @@ func TestCurrentSourceOnlyFixture(t *testing.T) {
 	sentinelPath := assertCurrentSourceFixtureExecuted(t, script, env, fixture)
 	assertCurrentSourceRejectsDemoDrift(t, script, env, siteDir, sentinelPath)
 
-	pinnedEnv := append(append([]string{}, env...), "GOFLAGS=-mod=mod")
-	pinnedOutput, pinnedErr := runContract(script, "pinned-dependency", pinnedEnv)
-	if pinnedErr != nil {
-		t.Fatalf("pinned-dependency contract should exclude the current-source-only fixture: %v\n%s", pinnedErr, pinnedOutput)
-	}
-	if !bytes.Contains(pinnedOutput, []byte("pinned-dependency excludes current-source agreement fixture")) {
-		t.Fatalf("pinned output missing fixture exclusion marker:\n%s", pinnedOutput)
-	}
-	if !bytes.Contains(pinnedOutput, []byte("site pinned-dependency deployability: PASS (2 non-E2E packages; server built)")) {
-		t.Fatalf("pinned output missing exact package count:\n%s", pinnedOutput)
-	}
-	if _, err := os.Stat(sentinelPath); !os.IsNotExist(err) {
-		t.Fatalf("pinned-dependency unexpectedly executed current-source fixture; sentinel stat error: %v\n%s", err, pinnedOutput)
-	}
 }
 
 func assertCurrentSourceFixtureExecuted(t *testing.T, script string, env []string, fixture string) string {

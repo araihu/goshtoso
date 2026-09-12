@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Test the published package in isolation from the checkout and its workspace.
+set -euo pipefail
+if [[ $# -gt 1 || ( $# -eq 1 && ! "$1" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ) ]]; then
+  echo "usage: scripts/check-published-consumer [release-tag]" >&2
+  exit 2
+fi
+repo_root="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+fixture_dir="${GOSHTOSO_CONSUMER_FIXTURE:-$repo_root/tests/external/published-consumer}"
+module="${GOSHTOSO_CONSUMER_MODULE:-github.com/araihu/goshtoso}"
+tmp_dir="$(mktemp -d)"
+trap 'rm -rf -- "$tmp_dir"' EXIT
+mkdir "$tmp_dir/consumer"
+cp -R "$fixture_dir/." "$tmp_dir/consumer/"
+cd "$tmp_dir/consumer"
+export GOWORK=off
+export GOFLAGS=-mod=readonly
+replacement="$(go list -m -f '{{with .Replace}}{{.Path}}{{end}}' "$module")"
+if [[ -n "$replacement" ]]; then
+  echo "published consumer must not replace $module: $replacement" >&2
+  exit 1
+fi
+# A release verifies its own tag in the temporary fixture, without a pin-update PR.
+if [[ $# -eq 1 ]]; then
+  go mod edit "-require=$module@$1"
+  go mod tidy
+fi
+version="$(go list -m -f '{{.Version}}' "$module")"
+if [[ ! "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "published consumer must pin a release tag: $version" >&2
+  exit 1
+fi
+export GOSHTOSO_EXPECTED_VERSION="$version"
+echo "published consumer: $module@$version (GOWORK=off; isolated fixture)"
+go list -deps -test -f '{{with .Module}}{{.Path}}{{end}}' ./... > "$tmp_dir/modules"
+if ! grep -Fxq "$module" "$tmp_dir/modules"; then
+  echo "published consumer does not exercise $module" >&2
+  exit 1
+fi
+go test ./... -count=1
+go build ./...
+echo "published consumer: PASS ($module@$version)"

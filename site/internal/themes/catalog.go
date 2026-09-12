@@ -1,10 +1,7 @@
 // Package themes owns the theme presentation order used by the demo site's
 // selectors, counts, profile example, and theme previews.
 //
-// This compatibility catalog remains local while site/go.mod pins v0.1.12,
-// which predates the public root themes package. After that pin is bumped to a
-// release containing the package, derive built-in keys from the root catalog
-// while retaining this site's presentation labels, order, and defaults.
+// Agreement tests compare these presentation choices with the root catalog.
 package themes
 
 import "slices"

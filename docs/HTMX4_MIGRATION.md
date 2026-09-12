@@ -80,6 +80,9 @@ observation is not a confirmed upstream defect report.
 
 ## Coordinated dependency pins
 
+These pins record the migration at the time. The site now uses the library in
+the same checkout; see [Site and Published-Package Contracts](SITE_MODULE_CONTRACTS.md).
+
 The migration spans Goshtoso and goshtoso-app-shells. The root runtime commit
 was pushed first, then app-shells pinned that reachable revision and published
 its migration commit. The site now pins both exact public pseudo-versions:

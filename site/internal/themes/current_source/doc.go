@@ -1,4 +1,3 @@
-// Package current_source contains checks that require the root module from the
-// current checkout. The pinned site module contract excludes this package until
-// the public root themes package is available in its released dependency.
+// Package current_source checks the demo theme catalog against the root module
+// in the same checkout. Site integration always runs these checks.
 package current_source

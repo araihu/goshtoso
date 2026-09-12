@@ -39,14 +39,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Dagger pinned-dependency deployability (embedded CLI)
+      - name: Dagger site integration and published consumer (embedded CLI)
         if: runner.environment == 'self-hosted'
         shell: bash
         run: |
           set -euo pipefail
           test "$(dagger version | awk '{print $2}')" = v0.21.8
           dagger call required --source=. --cache-partition="$CACHE_PARTITION"
-      - name: Dagger pinned-dependency deployability
+      - name: Dagger site integration and published consumer
         if: runner.environment != 'self-hosted'
         uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.2.1
         with:

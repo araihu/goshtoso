@@ -81,7 +81,7 @@ func TestCodeQLBuildsEveryGoModule(t *testing.T) {
 	for _, expected := range []string{
 		"build_mode: manual",
 		"if: matrix.build_mode == 'manual'",
-		"for module in . examples/application-patterns examples/brand-site examples/getting-started site tests/external/runtime-manifest",
+		"for module in . examples/application-patterns examples/brand-site examples/getting-started site tests/external/runtime-manifest tests/external/published-consumer",
 		"GOWORK=off go build ./...",
 	} {
 		if !strings.Contains(workflow, expected) {
@@ -336,7 +336,7 @@ func TestDaggerTestsAcquireTailwindBeforeCSSBuild(t *testing.T) {
 	}
 	module := string(data)
 	start := strings.Index(module, "  tests(")
-	end := strings.Index(module, "  /** Standalone site/go.mod consumer contract")
+	end := strings.Index(module, "  /** Site integration and published-package consumer contract")
 	if start < 0 || end <= start {
 		t.Fatal("cannot locate Dagger tests pipeline")
 	}

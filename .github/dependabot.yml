@@ -11,6 +11,9 @@ updates:
       - "/site"
     schedule:
       interval: "weekly"
+    # These in-repository consumers replace Goshtoso with the checkout.
+    ignore:
+      - dependency-name: "github.com/araihu/goshtoso"
     groups:
       go-minor-patch:
         patterns: ["*"]

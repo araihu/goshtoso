@@ -408,8 +408,9 @@ The package should remain private. Kubernetes uses its existing GHCR pull secret
 
 The Docker image serves port 8090 as UID/GID 10001 and is tested with a read-only
 root filesystem and writable `/tmp`. It builds the root library and site from
-one checkout; release images display the released tag, while main images use
-the documentation version pinned in `site/go.mod`.
+one checkout. Release images display the released tag; main and local images
+show development metadata. The site has no published-version pin. A separate
+[consumer fixture](docs/SITE_MODULE_CONTRACTS.md) verifies the public Go module.
 
 Update `k8s/goshtoso/deployment.yaml` in `guilycst/home-lab` with the produced
 digest through a reviewed GitOps change. Argo CD owns the rollout. Publishing an

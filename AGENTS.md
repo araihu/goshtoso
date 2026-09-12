@@ -57,19 +57,20 @@ go test -tags=e2e,full ./site/tests/e2e/... -count=1 -timeout 5m -run TestDropdo
 - Root: component library. Keep dependencies slim and never import `site/`.
 - `site/`: demo website, example apps, server, Playwright E2E tests.
 
-`go.work` is gitignored. The site module pins a released library version for
-fresh clones; CI creates a temporary workspace so it builds against the in-repo
-library at the current commit.
+The site builds against the root library in the same checkout. `go.work` is
+local and gitignored; the site's `replace github.com/araihu/goshtoso => ..`
+also supports individual-module commands such as `go mod tidy`. The site is
+not a standalone published consumer and does not need version-pin follow-ups.
 
-Both module contracts are required:
+Both contracts are required:
 
-- `just site-current-source-integration` tests the site against this checkout
-  through a throwaway workspace.
-- `just site-pinned-dependency-deployability` forces `GOWORK=off` and tests the
-  standalone site against the public version pinned in `site/go.mod`.
+- `just site-current-source-integration` tests and builds the site through a
+  throwaway workspace, including all current-source agreement fixtures.
+- `just published-consumer` tests an isolated application against the published
+  Go module with `GOWORK=off` and no Goshtoso replacement.
 
-See [`docs/SITE_MODULE_CONTRACTS.md`](docs/SITE_MODULE_CONTRACTS.md) for the
-two-phase sequencing required when the site adopts an unreleased root API.
+API changes and their site examples belong in the same PR. See
+[`docs/SITE_MODULE_CONTRACTS.md`](docs/SITE_MODULE_CONTRACTS.md).
 
 ## Worktree Isolation (required)
 
@@ -143,9 +144,9 @@ containers uniquely identified. The shared layout appends the component's exact
 versioned pkg.go.dev link from the catalog; keep exported Go declarations and
 their Go doc comments authoritative instead of maintaining a second API table.
 
-Release builds resolve the documented Goshtoso version from `site/go.mod` and
-inject it into `site/internal/buildinfo` with `go build -ldflags -X`. Plain local
-builds deliberately show `development` without an external API link. Do not
+Release builds inject the exact release tag into `site/internal/buildinfo`
+with `go build -ldflags -X`. Local and main builds deliberately show
+`development` without an external API link. Do not
 hardcode a release version in templates or replace this with mutable runtime
 configuration.
 

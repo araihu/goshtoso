@@ -62,10 +62,9 @@ func TestMain(m *testing.M) {
 	// Build server
 	projectRoot, _ := filepath.Abs("../..")
 	buildArgs := []string{"build", "-o", "bin/server"}
-	docsVersion, err := pinnedGoshtosoVersion(projectRoot)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to resolve pinned Goshtoso version: %v\n", err)
-		os.Exit(1)
+	docsVersion := os.Getenv("GOSHTOSO_DOCS_VERSION")
+	if docsVersion == "" {
+		docsVersion = "development"
 	}
 	goshtosoDocsVersion = docsVersion
 	buildArgs = append(buildArgs,
@@ -152,28 +151,6 @@ func TestMain(m *testing.M) {
 	}
 
 	os.Exit(code)
-}
-
-func pinnedGoshtosoVersion(projectRoot string) (string, error) {
-	cmd := exec.Command(
-		"go",
-		"list",
-		"-m",
-		"-f",
-		"{{.Version}}",
-		"github.com/araihu/goshtoso",
-	)
-	cmd.Dir = projectRoot
-	cmd.Env = append(os.Environ(), "GOWORK=off")
-	output, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-	version := strings.TrimSpace(string(output))
-	if version == "" {
-		return "", fmt.Errorf("empty module version")
-	}
-	return version, nil
 }
 
 func stopServer(cmd *exec.Cmd, url, token string) error {
