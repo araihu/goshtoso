@@ -1,6 +1,6 @@
 FROM --platform=$BUILDPLATFORM golang:1.27.0-bookworm@sha256:484ef6066fa69acb059fdfeda7ba2b8f7391f2ef6abc6f9b8411e669ebd56466 AS builder
 ARG TARGETARCH=amd64
-ARG GOSHTOSO_DOCS_VERSION
+ARG GOSHTOSO_DOCS_VERSION=development
 
 WORKDIR /src
 
@@ -11,12 +11,11 @@ COPY site/go.mod site/go.sum ./site/
 
 # A build-time workspace ties the site to the in-repo library, so the image
 # always reflects the library at this commit (go.work is gitignored; it exists
-# only inside the build). The site's pinned require is for fresh-clone builds.
+# only inside the build). The site also uses a checkout-local module replacement.
 RUN go work init . ./site && go mod download
 
 COPY . .
-RUN GOSHTOSO_DOCS_VERSION="${GOSHTOSO_DOCS_VERSION:-$(cd site && GOWORK=off go list -m -f '{{.Version}}' github.com/araihu/goshtoso)}" && \
-    CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build \
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build \
       -ldflags "-X github.com/araihu/goshtoso/site/internal/buildinfo.goDocsVersion=${GOSHTOSO_DOCS_VERSION}" \
       -o /out/server ./site/cmd/server
 # Drop the build-only workspace so it is never baked into the runtime image

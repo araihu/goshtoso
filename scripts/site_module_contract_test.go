@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func TestSiteModuleContractsSeparateCurrentSourceFromPinnedDependency(t *testing.T) {
+func TestSiteAndPublishedConsumerUseIndependentLibraries(t *testing.T) {
 	t.Parallel()
 
 	repoRoot, err := filepath.Abs("..")
@@ -85,18 +85,100 @@ func TestCurrentSourceOnlyFixture(t *testing.T) {
 		t.Fatalf("current-source output missing success marker:\n%s", currentOutput)
 	}
 
-	pinnedEnv := append(append([]string{}, env...), "GOFLAGS=-mod=mod")
-	pinnedOutput, pinnedErr := runContract(script, "pinned-dependency", pinnedEnv)
-	if pinnedErr == nil {
-		t.Fatalf("pinned-dependency contract should reject unavailable API:\n%s", pinnedOutput)
+	consumerDir := filepath.Join(fixture, "consumer")
+	writeFile(t, filepath.Join(consumerDir, "go.mod"), fmt.Sprintf("module example.com/consumer\n\ngo 1.27.0\n\nrequire %s %s\n", modulePath, version))
+	consumerSource := "package main\nimport (\"fmt\"; \"example.com/library\")\nfunc main() { fmt.Println(library.OldAPI()) }\n"
+	writeFile(t, filepath.Join(consumerDir, "main.go"), consumerSource)
+	tidy := exec.Command("go", "mod", "tidy")
+	tidy.Dir = consumerDir
+	tidy.Env = append(env, "GOWORK=off")
+	if out, err := tidy.CombinedOutput(); err != nil {
+		t.Fatalf("tidy consumer: %v\n%s", err, out)
 	}
-	for _, want := range [][]byte{
-		[]byte("undefined: library.NewAPI"),
-		[]byte("site pinned-dependency deployability failed during non-E2E tests"),
-	} {
-		if !bytes.Contains(pinnedOutput, want) {
-			t.Fatalf("pinned-dependency output missing %q:\n%s", want, pinnedOutput)
-		}
+	writeFile(t, filepath.Join(fixture, "go.work"), "go 1.27.0\nuse ./root\n")
+	consumerEnv := append(env, "GOWORK="+filepath.Join(fixture, "go.work"), "GOSHTOSO_CONSUMER_FIXTURE="+consumerDir, "GOSHTOSO_CONSUMER_MODULE="+modulePath)
+	publishedScript := filepath.Join(repoRoot, "scripts", "check-published-consumer")
+	runConsumer := func(args ...string) ([]byte, error) {
+		cmd := exec.Command(publishedScript, args...)
+		cmd.Env = consumerEnv
+		return cmd.CombinedOutput()
+	}
+	out, err := runConsumer()
+	if err != nil || !bytes.Contains(out, []byte("published consumer: PASS")) {
+		t.Fatalf("published consumer: %v\n%s", err, out)
+	}
+	manifestPath := filepath.Join(consumerDir, "go.mod")
+	before, err := os.ReadFile(manifestPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	writeProxyModule(t, proxyDir, modulePath, "v0.0.2", "package library\nfunc OldAPI() string { return \"second release\" }\n")
+	out, err = runConsumer("v0.0.2")
+	if err != nil || !bytes.Contains(out, []byte("PASS (example.com/library@v0.0.2)")) {
+		t.Fatalf("release override: %v\n%s", err, out)
+	}
+	after, err := os.ReadFile(manifestPath)
+	if err != nil || !bytes.Equal(before, after) {
+		t.Fatalf("release verification changed fixture manifest: %v", err)
+	}
+	// The published fixture must not accidentally pick up the checkout's NewAPI.
+	writeFile(t, filepath.Join(consumerDir, "main.go"), string(bytes.ReplaceAll([]byte(consumerSource), []byte("OldAPI"), []byte("NewAPI"))))
+	out, err = runConsumer()
+	if err == nil || !bytes.Contains(out, []byte("undefined: library.NewAPI")) {
+		t.Fatalf("consumer used checkout API: %v\n%s", err, out)
+	}
+	// An absolute replacement would remain usable after copying; reject it explicitly.
+	f, err := os.OpenFile(filepath.Join(consumerDir, "go.mod"), os.O_APPEND|os.O_WRONLY, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = fmt.Fprintf(f, "\nreplace %s => %s\n", modulePath, rootDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
+	out, err = runConsumer()
+	if err == nil || !bytes.Contains(out, []byte("must not replace")) {
+		t.Fatalf("consumer accepted replacement: %v\n%s", err, out)
+	}
+
+}
+
+func TestPublishedConsumerRejectsTransitiveVersionUpgrade(t *testing.T) {
+	t.Parallel()
+	fixture := t.TempDir()
+	proxy := filepath.Join(fixture, "proxy")
+	consumer := filepath.Join(fixture, "consumer")
+	module := "example.com/library"
+	for _, version := range []string{"v0.0.1", "v0.0.2"} {
+		writeProxyModule(t, proxy, module, version, "package library\nfunc Value() string { return \"ok\" }\n")
+	}
+	writeProxyModule(t, proxy, "example.com/bridge", "v0.0.1", "package bridge\nimport \"example.com/library\"\nfunc Value() string { return library.Value() }\n", module+" v0.0.2")
+	writeFile(t, filepath.Join(consumer, "go.mod"), "module example.com/consumer\ngo 1.27.0\nrequire example.com/bridge v0.0.1\n")
+	writeFile(t, filepath.Join(consumer, "main.go"), "package main\nimport (\"fmt\"; \"example.com/bridge\")\nfunc main() { fmt.Println(bridge.Value()) }\n")
+	cache := filepath.Join(fixture, "modcache")
+	env := append(os.Environ(), "GOWORK=off", "GOSUMDB=off", "GOPROXY="+(&url.URL{Scheme: "file", Path: proxy}).String(), "GOMODCACHE="+cache, "GOSHTOSO_CONSUMER_FIXTURE="+consumer, "GOSHTOSO_CONSUMER_MODULE="+module)
+	t.Cleanup(func() {
+		cmd := exec.Command("go", "clean", "-modcache")
+		cmd.Env = env
+		_ = cmd.Run()
+	})
+	tidy := exec.Command("go", "mod", "tidy")
+	tidy.Dir, tidy.Env = consumer, env
+	if out, err := tidy.CombinedOutput(); err != nil {
+		t.Fatalf("tidy: %v\n%s", err, out)
+	}
+	script, err := filepath.Abs("check-published-consumer")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cmd := exec.Command(script, "v0.0.1")
+	cmd.Env = env
+	out, err := cmd.CombinedOutput()
+	if err == nil || !bytes.Contains(out, []byte("resolved v0.0.2 instead of requested release v0.0.1")) {
+		t.Fatalf("release check accepted a transitive upgrade: %v\n%s", err, out)
 	}
 }
 
@@ -177,20 +259,6 @@ func TestCurrentSourceOnlyFixture(t *testing.T) {
 	sentinelPath := assertCurrentSourceFixtureExecuted(t, script, env, fixture)
 	assertCurrentSourceRejectsDemoDrift(t, script, env, siteDir, sentinelPath)
 
-	pinnedEnv := append(append([]string{}, env...), "GOFLAGS=-mod=mod")
-	pinnedOutput, pinnedErr := runContract(script, "pinned-dependency", pinnedEnv)
-	if pinnedErr != nil {
-		t.Fatalf("pinned-dependency contract should exclude the current-source-only fixture: %v\n%s", pinnedErr, pinnedOutput)
-	}
-	if !bytes.Contains(pinnedOutput, []byte("pinned-dependency excludes current-source agreement fixture")) {
-		t.Fatalf("pinned output missing fixture exclusion marker:\n%s", pinnedOutput)
-	}
-	if !bytes.Contains(pinnedOutput, []byte("site pinned-dependency deployability: PASS (2 non-E2E packages; server built)")) {
-		t.Fatalf("pinned output missing exact package count:\n%s", pinnedOutput)
-	}
-	if _, err := os.Stat(sentinelPath); !os.IsNotExist(err) {
-		t.Fatalf("pinned-dependency unexpectedly executed current-source fixture; sentinel stat error: %v\n%s", err, pinnedOutput)
-	}
 }
 
 func assertCurrentSourceFixtureExecuted(t *testing.T, script string, env []string, fixture string) string {
@@ -284,7 +352,7 @@ func outputContainsGoTestSuccess(output []byte, packagePath string) bool {
 	return false
 }
 
-func writeProxyModule(t *testing.T, proxyDir, modulePath, version, source string) {
+func writeProxyModule(t *testing.T, proxyDir, modulePath, version, source string, requirements ...string) {
 	t.Helper()
 
 	versionDir := filepath.Join(proxyDir, filepath.FromSlash(modulePath), "@v")
@@ -295,6 +363,9 @@ func writeProxyModule(t *testing.T, proxyDir, modulePath, version, source string
 		time.Date(2026, time.January, 1, 0, 0, 0, 0, time.UTC).Format(time.RFC3339),
 	))
 	moduleFile := "module " + modulePath + "\n\ngo 1.27.0\n"
+	for _, requirement := range requirements {
+		moduleFile += "\nrequire " + requirement + "\n"
+	}
 	writeFile(t, filepath.Join(versionDir, version+".mod"), moduleFile)
 
 	if err := os.MkdirAll(versionDir, 0o755); err != nil {

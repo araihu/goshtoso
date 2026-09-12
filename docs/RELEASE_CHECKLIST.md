@@ -20,7 +20,7 @@ many of these steps, but the checklist keeps the public release story coherent.
   - confirm streamed `skills use` output contains the complete required
     discovery pass without depending on bundled references
   - `just site-current-source-integration`
-  - `just site-pinned-dependency-deployability`
+  - `just published-consumer`
   - `scripts/run-release-coverage.sh --local-dry-run`
 - Check that generated and public distribution files have no drift:
   - `*_templ.go`
@@ -70,9 +70,9 @@ many of these steps, but the checklist keeps the public release story coherent.
   current release report. The `CODECOV_TOKEN` repository secret must be present.
 - Confirm the release coverage artifact retains both authored-source and full
   generated-inclusive profiles, function summaries, and HTML reports.
-- Open a follow-up PR that pins `site/go.mod` to the new tag and updates any
-  version-aware documentation links. Never push this follow-up directly to the
-  protected `main` branch.
+- Confirm the publish job verified the new Go tag with the isolated consumer
+  fixture before creating the release. The site uses the tagged checkout and
+  requires no dependency-pin follow-up.
 - Confirm `VERSIONS.md` has a row for the released tag.
 - Confirm the documentation site deploy completed or was intentionally skipped.
 - Confirm the release image job passed, the version tag and `latest` resolve to
@@ -81,44 +81,6 @@ many of these steps, but the checklist keeps the public release story coherent.
   not perform a homelab rollout.
 - Confirm `npx skills add araihu/goshtoso --list` discovers the released
   consumer-agent skill.
-
-## Pending v0.1.0 icon catalog evidence
-
-This is release-candidate evidence only. It does not authorize a tag, push,
-deployment, or a `site/go.mod` dependency update.
-
-- Assets release candidate: P1 source `246cb28`, integrated `80d43a3`; UI
-  sprite correction `613335f`.
-- Upstream immutable Assets `dist/catalog.json`: 302 records, schema `1`,
-  SHA-256 `d83be964fa411e87c61b49f0a0b6a2a1465f33ad43bea7cd93b2e434b59266af`.
-- Local exact Heroicons generator subset:
-  `internal/iconcatalog/testdata/heroicons-catalog.json`, 67 records selected
-  as namespace `ui` and product `heroicons`; every selected record is the exact
-  upstream object. SHA-256
-  `0a420ad65e2fe7db3e2cc5dbb6c87167fcd6e85f64a3ebc409e2a58c9bd111ef`.
-- Assets UI sprite correction `613335f`: SHA-256
-  `75e282de7a19efba9cf0285b44af0641c1527361f921b7d7f8020efc1f1f0fb7`.
-- Goshtoso approved functional head: `ab05821`; bundled default sprite path:
-  `/assets/icons/heroicons.svg`.
-- Bundled binding command:
-
-  ```bash
-  go run ./cmd/iconcatalog -catalog internal/iconcatalog/testdata/heroicons-catalog.json -namespace ui -product heroicons -sprite-url /assets/icons/heroicons.svg -package heroicons -const-prefix Icon -out components/icon/heroicons/names_gen.go
-  ```
-
-- Current-source site integration and full icon E2E pass. Pinned-dependency
-  deployability is intentionally deferred: `site/go.mod` pins public
-  `github.com/araihu/goshtoso@v0.0.14-0.20260729070831-8863d6b7d0e8`. All
-  observed old-pin failures are recorded: missing
-  `github.com/araihu/goshtoso/components/icon` at
-  `site/internal/pages/demo/componentpages/icon/icon_templ.go:12:2`; missing
-  `github.com/araihu/goshtoso/components/icon/heroicons` at `:13:2`; and
-  `undefined: components.KindIcon` at
-  `site/internal/pages/catalog/catalog.go:221`.
-- Do not hide this with build tags, duplicated component code, a `replace`, or
-  a local workspace. Acceptance after approval: tag the root release, update
-  the site pin in its follow-up pull request, then rerun pinned-dependency
-  deployability successfully before merge or deployment.
 
 ## Support Notes
 

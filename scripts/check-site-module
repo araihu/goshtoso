@@ -2,32 +2,14 @@
 
 set -euo pipefail
 
-usage() {
-	cat >&2 <<'EOF'
-usage: scripts/check-site-module <current-source|pinned-dependency>
-
-current-source      Test the site against the root library in this checkout.
-pinned-dependency   Test the standalone site module with GOWORK=off.
-EOF
-}
-
-mode="${1:-}"
-case "$mode" in
-	current-source)
-		contract="current-source integration"
-		;;
-	pinned-dependency)
-		contract="pinned-dependency deployability"
-		;;
-	*)
-		usage
-		exit 2
-		;;
-esac
+if [[ "${1:-}" != current-source || $# -ne 1 ]]; then
+	echo "usage: scripts/check-site-module current-source" >&2
+	exit 2
+fi
+contract="current-source integration"
 
 repo_root="${GOSHTOSO_CONTRACT_ROOT:-$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)}"
 site_dir="${GOSHTOSO_CONTRACT_SITE:-$repo_root/site}"
-dependency_module="${GOSHTOSO_CONTRACT_DEPENDENCY:-github.com/araihu/goshtoso}"
 server_package="${GOSHTOSO_CONTRACT_SERVER_PACKAGE:-./cmd/server}"
 
 if [[ ! -f "$repo_root/go.mod" ]]; then
@@ -57,34 +39,14 @@ fail() {
 	if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
 		echo "::error title=Site module contract failed::$message"
 	fi
-	if [[ "$mode" == "pinned-dependency" ]]; then
-		echo "site/go.mod must pin a public Goshtoso version containing every API imported by site/." >&2
-		echo "Do not mask this contract with go.work or a replace directive; publish or merge root changes first, then pin a reachable tag or pseudo-version." >&2
-	fi
 	exit 1
 }
 
-if [[ "$mode" == "current-source" ]]; then
-	workspace="$tmp_dir/go.work"
-	if ! (cd "$tmp_dir" && GOWORK="$workspace" go work init "$repo_root" "$site_dir"); then
-		fail "temporary workspace creation"
-	fi
-	echo "site current-source integration: root library at $repo_root"
-else
-	workspace="off"
-	replacement="$(cd "$site_dir" && GOWORK=off go list -m -f '{{with .Replace}}{{.Path}} {{.Dir}}{{end}}' "$dependency_module")" \
-		|| fail "dependency resolution"
-	if [[ -n "$replacement" ]]; then
-		echo "pinned dependency resolved through replace: $replacement" >&2
-		fail "dependency resolution (replace directives are forbidden)"
-	fi
-	version="$(cd "$site_dir" && GOWORK=off go list -m -f '{{.Version}}' "$dependency_module")" \
-		|| fail "dependency resolution"
-	if [[ -z "$version" ]]; then
-		fail "dependency resolution (missing module version)"
-	fi
-	echo "site pinned-dependency deployability: $dependency_module@$version (GOWORK=off)"
+workspace="$tmp_dir/go.work"
+if ! (cd "$tmp_dir" && GOWORK="$workspace" go work init "$repo_root" "$site_dir"); then
+	fail "temporary workspace creation"
 fi
+echo "site current-source integration: root library at $repo_root"
 
 site_module="$(cd "$site_dir" && GOWORK="$workspace" go list -m -f '{{.Path}} {{.Dir}}' | awk -v site_dir="$site_dir" '$2 == site_dir { print $1 }')" \
 	|| fail "site module identity"
@@ -103,9 +65,6 @@ current_source_fixture_seen=0
 while IFS= read -r package; do
 	case "$package" in
 	"$current_source_theme_package")
-		if [[ "$mode" == "pinned-dependency" ]]; then
-			continue
-		fi
 		current_source_fixture_seen=$((current_source_fixture_seen + 1))
 		site_packages+=("$package")
 		;;
@@ -114,14 +73,10 @@ while IFS= read -r package; do
 	esac
 done < "$packages_file"
 
-if [[ "$mode" == "current-source" ]]; then
-	if [[ "$current_source_fixture_seen" -ne 1 ]]; then
-		fail "current-source agreement fixture missing or duplicated"
-	fi
-	echo "current-source agreement fixture: included ($current_source_theme_package)"
-else
-	echo "pinned-dependency excludes current-source agreement fixture ($current_source_theme_package)"
+if [[ "$current_source_fixture_seen" -ne 1 ]]; then
+	fail "current-source agreement fixture missing or duplicated"
 fi
+echo "current-source agreement fixture: included ($current_source_theme_package)"
 
 if [[ "${#site_packages[@]}" -eq 0 ]]; then
 	fail "package discovery (no non-E2E packages found)"

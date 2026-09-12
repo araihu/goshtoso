@@ -1,77 +1,65 @@
-# Site Module Contracts
+# Site and Published-Package Contracts
 
-Goshtoso has two Go modules with different dependency contracts. Pull requests
-must keep both green.
+The documentation site demonstrates the library in the same checkout. A separate
+consumer fixture verifies the published Go module. An API change and its site
+examples can be reviewed and merged in one PR.
 
-## Current-source integration
+## Site integration
 
-`site/` must integrate with the root library from the same checkout. This mode
-uses a temporary `go.work`; it proves an atomic root-plus-site change works
-together without committing workspace state.
-
-Current-source-only compatibility fixtures that import an unreleased root API
-run as ordinary packages in this contract. The pinned contract excludes only
-those explicitly named fixture packages, because it must remain an untagged
-`GOWORK=off` check against the released version in `site/go.mod`.
-
-The root-catalog browser agreement has the same boundary. Its maintained entry
-point creates a temporary root-plus-site workspace, proves the focused test is
-listed under its current-source build tag, and then runs it:
+The root module is the publishable library. The `site/` module contains the
+website, example applications, and browser tests. Build them together with:
 
 ```bash
-just test-e2e-theme-catalog-current-source
-```
-
-Required Code CI runs this command after generating the demo CSS. The standalone
-v0.1.12 site contract does not compile or execute this unreleased-root fixture.
-
-Run:
-
-```bash
+go work init . ./site
+go build -o bin/server ./site/cmd/server
 just site-current-source-integration
 ```
 
-Code CI retains this contract for site vet, lint, tests, coverage, E2E, and the
-server build.
+`go.work` remains local and gitignored. The integration check creates its own
+workspace, runs every non-E2E site package, including theme agreement tests,
+and builds the server. Code CI also runs browser tests against this checkout.
 
-## Pinned-dependency deployability
+The site's `go.mod` replaces `github.com/araihu/goshtoso` with `..`. This also
+makes commands such as `cd site && go mod tidy` use the checkout, since tidy
+operates on an individual module. Go still records a required version for its
+module graph, but the replacement selects the checkout. That version does not
+determine the documentation version and does not need release updates. The site
+requires the repository checkout; it is not a standalone consumer module.
 
-`site/` must also build as a standalone module from the Goshtoso version in
-`site/go.mod`. This mode forces `GOWORK=off`, discovers every site package, runs
-all non-E2E site tests, and builds `site/cmd/server`.
+## Published-package compatibility
 
-Run:
+`tests/external/published-consumer` is a small standalone application pinned to
+a released Goshtoso version, with no replacement directive. It exercises module
+identity, component rendering, runtime markup, and bundled CSS and JavaScript.
 
 ```bash
-just site-pinned-dependency-deployability
+just published-consumer
+# Check another published tag without changing any tracked file:
+scripts/check-published-consumer v0.3.3
 ```
 
-The protected `Required CI` check runs this contract on every pull request. A
-failure ends with a message such as:
+The script copies only the fixture to a temporary directory, forces `GOWORK=off`,
+rejects a Goshtoso replacement, and checks that the fixture actually imports the
+library. Tests and builds run with module files read-only. An explicit tag is
+resolved and its checksums written only in the temporary copy before testing.
 
-```text
-site pinned-dependency deployability failed during package discovery
-site/go.mod must pin a public Goshtoso version containing every API imported by site/.
-Do not mask this contract with go.work or a replace directive; publish or merge root changes first, then pin a reachable tag or pseudo-version.
-```
+The protected `Required CI` check runs both site integration and this contract. The fixture's checked-in
+version is a stable compatibility baseline; update it when the fixture needs a
+newly released API, not after every release. Site changes never depend on this
+pin. Existing external-consumer tests with local replacements continue to test
+the current library's integration contracts separately.
 
-The gate rejects a `replace` for `github.com/araihu/goshtoso`. A checked
-`replace github.com/araihu/goshtoso => ..` would make the standalone check use
-the sibling checkout, hide stale pins, and make `site/go.mod` non-portable. Pin
-a public tag or exact public pseudo-version instead.
+## Build and release identity
 
-## API-change sequencing
+Local and main-branch site builds show `dev` and omit versioned API links.
+Release images build the root and site from the tagged commit and receive the
+exact tag through `GOSHTOSO_DOCS_VERSION`. Docker defaults to `development` when
+that build argument is absent.
 
-A pull request cannot pin the future squash commit that will result from its
-own merge. When `site/` needs a new root API, use two phases unless the repository
-deliberately changes its module architecture:
+Before publishing a GitHub release, the release workflow checks the new public
+Go tag with the isolated consumer fixture. It then publishes the release and
+versioned image. No library-first/site-second PR sequence, temporary public
+pseudo-version, or post-release site-pin PR is required.
 
-1. Merge the root API without making the standalone site depend on it, then
-   publish a tag or wait until the merged commit resolves as a public
-   pseudo-version.
-2. In a follow-up pull request, update `site/go.mod` and `site/go.sum` to that
-   reachable version, adopt the API in `site/`, and run both contracts.
-
-A release tag is preferred for stable documentation. A public pseudo-version is
-acceptable between releases; after the next semantic tag, follow the release
-checklist and pin the site to that tag.
+Browser tests use development metadata by default. Set `GOSHTOSO_DOCS_VERSION`
+to a release tag to exercise the versioned badge and API-link assertions.

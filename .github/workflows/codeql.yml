@@ -53,7 +53,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for module in . examples/application-patterns examples/brand-site examples/getting-started site tests/external/runtime-manifest; do
+          for module in . examples/application-patterns examples/brand-site examples/getting-started site tests/external/runtime-manifest tests/external/published-consumer; do
             (cd "$module" && GOWORK=off go build ./...)
           done
 

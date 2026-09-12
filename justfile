@@ -133,12 +133,11 @@ help:
 site-current-source-integration:
     ./scripts/check-site-module current-source
 
-# Test the nested site exactly as a standalone consumer of site/go.mod. This is
-# the pinned-dependency deployability contract and always forces GOWORK=off.
-site-pinned-dependency-deployability:
-    ./scripts/check-site-module pinned-dependency
+# Verify a standalone consumer against a published library without a workspace.
+published-consumer:
+    ./scripts/check-published-consumer
 
-site-module-contracts: site-current-source-integration site-pinned-dependency-deployability
+site-module-contracts: site-current-source-integration published-consumer
 
 # Run the authoritative release-equivalent full coverage pipeline locally.
 coverage:

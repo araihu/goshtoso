@@ -31,8 +31,15 @@ func TestGettingStarted_StarterRepoAndLiveOutcome(t *testing.T) {
 
 	versionBadge := page.Locator(".component-doc-shell__brand-badge")
 	require.NoError(t, versionBadge.WaitFor())
-	require.Equal(t, goshtosoDocsVersion, mustText(t, versionBadge))
-	require.Equal(t, "https://github.com/araihu/goshtoso/releases/tag/"+goshtosoDocsVersion, mustAttribute(t, versionBadge, "href"))
+	if goshtosoDocsVersion == "development" {
+		require.Equal(t, "dev", mustText(t, versionBadge))
+		href, err := versionBadge.GetAttribute("href")
+		require.NoError(t, err)
+		require.Empty(t, href)
+	} else {
+		require.Equal(t, goshtosoDocsVersion, mustText(t, versionBadge))
+		require.Equal(t, "https://github.com/araihu/goshtoso/releases/tag/"+goshtosoDocsVersion, mustAttribute(t, versionBadge, "href"))
+	}
 
 	contentEndsNearFooter, err := page.Evaluate(`() => {
 		const main = document.getElementById('main-content');

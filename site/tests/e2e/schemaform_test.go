@@ -72,6 +72,10 @@ func TestSchemaFormDemoPage(t *testing.T) {
 	assert.Contains(t, submitPruneText, "values.internalToken")
 
 	apiLink := page.Locator("[data-go-api-link]")
+	if goshtosoDocsVersion == "development" {
+		require.Equal(t, 0, mustLocatorCount(t, apiLink))
+		return
+	}
 	href, err := apiLink.GetAttribute("href")
 	require.NoError(t, err)
 	assert.Equal(
