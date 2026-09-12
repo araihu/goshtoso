@@ -119,9 +119,9 @@ func TestProfileIdentityPersists(t *testing.T) {
 	// The submit button is NOT itself swapped (only #profile-identity inner is),
 	// so a normal click is fine.
 	require.NoError(t, page.Locator("#profile-identity-section form button[type='submit']").Click())
-	// Wait for the HTMX swap to re-render #profile-identity with the saved value.
+	// Wait for the server-rendered value; Fill already changed the live value.
 	_, err := page.WaitForFunction(
-		"() => { const el = document.querySelector(\"input[name='name']\"); return el && el.value === 'Katherine Johnson'; }",
+		"() => { const el = document.querySelector(\"input[name='name']\"); return el && el.defaultValue === 'Katherine Johnson'; }",
 		nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
 	require.NoError(t, err)
 
