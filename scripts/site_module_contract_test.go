@@ -146,6 +146,42 @@ func TestCurrentSourceOnlyFixture(t *testing.T) {
 
 }
 
+func TestPublishedConsumerRejectsTransitiveVersionUpgrade(t *testing.T) {
+	t.Parallel()
+	fixture := t.TempDir()
+	proxy := filepath.Join(fixture, "proxy")
+	consumer := filepath.Join(fixture, "consumer")
+	module := "example.com/library"
+	for _, version := range []string{"v0.0.1", "v0.0.2"} {
+		writeProxyModule(t, proxy, module, version, "package library\nfunc Value() string { return \"ok\" }\n")
+	}
+	writeProxyModule(t, proxy, "example.com/bridge", "v0.0.1", "package bridge\nimport \"example.com/library\"\nfunc Value() string { return library.Value() }\n", module+" v0.0.2")
+	writeFile(t, filepath.Join(consumer, "go.mod"), "module example.com/consumer\ngo 1.27.0\nrequire example.com/bridge v0.0.1\n")
+	writeFile(t, filepath.Join(consumer, "main.go"), "package main\nimport (\"fmt\"; \"example.com/bridge\")\nfunc main() { fmt.Println(bridge.Value()) }\n")
+	cache := filepath.Join(fixture, "modcache")
+	env := append(os.Environ(), "GOWORK=off", "GOSUMDB=off", "GOPROXY="+(&url.URL{Scheme: "file", Path: proxy}).String(), "GOMODCACHE="+cache, "GOSHTOSO_CONSUMER_FIXTURE="+consumer, "GOSHTOSO_CONSUMER_MODULE="+module)
+	t.Cleanup(func() {
+		cmd := exec.Command("go", "clean", "-modcache")
+		cmd.Env = env
+		_ = cmd.Run()
+	})
+	tidy := exec.Command("go", "mod", "tidy")
+	tidy.Dir, tidy.Env = consumer, env
+	if out, err := tidy.CombinedOutput(); err != nil {
+		t.Fatalf("tidy: %v\n%s", err, out)
+	}
+	script, err := filepath.Abs("check-published-consumer")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cmd := exec.Command(script, "v0.0.1")
+	cmd.Env = env
+	out, err := cmd.CombinedOutput()
+	if err == nil || !bytes.Contains(out, []byte("resolved v0.0.2 instead of requested release v0.0.1")) {
+		t.Fatalf("release check accepted a transitive upgrade: %v\n%s", err, out)
+	}
+}
+
 func TestSiteModuleContractsRunCurrentSourceOnlyThemeFixture(t *testing.T) {
 	t.Parallel()
 
@@ -316,7 +352,7 @@ func outputContainsGoTestSuccess(output []byte, packagePath string) bool {
 	return false
 }
 
-func writeProxyModule(t *testing.T, proxyDir, modulePath, version, source string) {
+func writeProxyModule(t *testing.T, proxyDir, modulePath, version, source string, requirements ...string) {
 	t.Helper()
 
 	versionDir := filepath.Join(proxyDir, filepath.FromSlash(modulePath), "@v")
@@ -327,6 +363,9 @@ func writeProxyModule(t *testing.T, proxyDir, modulePath, version, source string
 		time.Date(2026, time.January, 1, 0, 0, 0, 0, time.UTC).Format(time.RFC3339),
 	))
 	moduleFile := "module " + modulePath + "\n\ngo 1.27.0\n"
+	for _, requirement := range requirements {
+		moduleFile += "\nrequire " + requirement + "\n"
+	}
 	writeFile(t, filepath.Join(versionDir, version+".mod"), moduleFile)
 
 	if err := os.MkdirAll(versionDir, 0o755); err != nil {
