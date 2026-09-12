@@ -55,11 +55,11 @@ func TestAppShellsModuleReferencesCurrentPackagesAndCompositionRecipe(t *testing
 		`Goshtoso App Shells`,
 		`v0.1.9-0.20260910224508-5b2222e54637`,
 		`Application frames and shells`,
-		`Build the frame once`,
+		`Go and templ layouts`,
 		`Frames`,
-		`Choose a frame when you need a consistent page shape`,
+		`Page content`,
 		`Shells`,
-		`Choose a shell when the product owns the surrounding regions`,
+		`Full pages`,
 		`componentdocshell`,
 		`componentpage`,
 		`consoleshell`,
@@ -109,7 +109,7 @@ func TestAppShellsPackagePagesDocumentRequiredSetup(t *testing.T) {
 			page: appShellsComponentPageContent,
 			want: []string{
 				`go get github.com/araihu/goshtoso-app-shells/componentpage@v0.1.9-0.20260910224508-5b2222e54637`,
-				`document shell owns runtime and asset mounting`,
+				`Load the runtime scripts and mount the asset handlers in that shell`,
 			},
 		},
 		{
@@ -201,7 +201,7 @@ func TestComponentDocsShellPageKeepsGlobalSearchConsumerOwned(t *testing.T) {
 	var buffer bytes.Buffer
 	require.NoError(t, appShellsComponentDocsShellContent().Render(context.Background(), &buffer))
 	html := buffer.String()
-	require.Contains(t, html, `Consumer-owned global search`)
+	require.Contains(t, html, `Add your application’s global search to`)
 	require.NotContains(t, html, `Brand, global search, appearance controls, and family navigation.`)
 }
 

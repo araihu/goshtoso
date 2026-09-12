@@ -39,17 +39,17 @@ func appShellsComponentPageContent() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = componentpage.Page(componentpage.Config{
 			Title:       "Component Page",
-			Description: "A foundational reference-page frame for showing a rendered preview, usage source, named variants, and consumer-owned guidance.",
+			Description: "A component reference page with previews, code samples, variants, and usage notes.",
 			RootAttrs:   templpkg.Attributes{"class": "mx-auto max-w-4xl"},
 			Primary: componentpage.Example{
-				PreviewLabel: "Reference composition",
+				PreviewLabel: "Page header",
 				Preview:      appShellsComponentPagePreview(),
 				Code:         appShellsComponentPageCode(),
 			},
 			Sections: []componentpage.Example{
 				{
-					Title:       "Named states",
-					Description: "Keep meaningful variants close to the default example so readers can compare the component contract without leaving the page.",
+					Title:       "Disabled state",
+					Description: "Add a section for each state readers need to see, such as a disabled button.",
 					Preview:     appShellsComponentPageStatesPreview(),
 					Code:        appShellsComponentPageStatesCode(),
 				},
@@ -90,13 +90,13 @@ func appShellsComponentPagePreview() templ.Component {
 		}
 		templ_7745c5c3_Err = pageheader.PageHeader(pageheader.Config{
 			Title:       "Deployments",
-			Description: "A page identity and one clear action establish the reference surface before examples begin.",
+			Description: "View deployments and create a new one.",
 			Actions:     appShellsPreviewAction(),
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\"><div class=\"grid gap-1 py-4 sm:grid-cols-[8rem_1fr] sm:gap-6\"><span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Preview</span> <span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Rendered component state, using the same page-owned layout as the production docs.</span></div><div class=\"grid gap-1 py-4 sm:grid-cols-[8rem_1fr] sm:gap-6\"><span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Source</span> <span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Copyable Go and templ code remains next to the rendered evidence.</span></div><div class=\"grid gap-1 py-4 sm:grid-cols-[8rem_1fr] sm:gap-6\"><span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Guidance</span> <span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">The consumer decides intent, content, and the right component states.</span></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"divide-y divide-outline border-y border-outline dark:divide-outline-dark dark:border-outline-dark\"><div class=\"grid gap-1 py-4 sm:grid-cols-[8rem_1fr] sm:gap-6\"><span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Preview</span> <span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Show the component as it appears in your application.</span></div><div class=\"grid gap-1 py-4 sm:grid-cols-[8rem_1fr] sm:gap-6\"><span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Source</span> <span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Place copyable Go and templ code beside the preview.</span></div><div class=\"grid gap-1 py-4 sm:grid-cols-[8rem_1fr] sm:gap-6\"><span class=\"text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Guidance</span> <span class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Explain when to use the component and which options to set.</span></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -125,7 +125,7 @@ func appShellsComponentPageStatesPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"space-y-4\"><div class=\"flex flex-wrap items-center justify-between gap-3 border-b border-outline pb-4 dark:border-outline-dark\"><div><p class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Button</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">A named secondary example keeps an unavailable state explicit.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"space-y-4\"><div class=\"flex flex-wrap items-center justify-between gap-3 border-b border-outline pb-4 dark:border-outline-dark\"><div><p class=\"font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">Button</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">The Continue button is disabled.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -151,7 +151,7 @@ func appShellsComponentPageStatesPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Each example can add its own description, preview, source block, and stable heading anchor.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Each example accepts a description, preview, code sample, and heading anchor.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -227,7 +227,7 @@ func appShellsComponentPageGuidance() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<section class=\"space-y-4 border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"component-page-install-title\"><h2 id=\"component-page-install-title\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Install and compose</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<section class=\"space-y-4 border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"component-page-install-title\"><h2 id=\"component-page-install-title\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Install and use</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -241,7 +241,7 @@ func appShellsComponentPageGuidance() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<p class=\"max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\"><code class=\"font-mono\">componentpage</code> renders an embedded page frame. Its document shell owns runtime and asset mounting.</p></section><section class=\"border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"component-page-boundary-title\"><h2 id=\"component-page-boundary-title\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Consumer boundary</h2><p class=\"mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\">The frame owns order, labels, spacing, and code presentation. The consumer owns every preview, code sample, description, control, and follow-up section.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<p class=\"max-w-3xl text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\"><code class=\"font-mono\">componentpage</code> renders content inside a document shell. Load the runtime scripts and mount the asset handlers in that shell.</p></section><section class=\"border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"component-page-boundary-title\"><h2 id=\"component-page-boundary-title\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">What you provide</h2><p class=\"mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\">Pass your previews, code samples, descriptions, and controls to the frame. It arranges them into sections with labels, spacing, and formatted code.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -273,7 +273,7 @@ func appShellsComponentDocsShellContent() templ.Component {
 		templ_7745c5c3_Err = appShellPackagePage(
 			"Component Docs Shell",
 			"componentdocshell",
-			"A complete documentation frame for component libraries, API references, design systems, and product documentation.",
+			"A documentation layout with sidebar search, section navigation, and a table of contents.",
 			"app-shells-component-docs-shell",
 			appShellsComponentDocsShellPreview(),
 			appShellsComponentDocsShellCode(),
@@ -311,7 +311,7 @@ func appShellsConsoleShellContent() templ.Component {
 		templ_7745c5c3_Err = appShellPackagePage(
 			"Console Shell",
 			"consoleshell",
-			"An application frame for operations consoles and HTMX products that need persistent navigation and predictable fragment lifecycle.",
+			"An application layout with a persistent header and sidebar, a mobile drawer, and HTMX page navigation.",
 			"app-shells-console-shell",
 			appShellsConsoleShellPreview(),
 			appShellsConsoleShellCode(),
@@ -349,7 +349,7 @@ func appShellsLandingShellContent() templ.Component {
 		templ_7745c5c3_Err = appShellPackagePage(
 			"Landing Shell",
 			"landingshell",
-			"A public-site frame for product and organization landing pages with responsive brand navigation and a structured footer.",
+			"A landing page layout with a responsive header, theme controls, a hero section, and footer links.",
 			"app-shells-landing-shell",
 			appShellsLandingShellPreview(),
 			appShellsLandingShellCode(),
@@ -509,7 +509,7 @@ func appShellPackagePage(title, packageName, description, codeID string, preview
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Install and compose</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Install and use</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -526,7 +526,7 @@ func appShellPackagePage(title, packageName, description, codeID string, preview
 		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{
 			ID:       codeID + "-code",
 			Language: "go",
-			Label:    "Assets and composition",
+			Label:    "Asset handlers and layout",
 			Code:     code,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -568,7 +568,7 @@ func appShellPackagePage(title, packageName, description, codeID string, preview
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Consumer boundary</h2><p class=\"mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\">The shell owns the surrounding frame, responsive behavior, and lifecycle hooks. The consumer owns product vocabulary, authorization, data, navigation policy, metadata, and content.</p></section></div></details></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" data-toc-heading class=\"font-title text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">What you provide</h2><p class=\"mt-2 max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\">Configure the brand, navigation links, and page metadata, then pass in your content. Your application handles routes, permissions, and data.</p></section></div></details></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -626,14 +626,14 @@ func appShellsComponentDocsFragmentGuidance() templ.Component {
 			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Consumer-owned global search belongs in <code>HeaderActions</code>. The shell’s sidebar search filters local navigation.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<p class=\"text-sm leading-6 text-on-surface-muted dark:text-on-surface-dark-muted\">Add your application’s global search to <code>HeaderActions</code>. The shell’s sidebar search filters local navigation.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = appShellsFragmentGuidance(
 			"app-shells-component-docs-shell-fragments",
-			"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request-Type: partial and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
-			"Component Docs Shell Fragment emits the document title plus out-of-band replacements for main content, scoped sidebar, and family navigation. Active page and family state therefore stay synchronized after navigation.",
+			"Return Layout for ordinary browser requests. With EnableHTMX enabled, return Fragment when HX-Request-Type is partial. This updates the current page without inserting a second HTML document.",
+			"Component Docs Shell Fragment updates the document title and replaces the main content, scoped sidebar, and family navigation out of band, including their active links.",
 			appShellsComponentDocsShellFragmentCode(),
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -666,8 +666,8 @@ func appShellsConsoleFragmentGuidance() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = appShellsFragmentGuidance(
 			"app-shells-console-shell-fragments",
-			"Serve Layout for ordinary browser requests. When EnableHTMX adds enhanced navigation, inspect HX-Request-Type: partial and serve Fragment instead; sending Layout into the main target would swap a complete document into the page.",
-			"Console Shell Fragment emits the document title and stable main region. NavigationOOB controls whether the same response also replaces the sidebar so its active state follows the new page.",
+			"Return Layout for ordinary browser requests. With EnableHTMX enabled, return Fragment when HX-Request-Type is partial. This updates the current page without inserting a second HTML document.",
+			"Console Shell Fragment updates the document title and main content. Enable NavigationOOB to replace the sidebar in the same response and update its active link.",
 			appShellsConsoleShellFragmentCode(),
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -792,7 +792,7 @@ func appShellsLandingResponseGuidance() templ.Component {
 			templ_7745c5c3_Var31 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<section class=\"space-y-2 border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"app-shells-landing-response-title\"><h2 id=\"app-shells-landing-response-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Full-document response</h2><p class=\"max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\"><code class=\"font-mono\">landingshell</code> has no <code class=\"font-mono\">Fragment</code> API in v0.1.9-0.20260910224508-5b2222e54637. Use <code class=\"font-mono\">Layout</code> to render complete public pages; keep any HTMX fragments inside consumer-owned content.</p></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<section class=\"space-y-2 border-t border-outline pt-8 dark:border-outline-dark\" aria-labelledby=\"app-shells-landing-response-title\"><h2 id=\"app-shells-landing-response-title\" data-toc-heading class=\"font-title text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong\">Full-document response</h2><p class=\"max-w-3xl leading-7 text-on-surface dark:text-on-surface-dark\"><code class=\"font-mono\">landingshell</code> has no <code class=\"font-mono\">Fragment</code> API in v0.1.9-0.20260910224508-5b2222e54637. Use <code class=\"font-mono\">Layout</code> to render complete public pages; render any HTMX fragments within your page content.</p></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
