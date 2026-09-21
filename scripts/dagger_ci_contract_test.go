@@ -671,3 +671,59 @@ func runGitOutput(t *testing.T, repo string, args ...string) string {
 	}
 	return string(output)
 }
+
+func TestRequiredCIAggregatesEveryGate(t *testing.T) {
+	data, err := os.ReadFile("../.github/workflows/required.yml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	workflow := string(data)
+	for _, contract := range []string{"uses: ./.github/workflows/ci.yml", "name: Site integration and published consumer", "if: always()", "needs: [code, integration]", "CODE_RESULT: ${{ needs.code.result }}", "INTEGRATION_RESULT: ${{ needs.integration.result }}"} {
+		if !strings.Contains(workflow, contract) {
+			t.Fatalf("required gate missing %q", contract)
+		}
+	}
+	code, err := os.ReadFile("../.github/workflows/ci.yml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(code), "workflow_call:") || strings.Contains(string(code), "paths-ignore:") {
+		t.Fatal("code checks must be called for every required run, including documentation changes")
+	}
+	_, script, ok := strings.Cut(workflow[strings.LastIndex(workflow, "  required:"):], "        run: |\n")
+	if !ok {
+		t.Fatal("missing required gate command")
+	}
+	for _, codeResult := range []string{"success", "failure", "cancelled", "skipped"} {
+		for _, integrationResult := range []string{"success", "failure", "cancelled", "skipped"} {
+			t.Run(codeResult+"/"+integrationResult, func(t *testing.T) {
+				cmd := exec.Command("bash", "-euc", script)
+				cmd.Env = append(os.Environ(), "CODE_RESULT="+codeResult, "INTEGRATION_RESULT="+integrationResult)
+				err := cmd.Run()
+				wantSuccess := codeResult == "success" && integrationResult == "success"
+				if (err == nil) != wantSuccess {
+					t.Fatalf("gate error=%v, want success=%v", err, wantSuccess)
+				}
+			})
+		}
+	}
+	module, err := os.ReadFile("../.dagger/src/index.ts")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(module), `.withEnvVariable("CI", "true")`) {
+		t.Fatal("Dagger tests must enable bounded CI timeout recovery")
+	}
+}
+
+func TestSitePublicationRequiresAggregateCI(t *testing.T) {
+	data, err := os.ReadFile("../.github/workflows/deploy.yml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, expected := range []string{"workflows: [Required CI]", "--workflow required.yml --event push --branch main --commit", "--status success"} {
+		if !strings.Contains(string(data), expected) {
+			t.Fatalf("publication missing aggregate CI guard %q", expected)
+		}
+	}
+}

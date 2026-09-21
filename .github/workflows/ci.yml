@@ -1,15 +1,10 @@
 name: Code CI
 
 on:
-  pull_request:
-    branches: [main]
-    paths-ignore: ['**/*.md']
-  push:
-    branches: [main]
-    paths-ignore: ['**/*.md']
+  workflow_call:
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  group: code-ci-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
@@ -57,6 +52,7 @@ jobs:
 
   test:
     name: Tests + coverage
+    timeout-minutes: 45
     runs-on: >-
       ${{
         github.event_name == 'pull_request' &&

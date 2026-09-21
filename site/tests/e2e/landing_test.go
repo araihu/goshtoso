@@ -477,7 +477,7 @@ func TestLanding_NoConsoleErrors(t *testing.T) {
 	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil)
 	require.NoError(t, err)
 	require.NoError(t, page.Locator("#charts-showcase-frame-line-3d").WaitFor())
-	require.NoError(t, page.FrameLocator("#charts-showcase-frame-line-3d").Locator("canvas").First().WaitFor())
+	require.NoError(t, page.FrameLocator("#charts-showcase-frame-line-3d").Locator("canvas").First().WaitFor(playwright.LocatorWaitForOptions{Timeout: playwright.Float(15000)}))
 
 	title, err := page.Title()
 	require.NoError(t, err)
