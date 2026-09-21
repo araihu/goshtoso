@@ -9,11 +9,13 @@ trap 'rm -rf "$fixture_dir"' EXIT
 printf '%s\n' '{"mode":"focused","tags":["button","actiongroup"],"reasons":["button changed"]}' > "$fixture_dir/focused.json"
 output="$($runner "$fixture_dir/focused.json" --dry-run)"
 grep -q 'E2E tags: e2e,actiongroup,button' <<< "$output"
+grep -q -- '-timeout 15m' <<< "$output"
 test "$(grep -c '^go test ' <<< "$output")" -eq 1
 
 printf '%s\n' '{"mode":"full","tags":["full"],"reasons":["unsafe"]}' > "$fixture_dir/full.json"
 output="$($runner "$fixture_dir/full.json" --dry-run)"
 grep -q 'E2E tags: e2e,full' <<< "$output"
+grep -q -- '-timeout 30m' <<< "$output"
 test "$(grep -c '^go test ' <<< "$output")" -eq 1
 
 output="$($runner --current-source-navbar --dry-run)"
@@ -54,6 +56,7 @@ printf '%s\n' \
   '  else' \
   '    echo "    Error: Not equal"' \
   '  fi' \
+  '  if [[ "${FAKE_GO_MODE:-timeout}" == "panic" ]]; then echo "panic: test timed out after 30m0s"; fi' \
   '  exit 1' \
   'fi' \
   'exit 0' \
@@ -77,6 +80,14 @@ rm -f "$fake_state" "$fake_args"
 if CI=true PATH="$fake_bin:$PATH" FAKE_GO_MODE=mixed FAKE_GO_STATE="$fake_state" FAKE_GO_ARGS="$fake_args" \
   "$runner" "$fixture_dir/full.json" >/dev/null 2>&1; then
   echo "mixed timeout and assertion failure unexpectedly retried and passed" >&2
+  exit 1
+fi
+test "$(<"$fake_state")" -eq 1
+
+rm -f "$fake_state" "$fake_args"
+if CI=true PATH="$fake_bin:$PATH" FAKE_GO_MODE=panic FAKE_GO_STATE="$fake_state" FAKE_GO_ARGS="$fake_args" \
+  "$runner" "$fixture_dir/full.json" >/dev/null 2>&1; then
+  echo "suite panic unexpectedly retried and passed" >&2
   exit 1
 fi
 test "$(<"$fake_state")" -eq 1
