@@ -190,7 +190,7 @@ scripts/run-release-coverage.sh --local-dry-run`
       .withExec(["scripts/check-published-consumer", tag])
       .stdout()
     const script = `set -euo pipefail
-ver=$(sed -nE '/^  tailwindcss:$/,/^  [^ ]/ s/^    version: "?([^"[:space:]]+)"?[[:space:]]*$/\\1/p' muamba.yaml)
+ver=$(scripts/release-tailwind-version)
 test -n "$ver"
 awk -v heading="## [$TAG]" 'index($0, heading) == 1 { found=1; next } found && /^## \\[/ { exit } found { print } END { if (!found) exit 1 }' CHANGELOG.md > /tmp/release-notes.md
 printf '\\n## Build artifacts\\n\\nBuilt with Tailwind CSS %s.\\nAssets attached: styles.css and goshtoso-theme.css.\\n' "$ver" >> /tmp/release-notes.md
