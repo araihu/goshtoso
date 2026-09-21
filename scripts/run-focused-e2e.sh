@@ -97,13 +97,19 @@ case "$mode" in
     ;;
 esac
 
+# Full coverage-instrumented runs exceed 15 minutes on the shared PR runner.
+# Keep focused suites bounded separately from the complete component inventory.
+suite_timeout=15m
+if [[ "$mode" == full ]]; then
+  suite_timeout=30m
+fi
 suite_tags="e2e,$identity_tags"
 echo "E2E mode: $mode"
 echo "E2E tags: $suite_tags"
 jq -r '.reasons[] | "- " + .' "$impact_file"
 
 if [[ "$dry_run" == "--dry-run" ]]; then
-  echo "go test -tags=e2e,$identity_tags ./site/tests/e2e -count=1 -timeout 15m"
+  echo "go test -tags=e2e,$identity_tags ./site/tests/e2e -count=1 -timeout $suite_timeout"
   exit 0
 fi
 
@@ -117,7 +123,7 @@ go_test_args=(
 )
 
 if [[ "${CI:-}" != "true" ]]; then
-  go test "${go_test_args[@]}" -timeout 15m
+  go test "${go_test_args[@]}" -timeout "$suite_timeout"
   exit 0
 fi
 
@@ -126,7 +132,7 @@ trap 'rm -rf "$log_dir"' EXIT
 suite_log="$log_dir/full-suite.log"
 
 set +e
-go test "${go_test_args[@]}" -timeout 15m 2>&1 | tee "$suite_log"
+go test "${go_test_args[@]}" -timeout "$suite_timeout" 2>&1 | tee "$suite_log"
 suite_status="${PIPESTATUS[0]}"
 set -e
 if [[ "$suite_status" -eq 0 ]]; then
@@ -137,7 +143,7 @@ failed_tests=()
 while IFS= read -r failed_test; do
   failed_tests+=("$failed_test")
 done < <(sed -nE 's/^--- FAIL: (Test[A-Za-z0-9_]+).*/\1/p' "$suite_log" | sort -u)
-if [[ "${#failed_tests[@]}" -eq 0 ]]; then
+if [[ "${#failed_tests[@]}" -eq 0 ]] || grep -Eq "panic:|fatal error:|^FAIL[[:space:]].*\[build failed\]" "$suite_log"; then
   exit "$suite_status"
 fi
 

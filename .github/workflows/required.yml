@@ -14,8 +14,11 @@ permissions:
   contents: read
 
 jobs:
-  required:
-    name: Required CI
+  code:
+    uses: ./.github/workflows/ci.yml
+
+  integration:
+    name: Site integration and published consumer
     env:
       CACHE_PARTITION: >-
         ${{
@@ -53,3 +56,17 @@ jobs:
           version: '0.21.8'
           verb: call
           args: required --source=. --cache-partition=${{ env.CACHE_PARTITION }}
+
+  required:
+    name: Required CI
+    if: always()
+    needs: [code, integration]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every CI gate to pass
+        env:
+          CODE_RESULT: ${{ needs.code.result }}
+          INTEGRATION_RESULT: ${{ needs.integration.result }}
+        run: |
+          test "$CODE_RESULT" = success
+          test "$INTEGRATION_RESULT" = success
