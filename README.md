@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/araihu/goshtoso/actions/workflows/ci.yml"><img src="https://github.com/araihu/goshtoso/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://github.com/araihu/goshtoso/actions/workflows/required.yml"><img src="https://github.com/araihu/goshtoso/actions/workflows/required.yml/badge.svg" alt="CI" /></a>
   <a href="https://app.codecov.io/gh/araihu/goshtoso"><img src="https://codecov.io/gh/araihu/goshtoso/branch/main/graph/badge.svg" alt="Codecov coverage" /></a>
   <a href="https://pkg.go.dev/github.com/araihu/goshtoso"><img src="https://pkg.go.dev/badge/github.com/araihu/goshtoso.svg" alt="Go Reference" /></a>
   <a href="https://goreportcard.com/report/github.com/araihu/goshtoso"><img src="https://goreportcard.com/badge/github.com/araihu/goshtoso" alt="Go Report Card" /></a>
