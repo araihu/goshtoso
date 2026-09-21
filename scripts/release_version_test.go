@@ -16,13 +16,17 @@ func TestReleasePublisherReadsTailwindVersion(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	line := regexp.MustCompile(`(?m)^ver=\$\(sed .*\)$`).FindString(string(module))
+	line := regexp.MustCompile(`(?m)^ver=\$\(scripts/release-tailwind-version\)$`).FindString(string(module))
 	if line == "" {
 		t.Fatal("release publisher version command not found")
 	}
 	// Decode the escaped backslashes in the TypeScript template literal, then
 	// execute the actual publisher command against the manifest fixtures.
 	command := strings.ReplaceAll(line, `\\`, `\`) + "\ntest -n \"$ver\"\nprintf '%s' \"$ver\""
+	parser, err := os.ReadFile("release-tailwind-version")
+	if err != nil {
+		t.Fatal(err)
+	}
 	manifest, err := os.ReadFile("../muamba.yaml")
 	if err != nil {
 		t.Fatal(err)
@@ -37,6 +41,12 @@ func TestReleasePublisherReadsTailwindVersion(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			dir := t.TempDir()
+			if err := os.Mkdir(filepath.Join(dir, "scripts"), 0700); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(dir, "scripts/release-tailwind-version"), parser, 0700); err != nil {
+				t.Fatal(err)
+			}
 			if err := os.WriteFile(filepath.Join(dir, "muamba.yaml"), []byte(tc.manifest), 0600); err != nil {
 				t.Fatal(err)
 			}
