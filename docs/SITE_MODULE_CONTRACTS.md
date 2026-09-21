@@ -43,8 +43,10 @@ rejects a Goshtoso replacement, and checks that the fixture actually imports the
 library. Tests and builds run with module files read-only. An explicit tag is
 resolved and its checksums written only in the temporary copy before testing.
 
-The protected `Required CI` check runs both site integration and this contract. The fixture's checked-in
-version is a stable compatibility baseline; update it when the fixture needs a
+The protected `Required CI` check requires site integration, this published-consumer
+contract, lint/build checks, browser tests and coverage, and the site image smoke
+test to pass. Failed, cancelled, or skipped jobs cannot produce a green gate.
+The fixture's checked-in version is a stable compatibility baseline; update it when the fixture needs a
 newly released API, not after every release. Site changes never depend on this
 pin. Existing external-consumer tests with local replacements continue to test
 the current library's integration contracts separately.
