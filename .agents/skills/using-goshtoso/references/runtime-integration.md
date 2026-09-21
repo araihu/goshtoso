@@ -27,7 +27,8 @@ defer, and readiness semantics. Cache stylesheet and loader URLs separately.
 Execute either the loader or direct local scripts, never both.
 
 Custom roles must remain unique and safe. Preserve Alpine plugin and first-party
-ordering before Alpine, plus HTMX before SSE/WS. For custom local-only loading,
+ordering before Alpine. Load HTMX, then `hx-alpine-compat`, then Alpine core;
+keep SSE/WS after HTMX. The default manifest already supplies this order. For custom local-only loading,
 set each `PrimaryURL` to its `LocalURL`, keep the loader local, and use
 `WithoutLocalFallback()`. `WithLocalRuntime` applies only to the default
 manifest. Invalid manifests fail before emitting HTML.
@@ -36,6 +37,18 @@ Goshtoso guarantees its pinned runtime combination, not arbitrary overrides.
 Bind same-version caches only when `assets.GoshtosoVersion().Status` is
 `assets.VersionExact`; development, replacement, and unavailable builds do not
 identify exact Goshtoso bytes.
+
+## Alpine and fragment lifecycle
+
+The bundled `hx-alpine-compat` extension coordinates Alpine with HTMX settling
+and preserves reactive scope during `innerMorph` / `outerMorph` swaps. Register
+app providers before Alpine starts. Do not add a second Alpine runtime,
+`@alpinejs/morph`, or unconditional `Alpine.initTree()` after each swap.
+Replacement swaps still destroy the replaced state. Keep stable IDs for morphs
+and test edited fields, focus, reactive IDs, and repeated navigation.
+
+See [the release migration reference](migration-v0.3.0.md) for request/event
+changes and the App Shells dependency boundary.
 
 ## CSP
 
