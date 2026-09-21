@@ -110,6 +110,7 @@ templ generate
 scripts/run-focused-e2e.sh --current-source-theme-catalog
 scripts/run-component-coverage.sh --phase e2e-merge --impact /out/e2e-impact.json`
     return this.browserProject(source, cachePartition)
+      .withEnvVariable("CI", "true")
       .withFile("/tmp/e2e-changes", changes)
       .withEnvVariable("GOSHTOSO_RUN_NONCE", runNonce)
       .withExec(["bash", "-c", script], { expect: ReturnType.Any })
