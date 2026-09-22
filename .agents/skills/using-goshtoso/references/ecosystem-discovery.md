@@ -17,11 +17,15 @@ or an unreleased `main` branch.
 
 ## Verified Public Baseline
 
-This reference was reconciled on 2026-08-19 against Goshtoso `v0.2.5`,
-Goshtoso App Shells `v0.1.6`, Margo `v0.0.6`, and Goshtoso Charts `v0.0.2`
-module tag. These versions describe the review baseline, not a command to
-downgrade or upgrade. Recheck public versions and honor the consumer's `go.mod`
-before using an API.
+Goshtoso's baseline is `v0.3.0`, checked against its published tag on
+2026-09-11. The HTMX 4 site pairs it with App Shells
+`v0.1.9-0.20260910224508-5b2222e54637`; App Shells `v0.1.8` still uses HTMX 2
+events. Use this exact compatible pseudo-version until selecting a newer
+verified compatible release; do not infer compatibility from `@latest`.
+
+Charts `v0.0.2` and Margo `v0.0.6` remain the earlier API review baselines,
+not claims about their latest releases. Recheck each selected public version
+and honor the consumer's `go.mod` before using an API.
 
 ## Evidence Order
 

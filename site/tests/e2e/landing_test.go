@@ -278,6 +278,8 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 
 		dracula := playground.Locator("#home-theme-picker input[data-theme-key='dracula']")
 		require.NoError(t, dracula.Press("Space"))
+		_, err = page.WaitForFunction(`() => document.querySelector('#theme-playground-frame').contentDocument.documentElement.dataset.theme === 'dracula'`, nil)
+		require.NoError(t, err)
 		got, err := playground.Locator("html").GetAttribute("data-theme")
 		require.NoError(t, err)
 		require.Equal(t, "dracula", got, "activating a segment should set data-theme on <html>")
@@ -294,7 +296,23 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.Nil(t, stored, "playground theme must not persist into homepage storage")
 
 		require.NoError(t, page.Locator("button", playwright.PageLocatorOptions{HasText: "Allow browser storage"}).Click())
-		require.NoError(t, playground.Locator("#home-theme-picker label:has(input[data-theme-key='minimal'])").Click())
+		require.NoError(t, page.Locator("[aria-labelledby='landing-cookie-title']").WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+		allowed, err := page.Evaluate("() => window.goshtosoStorageConsent.allowed()", nil)
+		require.NoError(t, err)
+		require.Equal(t, true, allowed, "storage consent must be active before testing preview isolation")
+
+		// Exercise the same keyboard interaction before and after consent. This
+		// keeps the isolation check independent of pointer scrolling into the iframe.
+		minimal := playground.Locator("#home-theme-picker input[data-theme-key='minimal']")
+		require.NoError(t, minimal.Press("Space"))
+		_, err = page.WaitForFunction(`() => document.querySelector('#theme-playground-frame').contentDocument.documentElement.dataset.theme === 'minimal'`, nil)
+		require.NoError(t, err)
+		checked, err = minimal.IsChecked()
+		require.NoError(t, err)
+		require.True(t, checked, "selected theme segment should be checked after consent")
+		parentThemeAfter, err = page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
+		require.NoError(t, err)
+		require.Equal(t, parentTheme, parentThemeAfter, "playground theme must not restyle homepage after consent")
 		stored, err = page.Evaluate("() => localStorage.getItem('theme')", nil)
 		require.NoError(t, err)
 		require.Nil(t, stored, "playground must remain non-persistent after storage consent")

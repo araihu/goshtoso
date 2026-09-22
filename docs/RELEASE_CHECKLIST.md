@@ -32,11 +32,13 @@ many of these steps, but the checklist keeps the public release story coherent.
   - `docs/RUNTIME_DEPENDENCIES.md`
   - `site/internal/pages/demo/contentpages/legal/runtime_attributions_gen.go`
   - `.claude/skills/using-goshtoso/components-reference.md`
+  - `.agents/skills/using-goshtoso/LICENSE`
   - `.agents/skills/using-goshtoso/SKILL.md`
   - `.agents/skills/using-goshtoso/agents/openai.yaml`
   - `.agents/skills/using-goshtoso/references/components-reference.md`
   - `.agents/skills/using-goshtoso/references/design-intelligence.md`
   - `.agents/skills/using-goshtoso/references/ecosystem-discovery.md`
+  - `.agents/skills/using-goshtoso/references/migration-v0.3.0.md`
   - `.agents/skills/using-goshtoso/references/runtime-integration.md`
   - `.agents/skills/using-goshtoso/references/application-patterns.md`
   - `.agents/skills/using-goshtoso/references/visual-acceptance.md`
