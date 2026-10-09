@@ -2,6 +2,33 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.3.4] - 2026-10-09
+
+### Select change events
+
+- Emit one bubbling `change` event after a mouse or keyboard pick changes the
+  submitted value. HTMX filters can use `InputAttrs` with `hx-trigger="change"`
+  without watching private Select state.
+- Keep initialization, same-value picks, and programmatic model/input
+  synchronization silent. Selecting an empty option follows the same
+  value-change policy. Shell-mode children continue to own their events.
+- Document the public event contract and add a working HTMX filter example,
+  with browser coverage for keyboard selection, form inclusion, empty values,
+  external synchronization, and light/dark themes.
+- Consumers with custom selection watchers or manual change dispatch for HTMX
+  filtering should remove that workaround to avoid duplicate requests. Update
+  the bundled Goshtoso JavaScript together with the library; HTMX and Alpine
+  dependency versions are unchanged.
+
+### Documentation and build
+
+- Build the documentation site against the repository checkout and verify the
+  published package with a separate, isolated consumer fixture.
+- Refresh the public consumer skill and simplify App Shells guides.
+- Update build images and GitHub Actions dependencies, and accept unquoted
+  Tailwind versions during release publication. CSS remains built with
+  Tailwind CSS 4.3.3.
+
 ## [v0.3.3] - 2026-09-11
 
 ### Component text
