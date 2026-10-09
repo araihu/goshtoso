@@ -33,6 +33,28 @@ templ selectDemoContent() {
 })`,
 		)
 		@demo.ExpressionOverridesNote("Select")
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "HTMX Filter",
+				Description: "InputAttrs accepts hx-trigger=change. Mouse and keyboard picks emit one bubbling change after the submitted value is current. Initial rendering, same-value picks, and parent Alpine.Model updates are silent. External input/change synchronization emits no extra event. Shell mode leaves value and events to its children.",
+			},
+			selectHTMXFilterPreview(),
+			`<form>
+    @selectfield.Select(selectfield.Config{
+        ID: "allocation-type", Name: "type", Label: "Allocation type",
+        Options: []selectfield.Option{
+            {Value: "", Label: "All types", Selected: true},
+            {Value: "allocated", Label: "Allocated"},
+            {Value: "reserved", Label: "Reserved"},
+        },
+        InputAttrs: templ.Attributes{
+            "hx-get": "/api/components/select/filter", "hx-trigger": "change",
+            "hx-target": "#allocation-result", "hx-include": "closest form",
+        },
+    })
+    <p id="allocation-result" aria-live="polite">Showing all types</p>
+</form>`,
+		)
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -161,6 +183,36 @@ templ selectDemoContent() {
 </div>`,
 		)
 	</div>
+}
+
+// selectHTMXFilterPreview uses only the public submission-input contract.
+templ selectHTMXFilterPreview() {
+	<form id="select-htmx-filter" class="w-full max-w-xs mx-auto">
+		@selectfield.Select(selectfield.Config{
+			ID: "allocation-type", Name: "type", Label: "Allocation type",
+			Options: []selectfield.Option{
+				{Value: "", Label: "All types", Selected: true},
+				{Value: "allocated", Label: "Allocated"},
+				{Value: "reserved", Label: "Reserved"},
+			},
+			InputAttrs: templ.Attributes{
+				"hx-get": "/api/components/select/filter", "hx-trigger": "change",
+				"hx-target": "#allocation-result", "hx-include": "closest form",
+			},
+		})
+		<p id="allocation-result" class="mt-3 text-sm" aria-live="polite">Showing all types</p>
+	</form>
+}
+
+// FilterResult renders the server response for the HTMX filter example.
+templ FilterResult(value string) {
+	if value == "allocated" {
+		Showing allocated items
+	} else if value == "reserved" {
+		Showing reserved items
+	} else {
+		Showing all types
+	}
 }
 
 // selectDraftRestorationPreview demonstrates the public standard-event sync path.

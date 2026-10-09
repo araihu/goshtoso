@@ -46,7 +46,8 @@ func toOptions[T any](items []T, valueFn func(T) string, labelFn func(T) string,
 	return opts
 }
 
-// AlpineConfig wires client-side Alpine bindings.
+// AlpineConfig wires client-side Alpine bindings. Model synchronizes the selected
+// value with a parent expression. Parent-driven updates do not emit change events.
 type AlpineConfig struct {
 	Model        string
 	BindDisabled string
@@ -83,9 +84,17 @@ type Config struct {
 	// Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits
 	Readonly bool
 	// InputAttrs allows arbitrary HTML attributes on the hidden submission input.
+	// Mouse and keyboard picks emit one bubbling change event after the input's
+	// value and Alpine.Model are current, only when the submitted value changes.
+	// Use hx-trigger="change" here for HTMX filters; no private-state watcher is needed.
+	// Initial rendering, same-value picks, and Alpine.Model updates emit no events.
+	// Selecting an empty option emits change only if the previous value was nonempty.
 	// To restore a draft from external JavaScript, set this input's value and
 	// dispatch a bubbling input or change event; Select synchronizes its visible
-	// value and live option state from either standard event.
+	// value and live option state from either standard event, without emitting an
+	// additional event. The caller's event can itself trigger HTMX listeners.
+	// Shell mode has no submission input or automatic change events; children
+	// own their value and event contract.
 	InputAttrs templ.Attributes
 	// TriggerAttrs appends non-conflicting HTML attributes to the focusable
 	// combobox trigger. Use it for ARIA relationships and event hooks.
