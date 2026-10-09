@@ -23,6 +23,7 @@ var handlerIdentities = map[string][]string{
 	"profile_handler.go":         {"example_profile"},
 	"radio_handler.go":           {"radio"},
 	"search_handler.go":          {"search"},
+	"select_handler.go":          {"select"},
 	"steps_handler.go":           {"steps"},
 	"table_handler.go":           {"table"},
 	"table_fragments.templ":      {"table"},
