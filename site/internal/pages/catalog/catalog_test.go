@@ -31,6 +31,7 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		{"/components/carousel", "Display"},
 		{"/components/chatbubble", "Display"},
 		{"/components/codeblock", "Display"},
+		{"/components/diff", "Display"},
 		{"/components/dependencies", "Display"},
 		{"/components/icon", "Display"},
 		{"/components/kbd", "Display"},

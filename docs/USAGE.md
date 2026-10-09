@@ -597,8 +597,8 @@ so trailing buttons are never nested inside a clickable row. Avoid adding
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The public surface has 57 public component packages and 86 renderable primitives;
-the demo catalog has 53 documentation pages.
+The public surface has 58 public component packages and 87 renderable primitives;
+the demo catalog has 54 documentation pages.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
@@ -621,6 +621,7 @@ configuration previews, and API tables.
 | `codeblock` | `components/codeblock` | Code display block with copy button, compact density, and max-height scrolling |
 | `inlinecode` | `components/inlinecode` | Semantic inline code fragments for prose and documentation |
 | `combobox` | `components/combobox` | Searchable dropdown with single/multi-select, HTMX server search |
+| `diff` | `components/diff` | Generic text comparison with precomputed paired lines, source numbers, markers, and responsive layout |
 | `drawer` | `components/drawer` | Slide-over drawers for navigation and contextual panels |
 | `dropdown` | `components/dropdown` | Context menus, action menus with icons, shortcuts, sections |
 | `emptystate` | `components/emptystate` | Instructive empty surfaces with optional icon and next action |

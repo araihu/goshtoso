@@ -947,6 +947,100 @@
   color: color-mix(in srgb, var(--color-on-surface-dark) 70%, transparent);
 }
 
+/* The shared scroll region preserves complete source lines. Each pair has
+   equal-width columns; on small screens the sources stack in DOM order. */
+.gs-diff {
+  --diff-surface: var(--color-surface);
+  --diff-alt: var(--color-surface-alt);
+  --diff-text: var(--color-on-surface);
+  --diff-outline: var(--color-outline);
+  --diff-added: var(--color-success);
+  --diff-removed: var(--color-danger);
+  --diff-added-text: var(--color-success-action);
+  --diff-removed-text: var(--color-danger-action);
+  max-width: 100%;
+  min-width: 0;
+  overflow: auto;
+  border: 1px solid var(--diff-outline);
+  border-radius: var(--radius-radius);
+  color: var(--diff-text);
+  background: var(--diff-surface);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.dark .gs-diff {
+  --diff-surface: var(--color-surface-dark);
+  --diff-alt: var(--color-surface-dark-alt);
+  --diff-text: var(--color-on-surface-dark);
+  --diff-outline: var(--color-outline-dark);
+  --diff-added-text: var(--color-success-action-dark);
+  --diff-removed-text: var(--color-danger-action-dark);
+}
+.gs-diff:focus-visible {
+  outline: 2px solid var(--diff-text);
+  outline-offset: 2px;
+}
+.gs-diff-content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(max-content, 1fr));
+  width: max-content;
+  min-width: 100%;
+}
+.gs-diff-header, .gs-diff-row {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+}
+.gs-diff-header {
+  background: var(--diff-alt);
+  font-weight: 600;
+}
+.gs-diff-header > div { padding: 0.5rem 0.75rem; }
+.gs-diff-cell, .gs-diff-padding { min-width: 0; }
+.gs-diff-row { border-top: 1px solid var(--diff-outline); }
+.gs-diff-row > :last-child, .gs-diff-header > :last-child {
+  border-left: 1px solid var(--diff-outline);
+}
+.gs-diff-padding { background: var(--diff-alt); }
+.gs-diff-label { display: none; }
+.gs-diff-source {
+  display: flex;
+  align-items: baseline;
+  min-width: max-content;
+  padding: 0.25rem 0.75rem;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+}
+.gs-diff-marker { flex: 0 0 1ch; white-space: pre; font-weight: 700; }
+.gs-diff-number { flex: 0 0 auto; min-width: 3ch; text-align: right; opacity: 0.7; }
+.gs-diff-source pre, .gs-diff-source code {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: pre;
+  tab-size: 4;
+}
+.gs-diff-source pre { min-height: 1.5em; }
+.gs-diff-cell[data-diff-marker="+"] {
+  background: color-mix(in srgb, var(--diff-added) 12%, var(--diff-surface));
+}
+.gs-diff-cell[data-diff-marker="−"] {
+  background: color-mix(in srgb, var(--diff-removed) 12%, var(--diff-surface));
+}
+.gs-diff-cell[data-diff-marker="+"] .gs-diff-marker { color: var(--diff-added-text); }
+.gs-diff-cell[data-diff-marker="−"] .gs-diff-marker { color: var(--diff-removed-text); }
+.gs-diff-empty { grid-column: 1 / -1; margin: 0; padding: 0.75rem; }
+@media (max-width: 639px) {
+  .gs-diff-header, .gs-diff-padding { display: none; }
+  .gs-diff-content { grid-template-columns: minmax(max-content, 1fr); }
+  .gs-diff-row > :last-child { border-left: 0; }
+  .gs-diff-label { display: block; padding: 0.25rem 0.75rem; font-weight: 600; }
+}
+
 /* Format-neutral schema documentation. Explicit selectors keep host prose
    styles from changing the tree's spacing, markers, or identifier treatment. */
 .gs-schema-tree {

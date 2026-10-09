@@ -12,6 +12,7 @@ import (
 	"github.com/araihu/goshtoso/components/carousel"
 	"github.com/araihu/goshtoso/components/chatbubble"
 	"github.com/araihu/goshtoso/components/codeblock"
+	"github.com/araihu/goshtoso/components/diff"
 	"github.com/araihu/goshtoso/components/head"
 	"github.com/araihu/goshtoso/components/icon"
 	"github.com/araihu/goshtoso/components/inlinecode"
@@ -36,6 +37,7 @@ func displayRenderables() map[components.Kind]components.Component {
 		components.KindCardCarousel:        carousel.CardCarousel(carousel.CardConfig{}),
 		components.KindChatBubble:          chatbubble.ChatBubble(chatbubble.Config{}),
 		components.KindTypingIndicator:     chatbubble.TypingIndicator(chatbubble.Config{}),
+		components.KindDiff:                diff.Diff(diff.Config{}),
 		components.KindCodeBlock:           codeblock.CodeBlock(codeblock.Config{}),
 		components.KindDependencies:        head.Dependencies(),
 		components.KindDependenciesMinimal: head.DependenciesMinimal(),
@@ -53,7 +55,7 @@ func displayRenderables() map[components.Kind]components.Component {
 
 func TestDisplayRenderablesExposeKinds(t *testing.T) {
 	values := displayRenderables()
-	require.Len(t, values, 26)
+	require.Len(t, values, 27)
 	for want, value := range values {
 		require.Equal(t, want, value.Kind())
 	}
