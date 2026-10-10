@@ -1,0 +1,76 @@
+package diff
+
+import (
+	"github.com/araihu/goshtoso/expressions"
+	"github.com/araihu/goshtoso/internal/expressionutil"
+	"strconv"
+)
+
+templ diffTemplate(cfg Config) {
+	{{ text := expressions.From(ctx).Diff }}
+	{{ before := expressionutil.Text(cfg.BeforeLabel, text.BeforeLabel) }}
+	{{ after := expressionutil.Text(cfg.AfterLabel, text.AfterLabel) }}
+	<div
+		if cfg.ID != "" {
+			id={ cfg.ID }
+		}
+		class={ "gs-diff " + cfg.RootClass }
+		data-diff
+		role="region"
+		aria-label={ expressionutil.Text(cfg.AriaLabel, before+" / "+after) }
+		tabindex="0"
+		style={ cfg.maxHeightStyle() }
+		{ cfg.RootAttrs... }
+	>
+		<div class="gs-diff-content">
+			<div class="gs-diff-header" aria-hidden="true">
+				<div>@diffSourceLabel(before)</div>
+				<div>@diffSourceLabel(after)</div>
+			</div>
+			if !cfg.hasLines() {
+				<p class="gs-diff-empty">{ expressionutil.Text(cfg.EmptyText, text.EmptyText) }</p>
+			} else {
+				for _, row := range cfg.Rows {
+					if row.Before != nil || row.After != nil {
+						<div class="gs-diff-row" data-diff-operation={ string(row.Operation) }>
+							@diffLine(row.Before, before, row.beforeMarker(), text)
+							@diffLine(row.After, after, row.afterMarker(), text)
+						</div>
+					}
+				}
+			}
+		</div>
+	</div>
+}
+
+templ diffLine(line *Line, label string, marker string, text expressions.Diff) {
+	if line == nil {
+		<div class="gs-diff-padding" aria-hidden="true"></div>
+	} else {
+		<div class="gs-diff-cell" role="group" aria-label={ label } data-diff-marker={ marker }>
+			<div class="gs-diff-label" aria-hidden="true">@diffSourceLabel(label)</div>
+			<div class="gs-diff-source">
+				<span class="gs-diff-number">
+					if line.Number > 0 {
+						{ strconv.Itoa(line.Number) }
+					}
+				</span>
+				if marker == "−" {
+					<span class="gs-diff-marker" role="img" aria-label={ text.RemovedLabel }>{ marker }</span>
+				} else if marker == "+" {
+					<span class="gs-diff-marker" role="img" aria-label={ text.AddedLabel }>{ marker }</span>
+				} else {
+					<span class="gs-diff-marker" role="img" aria-label={ text.UnchangedLabel }>{ marker }</span>
+				}
+				<pre><code>{ line.Text }</code></pre>
+			</div>
+		</div>
+	}
+}
+
+templ diffSourceLabel(label string) {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8l-5-5Zm0 0v5h5M8 12h8M8 16h5"></path>
+	</svg>
+	<span>{ label }</span>
+}

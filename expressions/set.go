@@ -18,6 +18,7 @@ type Set struct {
 	Carousel        Carousel
 	ChatBubble      ChatBubble
 	CodeBlock       CodeBlock
+	Diff            Diff
 	Combobox        Combobox
 	Drawer          Drawer
 	Dropdown        Dropdown
@@ -129,6 +130,22 @@ type ChatBubble struct {
 	SeenLabel string
 	// BotLabel defaults to "BOT".
 	BotLabel string
+}
+
+// Diff contains optional expressions for generic text comparisons.
+type Diff struct {
+	// BeforeLabel defaults to "Before".
+	BeforeLabel string
+	// AfterLabel defaults to "After".
+	AfterLabel string
+	// AddedLabel defaults to "Added".
+	AddedLabel string
+	// RemovedLabel defaults to "Removed".
+	RemovedLabel string
+	// UnchangedLabel defaults to "Unchanged".
+	UnchangedLabel string
+	// EmptyText defaults to "No lines to compare.".
+	EmptyText string
 }
 
 // CodeBlock contains optional expressions for the CodeBlock component family.
@@ -506,6 +523,10 @@ func English() Set {
 			SeenLabel:       "Seen",
 			BotLabel:        "BOT",
 		},
+		Diff: Diff{
+			BeforeLabel: "Before", AfterLabel: "After", AddedLabel: "Added",
+			RemovedLabel: "Removed", UnchangedLabel: "Unchanged", EmptyText: "No lines to compare.",
+		},
 		CodeBlock: CodeBlock{
 			CopyLabel:     "Copy",
 			CopiedLabel:   "Copied!",
@@ -692,6 +713,7 @@ func Merge(base, overrides Set) Set {
 	base.Carousel = mergeCarousel(base.Carousel, overrides.Carousel)
 	base.ChatBubble = mergeChatBubble(base.ChatBubble, overrides.ChatBubble)
 	base.CodeBlock = mergeCodeBlock(base.CodeBlock, overrides.CodeBlock)
+	base.Diff = mergeDiff(base.Diff, overrides.Diff)
 	base.Combobox = mergeCombobox(base.Combobox, overrides.Combobox)
 	base.Drawer = mergeDrawer(base.Drawer, overrides.Drawer)
 	base.Dropdown = mergeDropdown(base.Dropdown, overrides.Dropdown)
@@ -825,6 +847,28 @@ func mergeChatBubble(base, overrides ChatBubble) ChatBubble {
 	}
 	if overrides.BotLabel != "" {
 		base.BotLabel = overrides.BotLabel
+	}
+	return base
+}
+
+func mergeDiff(base, overrides Diff) Diff {
+	if overrides.BeforeLabel != "" {
+		base.BeforeLabel = overrides.BeforeLabel
+	}
+	if overrides.AfterLabel != "" {
+		base.AfterLabel = overrides.AfterLabel
+	}
+	if overrides.AddedLabel != "" {
+		base.AddedLabel = overrides.AddedLabel
+	}
+	if overrides.RemovedLabel != "" {
+		base.RemovedLabel = overrides.RemovedLabel
+	}
+	if overrides.UnchangedLabel != "" {
+		base.UnchangedLabel = overrides.UnchangedLabel
+	}
+	if overrides.EmptyText != "" {
+		base.EmptyText = overrides.EmptyText
 	}
 	return base
 }

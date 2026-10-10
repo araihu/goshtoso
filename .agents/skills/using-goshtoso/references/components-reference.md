@@ -9,7 +9,7 @@ or store mixed values through the common interface and inspect their stable
 `Kind()`. Constructor signatures, config fields, options, and rendered defaults are
 listed below. See the selected Goshtoso tag's `docs/COMPONENT_MODEL.md`.
 
-57 component packages. Each is imported by its directory path; note the
+58 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -584,6 +584,45 @@ import "github.com/araihu/goshtoso/components/combobox"  // package combobox
 | `Selected` | `[]string` |  |
 | `Search` | `string` |  |
 | `Deps` | `map[string]string` |  |
+
+## diff
+
+```go
+import "github.com/araihu/goshtoso/components/diff"  // package diff
+```
+
+**Entry points:** `Diff(cfg Config)`
+
+- **Operation** — OperationUnchanged = "", OperationInsert = "insert", OperationRemove = "remove", OperationReplace = "replace"
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` | ID optionally identifies the scroll region for fragment replacement. |
+| `BeforeLabel` | `string` | BeforeLabel names the baseline source; defaults to the Before expression. |
+| `AfterLabel` | `string` | AfterLabel names the proposed source; defaults to the After expression. |
+| `Rows` | `[]Row` | Rows are comparisons in source order, supplied directly or by RowsFromText. Empty or all-padding rows display the empty state. Identical sources use unchanged rows. |
+| `MaxHeight` | `string` | MaxHeight bounds the scroll region; defaults to "32rem". |
+| `AriaLabel` | `string` | AriaLabel names the focusable region; defaults to "BeforeLabel / AfterLabel". |
+| `EmptyText` | `string` | EmptyText is shown when Rows is empty; defaults to the EmptyText expression. |
+| `RootClass` | `string` | RootClass appends classes to the scroll region. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends integration attributes to the scroll region. |
+
+**Line**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Text` | `string` | Text is the complete line without its newline separator. Spaces, tabs, Unicode, and HTML-looking characters are preserved and escaped. |
+| `Number` | `int` | Number is the optional source line number. Nonpositive numbers are omitted. |
+
+**Row**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Operation` | `Operation` |  |
+| `Before` | `*Line` |  |
+| `After` | `*Line` |  |
 
 ## drawer
 

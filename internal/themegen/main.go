@@ -23,6 +23,10 @@ func Run(stdout io.Writer) error {
 	if err != nil {
 		return err
 	}
+	diff, err := os.ReadFile("css/diff.css")
+	if err != nil {
+		return err
+	}
 	schemaTree, err := os.ReadFile("css/schematree.css")
 	if err != nil {
 		return err
@@ -31,6 +35,7 @@ func Run(stdout io.Writer) error {
 	out := generateTheme(string(mainCSS), map[string]string{
 		"all-themes.css": string(allThemes),
 		"codeblock.css":  string(codeblock),
+		"diff.css":       string(diff),
 		"schematree.css": string(schemaTree),
 	})
 

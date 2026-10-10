@@ -1,0 +1,140 @@
+package diffpage
+
+import (
+	"fmt"
+	"strings"
+	"github.com/araihu/goshtoso/components/diff"
+	"github.com/araihu/goshtoso/site/internal/pages/demo"
+)
+
+templ diffDemoContent() {
+	<div id="diff-fragment">
+		@demo.ComponentDemo(demo.ComponentDemoProps{
+			Title: "Diff",
+			Description: "Compare any text: prose, source code, logs, or configuration. RowsFromText uses sergi/go-diff to calculate complete line changes and source numbers from two strings. You can also supply precomputed rows for your own comparison policy. Goshtoso presents complete escaped lines. Below 640px each pair stacks Original then Revised, with labels on every populated side. Long lines scroll within a keyboard-accessible region bounded to 32rem by default.",
+		}, diffPreview("diff-text", textRows(), ""), textExample)
+		@demo.ExpressionOverridesNote("Diff")
+		@demo.DemoSection(demo.DemoSectionProps{
+			Title: "Unequal replacement blocks",
+			Description: "Pair complete lines in source order. Use nil for missing sides, including unmatched lines in a replacement block. RowsFromText pairs these blocks automatically. A non-nil line with empty Text is a real blank line. Number is an optional independent source line number, never calculated by the renderer.",
+		}, diffPreview("diff-unequal", unequalRows(), ""), unequalExample)
+		@demo.DemoSection(demo.DemoSectionProps{
+			Title: "Verbatim text and long lines",
+			Description: "Spaces, tabs, Unicode, and HTML-looking source remain text. There is no lexer or client initialization. Long lines share horizontal scrolling without overlapping the opposite source or overflowing the page.",
+		}, diffPreview("diff-verbatim", verbatimRows(), ""), verbatimExample)
+		@demo.DemoSection(demo.DemoSectionProps{
+			Title: "Empty inputs",
+			Description: "Empty or all-padding rows show the empty state. EmptyText and the built-in expressions can supply application-owned wording.",
+		}, diffPreview("diff-empty", nil, ""), emptyExample)
+		@demo.DemoSection(demo.DemoSectionProps{
+			Title: "Identical inputs",
+			Description: "Supply unchanged rows for matching text. Both sources keep their labels and optional numbers; the viewer performs no equality check.",
+		}, diffPreview("diff-identical", identicalRows(), ""), identicalExample)
+		@demo.DemoSection(demo.DemoSectionProps{
+			Title: "Bounded scrolling",
+			Description: "Set MaxHeight to a CSS length to bound long comparisons. Focus the region and use the arrow keys to scroll. An ID provides an ordinary HTMX fragment target: render diff.Diff again in your handler and replace the region with outerHTML; no component-specific endpoint or JavaScript is needed.",
+		}, diffPreview("diff-scroll", scrollRows(), "180px"), scrollExample)
+	</div>
+}
+
+templ diffPreview(id string, rows []diff.Row, height string) {
+	<div class="w-full min-w-0">
+		@diff.Diff(diff.Config{
+			ID: id, BeforeLabel: "Original", AfterLabel: "Revised",
+			Rows: rows, MaxHeight: height,
+		})
+	</div>
+}
+
+func textRows() []diff.Row {
+	return diff.RowsFromText(
+		"A quiet morning.\nThe door is closed.\nWait outside.\n",
+		"A quiet morning.\nThe door is open.\nCome inside.\nWelcome.\n",
+	)
+}
+
+func unequalRows() []diff.Row {
+	return []diff.Row{
+		{Before: &diff.Line{Text: "func greet() {", Number: 10}, After: &diff.Line{Text: "func greet() {", Number: 20}},
+		{Operation: diff.OperationReplace, Before: &diff.Line{Text: "    print(\"hello\")", Number: 11}, After: &diff.Line{Text: "    name := \"world\"", Number: 21}},
+		{Operation: diff.OperationReplace, Before: &diff.Line{Text: "    return", Number: 12}, After: &diff.Line{Text: "    print(\"hello, \" + name)", Number: 22}},
+		{Operation: diff.OperationReplace, After: &diff.Line{Text: "    return", Number: 23}},
+		{Before: &diff.Line{Text: "", Number: 13}, After: &diff.Line{Text: "", Number: 24}},
+		{Before: &diff.Line{Text: "}", Number: 14}, After: &diff.Line{Text: "}", Number: 25}},
+	}
+}
+
+func verbatimRows() []diff.Row {
+	return []diff.Row{
+		{Operation: diff.OperationReplace, Before: &diff.Line{Text: "\t  <div data-version='old'>old</div>  ", Number: 1}, After: &diff.Line{Text: "\t  <img src=x onerror=alert('new')>  ", Number: 1}},
+		{Before: &diff.Line{Text: "  Olá, 世界 👋  ", Number: 2}, After: &diff.Line{Text: "  Olá, 世界 👋  ", Number: 2}},
+		{Operation: diff.OperationReplace, Before: &diff.Line{Text: strings.Repeat("original text · ", 24), Number: 3}, After: &diff.Line{Text: strings.Repeat("revised text · ", 12), Number: 3}},
+	}
+}
+
+func identicalRows() []diff.Row {
+	return []diff.Row{{Before: &diff.Line{Text: "Nothing changed.", Number: 1}, After: &diff.Line{Text: "Nothing changed.", Number: 1}}}
+}
+
+func scrollRows() []diff.Row {
+	rows := make([]diff.Row, 30)
+	for index := range rows {
+		text := fmt.Sprintf("Event %02d: ready", index + 1)
+		rows[index] = diff.Row{Before: &diff.Line{Text: text, Number: index + 1}, After: &diff.Line{Text: text, Number: index + 1}}
+	}
+	return rows
+}
+
+const textExample = `before := "A quiet morning.\nThe door is closed.\nWait outside.\n"
+after := "A quiet morning.\nThe door is open.\nCome inside.\nWelcome.\n"
+
+@diff.Diff(diff.Config{
+    ID: "text-review", BeforeLabel: "Original", AfterLabel: "Revised",
+    Rows: diff.RowsFromText(before, after),
+})`
+
+const unequalExample = `@diff.Diff(diff.Config{
+    BeforeLabel: "Original", AfterLabel: "Revised",
+    Rows: []diff.Row{
+        {Before: &diff.Line{Text: "func greet() {", Number: 10}, After: &diff.Line{Text: "func greet() {", Number: 20}},
+        {Operation: diff.OperationReplace, Before: &diff.Line{Text: "    print(\"hello\")", Number: 11}, After: &diff.Line{Text: "    name := \"world\"", Number: 21}},
+        {Operation: diff.OperationReplace, Before: &diff.Line{Text: "    return", Number: 12}, After: &diff.Line{Text: "    print(\"hello, \" + name)", Number: 22}},
+        {Operation: diff.OperationReplace, After: &diff.Line{Text: "    return", Number: 23}},
+        {Before: &diff.Line{Text: "", Number: 13}, After: &diff.Line{Text: "", Number: 24}},
+        {Before: &diff.Line{Text: "}", Number: 14}, After: &diff.Line{Text: "}", Number: 25}},
+    },
+})`
+
+const verbatimExample = `@diff.Diff(diff.Config{
+    BeforeLabel: "Original", AfterLabel: "Revised",
+    Rows: []diff.Row{
+        {Operation: diff.OperationReplace, Before: &diff.Line{Text: "\t  <div data-version='old'>old</div>  ", Number: 1}, After: &diff.Line{Text: "\t  <img src=x onerror=alert('new')>  ", Number: 1}},
+        {Before: &diff.Line{Text: "  Olá, 世界 👋  ", Number: 2}, After: &diff.Line{Text: "  Olá, 世界 👋  ", Number: 2}},
+        {Operation: diff.OperationReplace, Before: &diff.Line{Text: strings.Repeat("original text · ", 24), Number: 3}, After: &diff.Line{Text: strings.Repeat("revised text · ", 12), Number: 3}},
+    },
+})`
+
+const emptyExample = `@diff.Diff(diff.Config{
+    BeforeLabel: "Original", AfterLabel: "Revised",
+    Rows: nil,
+})`
+
+const identicalExample = `@diff.Diff(diff.Config{
+    BeforeLabel: "Original", AfterLabel: "Revised",
+    Rows: []diff.Row{
+        {Before: &diff.Line{Text: "Nothing changed.", Number: 1}, After: &diff.Line{Text: "Nothing changed.", Number: 1}},
+    },
+})`
+
+const scrollExample = `rows := make([]diff.Row, 30)
+for index := range rows {
+    text := fmt.Sprintf("Event %02d: ready", index + 1)
+    rows[index] = diff.Row{
+        Before: &diff.Line{Text: text, Number: index + 1},
+        After: &diff.Line{Text: text, Number: index + 1},
+    }
+}
+@diff.Diff(diff.Config{
+    ID: "long-comparison", BeforeLabel: "Original", AfterLabel: "Revised",
+    Rows: rows, MaxHeight: "180px",
+})`

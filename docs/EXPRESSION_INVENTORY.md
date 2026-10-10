@@ -36,6 +36,12 @@ fields retain precedence over the expression set.
 | `CodeBlock.CopiedLabel` | Copied! | [components/codeblock/codeblock.templ:43](../components/codeblock/codeblock.templ#L43) |
 | `CodeBlock.ErrorText` | Unable to copy | [components/codeblock/codeblock.templ:44](../components/codeblock/codeblock.templ#L44) |
 | `CodeBlock.CopyAriaLabel` | Complete application-formatted message callback | [components/codeblock/codeblock.templ:41](../components/codeblock/codeblock.templ#L41) |
+| `Diff.BeforeLabel` | Before | [components/diff/diff.templ](../components/diff/diff.templ) |
+| `Diff.AfterLabel` | After | [components/diff/diff.templ](../components/diff/diff.templ) |
+| `Diff.AddedLabel` | Added | [components/diff/diff.templ](../components/diff/diff.templ) |
+| `Diff.RemovedLabel` | Removed | [components/diff/diff.templ](../components/diff/diff.templ) |
+| `Diff.UnchangedLabel` | Unchanged | [components/diff/diff.templ](../components/diff/diff.templ) |
+| `Diff.EmptyText` | No lines to compare. | [components/diff/diff.templ](../components/diff/diff.templ) |
 | `Combobox.Placeholder` | Select… | [components/combobox/expressions.go:11](../components/combobox/expressions.go#L11) |
 | `Combobox.ClearLabel` | Clear all | [components/combobox/combobox.templ:61](../components/combobox/combobox.templ#L61), [components/combobox/combobox.templ:73](../components/combobox/combobox.templ#L73) |
 | `Combobox.SearchPlaceholder` | Search… | [components/combobox/combobox.templ:85](../components/combobox/combobox.templ#L85) |

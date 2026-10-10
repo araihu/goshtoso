@@ -19,6 +19,7 @@ import (
 	checkboxpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/checkbox"
 	codeblockpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/codeblock"
 	comboboxpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/combobox"
+	diffpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/diff"
 	drawerpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/drawer"
 	dropdownpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/dropdown"
 	emptystatepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/emptystate"
@@ -90,6 +91,7 @@ func mustDefault() *Registry {
 		chatbubblepage.Definition,
 		checkboxpage.Definition,
 		codeblockpage.Definition,
+		diffpage.Definition,
 		comboboxpage.Definition,
 		drawerpage.Definition,
 		dropdownpage.Definition,

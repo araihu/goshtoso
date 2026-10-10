@@ -13,11 +13,13 @@ func TestGenerateTheme(t *testing.T) {
 @import "../all-themes.css";
 @import "./codeblock.css";
 @import "./schematree.css";
+@import "./diff.css";
 @theme { --font-body: x; }`
 
 	imports := map[string]string{
 		"all-themes.css": "@theme { --color-primary: red; }",
 		"codeblock.css":  ".ch-x { color: red; }",
+		"diff.css":       ".gs-diff { overflow: auto; }",
 		"schematree.css": ".gs-schema-tree { color: inherit; }",
 	}
 	out := generateTheme(mainCSS, imports)
@@ -45,6 +47,9 @@ func TestGenerateTheme(t *testing.T) {
 	}
 	if strings.Contains(out, `@import "`) {
 		t.Error("relative @imports must be replaced, not left in place")
+	}
+	if !strings.Contains(out, ".gs-diff") {
+		t.Error("diff.css must be inlined")
 	}
 	if !strings.Contains(out, ".gs-schema-tree") {
 		t.Error("schematree.css must be inlined")

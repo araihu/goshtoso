@@ -29,6 +29,9 @@ func generateTheme(mainCSS string, imports map[string]string) string {
 		case trimmed == `@import "./codeblock.css";`:
 			b.WriteString(imports["codeblock.css"])
 			b.WriteByte('\n')
+		case trimmed == `@import "./diff.css";`:
+			b.WriteString(imports["diff.css"])
+			b.WriteByte('\n')
 		case trimmed == `@import "./schematree.css";`:
 			b.WriteString(imports["schematree.css"])
 			b.WriteByte('\n')

@@ -18,7 +18,7 @@ import (
 )
 
 func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
-	got := make([]components.Kind, 0, 85)
+	got := make([]components.Kind, 0, 87)
 	for _, inventory := range publicRenderableInventories() {
 		for want, value := range inventory {
 			require.Equal(t, want, value.Kind())
@@ -27,7 +27,7 @@ func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
 	}
 
 	require.ElementsMatch(t, components.AllKinds(), got)
-	require.Len(t, got, 86)
+	require.Len(t, got, 87)
 	require.Len(t, got, len(components.AllKinds()))
 }
 
@@ -56,6 +56,8 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"chatbubble.TypingIndicator":      {},
 		"checkbox.Checkbox":               {},
 		"checkbox.CheckboxGroup":          {},
+		"diff.Diff":                       {},
+		"diff.RowsFromText":               {},
 		"codeblock.CodeBlock":             {},
 		"inlinecode.InlineCode":           {},
 		"inlinecode.WithRootAttrs":        {},
@@ -210,6 +212,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"carousel.Instance.WithExpressions":                  {},
 		"chatbubble.Instance.WithExpressions":                {},
 		"chatbubble.TypingIndicatorInstance.WithExpressions": {},
+		"diff.Instance.WithExpressions":                      {},
 		"codeblock.Instance.WithExpressions":                 {},
 		"combobox.Instance.WithExpressions":                  {},
 		"drawer.Instance.WithExpressions":                    {},
@@ -462,7 +465,7 @@ func allowedRenderableMethods(t *testing.T) map[string]struct{} {
 			methods[receiver+".Render"] = struct{}{}
 		}
 	}
-	require.Len(t, methods, 172)
+	require.Len(t, methods, 174)
 	return methods
 }
 

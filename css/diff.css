@@ -1,0 +1,127 @@
+/* The shared scroll region preserves complete source lines. Each pair has
+   equal-width columns; on small screens the sources stack in DOM order. */
+.gs-diff {
+  --diff-surface: var(--color-surface);
+  --diff-alt: var(--color-surface-alt);
+  --diff-text: var(--color-on-surface);
+  --diff-code: var(--color-on-surface-strong);
+  --diff-outline: var(--color-outline);
+  --diff-added: var(--color-success);
+  --diff-removed: var(--color-danger);
+  --diff-added-text: var(--color-success-action);
+  --diff-removed-text: var(--color-danger-action);
+  max-width: 100%;
+  min-width: 0;
+  overflow: auto;
+  border: 1px solid var(--diff-outline);
+  border-radius: var(--radius-radius);
+  color: var(--diff-text);
+  background: var(--diff-surface);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.dark .gs-diff {
+  --diff-surface: var(--color-surface-dark);
+  --diff-alt: var(--color-surface-dark-alt);
+  --diff-text: var(--color-on-surface-dark);
+  --diff-code: var(--color-on-surface-dark-strong);
+  --diff-outline: var(--color-outline-dark);
+  --diff-added-text: var(--color-success-action-dark);
+  --diff-removed-text: var(--color-danger-action-dark);
+}
+.gs-diff:focus-visible {
+  outline: 2px solid var(--diff-text);
+  outline-offset: 2px;
+}
+.gs-diff-content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(max-content, 1fr));
+  width: max-content;
+  min-width: 100%;
+}
+.gs-diff-header, .gs-diff-row {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+}
+.gs-diff-header {
+  background: var(--diff-alt);
+  border-bottom: 1px solid var(--diff-outline);
+  color: var(--diff-code);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.gs-diff-header > div, .gs-diff-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+}
+.gs-diff-header svg, .gs-diff-label svg { width: 1rem; height: 1rem; flex: none; }
+.gs-diff-cell, .gs-diff-padding { min-width: 0; }
+.gs-diff-row > :last-child, .gs-diff-header > :last-child {
+  border-left: 1px solid var(--diff-outline);
+}
+.gs-diff-padding {
+  background: repeating-linear-gradient(135deg, var(--diff-surface), var(--diff-surface) 3px, var(--diff-alt) 3px, var(--diff-alt) 6px);
+}
+.gs-diff-label { display: none; }
+.gs-diff-source {
+  display: flex;
+  align-items: baseline;
+  min-width: max-content;
+  color: var(--diff-code);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+}
+.gs-diff-marker { flex: 0 0 1.25rem; text-align: center; white-space: pre; }
+.gs-diff-number {
+  flex: 0 0 auto;
+  min-width: calc(4ch + 1.5rem);
+  padding: 0 0.75rem;
+  color: var(--diff-text);
+  background: var(--diff-alt);
+  text-align: right;
+  user-select: none;
+}
+.gs-diff-source pre, .gs-diff-source code {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: pre;
+  tab-size: 4;
+}
+.gs-diff-source pre { min-height: 1.25rem; padding-right: 0.75rem; }
+.gs-diff-cell[data-diff-marker="+"] {
+  background: color-mix(in srgb, var(--diff-added) 12%, var(--diff-surface));
+}
+.gs-diff-cell[data-diff-marker="−"] {
+  background: color-mix(in srgb, var(--diff-removed) 12%, var(--diff-surface));
+}
+.gs-diff-cell[data-diff-marker="+"] .gs-diff-number {
+  background: color-mix(in srgb, var(--diff-added) 30%, var(--diff-surface));
+}
+.gs-diff-cell[data-diff-marker="−"] .gs-diff-number {
+  background: color-mix(in srgb, var(--diff-removed) 30%, var(--diff-surface));
+}
+.gs-diff-cell[data-diff-marker="+"] .gs-diff-marker { color: var(--diff-added-text); }
+.gs-diff-cell[data-diff-marker="−"] .gs-diff-marker { color: var(--diff-removed-text); }
+.gs-diff-empty { grid-column: 1 / -1; margin: 0; padding: 0.75rem; }
+@media (max-width: 639px) {
+  .gs-diff-header, .gs-diff-padding { display: none; }
+  .gs-diff-content { grid-template-columns: minmax(max-content, 1fr); }
+  .gs-diff-row > :last-child { border-left: 0; }
+  .gs-diff-label {
+    display: flex;
+    padding: 0.375rem 0.75rem;
+    background: var(--diff-alt);
+    color: var(--diff-code);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}

@@ -73,6 +73,7 @@
 
 /* Code block palette (Chroma class-mode tokens, theme-independent) */
 @import "./codeblock.css";
+@import "./diff.css";
 @import "./schematree.css";
 
 /* Font families (not theme-dependent) */

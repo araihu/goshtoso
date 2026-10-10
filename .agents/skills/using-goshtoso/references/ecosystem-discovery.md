@@ -17,8 +17,9 @@ or an unreleased `main` branch.
 
 ## Verified Public Baseline
 
-Goshtoso's baseline is `v0.3.0`, checked against its published tag on
-2026-09-11. The HTMX 4 site pairs it with App Shells
+Goshtoso's baseline is `v0.4.0`. This release adds the generic `components/diff`
+viewer and `diff.RowsFromText` for automatic line comparisons. The HTMX 4 site
+pairs it with App Shells
 `v0.1.9-0.20260910224508-5b2222e54637`; App Shells `v0.1.8` still uses HTMX 2
 events. Use this exact compatible pseudo-version until selecting a newer
 verified compatible release; do not infer compatibility from `@latest`.

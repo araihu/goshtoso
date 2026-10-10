@@ -277,6 +277,43 @@
       },
       "type": "object"
     },
+    "Diff": {
+      "additionalProperties": false,
+      "description": "Diff expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "AddedLabel": {
+          "default": "Added",
+          "description": "AddedLabel defaults to \"Added\".",
+          "type": "string"
+        },
+        "AfterLabel": {
+          "default": "After",
+          "description": "AfterLabel defaults to \"After\".",
+          "type": "string"
+        },
+        "BeforeLabel": {
+          "default": "Before",
+          "description": "BeforeLabel defaults to \"Before\".",
+          "type": "string"
+        },
+        "EmptyText": {
+          "default": "No lines to compare.",
+          "description": "EmptyText defaults to \"No lines to compare.\".",
+          "type": "string"
+        },
+        "RemovedLabel": {
+          "default": "Removed",
+          "description": "RemovedLabel defaults to \"Removed\".",
+          "type": "string"
+        },
+        "UnchangedLabel": {
+          "default": "Unchanged",
+          "description": "UnchangedLabel defaults to \"Unchanged\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "Drawer": {
       "additionalProperties": false,
       "description": "Drawer expressions. Omitted or empty fields inherit defaults.",

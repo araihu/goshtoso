@@ -78,7 +78,7 @@ func TestAgentSkillChoosesCurrentNavigationAndActionPrimitives(t *testing.T) {
 func TestEcosystemDiscoveryRecordsCurrentPublicBaseline(t *testing.T) {
 	discovery := readDoc(t, "../.agents/skills/using-goshtoso/references/ecosystem-discovery.md")
 	for _, want := range []string{
-		"Goshtoso's baseline is `v0.3.0`",
+		"Goshtoso's baseline is `v0.4.0`",
 		"`v0.1.9-0.20260910224508-5b2222e54637`",
 		"Margo `v0.0.6`",
 		"Charts `v0.0.2`",
@@ -104,8 +104,8 @@ func TestEcosystemDiscoveryRecordsCurrentPublicBaseline(t *testing.T) {
 
 func TestAgentSkillInstallExampleTargetsCurrentRelease(t *testing.T) {
 	skill := readDoc(t, "../.agents/skills/using-goshtoso/SKILL.md")
-	if !strings.Contains(skill, "go get github.com/araihu/goshtoso@v0.3.0") {
-		t.Error("agent skill install example must target v0.3.0")
+	if !strings.Contains(skill, "go get github.com/araihu/goshtoso@v0.4.0") {
+		t.Error("agent skill install example must target v0.4.0")
 	}
 }
 

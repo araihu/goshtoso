@@ -2,6 +2,29 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.4.0] - 2026-10-10
+
+### Generic text diff
+
+- Add `diff.Diff` to compare any text: prose, source code, logs, or configuration.
+  The pull-request-style layout includes line-number gutters, change markers,
+  aligned replacement padding, and native bounded scrolling. Sources stack on
+  small screens and support Goshtoso and Minimal themes in light and dark modes.
+- Add `diff.RowsFromText(before, after)`, backed by `sergi/go-diff` v1.4.0, to
+  calculate complete line changes, independent source numbers, and unequal
+  replacement blocks. Applications may also provide comparison rows directly.
+- Preserve whitespace, Unicode, real blank lines, and escaped HTML-looking text.
+  The helper recognizes LF and CRLF separators and includes separator changes
+  in the comparison. No JavaScript is required to render or scroll the viewer.
+- Support expression overrides and ordinary HTMX fragment replacement, with a
+  specification, documentation examples, and calculation/browser coverage.
+
+### Upgrading
+
+- No breaking API changes or migration steps are required. Update the library
+  and served CSS together to include the new Diff styles. Tailwind CSS remains
+  at 4.3.3; bundled HTMX and Alpine versions are unchanged.
+
 ## [v0.3.4] - 2026-10-09
 
 ### Select change events
