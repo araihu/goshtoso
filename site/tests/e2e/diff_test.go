@@ -31,7 +31,7 @@ func TestDiffThemesResponsiveAndVerbatimWithoutJavaScript(t *testing.T) {
 					assertDiffLayout(t, page, width)
 					assertDiffTheme(t, page, dark)
 					code := page.Locator("#diff-verbatim code")
-					for index, expected := range []string{"\t  <script>alert('old')</script>  ", "\t  <img src=x onerror=alert('new')>  ", "  Olá, 世界 👋  ", "  Olá, 世界 👋  ", strings.Repeat("original text · ", 24), strings.Repeat("revised text · ", 12)} {
+					for index, expected := range []string{"\t  <div data-version='old'>old</div>  ", "\t  <img src=x onerror=alert('new')>  ", "  Olá, 世界 👋  ", "  Olá, 世界 👋  ", strings.Repeat("original text · ", 24), strings.Repeat("revised text · ", 12)} {
 						actual, err := code.Nth(index).TextContent()
 						require.NoError(t, err)
 						require.Equal(t, expected, actual)
@@ -65,7 +65,9 @@ func assertDiffLayout(t *testing.T, page playwright.Page, width int) {
                 const a = cells[0].getBoundingClientRect(), b = cells[1].getBoundingClientRect();
                 const codeFits = [...row.querySelectorAll('code')].every(code => {
                     const source = code.getBoundingClientRect(), cell = code.closest('.gs-diff-cell').getBoundingClientRect();
-                    return source.right <= cell.right + 1;
+                    const number = code.closest('.gs-diff-source').querySelector('.gs-diff-number').getBoundingClientRect();
+                    const marker = code.closest('.gs-diff-source').querySelector('.gs-diff-marker').getBoundingClientRect();
+                    return source.right <= cell.right + 1 && number.right <= marker.left + 1 && marker.right <= source.left + 1;
                 });
                 if (!codeFits) return false;
                 if (!mobile) return Math.abs(a.top - b.top) <= 1 && Math.abs(a.width - b.width) <= 1 && a.right <= b.left + 1;
@@ -93,7 +95,14 @@ func assertDiffTheme(t *testing.T, page playwright.Page, dark bool) {
         const expected = token => { probe.style.color = 'var(--color-' + token + suffix + ')'; return getComputedStyle(probe).color; };
         const added = viewer.querySelector('[data-diff-marker="+"] .gs-diff-marker');
         const removed = viewer.querySelector('[data-diff-marker="−"] .gs-diff-marker');
+        const gutters = [added, removed].every(marker => {
+            const cell = marker.closest('.gs-diff-cell');
+            const number = cell.querySelector('.gs-diff-number');
+            return getComputedStyle(number).backgroundColor !== getComputedStyle(cell).backgroundColor &&
+                getComputedStyle(number).color === expected('on-surface');
+        });
         const valid = getComputedStyle(viewer).color === expected('on-surface') &&
+            gutters &&
             getComputedStyle(added).color === expected('success-action') &&
             getComputedStyle(removed).color === expected('danger-action') &&
             added.textContent === '+' && removed.textContent === '−' &&

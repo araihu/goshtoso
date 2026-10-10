@@ -24,8 +24,8 @@ templ diffTemplate(cfg Config) {
 	>
 		<div class="gs-diff-content">
 			<div class="gs-diff-header" aria-hidden="true">
-				<div>{ before }</div>
-				<div>{ after }</div>
+				<div>@diffSourceLabel(before)</div>
+				<div>@diffSourceLabel(after)</div>
 			</div>
 			if !cfg.hasLines() {
 				<p class="gs-diff-empty">{ expressionutil.Text(cfg.EmptyText, text.EmptyText) }</p>
@@ -48,8 +48,13 @@ templ diffLine(line *Line, label string, marker string, text expressions.Diff) {
 		<div class="gs-diff-padding" aria-hidden="true"></div>
 	} else {
 		<div class="gs-diff-cell" role="group" aria-label={ label } data-diff-marker={ marker }>
-			<div class="gs-diff-label" aria-hidden="true">{ label }</div>
+			<div class="gs-diff-label" aria-hidden="true">@diffSourceLabel(label)</div>
 			<div class="gs-diff-source">
+				<span class="gs-diff-number">
+					if line.Number > 0 {
+						{ strconv.Itoa(line.Number) }
+					}
+				</span>
 				if marker == "−" {
 					<span class="gs-diff-marker" role="img" aria-label={ text.RemovedLabel }>{ marker }</span>
 				} else if marker == "+" {
@@ -57,13 +62,15 @@ templ diffLine(line *Line, label string, marker string, text expressions.Diff) {
 				} else {
 					<span class="gs-diff-marker" role="img" aria-label={ text.UnchangedLabel }>{ marker }</span>
 				}
-				<span class="gs-diff-number">
-					if line.Number > 0 {
-						{ strconv.Itoa(line.Number) }
-					}
-				</span>
 				<pre><code>{ line.Text }</code></pre>
 			</div>
 		</div>
 	}
+}
+
+templ diffSourceLabel(label string) {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8l-5-5Zm0 0v5h5M8 12h8M8 16h5"></path>
+	</svg>
+	<span>{ label }</span>
 }

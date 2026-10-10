@@ -156,7 +156,7 @@ func unequalRows() []diff.Row {
 
 func verbatimRows() []diff.Row {
 	return []diff.Row{
-		{Operation: diff.OperationReplace, Before: &diff.Line{Text: "\t  <script>alert('old')</script>  ", Number: 1}, After: &diff.Line{Text: "\t  <img src=x onerror=alert('new')>  ", Number: 1}},
+		{Operation: diff.OperationReplace, Before: &diff.Line{Text: "\t  <div data-version='old'>old</div>  ", Number: 1}, After: &diff.Line{Text: "\t  <img src=x onerror=alert('new')>  ", Number: 1}},
 		{Before: &diff.Line{Text: "  Olá, 世界 👋  ", Number: 2}, After: &diff.Line{Text: "  Olá, 世界 👋  ", Number: 2}},
 		{Operation: diff.OperationReplace, Before: &diff.Line{Text: strings.Repeat("original text · ", 24), Number: 3}, After: &diff.Line{Text: strings.Repeat("revised text · ", 12), Number: 3}},
 	}
@@ -200,7 +200,7 @@ const unequalExample = `@diff.Diff(diff.Config{
 const verbatimExample = `@diff.Diff(diff.Config{
     BeforeLabel: "Original", AfterLabel: "Revised",
     Rows: []diff.Row{
-        {Operation: diff.OperationReplace, Before: &diff.Line{Text: "\t  <script>alert('old')</script>  ", Number: 1}, After: &diff.Line{Text: "\t  <img src=x onerror=alert('new')>  ", Number: 1}},
+        {Operation: diff.OperationReplace, Before: &diff.Line{Text: "\t  <div data-version='old'>old</div>  ", Number: 1}, After: &diff.Line{Text: "\t  <img src=x onerror=alert('new')>  ", Number: 1}},
         {Before: &diff.Line{Text: "  Olá, 世界 👋  ", Number: 2}, After: &diff.Line{Text: "  Olá, 世界 👋  ", Number: 2}},
         {Operation: diff.OperationReplace, Before: &diff.Line{Text: strings.Repeat("original text · ", 24), Number: 3}, After: &diff.Line{Text: strings.Repeat("revised text · ", 12), Number: 3}},
     },

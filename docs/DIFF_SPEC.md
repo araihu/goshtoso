@@ -150,7 +150,12 @@ regenerate the expression-file schema.
 
 Use Goshtoso semantic surface, text, outline, success, and danger tokens,
 including their dark-mode counterparts and readable action colors for markers.
-Use the theme's border radius and monospace font for source content. Preserve
+Use the theme's border radius and monospace font for source content. The visual
+layout follows a pull-request split diff: a compact document-style header,
+continuous 20px source lines at 12px, source numbers before operation markers,
+and stronger addition/removal tint in the number gutters than the text area.
+Missing sides use neutral diagonal padding; rows have no horizontal dividers.
+Mobile source labels retain the same document icon and neutral surface. Preserve
 readability in Goshtoso and Minimal themes, in both light and dark modes.
 
 The first render and responsive behavior require no JavaScript. Consumers can
