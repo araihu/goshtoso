@@ -57,6 +57,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"checkbox.Checkbox":               {},
 		"checkbox.CheckboxGroup":          {},
 		"diff.Diff":                       {},
+		"diff.RowsFromText":               {},
 		"codeblock.CodeBlock":             {},
 		"inlinecode.InlineCode":           {},
 		"inlinecode.WithRootAttrs":        {},

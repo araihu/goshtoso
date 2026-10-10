@@ -30,6 +30,12 @@ func TestDiffThemesResponsiveAndVerbatimWithoutJavaScript(t *testing.T) {
 					setThemeMode(t, page, theme, dark)
 					assertDiffLayout(t, page, width)
 					assertDiffTheme(t, page, dark)
+					calculated, err := page.Locator("#diff-text code").AllTextContents()
+					require.NoError(t, err)
+					require.Equal(t, []string{"A quiet morning.", "A quiet morning.", "The door is closed.", "The door is open.", "Wait outside.", "Come inside.", "Welcome."}, calculated)
+					lastNumber, err := page.Locator("#diff-text .gs-diff-number").Last().TextContent()
+					require.NoError(t, err)
+					require.Equal(t, "4", lastNumber, "calculated additions keep their own source numbers")
 					code := page.Locator("#diff-verbatim code")
 					for index, expected := range []string{"\t  <div data-version='old'>old</div>  ", "\t  <img src=x onerror=alert('new')>  ", "  Olá, 世界 👋  ", "  Olá, 世界 👋  ", strings.Repeat("original text · ", 24), strings.Repeat("revised text · ", 12)} {
 						actual, err := code.Nth(index).TextContent()

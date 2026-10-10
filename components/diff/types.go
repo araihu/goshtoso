@@ -1,5 +1,6 @@
-// Package diff presents precomputed, complete source lines without
-// computing a diff or interpreting the source language.
+// Package diff compares and presents complete source lines from any text.
+// RowsFromText calculates line differences; Diff renders supplied rows without
+// interpreting the source language.
 package diff
 
 import "github.com/a-h/templ"
@@ -28,9 +29,10 @@ type Line struct {
 	Number int
 }
 
-// Row pairs complete lines in before-then-after reading order. Consumers own
-// comparison, normalization, and validation. For unequal replacement blocks,
-// use OperationReplace with a nil side for each unmatched line.
+// Row pairs complete lines in before-then-after reading order. Use RowsFromText
+// or supply comparisons with application-owned normalization and validation.
+// For unequal replacement blocks, use OperationReplace with a nil side for
+// each unmatched line.
 // Both-nil rows are omitted. Unknown operations render neutrally. Populated
 // sides always render, even when they do not match the operation's contract.
 type Row struct {
@@ -49,8 +51,9 @@ type Config struct {
 	BeforeLabel string
 	// AfterLabel names the proposed source; defaults to the After expression.
 	AfterLabel string
-	// Rows are precomputed comparisons in source order. Empty or all-padding
-	// rows display the empty state. Identical sources use unchanged rows.
+	// Rows are comparisons in source order, supplied directly or by RowsFromText.
+	// Empty or all-padding rows display the empty state. Identical sources use
+	// unchanged rows.
 	Rows []Row
 	// MaxHeight bounds the scroll region; defaults to "32rem".
 	MaxHeight string

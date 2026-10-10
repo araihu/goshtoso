@@ -11,10 +11,12 @@ two texts. Supported content includes source code, prose, logs, configuration,
 manifests, and plain text. Configuration is one example, not the component's
 identity or a special rendering mode.
 
-Consumers supply precomputed comparison rows. Goshtoso owns their presentation,
-responsive layout, theme integration, and accessibility. Consumers retain the
-diff algorithm, parsing, normalization, and application rules. The component
-does not interpret text or require a lexer, parser, or client runtime.
+Consumers may supply precomputed comparison rows or calculate them with
+`RowsFromText(before, after)`. Goshtoso uses `github.com/sergi/go-diff` v1.4.0 for
+optional line comparison and owns presentation, responsive layout, theme
+integration, and accessibility. Consumers retain parsing, normalization, and
+application rules. Rendering does not interpret text or require a lexer,
+parser, or client runtime.
 
 ## Public API
 
@@ -57,19 +59,22 @@ type Config struct {
     RootAttrs   templ.Attributes
 }
 
+func RowsFromText(before, after string) []Row
 func Diff(Config) Instance
 func (Instance) WithExpressions(expressions.Diff) Instance
 ```
 
 `Line.Text` contains a complete source line, excluding its newline separator.
-The consumer chooses how to split source text and represent a trailing empty
-line. The renderer preserves all supplied text, including leading and trailing
-spaces, tabs, Unicode, and HTML-looking characters. It does not trim, tokenize,
-normalize, or calculate differences within a line.
+When supplying rows directly, the consumer chooses how to split source text
+and represent a trailing empty line. The renderer preserves all supplied text,
+including leading and trailing spaces, tabs, Unicode, and HTML-looking
+characters. It does not trim, tokenize, normalize, or calculate differences
+within a line.
 
 `Line.Number` is optional and refers to the original source. Positive values
 are displayed verbatim; zero and negative values omit the number. Each side
-has independent numbering. The component never invents or renumbers lines.
+has independent numbering. The renderer never invents or renumbers lines;
+`RowsFromText` assigns source numbers before rendering.
 
 A non-nil `Line` with empty text represents a real blank line. A nil side
 represents alignment padding and has no source text, line number, or change
@@ -91,15 +96,38 @@ source order and using nil for the shorter side's remaining positions. For
 example, replacing two lines with three uses two paired rows and a third row
 with `Before: nil`.
 
-Consumers are responsible for choosing operations and pairing lines. The
-component performs no equality check. Unknown operations render populated
-sides neutrally. A side supplied contrary to the operation contract still
+When supplying rows directly, consumers are responsible for choosing operations
+and pairing lines. The renderer performs no equality check. Unknown operations
+render populated sides neutrally. A side supplied contrary to the operation contract still
 renders its text, but only the operation's applicable side receives a change
 marker. A row with both sides nil is omitted.
 
 Nil or empty `Rows`, or rows with no populated sides, show the empty state.
 Identical texts use unchanged rows and retain their text and optional numbers.
 An entirely added or removed text uses insertion or removal rows, respectively.
+
+## Calculating rows from text
+
+`RowsFromText` uses sergi/go-diff's line-to-rune encoding, compares those tokens,
+and rehydrates complete lines. It never uses character-level refinement or
+returns library-specific types. Sources receive independent one-based numbers.
+Adjacent additions and removals between unchanged blocks become replacement
+rows, paired in source order with nil padding for the shorter side. A block
+containing only additions or only removals uses insert or remove rows.
+
+Empty strings contain no lines. LF and CRLF terminate lines; a final terminator
+does not create an extra blank line. A real empty line, such as the second line
+of `"a\n\n"`, remains populated. The helper removes only the line separator
+from displayed text, preserving spaces, tabs, Unicode, and bare carriage
+returns. Comparisons include the separators: changes to newline style or a
+final newline mark the affected lines changed, even when their displayed text
+is identical. The viewer does not display a separate newline warning.
+
+The helper uses the library's default one-second comparison timeout. When that
+search deadline is exceeded, the library returns coarser delete/insert changes;
+all input lines still appear. Tokenization and row conversion are outside that
+search deadline. Consumers needing other algorithms or policies can still
+supply `Config.Rows` directly. Rendering never calculates rows implicitly.
 
 ## Layout and scrolling
 
@@ -172,7 +200,7 @@ comments remain the API reference; regenerate component skill references.
 
 Provide one preview and one matching code example per variant:
 
-1. Plain text with unchanged, inserted, removed, and replaced lines.
+1. Plain text calculated from two strings with `RowsFromText`.
 2. A source-code replacement block with unequal line counts and source numbers.
 3. Long lines, tabs, indentation, Unicode, and literal HTML-looking text.
 4. Empty inputs and identical inputs as separately identified examples.
@@ -182,6 +210,11 @@ Use generic labels such as `Original` and `Revised` across the primary examples.
 A configuration example may be added within this generic documentation.
 
 ## Verification and acceptance
+
+Calculation tests must cover empty and identical text, complete insertions and
+removals, unequal replacements, independent numbering after edits, repeated
+lines, LF/CRLF/final separators, whitespace, Unicode, and HTML-looking text.
+Source reconstruction must retain every line in order on both sides.
 
 Rendering tests must verify operations, independent source numbers, padding
 versus blank lines, empty and identical inputs, unknown-operation fallback,
@@ -207,7 +240,7 @@ regressions required by repository guidance.
 
 ## Out of scope
 
-Diff calculation, line matching, word or character highlighting, syntax
+Custom diff algorithms, word or character highlighting, syntax
 highlighting, parsers, normalization, editing, merge controls, submission
 workflows, authorization, and language-specific validation. These can be
 considered separately without restricting this component's generic text API.

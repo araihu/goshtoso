@@ -42,7 +42,7 @@ func diffDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.ComponentDemo(demo.ComponentDemoProps{
 			Title:       "Diff",
-			Description: "Compare any text with precomputed rows: prose, source code, logs, or configuration. Goshtoso presents complete escaped lines; your application owns the diff algorithm and source normalization. Below 640px each pair stacks Original then Revised, with labels on every populated side. Long lines scroll within a keyboard-accessible region bounded to 32rem by default.",
+			Description: "Compare any text: prose, source code, logs, or configuration. RowsFromText uses sergi/go-diff to calculate complete line changes and source numbers from two strings. You can also supply precomputed rows for your own comparison policy. Goshtoso presents complete escaped lines. Below 640px each pair stacks Original then Revised, with labels on every populated side. Long lines scroll within a keyboard-accessible region bounded to 32rem by default.",
 		}, diffPreview("diff-text", textRows(), ""), textExample).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -53,7 +53,7 @@ func diffDemoContent() templ.Component {
 		}
 		templ_7745c5c3_Err = demo.DemoSection(demo.DemoSectionProps{
 			Title:       "Unequal replacement blocks",
-			Description: "Pair complete lines in source order. Use nil for missing sides, including unmatched lines in a replacement block. A non-nil line with empty Text is a real blank line. Number is an optional independent source line number, never calculated by the renderer.",
+			Description: "Pair complete lines in source order. Use nil for missing sides, including unmatched lines in a replacement block. RowsFromText pairs these blocks automatically. A non-nil line with empty Text is a real blank line. Number is an optional independent source line number, never calculated by the renderer.",
 		}, diffPreview("diff-unequal", unequalRows(), ""), unequalExample).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -135,12 +135,10 @@ func diffPreview(id string, rows []diff.Row, height string) templ.Component {
 }
 
 func textRows() []diff.Row {
-	return []diff.Row{
-		{Before: &diff.Line{Text: "A quiet morning.", Number: 1}, After: &diff.Line{Text: "A quiet morning.", Number: 1}},
-		{Operation: diff.OperationReplace, Before: &diff.Line{Text: "The door is closed.", Number: 2}, After: &diff.Line{Text: "The door is open.", Number: 2}},
-		{Operation: diff.OperationRemove, Before: &diff.Line{Text: "Wait outside.", Number: 3}},
-		{Operation: diff.OperationInsert, After: &diff.Line{Text: "Come inside.", Number: 3}},
-	}
+	return diff.RowsFromText(
+		"A quiet morning.\nThe door is closed.\nWait outside.\n",
+		"A quiet morning.\nThe door is open.\nCome inside.\nWelcome.\n",
+	)
 }
 
 func unequalRows() []diff.Row {
@@ -175,14 +173,12 @@ func scrollRows() []diff.Row {
 	return rows
 }
 
-const textExample = `@diff.Diff(diff.Config{
+const textExample = `before := "A quiet morning.\nThe door is closed.\nWait outside.\n"
+after := "A quiet morning.\nThe door is open.\nCome inside.\nWelcome.\n"
+
+@diff.Diff(diff.Config{
     ID: "text-review", BeforeLabel: "Original", AfterLabel: "Revised",
-    Rows: []diff.Row{
-        {Before: &diff.Line{Text: "A quiet morning.", Number: 1}, After: &diff.Line{Text: "A quiet morning.", Number: 1}},
-        {Operation: diff.OperationReplace, Before: &diff.Line{Text: "The door is closed.", Number: 2}, After: &diff.Line{Text: "The door is open.", Number: 2}},
-        {Operation: diff.OperationRemove, Before: &diff.Line{Text: "Wait outside.", Number: 3}},
-        {Operation: diff.OperationInsert, After: &diff.Line{Text: "Come inside.", Number: 3}},
-    },
+    Rows: diff.RowsFromText(before, after),
 })`
 
 const unequalExample = `@diff.Diff(diff.Config{

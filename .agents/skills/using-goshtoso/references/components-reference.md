@@ -602,7 +602,7 @@ import "github.com/araihu/goshtoso/components/diff"  // package diff
 | `ID` | `string` | ID optionally identifies the scroll region for fragment replacement. |
 | `BeforeLabel` | `string` | BeforeLabel names the baseline source; defaults to the Before expression. |
 | `AfterLabel` | `string` | AfterLabel names the proposed source; defaults to the After expression. |
-| `Rows` | `[]Row` | Rows are precomputed comparisons in source order. Empty or all-padding rows display the empty state. Identical sources use unchanged rows. |
+| `Rows` | `[]Row` | Rows are comparisons in source order, supplied directly or by RowsFromText. Empty or all-padding rows display the empty state. Identical sources use unchanged rows. |
 | `MaxHeight` | `string` | MaxHeight bounds the scroll region; defaults to "32rem". |
 | `AriaLabel` | `string` | AriaLabel names the focusable region; defaults to "BeforeLabel / AfterLabel". |
 | `EmptyText` | `string` | EmptyText is shown when Rows is empty; defaults to the EmptyText expression. |
