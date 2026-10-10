@@ -45,11 +45,20 @@
         if (initial) this.syncFromInput(initial);
       },
       selectOption: function (option) {
-        this.selectedValues = [option.value];
+        var previousValue = this.selectedOption ? this.selectedOption.value : "";
+        if (!this.selectedOption || previousValue !== option.value) {
+          this.selectedValues = [option.value];
+        }
         this.activeIndex = this.allOptions.findIndex(function (item) { return item.value === option.value; });
         this.isOpen = false;
         this.openedWithKeyboard = false;
         this.$nextTick(function () {
+          // Notify only user changes, after Alpine has updated the submission input.
+          // The bubbling event also reaches our inbound bridge; syncing the same
+          // value is a no-op, so consumers can listen without a feedback loop.
+          if (previousValue !== option.value && this.$refs.hiddenInput) {
+            this.$refs.hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
+          }
           if (this.$refs.trigger) this.$refs.trigger.focus();
         }.bind(this));
       },
@@ -79,6 +88,7 @@
       },
       syncFromInput: function (value) {
         var option = this.allOptions.find(function (item) { return item.value === value; });
+        if (option && this.selectedValues.length === 1 && this.selectedValues[0] === option.value) return;
         this.selectedValues = option ? [option.value] : [];
         this.activeIndex = option ? this.allOptions.indexOf(option) : 0;
       },
