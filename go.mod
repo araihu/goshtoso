@@ -3,7 +3,7 @@ module github.com/araihu/goshtoso
 go 1.27.0
 
 require (
-	github.com/a-h/templ v0.3.1020
+	github.com/a-h/templ v0.3.1070
 	github.com/alecthomas/chroma/v2 v2.27.0
 	github.com/araihu/assets v0.2.3
 	github.com/araihu/muamba v0.0.6
@@ -14,12 +14,11 @@ require (
 	go.yaml.in/yaml/v3 v3.0.5
 	golang.org/x/image v0.46.0
 	golang.org/x/net v0.59.0
-	golang.org/x/sys v0.48.0
+	golang.org/x/sys v0.49.0
 )
 
 require (
 	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
-	github.com/google/go-cmp v0.7.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
