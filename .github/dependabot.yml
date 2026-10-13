@@ -9,6 +9,7 @@ updates:
       - "/examples/brand-site"
       - "/examples/getting-started"
       - "/site"
+      - "/tests/external/runtime-manifest"
     schedule:
       interval: "weekly"
     # These in-repository consumers replace Goshtoso with the checkout.
