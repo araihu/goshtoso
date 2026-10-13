@@ -110,14 +110,14 @@ jobs:
           args: tests --source=. --changes=.e2e-changes --cache-partition=${{ env.CACHE_PARTITION }} --run-nonce=${{ github.run_id }}-${{ github.run_attempt }} export --path=.dagger-output
       - name: Upload E2E impact decision
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.0
         with:
           name: e2e-impact
           path: .dagger-output/e2e-impact.json
           retention-days: 7
       - name: Upload E2E artifacts
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.0
         with:
           name: e2e-results
           path: |

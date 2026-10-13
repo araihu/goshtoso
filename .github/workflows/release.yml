@@ -29,7 +29,7 @@ jobs:
           args: release-verify --source=. --cache-partition=trusted-release --run-nonce=${{ github.run_id }}-${{ github.run_attempt }} export --path=.coverage
       - name: Upload release diagnostics
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.0
         with:
           name: release-e2e-results
           path: |
@@ -71,7 +71,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload authoritative coverage
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.0
         with:
           name: release-coverage
           path: .coverage/
@@ -90,7 +90,7 @@ jobs:
           ref: ${{ github.ref }}
           persist-credentials: false
       - name: Download verified coverage handoff
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: release-coverage
           path: .coverage
@@ -134,7 +134,7 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: bash scripts/publish-release-image
       - name: Preserve immutable release image for GitOps
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.0
         with:
           name: image-goshtoso-release
           path: image-goshtoso-release.txt
