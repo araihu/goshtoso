@@ -5462,6 +5462,9 @@
     .md\:max-h-\[90vh\] {
       max-height: 90vh;
     }
+    .md\:w-48 {
+      width: calc(var(--spacing) * 48);
+    }
     .md\:w-64 {
       width: calc(var(--spacing) * 64);
     }

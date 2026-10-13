@@ -2,7 +2,6 @@ package deploymentspage
 
 import (
 	"github.com/a-h/templ"
-	"github.com/araihu/goshtoso-app-shells/consoleshell"
 	"github.com/araihu/goshtoso/components/sidebar"
 	"github.com/araihu/goshtoso/site/internal/examples/deployments"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
@@ -19,22 +18,28 @@ type View struct {
 	Created                       bool
 }
 
-func Layout(v View) templ.Component {
+func navigation(v View) sidebar.Config {
 	active := v.Screen
 	if active == "detail" {
 		active = "list"
 	}
-	title := map[string]string{"overview": "Overview", "list": "Deployments", "new": "New deployment", "detail": "Deployment details"}[v.Screen]
-	cfg := consoleshell.Config{
-		Brand: consoleshell.Brand{Name: "Northstar", HomeURL: v.State.URL("overview", 0)},
-		Navigation: consoleshell.Navigation{DisableSearch: true, Items: []sidebar.Item{
-			{ID: "overview", Label: "Overview", Href: v.State.URL("overview", 0)},
-			{ID: "list", Label: "Deployments", Href: v.State.URL("list", 0)},
-			{ID: "new", Label: "New deployment", Href: v.State.URL("new", 0)},
-		}},
-		HeaderActions: HeaderActions(), Footer: Footer(),
-		Interactions: consoleshell.InteractionConfig{LocalRuntime: true},
-		Appearance:   consoleshell.AppearanceConfig{DefaultTheme: "araihu"},
+	items := []sidebar.Item{
+		{ID: "overview", Label: "Overview", Href: v.State.URL("overview", 0)},
+		{ID: "list", Label: "Deployments", Href: v.State.URL("list", 0)},
+		{ID: "new", Label: "New deployment", Href: v.State.URL("new", 0)},
 	}
-	return consoleshell.Layout(cfg, consoleshell.Page{Title: title, Active: active, Content: Body(v), Head: Styles()})
+	for i := range items {
+		items[i].Active = items[i].ID == active
+		items[i].LinkAttrs = navigationAttrs(items[i].Href)
+	}
+	return sidebar.Config{Items: items, DisableSkipLink: true}
+}
+
+func navigationAttrs(href string) templ.Attributes {
+	return templ.Attributes{
+		"hx-get":      href,
+		"hx-target":   "#main-content",
+		"hx-swap":     "innerHTML",
+		"hx-push-url": "true",
+	}
 }
