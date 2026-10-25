@@ -2,6 +2,16 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.4.2] - 2026-10-25
+
+### Site and asset maintenance
+
+- Remove the retired product from the organization showcase and its captured
+  site images.
+- Refresh the catalog compatibility fixture from Assets v0.2.5 while preserving
+  the existing generated Heroicons names.
+- Keep the verified release image as the source of the public site update.
+
 ## [v0.4.0] - 2026-10-10
 
 ### Generic text diff
