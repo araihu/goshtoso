@@ -65,9 +65,12 @@
     document.addEventListener("htmx:finally:request", settled, true);
   }, true);
 
+  const moveVersions = new WeakMap();
+
   function move(root, key) {
+    const version = moveVersions.get(root) || 0;
     function focus() {
-      if (!root.isConnected || !root.contains(document.activeElement)) return;
+      if ((moveVersions.get(root) || 0) !== version || !root.isConnected || !root.contains(document.activeElement)) return;
       const trigger = root.querySelector('[role="combobox"]');
       if (!trigger || trigger.getAttribute("aria-expanded") !== "true") return;
       const opts = options(root);
@@ -80,6 +83,7 @@
     // Alpine opens the panel on the trigger's key handler. Wait for its DOM
     // update before focusing an option that was display:none at keydown time.
     afterOwnedUpdate(root, function () {
+      if ((moveVersions.get(root) || 0) !== version) return;
       const trigger = root.querySelector('[role="combobox"]');
       if (trigger && trigger.getAttribute("aria-expanded") !== "true") {
         trigger.click();
@@ -119,6 +123,8 @@
         }
         break;
       case "Escape":
+        // Escape wins over any keyboard open/focus work still awaiting paint.
+        moveVersions.set(root, (moveVersions.get(root) || 0) + 1);
         afterOwnedUpdate(root, function () {
           const trigger = root.querySelector('[role="combobox"]');
           if (trigger) trigger.focus({ preventScroll: true });

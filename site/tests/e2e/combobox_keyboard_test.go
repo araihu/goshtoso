@@ -86,4 +86,15 @@ func TestComboboxKeyboardSelectClearAndSkipDisabled(t *testing.T) {
 		wait(`() => document.activeElement?.id === 'industry-trigger' && document.querySelector('#region-trigger').getAttribute('aria-expanded') === 'false'`)
 	}
 
+	// Escape must cancel an open queued before Alpine has painted it.
+	_, err = page.Evaluate(`async () => {
+  const trigger=document.querySelector('#industry-trigger');
+  trigger.focus();
+  trigger.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true}));
+  trigger.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+  for(let i=0;i<6;i++) await new Promise(requestAnimationFrame);
+ }`, nil)
+	require.NoError(t, err)
+	wait(`() => document.querySelector('#industry-trigger').getAttribute('aria-expanded') === 'false' && document.activeElement?.id === 'industry-trigger'`)
+
 }
