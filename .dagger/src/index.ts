@@ -237,7 +237,7 @@ echo "published $TAG and badge documents"`
       .stdout()
   }
 
-  /** Build the homelab site image from this repository. */
+  /** Build the optional native site image from this repository. */
   @func()
   siteImage(
     @argument({ defaultPath: ".", ignore: SOURCE_EXCLUDES }) source: Directory,
