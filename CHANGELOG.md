@@ -2,6 +2,20 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.4.4] - 2026-10-25
+
+### Added
+
+- Combobox options accept non-interactive trailing content through `Option.Trailing`. Supporting counts stay outside the closed selection label and submitted value.
+
+### Fixed
+
+- Escape cancels deferred keyboard opening and focus work, so a pending ArrowDown action cannot reopen a dismissed combobox.
+
+### Upgrading
+
+- Update the library and served Goshtoso JavaScript together. CSS, bundled HTMX and Alpine versions remain unchanged.
+
 ## [v0.4.3] - 2026-10-25
 
 ### Fixed
