@@ -2,9 +2,11 @@ package server
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/site/internal/examples/ticker"
@@ -29,11 +31,18 @@ func (s *Server) handleTickerStream(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Accel-Buffering", "no")
 
 	rc := http.NewResponseController(w)
-	ch, unsubscribe := s.tickerBroker.Subscribe()
+	broker := s.tickerBroker
+	if s.requestScopedTicker {
+		broker = ticker.NewBroker(ticker.NewSimulator(time.Now().UnixNano()), tickerInterval())
+		ctx, cancel := context.WithCancel(r.Context())
+		defer cancel()
+		go broker.Run(ctx)
+	}
+	ch, unsubscribe := broker.Subscribe()
 	defer unsubscribe()
 
 	// Send the current state immediately so cells populate before the first tick.
-	writeTickerSnapshot(r, w, rc, s.tickerBroker.Snapshot())
+	writeTickerSnapshot(r, w, rc, broker.Snapshot())
 
 	for {
 		select {

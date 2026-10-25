@@ -40,6 +40,9 @@ dependencies and render most HTML on the server.
 - **Go-native examples and tests** using templ generation and Playwright-backed
   E2E coverage.
 
+The documentation site also supports a Go WebAssembly server on Cloudflare
+Workers. See [site/README.md](site/README.md) for local testing and deployment.
+
 ## Quick Start
 
 Goshtoso requires **Go 1.27.0 or newer**.

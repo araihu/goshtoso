@@ -3,8 +3,6 @@ package legalpages
 import (
 	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
-	"net/http"
-	"net/http/httptest"
 	"path"
 )
 
@@ -65,12 +63,6 @@ func tailwindLicenseURL() string {
 	return ""
 }
 
-func linkedAssetServes(assetURL string) bool {
-	request := httptest.NewRequest(http.MethodGet, assetURL, nil)
-	response := httptest.NewRecorder()
-	assets.Handler().ServeHTTP(response, request)
-	return response.Code == http.StatusOK
-}
 
 templ attributionsContent() {
 	<div class="space-y-10">

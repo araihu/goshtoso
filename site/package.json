@@ -1,0 +1,19 @@
+{
+  "name": "goshtoso-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-worker.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run",
+    "pretest": "npm run build",
+    "test": "node --test worker/*.test.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "4.152.0"
+  },
+  "overrides": {
+    "undici": "7.30.1"
+  }
+}

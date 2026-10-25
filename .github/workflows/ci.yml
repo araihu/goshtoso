@@ -147,3 +147,18 @@ jobs:
           docker build --platform linux/amd64 --build-arg GOSHTOSO_DOCS_VERSION=v0.0.0 \
             -t goshtoso-site:release-test .
           scripts/check-site-image goshtoso-site:release-test v0.0.0
+
+  site-worker:
+    name: Go WASM site on Cloudflare Workers
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Build and test the Worker with local workerd
+        uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.2.1
+        with:
+          version: '0.21.8'
+          verb: call
+          args: site-worker --source=. --cache-partition=${{ env.CACHE_PARTITION }}

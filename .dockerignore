@@ -23,3 +23,6 @@ og-site
 .dagger
 **/.env*
 server
+site/node_modules
+site/dist
+site/.wrangler

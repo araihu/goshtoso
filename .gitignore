@@ -116,3 +116,6 @@ scripts/skillgen/
 
 # Local coverage badge — published badge now lives in a shields.io endpoint gist (CI-updated).
 badges/coverage.svg
+
+# Cloudflare Workers local state
+site/.wrangler/

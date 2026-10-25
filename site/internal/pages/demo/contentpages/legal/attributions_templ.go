@@ -11,8 +11,6 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"github.com/araihu/goshtoso/assets"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
-	"net/http"
-	"net/http/httptest"
 	"path"
 )
 
@@ -96,13 +94,6 @@ func tailwindLicenseURL() string {
 		return licenseURL
 	}
 	return ""
-}
-
-func linkedAssetServes(assetURL string) bool {
-	request := httptest.NewRequest(http.MethodGet, assetURL, nil)
-	response := httptest.NewRecorder()
-	assets.Handler().ServeHTTP(response, request)
-	return response.Code == http.StatusOK
 }
 
 func attributionsContent() templ.Component {
@@ -194,7 +185,7 @@ func runtimeAttrSection(rows []attribution) templ.Component {
 			var templ_7745c5c3_Var4 templ.SafeURL
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(a.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 131, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 123, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -207,7 +198,7 @@ func runtimeAttrSection(rows []attribution) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 131, Col: 166}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 123, Col: 166}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -220,7 +211,7 @@ func runtimeAttrSection(rows []attribution) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(a.Version)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 133, Col: 88}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 125, Col: 88}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -233,7 +224,7 @@ func runtimeAttrSection(rows []attribution) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(a.LocalURL)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 134, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 126, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -251,7 +242,7 @@ func runtimeAttrSection(rows []attribution) templ.Component {
 				var templ_7745c5c3_Var8 templ.SafeURL
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(a.LicenseURL))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 137, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 129, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -264,7 +255,7 @@ func runtimeAttrSection(rows []attribution) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(a.License)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 137, Col: 195}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 129, Col: 195}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -282,7 +273,7 @@ func runtimeAttrSection(rows []attribution) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(a.License)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 139, Col: 132}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 131, Col: 132}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -300,7 +291,7 @@ func runtimeAttrSection(rows []attribution) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(a.Note)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 142, Col: 103}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 134, Col: 103}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -347,7 +338,7 @@ func attrSection(title, subtitle string, rows []attribution) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.ResolveAttributeValue(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 153, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 145, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -360,7 +351,7 @@ func attrSection(title, subtitle string, rows []attribution) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 153, Col: 133}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 145, Col: 133}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -373,7 +364,7 @@ func attrSection(title, subtitle string, rows []attribution) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(subtitle)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 154, Col: 95}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 146, Col: 95}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -391,7 +382,7 @@ func attrSection(title, subtitle string, rows []attribution) templ.Component {
 			var templ_7745c5c3_Var16 templ.SafeURL
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(a.Href))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 168, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 160, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -404,7 +395,7 @@ func attrSection(title, subtitle string, rows []attribution) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(a.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 168, Col: 166}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 160, Col: 166}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -417,7 +408,7 @@ func attrSection(title, subtitle string, rows []attribution) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(a.License)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 171, Col: 131}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 163, Col: 131}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -430,7 +421,7 @@ func attrSection(title, subtitle string, rows []attribution) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(a.Note)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 173, Col: 103}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/contentpages/legal/attributions.templ`, Line: 165, Col: 103}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
