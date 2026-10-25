@@ -244,7 +244,13 @@
       var clearButton = event.target.closest("[data-combobox-clear]");
       if (clearButton && root.contains(clearButton)) {
         event.preventDefault();
+        var ownedFocus = document.activeElement === clearButton;
         clearAll(root);
+        // Clear hides its own button. Keep keyboard focus on a visible control.
+        if (ownedFocus) {
+          var trigger = root.querySelector('[role="combobox"]');
+          if (trigger) trigger.focus({ preventScroll: true });
+        }
         return;
       }
 

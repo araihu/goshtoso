@@ -205,7 +205,7 @@ var IndustryCfg = combobox.Config{
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Client Multi-Select",
-				Description: "Checkbox selection with Clear all. DisablePersistence lets server-rendered state own the selection after navigation.",
+				Description: "Use arrow keys to move between enabled options, Enter or Space to select, and Escape to return to the trigger. Checkbox selection supports Clear all. DisablePersistence lets server-rendered state own the selection after navigation.",
 			},
 			comboboxSkillsPreview(),
 			`var SkillsCfg = combobox.Config{
