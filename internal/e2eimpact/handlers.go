@@ -13,6 +13,7 @@ var handlerIdentities = map[string][]string{
 	"banner_handler.go":          {"banner"},
 	"button_handler.go":          {"button"},
 	"carousel_handler.go":        {"carousel"},
+	"worker_chat.go":             {"example_chat"},
 	"chat_handler.go":            {"example_chat"},
 	"deployments_handler.go":     {"example_deployments"},
 	"dropdown_handler.go":        {"dropdown"},
@@ -36,6 +37,8 @@ var handlerIdentities = map[string][]string{
 }
 
 var sharedServerFiles = map[string]bool{
+	"assets_js.go":               true,
+	"assets_native.go":           true,
 	"charts.go":                  true,
 	"getting_started_handler.go": true,
 	"llms.go":                    true,

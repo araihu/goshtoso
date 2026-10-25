@@ -9,10 +9,6 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"os"
-	"path/filepath"
-	"runtime"
-
 	"github.com/araihu/goshtoso/components/codeblock"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
@@ -173,30 +169,6 @@ func manualSetupCode() string {
 go mod init dog-breeds
 go get github.com/a-h/templ@latest
 go get github.com/araihu/goshtoso@latest`
-}
-
-// readExampleFile reads a source file from examples/getting-started/
-func readExampleFile(name string) string {
-	// Try relative to working directory first
-	paths := []string{
-		filepath.Join("examples", "getting-started", name),
-	}
-
-	// Also try relative to this source file
-	_, filename, _, ok := runtime.Caller(0)
-	if ok {
-		root := filepath.Join(filepath.Dir(filename), "..", "..", "..", "..")
-		paths = append(paths, filepath.Join(root, "examples", "getting-started", name))
-	}
-
-	for _, p := range paths {
-		data, err := os.ReadFile(p)
-		if err == nil {
-			return string(data)
-		}
-	}
-
-	return "// Source file not found: " + name
 }
 
 var _ = templruntime.GeneratedTemplate
