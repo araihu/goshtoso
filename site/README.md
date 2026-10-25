@@ -30,9 +30,11 @@ No Node.js service, TCP listener, or Go runtime in the browser is needed.
 `dist/` and `.wrangler/` are local build/runtime state.
 
 `wrangler.jsonc` declares the Worker, the `ASSETS` binding, and migrations for
-`SITE_SERVER` and `CHAT_ROOM`. Deployment uses the configured Worker name on
-workers.dev; add a Cloudflare route or custom domain when moving production
-traffic. The existing container publication workflow does not publish Workers.
+`SITE_SERVER` and `CHAT_ROOM`. Deployment serves `goshtoso.araihu.com` as a
+Cloudflare-managed Custom Domain and retains `goshtoso-site.guilycst.workers.dev`
+for direct checks. Cloudflare owns the Custom Domain's DNS and TLS certificate;
+the homelab must not recreate an origin DNS record for this hostname. The existing
+container publication workflow does not publish Workers.
 
 For a tagged documentation build, set `GOSHTOSO_DOCS_VERSION=vX.Y.Z` when running
 Wrangler. This injects the same build-time version used by the native server;

@@ -1,7 +1,14 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "goshtoso-site",
+  "account_id": "482241c1c361c24977ac6540df946c2f",
   "main": "worker/index.js",
+  "workers_dev": true,
+  "routes": [{
+    "pattern": "goshtoso.araihu.com",
+    "custom_domain": true,
+    "zone_id": "a323a200b988c46fed850afb5fb6130b"
+  }],
   "compatibility_date": "2026-10-25",
   "rules": [{ "type": "Text", "globs": ["**/*.go", "**/*.templ"], "fallthrough": true }],
   "build": { "command": "npm run build" },
