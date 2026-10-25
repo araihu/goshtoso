@@ -33,12 +33,46 @@ No Node.js service, TCP listener, or Go runtime in the browser is needed.
 `SITE_SERVER` and `CHAT_ROOM`. Deployment serves `goshtoso.araihu.com` as a
 Cloudflare-managed Custom Domain and retains `goshtoso-site.guilycst.workers.dev`
 for direct checks. Cloudflare owns the Custom Domain's DNS and TLS certificate;
-the homelab must not recreate an origin DNS record for this hostname. The existing
-container publication workflow does not publish Workers.
+the homelab must not recreate an origin DNS record for this hostname.
 
 For a tagged documentation build, set `GOSHTOSO_DOCS_VERSION=vX.Y.Z` when running
 Wrangler. This injects the same build-time version used by the native server;
 unversioned builds show `development`.
+
+## Automatic deployment
+
+`.github/workflows/deploy.yml` deploys the exact `main` commit whose **Required
+CI** push run completed successfully. It serializes production deployments and
+checks `main` again immediately before upload, so superseded commits and old
+workflow reruns do not overwrite a newer site. `workflow_dispatch` on `main`
+provides a manual retry, with the same successful-CI requirement.
+
+Create the repository Actions secret `CLOUDFLARE_API_TOKEN` using a Cloudflare
+API token scoped to this account and the `araihu.com` zone. The official
+[Edit Cloudflare Workers token template](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/#api-token)
+is supported. Account and zone IDs are already declared in `wrangler.jsonc`.
+The local `wrangler login` OAuth session is not copied into GitHub Actions.
+The workflow needs no billing permissions and does not upgrade the account.
+
+The job installs the Go version declared by `site/go.mod`, Node.js matching the
+Worker CI image, and the locked Wrangler dependency. Wrangler compiles the WASM
+and uploads the static assets, then deploys the existing Custom Domain and
+SQLite object bindings. A bounded production smoke checks HTTPS pages, HTMX,
+immutable runtime assets, cookie-backed form state, SSE completion and a
+WebSocket handshake. Form state stays in the test's own cookies; the chat
+check opens and closes a connection without sending messages. Deployment logs and the step summary record the
+source commit.
+
+Main and release workflows no longer publish GHCR images or hand off artifacts
+to the homelab. Go library releases and optional native Docker checks remain
+available independently. Main deployments deliberately display `development`
+metadata; tagging a library release does not roll production back to that tag.
+
+To run only the live smoke locally:
+
+```sh
+node scripts/smoke-deploy.mjs https://goshtoso.araihu.com
+```
 
 ## Staying on Workers Free
 
