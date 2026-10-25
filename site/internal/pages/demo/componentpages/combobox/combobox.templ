@@ -31,8 +31,8 @@ var SkillsCfg = combobox.Config{
 	EnableClearAll: true,
 	DisablePersistence: true,
 	Source: combobox.Source{Static: []combobox.Option{
-		{Value: "go", Label: "Go"},
-		{Value: "rust", Label: "Rust"},
+		{Value: "go", Label: "Go", Trailing: skillCount("12")},
+		{Value: "rust", Label: "Rust", Trailing: skillCount("3")},
 		{Value: "ts", Label: "TypeScript"},
 		{Value: "py", Label: "Python"},
 		{Value: "kt", Label: "Kotlin"},
@@ -120,12 +120,14 @@ var IndustryCfg = combobox.Config{
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Client Multi-Select",
-				Description: "Use arrow keys to move between enabled options, Enter or Space to select, and Escape to return to the trigger. Checkbox selection supports Clear all. DisablePersistence lets server-rendered state own the selection after navigation.",
+				Description: "Use arrow keys to move between enabled options, Enter or Space to select, and Escape to return to the trigger. Checkbox selection supports Clear all. Option.Trailing renders supporting content without changing the selected label. DisablePersistence lets server-rendered state own the selection after navigation.",
 			},
 			comboboxSkillsPreview(),
 			`var SkillsCfg = combobox.Config{
     ID: "skills", Name: "skills", Mode: combobox.ModeMultiple, EnableClearAll: true, DisablePersistence: true,
-    Source: combobox.Source{Static: skillOptions},
+    Source: combobox.Source{Static: []combobox.Option{
+        {Value: "go", Label: "Go", Trailing: skillCount("12")},
+    }},
 }
 @combobox.Combobox(SkillsCfg, combobox.State{Options: SkillsCfg.Source.Static})`,
 		)
@@ -249,4 +251,9 @@ templ comboboxClusterPreview() {
 		</label>
 		@combobox.Combobox(ClusterCfg, combobox.State{})
 	</div>
+}
+
+// Supporting content stays outside the label copied into the closed trigger.
+templ skillCount(count string) {
+ <span class="text-xs tabular-nums">{ count }</span>
 }

@@ -3,6 +3,7 @@
 package e2e
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/mxschmitt/playwright-go"
@@ -30,6 +31,13 @@ func TestComboboxKeyboardSelectClearAndSkipDisabled(t *testing.T) {
 	wait(`() => document.activeElement?.getAttribute('data-value') === 'go'`)
 	require.NoError(t, page.Keyboard().Press("Space"))
 	wait(`() => document.querySelector('#skills input[type=hidden][value=go]') !== null`)
+	// Supporting option content must never leak into the closed selection label.
+	label, err := page.Locator("#skills-trigger-label").TextContent()
+	require.NoError(t, err)
+	require.Equal(t, "Go", strings.TrimSpace(label))
+	trailing, err := page.Locator(`#skills [data-value="go"] .ml-auto`).TextContent()
+	require.NoError(t, err)
+	require.Equal(t, "12", strings.TrimSpace(trailing))
 	require.NoError(t, page.Keyboard().Press("ArrowDown"))
 	wait(`() => document.activeElement?.getAttribute('data-value') === 'rust'`)
 	require.NoError(t, page.Keyboard().Press("Enter"))
@@ -77,5 +85,16 @@ func TestComboboxKeyboardSelectClearAndSkipDisabled(t *testing.T) {
 		require.NoError(t, err)
 		wait(`() => document.activeElement?.id === 'industry-trigger' && document.querySelector('#region-trigger').getAttribute('aria-expanded') === 'false'`)
 	}
+
+	// Escape must cancel an open queued before Alpine has painted it.
+	_, err = page.Evaluate(`async () => {
+  const trigger=document.querySelector('#industry-trigger');
+  trigger.focus();
+  trigger.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true}));
+  trigger.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+  for(let i=0;i<6;i++) await new Promise(requestAnimationFrame);
+ }`, nil)
+	require.NoError(t, err)
+	wait(`() => document.querySelector('#industry-trigger').getAttribute('aria-expanded') === 'false' && document.activeElement?.id === 'industry-trigger'`)
 
 }

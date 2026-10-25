@@ -140,6 +140,9 @@ templ clientOptionLI(cfg Config, state State, opt Option) {
 			@optionCheckbox(state.isSelected(opt.Value))
 		}
 		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.isSelected(opt.Value)) }>{ opt.Label }</span>
+		if opt.Trailing != nil {
+			<span class="ml-auto shrink-0">@opt.Trailing</span>
+		}
 	</li>
 }
 
@@ -169,6 +172,9 @@ templ serverOptionLI(cfg Config, state State, opt Option) {
 			@optionCheckbox(state.isSelected(opt.Value))
 		}
 		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.isSelected(opt.Value)) }>{ opt.Label }</span>
+		if opt.Trailing != nil {
+			<span class="ml-auto shrink-0">@opt.Trailing</span>
+		}
 	</li>
 }
 
