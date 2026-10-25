@@ -2,6 +2,12 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.4.3] - 2026-10-25
+
+### Fixed
+
+- Combobox options now receive keyboard focus after opening. Arrow navigation skips disabled options, Enter and Space select, and Escape returns focus to the trigger. Search inputs retain native Home/End caret movement.
+
 ## [v0.4.2] - 2026-10-25
 
 ### Site and asset maintenance
