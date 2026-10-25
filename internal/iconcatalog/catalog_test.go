@@ -181,14 +181,14 @@ func TestLoadValidatesSchemaV1Semantics(t *testing.T) {
 
 func TestReleasedCatalogFixtureRemainsCompatible(t *testing.T) {
 	catalog := releasedFixture(t)
-	if catalog.Release != "v0.1.1" {
-		t.Fatalf("catalog release = %q, want v0.1.1", catalog.Release)
+	if catalog.Release != "v0.2.5" {
+		t.Fatalf("catalog release = %q, want v0.2.5", catalog.Release)
 	}
-	if catalog.Hash != "bca54f24af0529ebe988c901c6786110f2006a5bcedbab5928ba2795e1cf7d7c" {
-		t.Fatalf("catalog SHA-256 = %q, want released v0.1.1 catalog", catalog.Hash)
+	if catalog.Hash != "c448e94d02ee3d8727ffa40fa38fae3319f178547c12376968c3ad58ff0b758b" {
+		t.Fatalf("catalog SHA-256 = %q, want released v0.2.5 catalog", catalog.Hash)
 	}
-	if len(catalog.Assets) != 302 {
-		t.Fatalf("catalog asset count = %d, want 302", len(catalog.Assets))
+	if len(catalog.Assets) != 1841 {
+		t.Fatalf("catalog asset count = %d, want 1841", len(catalog.Assets))
 	}
 
 	heroicons := 0
@@ -197,8 +197,8 @@ func TestReleasedCatalogFixtureRemainsCompatible(t *testing.T) {
 			heroicons++
 		}
 	}
-	if heroicons != 67 {
-		t.Fatalf("released Heroicons sprite asset count = %d, want 67", heroicons)
+	if heroicons != 1288 {
+		t.Fatalf("released Heroicons sprite asset count = %d, want 1288", heroicons)
 	}
 }
 
