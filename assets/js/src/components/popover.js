@@ -38,6 +38,20 @@
           ? "text-on-surface-strong dark:text-on-surface-dark-strong"
           : "text-on-surface dark:text-on-surface-dark";
       },
+      handleEscape: function (event) {
+        if (event.defaultPrevented || !(this.isOpen || this.openedWithKeyboard)) return;
+        var owner = event.target && event.target.closest && event.target.closest('[data-popover-root]');
+        while (owner) {
+          var trigger = firstTrigger(owner);
+          if (trigger && trigger.getAttribute('aria-expanded') === 'true') {
+            if (owner !== root) return;
+            break;
+          }
+          owner = owner.parentElement && owner.parentElement.closest('[data-popover-root]');
+        }
+        event.preventDefault();
+        this.closeAndFocus();
+      },
       triggerElement: function () {
         return this.$refs.trigger || firstTrigger(root);
       },

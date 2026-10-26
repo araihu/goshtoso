@@ -38,7 +38,7 @@ func popoverTemplate(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-popover-root x-data=\"goshtosoPopover($el)\" x-on:keydown.esc.window=\"closeAndFocus()\" x-on:click.outside=\"close()\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-popover-root x-data=\"goshtosoPopover($el)\" x-on:keydown.esc.window=\"handleEscape($event)\" x-on:click.outside=\"close()\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

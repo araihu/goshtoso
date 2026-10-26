@@ -58,3 +58,27 @@ func TestPopover_Primitives(t *testing.T) {
 		State: playwright.WaitForSelectorStateHidden,
 	}))
 }
+
+func TestPopover_NestedEscapeClosesInnermostFirst(t *testing.T) {
+	page := newPage(t, sharedBrowser)
+	defer func() { _ = page.Close() }()
+	_, err := page.Goto(baseURL + "/components/popover")
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+	outer := page.Locator("#nested-inbox-trigger")
+	inner := page.Locator("#nested-inbox-actions [data-popover-trigger] button")
+	require.NoError(t, outer.Click())
+	require.NoError(t, inner.Click())
+	require.NoError(t, page.Keyboard().Press("ArrowDown"))
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, page.Locator("#nested-inbox-actions-panel").WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	visible, err := page.Locator("#nested-inbox-panel").IsVisible()
+	require.NoError(t, err)
+	assert.True(t, visible, "inner Escape must leave outer dialog open")
+	_, err = page.WaitForFunction(`() => document.activeElement === document.querySelector('#nested-inbox-actions [data-popover-trigger] button')`, nil)
+	require.NoError(t, err)
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, page.Locator("#nested-inbox-panel").WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	_, err = page.WaitForFunction(`() => document.activeElement.id === 'nested-inbox-trigger'`, nil)
+	require.NoError(t, err)
+}
