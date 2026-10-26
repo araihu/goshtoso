@@ -8,6 +8,9 @@ on:
 permissions:
   contents: write
 
+env:
+  _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-image://registry.dagger.io/engine:v0.21.11@sha256:6b557cc8b5fdfee0e2e8c82d451ac922097a1255482143e1b96c0be3ff2a303c
+
 jobs:
   pre-release:
     name: Full release verification + coverage
@@ -24,7 +27,7 @@ jobs:
       - name: Dagger release-equivalent gates
         uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.2.1
         with:
-          version: '0.21.8'
+          version: '0.21.11'
           verb: call
           args: release-verify --source=. --cache-partition=trusted-release --run-nonce=${{ github.run_id }}-${{ github.run_attempt }} export --path=.coverage
       - name: Upload release diagnostics
@@ -105,7 +108,7 @@ jobs:
       - name: Publish release and badges through Dagger
         uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.2.1
         with:
-          version: '0.21.8'
+          version: '0.21.11'
           verb: call
           args: publish-release --source=. --coverage=.coverage --metadata=.release-handoff.json --github-token=env:GITHUB_RELEASE_TOKEN --gist-token=env:GIST_TOKEN --run-nonce=${{ github.run_id }}-${{ github.run_attempt }}
         env:

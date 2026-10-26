@@ -8,6 +8,9 @@ on:
 permissions:
   contents: read
 
+env:
+  _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-image://registry.dagger.io/engine:v0.21.11@sha256:6b557cc8b5fdfee0e2e8c82d451ac922097a1255482143e1b96c0be3ff2a303c
+
 jobs:
   smoke:
     name: GitHub-hosted runner smoke test
@@ -29,6 +32,6 @@ jobs:
       - name: Runner-to-Dagger smoke proof
         uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.2.1
         with:
-          version: '0.21.8'
+          version: '0.21.11'
           verb: call
           args: smoke --source=. --identity=.runner-identity.json --run-nonce=${{ github.run_id }}-${{ github.run_attempt }}

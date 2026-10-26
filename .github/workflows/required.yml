@@ -13,6 +13,9 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  _EXPERIMENTAL_DAGGER_RUNNER_HOST: docker-image://registry.dagger.io/engine:v0.21.11@sha256:6b557cc8b5fdfee0e2e8c82d451ac922097a1255482143e1b96c0be3ff2a303c
+
 jobs:
   code:
     uses: ./.github/workflows/ci.yml
@@ -42,18 +45,23 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Install exact Dagger CLI on self-hosted runner
+        if: runner.environment == 'self-hosted'
+        uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.4.1
+        with:
+          version: '0.21.11'
       - name: Dagger site integration and published consumer (embedded CLI)
         if: runner.environment == 'self-hosted'
         shell: bash
         run: |
           set -euo pipefail
-          test "$(dagger version | awk '{print $2}')" = v0.21.8
+          test "$(dagger version | awk '{print $2}')" = v0.21.11
           dagger call required --source=. --cache-partition="$CACHE_PARTITION"
       - name: Dagger site integration and published consumer
         if: runner.environment != 'self-hosted'
         uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.2.1
         with:
-          version: '0.21.8'
+          version: '0.21.11'
           verb: call
           args: required --source=. --cache-partition=${{ env.CACHE_PARTITION }}
 

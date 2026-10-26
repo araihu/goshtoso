@@ -303,7 +303,7 @@ go work init . ./site
 ### Dagger CI locally
 
 All repository CI gates are implemented by the Dagger module pinned to
-`v0.21.8`; GitHub Actions only supplies event routing, immutable identities,
+`v0.21.11`; GitHub Actions only supplies event routing, immutable identities,
 secrets, and artifact/publication adapters. Run the same safe gates locally:
 
 ```bash
