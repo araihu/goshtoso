@@ -72,17 +72,43 @@ many of these steps, but the checklist keeps the public release story coherent.
   current release report. The `CODECOV_TOKEN` repository secret must be present.
 - Confirm the release coverage artifact retains both authored-source and full
   generated-inclusive profiles, function summaries, and HTML reports.
-- Confirm the publish job verified the new Go tag with the isolated consumer
-  fixture before creating the release. The site uses the tagged checkout and
-  requires no dependency-pin follow-up.
+- Confirm the new Go tag passed the isolated published-consumer fixture before
+  creating the release. The fixture needs no site dependency-pin follow-up.
 - Confirm `VERSIONS.md` has a row for the released tag.
-- Confirm the documentation site deploy completed or was intentionally skipped.
-- Confirm the release image job passed, the version tag and `latest` resolve to
-  the same GHCR digest for the latest stable release, and the
-  `image-goshtoso-release` artifact contains that digest. Image publication does
-  not perform a homelab rollout.
+- Confirm the documentation site deployment for the release commit completed
+  through the successful `Required CI` run on main, or was intentionally skipped.
+  Creating a GitHub Release does not trigger a site deployment.
+- Release-image publication is retired and does not apply to current releases.
 - Confirm `npx skills add araihu/goshtoso --list` discovers the released
   consumer-agent skill.
+
+## v0.4.4 publication recovery
+
+The immutable tag `v0.4.4` points to
+`234eaaf97a7058d137dfed942423dcfb77f2ace6`. In
+[run 40219694440](https://github.com/araihu/goshtoso/actions/runs/40219694440),
+full release verification passed, but publication stopped while extracting the
+missing changelog section. Add that section and the compatibility row on main;
+do not move the tag or change the library or assets in it.
+
+Complete the publication outputs using that exact tag:
+
+1. Create the GitHub Release with the corrected notes and Tailwind 4.3.3 artifact
+   section. Upload the tag's unmodified `styles.css` and `goshtoso-theme.css`.
+2. Patch both documents in the existing badge Gist in one request. Use
+   `release.json` message `v0.4.4`, color `blue`, and `coverage.json` message
+   `94.3%`, color `brightgreen`, from this run's successful `release-coverage`
+   artifact. Keep existing badge labels and schema version. Use authenticated
+   tooling without writing credentials to files or output.
+3. Download the published assets and compare their SHA-256 values to the tag:
+   `styles.css` is `18b633cad74debfdfa972b324ec4c99ce31716301e66cdba84ba617a5d9f3d7b`;
+   `goshtoso-theme.css` is `e31cdba9e67f19658f6fce2994ab0a0828d006b8e26b59077433255563c9125d`.
+   Verify both public badge values and retain the original workflow outcome.
+   Manual recovery does not make the failed publication job successful.
+4. Verify the existing main-based site deployment for the exact tag commit,
+   [run 40220673930](https://github.com/araihu/goshtoso/actions/runs/40220673930).
+   Manual GitHub Release creation triggers no new workflow. Release-image
+   publication is retired and is not a recovery requirement.
 
 ## Support Notes
 

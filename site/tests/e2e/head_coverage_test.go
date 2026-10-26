@@ -21,6 +21,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/araihu/goshtoso/assets"
+	"github.com/araihu/goshtoso/components/combobox"
 	"github.com/araihu/goshtoso/components/head"
 	"github.com/mxschmitt/playwright-go"
 	"github.com/stretchr/testify/assert"
@@ -64,9 +65,18 @@ func matchAssetURLs(t *testing.T, output string) []string {
 	return urls
 }
 
+func renderDependencyCombobox(t *testing.T, id string) string {
+	t.Helper()
+	cfg := combobox.Config{ID: id, Name: id, DisablePersistence: true, Source: combobox.Source{Static: []combobox.Option{{Value: "first", Label: "First"}, {Value: "second", Label: "Second"}}}}
+	var html strings.Builder
+	require.NoError(t, combobox.Combobox(cfg, cfg.InitialState()).Render(t.Context(), &html))
+	return html.String()
+}
+
 func dependencyFallbackFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
 	t.Helper()
 
+	comboboxHTML := renderDependencyCombobox(t, "combobox")
 	broken := func(name string) string { return "/cdn-unavailable/" + name + ".js" }
 	var dependencyHead strings.Builder
 	ctx := templ.WithNonce(context.Background(), "fallback-nonce")
@@ -110,10 +120,7 @@ func dependencyFallbackFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
   </div>
   <button id="htmx-trigger" hx-get="/fragment" hx-target="#htmx-target">Load fragment</button>
   <div id="htmx-target"></div>
-  <div id="combobox" data-combobox tabindex="0">
-    <button id="combobox-first" role="option" tabindex="-1">First</button>
-    <button id="combobox-second" role="option" tabindex="-1">Second</button>
-  </div>
+  %s
   <div id="action-group" data-goshtoso-action-group data-action-group-overflow-counts="1">
     <div data-action-group-primary><button>Primary</button></div>
     <div data-action-group-secondary><button>Secondary</button></div>
@@ -123,7 +130,7 @@ func dependencyFallbackFixture(t *testing.T) (*httptest.Server, *atomic.Int32) {
     </div>
   </div>
   %s
-	</body></html>`, dependencyHead.String(), firstPaintComponentFixtures())
+	</body></html>`, dependencyHead.String(), comboboxHTML, firstPaintComponentFixtures())
 	})
 
 	server := httptest.NewServer(mux)
@@ -424,11 +431,9 @@ window.addEventListener("goshtoso:dependency-fallback", event => {
 	require.NoError(t, page.Locator("#htmx-trigger").Click())
 	require.NoError(t, page.Locator("#htmx-result").WaitFor())
 
-	require.NoError(t, page.Locator("#combobox").Focus())
-	require.NoError(t, page.Keyboard().Press("ArrowDown"))
-	activeID, err := page.Evaluate(`() => document.activeElement && document.activeElement.id`, nil)
+	require.NoError(t, page.Locator("#combobox-trigger").Press("ArrowDown"))
+	_, err = page.WaitForFunction(`() => document.activeElement?.closest('#combobox') !== null && document.activeElement?.getAttribute('data-value') === 'first'`, nil)
 	require.NoError(t, err)
-	assert.Equal(t, "combobox-first", activeID)
 	_, err = page.WaitForFunction(`() => document.querySelector("#action-group").dataset.actionGroupInitialized === "true"`, nil)
 	require.NoError(t, err)
 	assertFirstPaintComponents(t, page)
@@ -484,17 +489,18 @@ func TestDependenciesLocalRuntimeBootsReusableComponentBundle(t *testing.T) {
 		t.Skip("skipping E2E test in short mode")
 	}
 
+	comboboxHTML := renderDependencyCombobox(t, "local-combobox")
 	var dependencyHead strings.Builder
 	require.NoError(t, head.Dependencies(head.WithLocalRuntime()).Render(context.Background(), &dependencyHead))
 	mux := http.NewServeMux()
 	mux.Handle("/assets/", assets.Handler())
 	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = fmt.Fprintf(w, `<!doctype html><html><head>%s</head><body>
-<div id="local-combobox" data-combobox tabindex="0"><button id="local-option" role="option">Option</button></div>
+%s
 <div id="local-action-group" data-goshtoso-action-group data-action-group-overflow-counts="1">
 <div data-action-group-primary><button>Primary</button></div><div data-action-group-secondary><button>Secondary</button></div>
 <div data-action-group-overflow><button aria-haspopup="true" aria-expanded="false">More</button><div role="menu"><button role="menuitem">Secondary</button></div></div>
-	</div>%s</body></html>`, dependencyHead.String(), firstPaintComponentFixtures())
+	</div>%s</body></html>`, dependencyHead.String(), comboboxHTML, firstPaintComponentFixtures())
 	})
 	server := httptest.NewServer(mux)
 	t.Cleanup(server.Close)
@@ -506,11 +512,9 @@ func TestDependenciesLocalRuntimeBootsReusableComponentBundle(t *testing.T) {
 	require.NoError(t, err)
 	_, err = page.WaitForFunction(`() => typeof Alpine !== "undefined" && typeof htmx !== "undefined" && document.querySelector("#local-action-group").dataset.actionGroupInitialized === "true"`, nil)
 	require.NoError(t, err)
-	require.NoError(t, page.Locator("#local-combobox").Focus())
-	require.NoError(t, page.Keyboard().Press("ArrowDown"))
-	activeID, err := page.Evaluate(`() => document.activeElement.id`, nil)
+	require.NoError(t, page.Locator("#local-combobox-trigger").Press("ArrowDown"))
+	_, err = page.WaitForFunction(`() => document.activeElement?.closest('#local-combobox') !== null && document.activeElement?.getAttribute('data-value') === 'first'`, nil)
 	require.NoError(t, err)
-	assert.Equal(t, "local-option", activeID)
 	assertFirstPaintComponents(t, page)
 	assert.Empty(t, pageErrors, "local runtime must initialise reusable component behavior without page errors")
 }

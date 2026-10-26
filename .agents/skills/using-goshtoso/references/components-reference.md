@@ -568,6 +568,7 @@ import "github.com/araihu/goshtoso/components/combobox"  // package combobox
 | `Value` | `string` |  |
 | `Label` | `string` |  |
 | `Disabled` | `bool` |  |
+| `Trailing` | `templ.Component` | Trailing renders non-interactive supporting content at the end of the option. It is excluded from the selected trigger label and submitted value. |
 
 **Source**
 
