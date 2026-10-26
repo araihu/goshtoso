@@ -40,6 +40,12 @@ const SOURCE_EXCLUDES = [
   ".coverage/**",
   "bin",
   "bin/**",
+  "site/node_modules",
+  "site/node_modules/**",
+  "site/dist",
+  "site/dist/**",
+  "site/.wrangler",
+  "site/.wrangler/**",
   "site/tests/e2e/test-results",
   "site/tests/e2e/test-results/**",
 ]
@@ -75,6 +81,22 @@ export class Goshtoso {
       .withExec(["bash", "-euo", "pipefail", "-c", "test -f go.work || go work init . ./site"])
       .withExec(["bash", "-euo", "pipefail", "-c", "cd site && go vet ./... && golangci-lint run --timeout 5m"])
       .withExec(["go", "build", "-o", "/tmp/server", "./site/cmd/server"])
+      .stdout()
+  }
+
+  /** Build the Go WASM site and test real Cloudflare runtime bindings. */
+  @func()
+  async siteWorker(
+    @argument({ defaultPath: ".", ignore: SOURCE_EXCLUDES }) source: Directory,
+    cachePartition: string,
+  ): Promise<string> {
+    return this.goProject(source, cachePartition)
+      .withWorkdir("/work/site")
+      .withEnvVariable("WRANGLER_SEND_METRICS", "false")
+      .withExec(["npm", "ci"])
+      .withExec(["bash", "-euo", "pipefail", "-c", "GOOS=js GOARCH=wasm golangci-lint run --timeout 5m ./cmd/worker/... ./internal/workerhttp/..."])
+      .withExec(["npm", "run", "check"])
+      .withExec(["npm", "test"])
       .stdout()
   }
 
@@ -215,7 +237,7 @@ echo "published $TAG and badge documents"`
       .stdout()
   }
 
-  /** Build the homelab site image from this repository. */
+  /** Build the optional native site image from this repository. */
   @func()
   siteImage(
     @argument({ defaultPath: ".", ignore: SOURCE_EXCLUDES }) source: Directory,

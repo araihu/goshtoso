@@ -3,15 +3,13 @@ package server
 import (
 	"fmt"
 	"net/http"
-	"path/filepath"
 
 	"github.com/araihu/goshtoso/components/table"
 	startpages "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/start"
 )
 
 func (s *Server) registerGettingStartedRoutes() {
-	dogsDir := filepath.Join(s.projectRoot, "examples", "getting-started", "assets", "dogs")
-	s.mux.Handle("/dog-images/", http.StripPrefix("/dog-images/", http.FileServer(http.Dir(dogsDir))))
+	s.registerDogImages()
 	s.mux.HandleFunc("/api/getting-started/breeds", s.handleGettingStartedBreeds)
 }
 

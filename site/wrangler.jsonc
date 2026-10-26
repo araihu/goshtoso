@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "goshtoso-site",
+  "account_id": "482241c1c361c24977ac6540df946c2f",
+  "main": "worker/index.js",
+  "workers_dev": true,
+  "routes": [{
+    "pattern": "goshtoso.araihu.com",
+    "custom_domain": true,
+    "zone_id": "a323a200b988c46fed850afb5fb6130b"
+  }],
+  "compatibility_date": "2026-10-25",
+  "rules": [{ "type": "Text", "globs": ["**/*.go", "**/*.templ"], "fallthrough": true }],
+  "build": { "command": "npm run build" },
+  "assets": {
+    "directory": "./dist/public",
+    "binding": "ASSETS",
+    "run_worker_first": false,
+    "html_handling": "none",
+    "not_found_handling": "none"
+  },
+  "durable_objects": {
+    "bindings": [
+      { "name": "SITE_SERVER", "class_name": "SiteServer" },
+      { "name": "CHAT_ROOM", "class_name": "ChatRoom" }
+    ]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["SiteServer", "ChatRoom"] }]
+}

@@ -1,4 +1,4 @@
-name: Publish site image
+name: Deploy site to Cloudflare
 
 on:
   workflow_run:
@@ -10,53 +10,93 @@ on:
 permissions:
   contents: read
   actions: read
-  packages: write
 
 concurrency:
-  group: publish-goshtoso-site
+  group: deploy-goshtoso-production
   cancel-in-progress: false
 
 jobs:
-  publish:
-    if: (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || (github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success')
+  deploy:
+    if: >-
+      github.repository == 'araihu/goshtoso' && (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event.workflow_run.event == 'push' &&
+         github.event.workflow_run.conclusion == 'success' &&
+         github.event.workflow_run.head_branch == 'main' &&
+         github.event.workflow_run.head_repository.full_name == github.repository)
+      )
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CI: 'true'
+      WRANGLER_SEND_METRICS: 'false'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
-      - name: Verify source passed Required CI
+      - name: Select verified main revision
+        id: source
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           revision=$(git rev-parse HEAD)
-          gh run list --workflow required.yml --event push --branch main --commit "$revision" --status success --json databaseId --jq 'length > 0' | grep -qx true
-          printf 'IMAGE=ghcr.io/araihu/goshtoso:%s\n' "$revision" >> "$GITHUB_ENV"
-          printf 'REVISION=%s\n' "$revision" >> "$GITHUB_ENV"
-      - name: Build site image
-        run: |
-          docker build --platform linux/amd64 \
-            --label org.opencontainers.image.source=https://github.com/araihu/goshtoso \
-            --label "org.opencontainers.image.revision=$REVISION" \
-            -t "$IMAGE" .
-      - name: Test image with homelab security settings
-        run: scripts/check-site-image "$IMAGE"
-      - name: Publish to GHCR
+          [[ "$revision" =~ ^[0-9a-f]{40}$ ]]
+          current=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+          if [[ "$revision" != "$current" ]]; then
+            printf 'deploy=false\n' >> "$GITHUB_OUTPUT"
+            printf 'Skipped superseded revision `%s`; main is `%s`.\n' "$revision" "$current" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow required.yml --event push --branch main --commit "$revision" --status success --json databaseId --jq 'length > 0' | grep -qx true
+          printf 'deploy=true\nrevision=%s\n' "$revision" >> "$GITHUB_OUTPUT"
+      - name: Set up Go
+        if: steps.source.outputs.deploy == 'true'
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: site/go.mod
+          cache-dependency-path: |
+            go.sum
+            site/go.sum
+      - name: Set up Node.js
+        if: steps.source.outputs.deploy == 'true'
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24.19.0'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Install locked Worker tooling
+        if: steps.source.outputs.deploy == 'true'
+        working-directory: site
+        run: npm ci --ignore-scripts
+      - name: Deploy verified revision
+        id: deploy
+        if: steps.source.outputs.deploy == 'true'
+        working-directory: site
         env:
-          GHCR_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          REVISION: ${{ steps.source.outputs.revision }}
         run: |
           set -euo pipefail
-          printf '%s' "$GHCR_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
-          trap 'docker logout ghcr.io >/dev/null' EXIT
-          docker push "$IMAGE"
-          digest=$(docker inspect --format '{{index .RepoDigests 0}}' "$IMAGE")
-          [[ "$digest" =~ ^ghcr.io/araihu/goshtoso@sha256:[0-9a-f]{64}$ ]]
-          printf '%s\n' "$digest" > image-goshtoso.txt
-          printf 'Homelab image: `%s`\n' "$digest" >> "$GITHUB_STEP_SUMMARY"
-      - name: Preserve immutable image for GitOps
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.0
-        with:
-          name: image-goshtoso
-          path: image-goshtoso.txt
-          retention-days: 90
+          current=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+          if [[ "$REVISION" != "$current" ]]; then
+            printf 'Skipped superseded revision `%s` before upload.\n' "$REVISION" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if [[ -z "$CLOUDFLARE_API_TOKEN" ]]; then
+            printf '::error::Configure the CLOUDFLARE_API_TOKEN Actions secret before deploying.\n'
+            exit 1
+          fi
+          npm run deploy -- --tag "$REVISION" --message "main $REVISION (run $GITHUB_RUN_ID)"
+          printf 'deployed=true\n' >> "$GITHUB_OUTPUT"
+      - name: Check production HTTP, HTMX, cookies, SSE and WebSocket
+        if: steps.deploy.outputs.deployed == 'true'
+        run: timeout 120s node site/scripts/smoke-deploy.mjs https://goshtoso.araihu.com
+      - name: Record deployment
+        if: steps.deploy.outputs.deployed == 'true'
+        env:
+          REVISION: ${{ steps.source.outputs.revision }}
+        run: |
+          printf 'Deployed verified main revision `%s` to https://goshtoso.araihu.com.\n' "$REVISION" >> "$GITHUB_STEP_SUMMARY"

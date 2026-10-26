@@ -29,6 +29,9 @@ type Option struct {
 	Value    string
 	Label    string
 	Disabled bool
+	// Trailing renders non-interactive supporting content at the end of the option.
+	// It is excluded from the selected trigger label and submitted value.
+	Trailing templ.Component
 }
 
 // Config holds the combobox configuration. ID must be globally unique per page.

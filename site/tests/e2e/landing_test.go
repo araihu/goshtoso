@@ -344,7 +344,6 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		for _, productURL := range []string{
 			"https://manja.araihu.com/",
 			"https://x9.araihu.com/",
-			"https://paje.araihu.com/en/",
 			"https://araihu.com/",
 		} {
 			product := page.Locator("#examples a[data-product-card][href='" + productURL + "']")
@@ -356,10 +355,10 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		}
 		require.Zero(t, mustCount(t, page.Locator("#examples a[href^='/examples/']")), "homepage gallery should not repeat built-in demos")
 		require.Zero(t, mustCount(t, page.Locator(`#examples a:has-text("Visit Arai Hû")`)), "the gallery heading should not repeat the Arai Hû product link")
-		require.Equal(t, 3, mustCount(t, page.Locator(`#examples >> text="Work in progress"`)))
+		require.Equal(t, 2, mustCount(t, page.Locator(`#examples >> text="Work in progress"`)))
 		examplesText, err := page.Locator("#examples").InnerText()
 		require.NoError(t, err)
-		require.Contains(t, examplesText, "agent-driven code changes")
+		require.Contains(t, examplesText, "OpenAPI publishing")
 		require.NotContains(t, examplesText, "agent-piloted")
 	})
 
@@ -367,7 +366,7 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		cards := page.Locator("#examples a[data-product-card]")
 		count, err := cards.Count()
 		require.NoError(t, err)
-		require.Equal(t, 4, count, "gallery should render one card per Arai Hû product site")
+		require.Equal(t, 3, count, "gallery should render one card per Arai Hû product site")
 
 		images := page.Locator("#examples a[data-product-card] img")
 		imageCount, err := images.Count()
@@ -382,7 +381,7 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		actions := page.Locator("#examples a[data-product-card] >> text=Visit site")
 		actionCount, err := actions.Count()
 		require.NoError(t, err)
-		require.Equal(t, 4, actionCount)
+		require.Equal(t, 3, actionCount)
 	})
 
 	t.Run("MobileKeepsHowItWorksBeforeProductGallery", func(t *testing.T) {
@@ -422,7 +421,7 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		products := small.Locator("#examples a[data-product-card] article")
 		count, err := products.Count()
 		require.NoError(t, err)
-		require.Equal(t, 4, count)
+		require.Equal(t, 3, count)
 		firstBox, err := products.Nth(0).BoundingBox()
 		require.NoError(t, err)
 		secondBox, err := products.Nth(1).BoundingBox()

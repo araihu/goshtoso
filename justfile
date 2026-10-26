@@ -142,3 +142,11 @@ site-module-contracts: site-current-source-integration published-consumer
 # Run the authoritative release-equivalent full coverage pipeline locally.
 coverage:
     scripts/run-release-coverage.sh
+
+# Build and exercise the Go WASM documentation server in local Cloudflare workerd.
+site-worker-check:
+    cd site && npm ci && npm run check && npm test
+
+# Run the documentation site on the Cloudflare Workers runtime locally.
+site-worker-dev:
+    cd site && npm run dev

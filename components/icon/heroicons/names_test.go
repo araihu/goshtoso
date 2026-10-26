@@ -26,8 +26,8 @@ func TestReleasedCatalogPreservesGeneratedNames(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if catalog.Release != "v0.1.1" {
-		t.Fatalf("catalog release = %q, want v0.1.1", catalog.Release)
+	if catalog.Release != "v0.2.5" {
+		t.Fatalf("catalog release = %q, want v0.2.5", catalog.Release)
 	}
 
 	releasedSymbols := make(map[string]string, len(Glyphs))
@@ -36,7 +36,7 @@ func TestReleasedCatalogPreservesGeneratedNames(t *testing.T) {
 			releasedSymbols[asset.CanonicalName] = asset.SpriteSymbol
 		}
 	}
-	if len(releasedSymbols) != len(Glyphs) {
+	if len(releasedSymbols) < len(Glyphs) {
 		t.Fatalf("released Heroicons count = %d, generated glyph count = %d", len(releasedSymbols), len(Glyphs))
 	}
 

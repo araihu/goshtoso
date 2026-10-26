@@ -39,8 +39,8 @@ var SkillsCfg = combobox.Config{
 	EnableClearAll:     true,
 	DisablePersistence: true,
 	Source: combobox.Source{Static: []combobox.Option{
-		{Value: "go", Label: "Go"},
-		{Value: "rust", Label: "Rust"},
+		{Value: "go", Label: "Go", Trailing: skillCount("12")},
+		{Value: "rust", Label: "Rust", Trailing: skillCount("3")},
 		{Value: "ts", Label: "TypeScript"},
 		{Value: "py", Label: "Python"},
 		{Value: "kt", Label: "Kotlin"},
@@ -205,12 +205,14 @@ var IndustryCfg = combobox.Config{
 		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Client Multi-Select",
-				Description: "Checkbox selection with Clear all. DisablePersistence lets server-rendered state own the selection after navigation.",
+				Description: "Use arrow keys to move between enabled options, Enter or Space to select, and Escape to return to the trigger. Checkbox selection supports Clear all. Option.Trailing renders supporting content without changing the selected label. DisablePersistence lets server-rendered state own the selection after navigation.",
 			},
 			comboboxSkillsPreview(),
 			`var SkillsCfg = combobox.Config{
     ID: "skills", Name: "skills", Mode: combobox.ModeMultiple, EnableClearAll: true, DisablePersistence: true,
-    Source: combobox.Source{Static: skillOptions},
+    Source: combobox.Source{Static: []combobox.Option{
+        {Value: "go", Label: "Go", Trailing: skillCount("12")},
+    }},
 }
 @combobox.Combobox(SkillsCfg, combobox.State{Options: SkillsCfg.Source.Static})`,
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -480,7 +482,7 @@ func comboboxClusterPreview() templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(ClusterCfg.OptionsEndpoint)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/combobox/combobox.templ`, Line: 239, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/combobox/combobox.templ`, Line: 241, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -495,6 +497,49 @@ func comboboxClusterPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// Supporting content stays outside the label copied into the closed trigger.
+func skillCount(count string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<span class=\"text-xs tabular-nums\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(count)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/combobox/combobox.templ`, Line: 258, Col: 43}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -22,6 +22,7 @@ import (
 	"path"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -38,7 +39,10 @@ type embeddedAssetFileSystem struct {
 	directories map[string][]fs.DirEntry
 }
 
-var publicFiles = newEmbeddedAssetFileSystem()
+// Build the inventory only for consumers serving or exporting assets. Render-only
+// consumers can then omit embedded artwork from their linked binary.
+var publicFiles *embeddedAssetFileSystem
+var publicFilesOnce sync.Once
 
 // FS returns a read-only filesystem containing every regular file published by
 // Handler, including first-party static files and Muamba-backed runtime files.
@@ -46,6 +50,7 @@ var publicFiles = newEmbeddedAssetFileSystem()
 // fs.ValidPath form such as "styles.css" and "js/goshtoso.min.js". Callers
 // choose destinations and perform any filesystem writes themselves.
 func FS() fs.FS {
+	publicFilesOnce.Do(func() { publicFiles = newEmbeddedAssetFileSystem() })
 	return publicFiles
 }
 
@@ -53,7 +58,7 @@ func FS() fs.FS {
 // absolute paths, traversal, backslash-separated paths, directories, and
 // unknown files. Names are relative to Handler's /assets/ mount.
 func ReadFile(name string) ([]byte, error) {
-	return publicFiles.ReadFile(name)
+	return fs.ReadFile(FS(), name)
 }
 
 func newEmbeddedAssetFileSystem() *embeddedAssetFileSystem {

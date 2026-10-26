@@ -128,9 +128,9 @@ templ clientOptionLI(cfg Config, state State, opt Option) {
 		data-combobox-option
 		data-value={ opt.Value }
 		aria-selected={ strconv.FormatBool(state.isSelected(opt.Value)) }
+		tabindex="-1"
 		if opt.Disabled {
 			aria-disabled="true"
-			tabindex="-1"
 			class={ "flex cursor-not-allowed items-center gap-2.5 px-4 py-2.5 text-sm opacity-50 " + optSelectedClass(state.isSelected(opt.Value)) }
 		} else {
 			class={ "flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors motion-reduce:transition-none hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value)) }
@@ -140,6 +140,9 @@ templ clientOptionLI(cfg Config, state State, opt Option) {
 			@optionCheckbox(state.isSelected(opt.Value))
 		}
 		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.isSelected(opt.Value)) }>{ opt.Label }</span>
+		if opt.Trailing != nil {
+			<span class="ml-auto shrink-0">@opt.Trailing</span>
+		}
 	</li>
 }
 
@@ -150,9 +153,9 @@ templ serverOptionLI(cfg Config, state State, opt Option) {
 		data-combobox-option
 		data-value={ opt.Value }
 		aria-selected={ strconv.FormatBool(state.isSelected(opt.Value)) }
+		tabindex="-1"
 		if opt.Disabled {
 			aria-disabled="true"
-			tabindex="-1"
 			class={ "flex cursor-not-allowed items-center gap-2.5 px-4 py-2.5 text-sm opacity-50 " + optSelectedClass(state.isSelected(opt.Value)) }
 		} else {
 			class={ "flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors motion-reduce:transition-none hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.isSelected(opt.Value)) }
@@ -169,6 +172,9 @@ templ serverOptionLI(cfg Config, state State, opt Option) {
 			@optionCheckbox(state.isSelected(opt.Value))
 		}
 		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.isSelected(opt.Value)) }>{ opt.Label }</span>
+		if opt.Trailing != nil {
+			<span class="ml-auto shrink-0">@opt.Trailing</span>
+		}
 	</li>
 }
 

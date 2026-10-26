@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/a-h/templ"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -431,4 +432,23 @@ func TestBody_ClientMode_ClearAllAlwaysRendered(t *testing.T) {
 		buttonTag := html[clearIdx:end]
 		assert.NotContains(t, buttonTag, ` hidden`, "visible button has no hidden attribute")
 	})
+}
+
+func TestOptionTrailingIsSeparateFromSelection(t *testing.T) {
+	for _, client := range []bool{true, false} {
+		t.Run(map[bool]string{true: "client", false: "server"}[client], func(t *testing.T) {
+			option := Option{Value: "warning", Label: "Warning", Trailing: templ.Raw(`<span id="warning-count">3</span>`)}
+			cfg := Config{ID: "severity", Name: "severity", Mode: ModeMultiple, Source: Source{Static: []Option{option}}, Selected: []string{"warning"}}
+			state := cfg.InitialState()
+			var buf bytes.Buffer
+			if client {
+				require.NoError(t, clientOptionLI(cfg, state, option).Render(t.Context(), &buf))
+			} else {
+				require.NoError(t, serverOptionLI(cfg, state, option).Render(t.Context(), &buf))
+			}
+			assert.Contains(t, buf.String(), `id="warning-count">3</span>`)
+			assert.Contains(t, buf.String(), `>Warning</span>`)
+			assert.Equal(t, "Warning", triggerLabelText(cfg, state))
+		})
+	}
 }

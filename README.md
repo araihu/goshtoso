@@ -40,6 +40,9 @@ dependencies and render most HTML on the server.
 - **Go-native examples and tests** using templ generation and Playwright-backed
   E2E coverage.
 
+The documentation site also supports a Go WebAssembly server on Cloudflare
+Workers. See [site/README.md](site/README.md) for local testing and deployment.
+
 ## Quick Start
 
 Goshtoso requires **Go 1.27.0 or newer**.
@@ -394,30 +397,18 @@ HTML/Alpine.js examples into an importable Go component library.
 
 MIT. See [LICENSE](LICENSE).
 
-## Homelab container image
+## Site deployment
 
-This repository builds and publishes `ghcr.io/araihu/goshtoso` after Code CI
-passes on `main`. The image tag is the complete source commit SHA; the
-`image-goshtoso` workflow artifact contains the immutable digest for deployment.
-After a stable GitHub release is published, the release workflow also builds
-and tests its image, publishes the version tag (for example `v0.3.2`), and
-updates `latest` only if that version is still the latest GitHub release.
-Main builds and reruns of older releases do not replace `latest`. The release
-digest is retained in the `image-goshtoso-release` workflow artifact.
-The package should remain private. Kubernetes uses its existing GHCR pull secret.
+The documentation site at [goshtoso.araihu.com](https://goshtoso.araihu.com)
+runs on Cloudflare Workers with bundled Go WASM, Static Assets, and SQLite
+Durable Objects. Every verified `main` revision deploys automatically after
+Required CI succeeds. Superseded revisions are skipped, including old reruns.
+The workflow uses features available on Workers Free and does not change the
+account plan. See [site deployment and credentials](site/README.md#automatic-deployment).
 
-The Docker image serves port 8090 as UID/GID 10001 and is tested with a read-only
-root filesystem and writable `/tmp`. It builds the root library and site from
-one checkout. Release images display the released tag; main and local images
-show development metadata. The site has no published-version pin. A separate
-[consumer fixture](docs/SITE_MODULE_CONTRACTS.md) verifies the public Go module.
-
-Update `k8s/goshtoso/deployment.yaml` in `guilycst/home-lab` with the produced
-digest through a reviewed GitOps change. Argo CD owns the rollout. Publishing an
-image does not itself change the running Deployment. Roll back by reverting the
-digest pin. The old `araihu/fly-deploy` repository no longer owns this publisher.
-
-For a local check:
+GHCR image publication and the homelab rollout have been retired. The Dockerfile
+and restricted-runtime checks remain available for running the optional native
+server; they do not publish an image or change production:
 
 ```bash
 docker build --platform linux/amd64 -t goshtoso-site:test .
