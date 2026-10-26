@@ -2,6 +2,16 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.4.5] - 2026-10-26
+
+### Fixed
+
+- Escape closes the innermost open Popover or Dropdown and returns focus to its trigger. A nested action menu no longer closes its parent popover on the same key press.
+
+### Upgrading
+
+- Update the library and served Goshtoso JavaScript together. Public Go APIs, CSS, bundled HTMX and Alpine versions remain unchanged.
+
 ## [v0.4.4] - 2026-10-25
 
 ### Added
