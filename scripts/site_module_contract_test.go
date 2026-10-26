@@ -28,9 +28,9 @@ func TestSiteAndPublishedConsumerUseIndependentLibraries(t *testing.T) {
 	modulePath := "example.com/library"
 	version := "v0.0.1"
 
-	writeFile(t, filepath.Join(rootDir, "go.mod"), "module "+modulePath+"\n\ngo 1.27.0\n")
+	writeFile(t, filepath.Join(rootDir, "go.mod"), "module "+modulePath+"\n\ngo 1.27.3\n")
 	writeFile(t, filepath.Join(rootDir, "library.go"), "package library\n\nfunc NewAPI() string { return \"current\" }\n")
-	writeFile(t, filepath.Join(siteDir, "go.mod"), fmt.Sprintf("module example.com/site\n\ngo 1.27.0\n\nrequire %s %s\n", modulePath, version))
+	writeFile(t, filepath.Join(siteDir, "go.mod"), fmt.Sprintf("module example.com/site\n\ngo 1.27.3\n\nrequire %s %s\n", modulePath, version))
 	writeFile(t, filepath.Join(siteDir, "cmd", "server", "main.go"), `package main
 
 import (
@@ -86,7 +86,7 @@ func TestCurrentSourceOnlyFixture(t *testing.T) {
 	}
 
 	consumerDir := filepath.Join(fixture, "consumer")
-	writeFile(t, filepath.Join(consumerDir, "go.mod"), fmt.Sprintf("module example.com/consumer\n\ngo 1.27.0\n\nrequire %s %s\n", modulePath, version))
+	writeFile(t, filepath.Join(consumerDir, "go.mod"), fmt.Sprintf("module example.com/consumer\n\ngo 1.27.3\n\nrequire %s %s\n", modulePath, version))
 	consumerSource := "package main\nimport (\"fmt\"; \"example.com/library\")\nfunc main() { fmt.Println(library.OldAPI()) }\n"
 	writeFile(t, filepath.Join(consumerDir, "main.go"), consumerSource)
 	tidy := exec.Command("go", "mod", "tidy")
@@ -95,7 +95,7 @@ func TestCurrentSourceOnlyFixture(t *testing.T) {
 	if out, err := tidy.CombinedOutput(); err != nil {
 		t.Fatalf("tidy consumer: %v\n%s", err, out)
 	}
-	writeFile(t, filepath.Join(fixture, "go.work"), "go 1.27.0\nuse ./root\n")
+	writeFile(t, filepath.Join(fixture, "go.work"), "go 1.27.3\nuse ./root\n")
 	consumerEnv := append(env, "GOWORK="+filepath.Join(fixture, "go.work"), "GOSHTOSO_CONSUMER_FIXTURE="+consumerDir, "GOSHTOSO_CONSUMER_MODULE="+modulePath)
 	publishedScript := filepath.Join(repoRoot, "scripts", "check-published-consumer")
 	runConsumer := func(args ...string) ([]byte, error) {
@@ -156,7 +156,7 @@ func TestPublishedConsumerRejectsTransitiveVersionUpgrade(t *testing.T) {
 		writeProxyModule(t, proxy, module, version, "package library\nfunc Value() string { return \"ok\" }\n")
 	}
 	writeProxyModule(t, proxy, "example.com/bridge", "v0.0.1", "package bridge\nimport \"example.com/library\"\nfunc Value() string { return library.Value() }\n", module+" v0.0.2")
-	writeFile(t, filepath.Join(consumer, "go.mod"), "module example.com/consumer\ngo 1.27.0\nrequire example.com/bridge v0.0.1\n")
+	writeFile(t, filepath.Join(consumer, "go.mod"), "module example.com/consumer\ngo 1.27.3\nrequire example.com/bridge v0.0.1\n")
 	writeFile(t, filepath.Join(consumer, "main.go"), "package main\nimport (\"fmt\"; \"example.com/bridge\")\nfunc main() { fmt.Println(bridge.Value()) }\n")
 	cache := filepath.Join(fixture, "modcache")
 	env := append(os.Environ(), "GOWORK=off", "GOSUMDB=off", "GOPROXY="+(&url.URL{Scheme: "file", Path: proxy}).String(), "GOMODCACHE="+cache, "GOSHTOSO_CONSUMER_FIXTURE="+consumer, "GOSHTOSO_CONSUMER_MODULE="+module)
@@ -192,9 +192,9 @@ func TestSiteModuleContractsRunCurrentSourceOnlyThemeFixture(t *testing.T) {
 	modulePath := "example.com/library"
 	version := "v0.0.1"
 
-	writeFile(t, filepath.Join(rootDir, "go.mod"), "module "+modulePath+"\n\ngo 1.27.0\n")
+	writeFile(t, filepath.Join(rootDir, "go.mod"), "module "+modulePath+"\n\ngo 1.27.3\n")
 	writeFile(t, filepath.Join(rootDir, "library.go"), "package library\n\nfunc SharedAPI() string { return \"shared\" }\nfunc ThemeKey() string { return \"shared\" }\nfunc NewAPI() string { return \"current\" }\n")
-	writeFile(t, filepath.Join(siteDir, "go.mod"), fmt.Sprintf("module example.com/site\n\ngo 1.27.0\n\nrequire %s %s\n", modulePath, version))
+	writeFile(t, filepath.Join(siteDir, "go.mod"), fmt.Sprintf("module example.com/site\n\ngo 1.27.3\n\nrequire %s %s\n", modulePath, version))
 	writeFile(t, filepath.Join(siteDir, "cmd", "server", "main.go"), `package main
 
 import (
@@ -362,7 +362,7 @@ func writeProxyModule(t *testing.T, proxyDir, modulePath, version, source string
 		version,
 		time.Date(2026, time.January, 1, 0, 0, 0, 0, time.UTC).Format(time.RFC3339),
 	))
-	moduleFile := "module " + modulePath + "\n\ngo 1.27.0\n"
+	moduleFile := "module " + modulePath + "\n\ngo 1.27.3\n"
 	for _, requirement := range requirements {
 		moduleFile += "\nrequire " + requirement + "\n"
 	}

@@ -1,6 +1,6 @@
 module example.com/goshtoso-runtime-manifest-contract
 
-go 1.27.0
+go 1.27.3
 
 require github.com/araihu/goshtoso v0.0.13
 

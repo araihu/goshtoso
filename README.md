@@ -45,7 +45,7 @@ Workers. See [site/README.md](site/README.md) for local testing and deployment.
 
 ## Quick Start
 
-Goshtoso requires **Go 1.27.0 or newer**.
+Goshtoso requires **Go 1.27.3 or newer**.
 
 Install the library:
 

@@ -12,7 +12,7 @@ import {
 } from "@dagger.io/dagger"
 
 const GO_IMAGE =
-  "golang:1.27.0-bookworm@sha256:484ef6066fa69acb059fdfeda7ba2b8f7391f2ef6abc6f9b8411e669ebd56466"
+  "golang:1.27.3-bookworm@sha256:972b4110ba0f47539a975c31e52c64765e1ff19f2d74469ae4a595c6676e80a5"
 const JQ_IMAGE =
   "ghcr.io/jqlang/jq:1.8.2@sha256:b9c68867e5766576263a222e91db3de422d802069c7af70440e667a95344e486"
 const NODE_IMAGE =
