@@ -57,7 +57,7 @@ func TestPopoverDefaultsToClickAndBottomStart(t *testing.T) {
 		`x-on:keydown.space.prevent="openFromKeyboard()"`,
 		`left-0`,
 		`top-full`,
-		`x-on:keydown.esc.window="closeAndFocus()"`,
+		`x-on:keydown.esc.window="handleEscape($event)"`,
 	} {
 		require.Contains(t, html, want)
 	}

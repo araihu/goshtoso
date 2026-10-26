@@ -146,7 +146,7 @@ func TestDropdownKeyboardOpenFocusesFirstEnabledItemAndEscapeReturnsToTrigger(t 
 	assert.NotContains(t, rendered, `$focus.wrap()`)
 	assert.Contains(t, rendered, `x-trap.noreturn="openedWithKeyboard"`)
 	assert.Contains(t, rendered, `x-data="goshtosoPopover($el)"`)
-	assert.Contains(t, rendered, `x-on:keydown.esc.window="closeAndFocus()"`)
+	assert.Contains(t, rendered, `x-on:keydown.esc.window="handleEscape($event)"`)
 	assert.NotContains(t, rendered, `<script`)
 	assert.Equal(t, 1, strings.Count(rendered, `role="menu"`))
 }
