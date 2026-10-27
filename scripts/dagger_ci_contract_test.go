@@ -37,7 +37,7 @@ func TestDaggerWorkflowSecurityAndArtifactContracts(t *testing.T) {
 		t.Fatal("external event data is interpolated into dagger-for-github args")
 	}
 
-	for _, expected := range []string{"runner.environment == 'self-hosted'", "dagger version | awk", "v0.21.8"} {
+	for _, expected := range []string{"runner.environment == 'self-hosted'", "dagger version | awk", "v0.21.11"} {
 		if !strings.Contains(all, expected) {
 			t.Fatalf("missing embedded-runner contract %q", expected)
 		}
@@ -526,10 +526,10 @@ func TestDaggerInstallsVerifiedGolangCILintArchives(t *testing.T) {
 		t.Fatal("golangci-lint must not execute a remote installer script")
 	}
 	for _, expected := range []string{
-		`const GOLANGCI_LINT_VERSION = "v2.13.1"`,
-		`const GOLANGCI_LINT_AMD64_SHA256 = "b17bfbc9d4aaa48be7f4f1ce3240bc3d8200c870c072bacf15c26219e2cfb9cc"`,
-		`const GOLANGCI_LINT_ARM64_SHA256 = "908317c23db18448f924e853b3d8a659fd919614cd438f224810a4053daa2607"`,
-		`file=golangci-lint-2.13.1-linux-$arch.tar.gz`,
+		`const GOLANGCI_LINT_VERSION = "v2.15.0"`,
+		`const GOLANGCI_LINT_AMD64_SHA256 = "9b7fe6a6bf6334b98decf8d86b11415ea7889afdabdd1959fdce23af2a9ebcea"`,
+		`const GOLANGCI_LINT_ARM64_SHA256 = "b4d8f17068b35ee6060cc2f69a16fb48740d706fbba81661c318649c114a6998"`,
+		`file=golangci-lint-2.15.0-linux-$arch.tar.gz`,
 		`releases/download/${GOLANGCI_LINT_VERSION}/$file`,
 		`dir=\${file%.tar.gz}`,
 		`echo "$sha  /tmp/golangci-lint.tgz" | sha256sum -c -`,
