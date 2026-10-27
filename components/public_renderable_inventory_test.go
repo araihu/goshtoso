@@ -37,6 +37,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 	allowedFunctions := map[string]struct{}{
 		"components.AllKinds":             {},
 		"themeeditor.ThemeEditor":         {},
+		"themeeditor.ContrastAdvisory":    {},
 		"themeplayground.ThemePlayground": {},
 		"themeplayground.Frame":           {},
 
