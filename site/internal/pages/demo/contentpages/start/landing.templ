@@ -78,14 +78,17 @@ func editorConfig() themeeditor.Config {
  initial,err:=publicthemes.Preset(publicthemes.KeyAraiHu);if err!=nil{panic(err)}
  catalog:=[]themeeditor.CatalogItem{}
  for _,t:=range themes.All(){d,err:=publicthemes.Preset(publicthemes.Key(t.Key));if err!=nil{panic(err)};catalog=append(catalog,themeeditor.CatalogItem{ID:string(t.Key),Label:t.Label,Definition:d})}
- return themeeditor.Config{ID:"site-theme-editor",Initial:initial,Catalog:catalog,Fonts:publicthemes.DefaultFonts(),PreviewID:"theme-playground-frame"}
+ return themeeditor.Config{ID:"site-theme-editor",Initial:initial,Catalog:catalog,Fonts:publicthemes.DefaultFonts(),PreviewID:"theme-playground-frame",ContrastID:"site-theme-contrast"}
 }
 
 // ThemeToolsDemo uses the same public controls and isolated frame as consumers.
 templ ThemeToolsDemo() {
  <div class="grid gap-6 lg:grid-cols-2">
   @themeeditor.ThemeEditor(editorConfig())
+ <div class="space-y-4">
   @themeplayground.ThemePlayground(themeplayground.Config{ID:"theme-playground-frame",Src:"/playground/theme",Title:"Interactive Goshtoso theme playground",RootClass:"h-[34rem]"})
+ @themeeditor.ContrastAdvisory("site-theme-contrast")
+ </div>
  </div>
 }
 

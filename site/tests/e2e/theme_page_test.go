@@ -387,3 +387,11 @@ func TestThemePage_ProvenanceValidationAgreesWithGo(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, false, accepted)
 }
+
+func TestThemePage_ContrastLivesBesidePreview(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoThemePage(t, page)
+	beside, err := page.Evaluate(`()=>{const editor=document.querySelector('[data-theme-editor]'),advisory=document.querySelector('[data-theme-contrast]'),frame=document.querySelector('#theme-playground-frame');return !!advisory&&!editor.contains(advisory)&&advisory.parentElement.contains(frame)&&document.querySelectorAll('[data-theme-contrast]').length===1}`, nil)
+	require.NoError(t, err)
+	require.Equal(t, true, beside)
+}

@@ -121,3 +121,23 @@ func TestPresetOptionsLoadNamedFacesWithoutChangingFontReferences(t *testing.T) 
 		t.Fatal("preview changed saved reference")
 	}
 }
+
+func TestContrastCanRenderOutsideEditor(t *testing.T) {
+	definition, _ := themes.Preset(themes.KeyGoshtoso)
+	var output bytes.Buffer
+	if err := ThemeEditor(Config{ID: "editor", Initial: definition, ContrastID: "advisory"}).Render(t.Context(), &output); err != nil {
+		t.Fatal(err)
+	}
+	html := output.String()
+	if strings.Contains(html, "data-theme-contrast-pair") || !strings.Contains(html, "advisory") {
+		t.Fatal("external target must omit inline contrast")
+	}
+	output.Reset()
+	if err := ContrastAdvisory("advisory").Render(t.Context(), &output); err != nil {
+		t.Fatal(err)
+	}
+	html = output.String()
+	if !strings.Contains(html, `id="advisory"`) || !strings.Contains(html, `aria-labelledby="advisory-heading"`) || strings.Count(html, "data-theme-contrast-pair") != 3 {
+		t.Fatal("contrast panel lost accessible heading or color pairs")
+	}
+}

@@ -21,11 +21,13 @@ type CatalogItem struct {
 
 // Config supplies the draft and public event contract. Actions belongs to the consumer.
 type Config struct {
-	ID                 string
-	Initial            themes.Definition
-	Catalog            []CatalogItem
-	Fonts              []themes.FontOption
-	PreviewID          string
+	ID        string
+	Initial   themes.Definition
+	Catalog   []CatalogItem
+	Fonts     []themes.FontOption
+	PreviewID string
+	// ContrastID associates an external ContrastAdvisory and omits the inline panel.
+	ContrastID         string
 	InitialPreviewMode string
 	InputName          string
 	Actions            templ.Component
@@ -40,9 +42,10 @@ func (c Config) data() string {
 		Catalog     []CatalogItem       `json:"catalog"`
 		Fonts       []themes.FontOption `json:"fonts"`
 		PreviewID   string              `json:"previewID"`
+		ContrastID  string              `json:"contrastID,omitempty"`
 		PreviewMode string              `json:"previewMode"`
 		Tokens      []themes.TokenSpec  `json:"tokens"`
-	}{c.ID, c.Initial, c.Catalog, c.Fonts, c.PreviewID, c.InitialPreviewMode, themes.Tokens()})
+	}{c.ID, c.Initial, c.Catalog, c.Fonts, c.PreviewID, c.ContrastID, c.InitialPreviewMode, themes.Tokens()})
 	return string(b)
 }
 func (c Config) presetOptions() []selectfield.Option {

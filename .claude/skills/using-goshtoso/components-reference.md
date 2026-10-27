@@ -2217,7 +2217,7 @@ import "github.com/araihu/goshtoso/components/textinput"  // package textinput
 import "github.com/araihu/goshtoso/components/themeeditor"  // package themeeditor
 ```
 
-**Entry points:** `ThemeEditor(cfg Config)`
+**Entry points:** `ContrastAdvisory(id string)` · `ThemeEditor(cfg Config)`
 
 **CatalogItem**
 
@@ -2236,6 +2236,7 @@ import "github.com/araihu/goshtoso/components/themeeditor"  // package themeedit
 | `Catalog` | `[]CatalogItem` |  |
 | `Fonts` | `[]themes.FontOption` |  |
 | `PreviewID` | `string` |  |
+| `ContrastID` | `string` | ContrastID associates an external ContrastAdvisory and omits the inline panel. |
 | `InitialPreviewMode` | `string` |  |
 | `InputName` | `string` |  |
 | `Actions` | `templ.Component` |  |

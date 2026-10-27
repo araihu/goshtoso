@@ -61,7 +61,9 @@ templ editorTemplate(c Config) {
 			</div>
 		</section>
 		<p data-theme-feedback role="status" aria-live="polite"></p>
-		@contrastAdvisory(c.ID)
+		if c.ContrastID == "" {
+ @ContrastAdvisory(c.ID + "-contrast")
+ }
 		<div class="flex flex-wrap gap-2">
 			@button.Button(button.WithType("button"), button.WithAttrs(templ.Attributes{"data-theme-reset": ""})) {
 				Reset draft
@@ -102,9 +104,10 @@ templ colorTriggerSwatch() {
 	<span class="size-4 shrink-0 rounded-full border border-outline" x-bind:style="{backgroundColor:colorValue}" aria-hidden="true" data-theme-color-swatch></span>
 }
 
-templ contrastAdvisory(id string) {
-	<section data-theme-contrast aria-labelledby={ id + "-contrast-heading" } class="@container space-y-2">
-		<h3 id={ id + "-contrast-heading" } class="text-sm font-medium">Color contrast</h3>
+// ContrastAdvisory renders contrast results inline or at the Config.ContrastID target.
+templ ContrastAdvisory(id string) {
+	<section id={ id } data-theme-contrast aria-labelledby={ id + "-heading" } class="@container space-y-2">
+		<h3 id={ id + "-heading" } class="text-sm font-medium">Color contrast</h3>
 		<p class="text-xs">Text contrast estimates for the current preview mode.</p>
 		<div class="grid grid-cols-1 gap-3 @xl:grid-cols-3">
 			for _, pair := range []struct{ Key, Label string }{{"surface", "Surface"}, {"primary", "Primary"}, {"secondary", "Secondary"}} {

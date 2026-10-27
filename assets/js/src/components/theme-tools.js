@@ -321,7 +321,7 @@
         const key = el.dataset.themeColorRow, dark = key.includes("-dark"), hasDark = specs.some((t) => t.key.includes("-dark") && t.key.replace("-dark", "") === key);
         el.hidden = dark ? mode !== "dark" : hasDark && mode === "dark";
       });
-      root.querySelectorAll("[data-theme-contrast-pair]").forEach((panel) => {
+      (config.contrastID ? document.getElementById(config.contrastID) : root)?.querySelectorAll("[data-theme-contrast-pair]").forEach((panel) => {
         const bg = panel.dataset.themeContrastPair + (mode === "dark" ? "-dark" : ""), fg = "on-" + bg;
         const foreground = definition.tokens[fg], background = definition.tokens[bg];
         const opaque = foreground.alpha === 1 && background.alpha === 1;
