@@ -257,37 +257,7 @@ func Materialize(base Definition, edits Overrides) (Definition, error) {
 		d.RadiusRem = *edits.RadiusRem
 	}
 	if len(edits.Tokens) > 0 {
-		original := map[string]string{}
-		for key, c := range base.Tokens {
-			original["--color-"+key] = c.CSS()
-		}
-		derived := map[string]bool{}
-		for _, spec := range Tokens() {
-			if spec.Editable {
-				continue
-			}
-			value, err := resolveColor(spec.Expression, original, map[string]bool{})
-			derived[spec.Key] = err == nil && sameColor(value, base.Tokens[spec.Key])
-		}
-		affected := map[string]bool{}
-		for key := range edits.Tokens {
-			affected[key] = true
-		}
-		for range derived {
-			for _, spec := range Tokens() {
-				if !derived[spec.Key] {
-					continue
-				}
-				for key := range affected {
-					if strings.Contains(spec.Expression, "var(--color-"+key+")") {
-						affected[spec.Key] = true
-					}
-				}
-			}
-		}
-		for key := range derived {
-			derived[key] = derived[key] && affected[key]
-		}
+		derived := derivedEdits(base, edits.Tokens)
 		vars := map[string]string{}
 		for key, c := range d.Tokens {
 			vars["--color-"+key] = c.CSS()
@@ -310,6 +280,41 @@ func Materialize(base Definition, edits Overrides) (Definition, error) {
 		}
 	}
 	return d, Validate(d)
+}
+
+func derivedEdits(base Definition, edits map[string]Color) map[string]bool {
+	original := map[string]string{}
+	for key, c := range base.Tokens {
+		original["--color-"+key] = c.CSS()
+	}
+	derived := map[string]bool{}
+	for _, spec := range Tokens() {
+		if spec.Editable {
+			continue
+		}
+		value, err := resolveColor(spec.Expression, original, map[string]bool{})
+		derived[spec.Key] = err == nil && sameColor(value, base.Tokens[spec.Key])
+	}
+	affected := map[string]bool{}
+	for key := range edits {
+		affected[key] = true
+	}
+	for range derived {
+		for _, spec := range Tokens() {
+			if !derived[spec.Key] {
+				continue
+			}
+			for key := range affected {
+				if strings.Contains(spec.Expression, "var(--color-"+key+")") {
+					affected[spec.Key] = true
+				}
+			}
+		}
+	}
+	for key := range derived {
+		derived[key] = derived[key] && affected[key]
+	}
+	return derived
 }
 
 func sameColor(a, b Color) bool {
