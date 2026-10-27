@@ -114,6 +114,10 @@ func TestPopoverRuntimePreservesLifecycleContract(t *testing.T) {
 		"aria-controls",
 		"openFromKeyboard: function",
 		"closeAndFocus: function",
+		"handleEscape: function",
+		"event.defaultPrevented",
+		"event.preventDefault()",
+		"if (owner !== root) return;",
 		"clearTimeout(this.leaveTimeout)",
 		"destroy: function ()",
 	} {

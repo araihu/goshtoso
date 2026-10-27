@@ -299,7 +299,7 @@ func stylesheetOnlyHeadHTML(t *testing.T) string {
 	directory := t.TempDir()
 	goMod := fmt.Sprintf(`module goshtoso-head-stylesheet-only-e2e
 
-go 1.27.0
+go 1.27.3
 
 require github.com/araihu/goshtoso v0.0.0
 

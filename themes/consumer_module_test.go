@@ -18,7 +18,7 @@ func TestPublicCatalogCompilesInStandaloneModule(t *testing.T) {
 
 	goMod := fmt.Sprintf(`module example.com/theme-consumer
 
-go 1.27.0
+go 1.27.3
 
 require github.com/araihu/goshtoso v0.0.0
 

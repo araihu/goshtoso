@@ -2,6 +2,7 @@ package popoverpage
 
 import (
 	"github.com/araihu/goshtoso/components/button"
+ "github.com/araihu/goshtoso/components/dropdown"
 	"github.com/araihu/goshtoso/components/popover"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -30,6 +31,8 @@ templ popoverDemoContent() {
 		)
 
 		@demo.ExpressionOverridesNote("Popover")
+  @demo.DemoSection(demo.DemoSectionProps{Title:"Nested action menu",Description:"Escape closes the innermost open surface first and restores its trigger. Press Escape again to close the enclosing popover."},nestedPopoverPreview(),`@popover.Popover(popover.Config{Content: dropdownMenu})`)
+
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -124,4 +127,17 @@ templ helpIcon() {
 		<circle cx="12" cy="12" r="9"></circle>
 		<path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9a2.25 2.25 0 1 1 3.73 1.7c-.84.72-1.48 1.18-1.48 2.55M12 16.75h.01"></path>
 	</svg>
+}
+
+templ nestedPopoverPreview() {
+ @popover.Popover(popover.Config{ID:"nested-inbox",Trigger:nestedInboxTrigger(),Content:nestedInboxContent(),Role:"dialog",Label:"Nested inbox",TrapFocus:true})
+}
+
+templ nestedInboxTrigger() {
+ @button.Button(button.WithID("nested-inbox-trigger")) { Open inbox }
+}
+
+templ nestedInboxContent() {
+ <p>Inbox with a nested action menu.</p>
+ @dropdown.Dropdown(dropdown.Config{ID:"nested-inbox-actions",Label:"Inbox actions",Sections:[]dropdown.Section{{Items:[]dropdown.Item{{Label:"Inspect notification",Href:"#"}}}}})
 }
