@@ -22,7 +22,8 @@ func (c Color) rgb() [3]float64 {
 	}
 	l, ch, h := c.Channels[0], c.Channels[1], c.Channels[2]*math.Pi/180
 	a, b := ch*math.Cos(h), ch*math.Sin(h)
-	ll, mm, ss := math.Pow(l+.3963377774*a+.2158037573*b, 3), math.Pow(l-.1055613458*a-.0638541728*b, 3), math.Pow(l-.0894841775*a-1.291485548*b, 3)
+	ll, mm, ss := l+.3963377774*a+.2158037573*b, l-.1055613458*a-.0638541728*b, l-.0894841775*a-1.291485548*b
+	ll, mm, ss = ll*ll*ll, mm*mm*mm, ss*ss*ss
 	result := [3]float64{4.0767416621*ll - 3.3077115913*mm + .2309699292*ss, -1.2684380046*ll + 2.6097574011*mm - .3413193965*ss, -.0041960863*ll - .7034186147*mm + 1.707614701*ss}
 	for i, v := range result {
 		if v <= .0031308 {

@@ -92,7 +92,7 @@ func RenderFontCSS(ref FontRef, resolve FontResolver) (string, string, error) {
 		}
 		alias := "goshtoso-font-" + strings.NewReplacer(":", "-", "/", "-", ".", "-").Replace(ref.ID)
 		family = strconv.Quote(alias) + ",system-ui,sans-serif"
-		before.WriteString(fmt.Sprintf("@font-face{font-family:%s;src:url(%s) format(%s);font-weight:%s;font-style:%s;font-display:swap;}\n", strconv.Quote(alias), strconv.Quote(r.URL), strconv.Quote(r.Format), r.Weight, r.Style))
+		fmt.Fprintf(&before, "@font-face{font-family:%s;src:url(%s) format(%s);font-weight:%s;font-style:%s;font-display:swap;}\n", strconv.Quote(alias), strconv.Quote(r.URL), strconv.Quote(r.Format), r.Weight, r.Style)
 	}
 	return before.String(), family, nil
 }
