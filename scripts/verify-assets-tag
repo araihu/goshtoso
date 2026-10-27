@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "${GH_TOKEN:?GitHub token is required}"
+: "${RELEASE:?Release tag is required}"
+: "${ASSETS_REVISION:?Assets revision is required}"
+[[ "$RELEASE" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+[[ "$ASSETS_REVISION" =~ ^[0-9a-f]{40}$ ]]
+
+fetch() {
+  curl -fsS -H "Authorization: Bearer $GH_TOKEN" \
+    -H 'Accept: application/vnd.github+json' "https://api.github.com/repos/araihu/assets/$1"
+}
+
+object=$(fetch "git/ref/tags/$RELEASE" | jq -ce '.object')
+if [[ $(jq -er '.type' <<< "$object") == tag ]]; then
+  tag_sha=$(jq -er '.sha | select(test("^[0-9a-f]{40}$"))' <<< "$object")
+  object=$(fetch "git/tags/$tag_sha" | jq -ce '.object')
+fi
+jq -e --arg revision "$ASSETS_REVISION" \
+  '.type == "commit" and .sha == $revision' <<< "$object" > /dev/null
