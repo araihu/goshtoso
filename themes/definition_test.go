@@ -1,9 +1,13 @@
 package themes
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"math"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -128,5 +132,80 @@ func TestAssetFontUsesOpaqueAlias(t *testing.T) {
 	}
 	if _, err := ResolveFont([]FontOption{{Source: "google", ID: "empty"}}, FontRef{Source: "google", ID: "empty"}); err == nil {
 		t.Fatal("missing Google family accepted")
+	}
+}
+
+func TestMaterializePreservesUnrelatedPresetRoles(t *testing.T) {
+	color, _ := ParseColor("#165d9b")
+	specs := Tokens()
+	for _, preset := range BuiltIn() {
+		t.Run(string(preset.Key), func(t *testing.T) {
+			base, _ := Preset(preset.Key)
+			for _, edit := range specs {
+				if !edit.Editable {
+					continue
+				}
+				changed, err := Materialize(base, Overrides{Tokens: map[string]Color{edit.Key: color}})
+				if err != nil {
+					t.Fatal(err)
+				}
+				affected := map[string]bool{edit.Key: true}
+				for range specs {
+					for _, spec := range specs {
+						if spec.Editable {
+							continue
+						}
+						for key := range affected {
+							if strings.Contains(spec.Expression, "var(--color-"+key+")") {
+								affected[spec.Key] = true
+							}
+						}
+					}
+				}
+				for key, before := range base.Tokens {
+					if !affected[key] && !sameColor(before, changed.Tokens[key]) {
+						t.Errorf("editing %s changed unrelated %s", edit.Key, key)
+					}
+				}
+			}
+		})
+	}
+	minimal, _ := Preset(KeyMinimal)
+	changed, err := Materialize(minimal, Overrides{Tokens: map[string]Color{"outline": color, "outline-dark": color}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, key := range []string{"control-outline", "control-outline-dark"} {
+		if changed.Tokens[key] != minimal.Tokens[key] {
+			t.Errorf("lost Minimal override %s", key)
+		}
+	}
+	// Imported/customized derived literals remain snapshots even when their default inputs change.
+	minimal.Tokens["info-text"] = color
+	changed, err = Materialize(minimal, Overrides{Tokens: map[string]Color{"info": color}})
+	if err != nil || changed.Tokens["info-text"] != color {
+		t.Fatalf("lost custom literal: %v", err)
+	}
+}
+
+func TestMaterializerCatalogDigestMatchesSource(t *testing.T) {
+	files, err := filepath.Glob("*.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	hash := sha256.New()
+	for _, file := range files {
+		if strings.HasSuffix(file, "_test.go") {
+			continue
+		}
+		data, err := os.ReadFile(file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		hash.Write([]byte(file + "\x00"))
+		hash.Write(data)
+	}
+	if got := hex.EncodeToString(hash.Sum(nil)); got != source.MaterializerDigest {
+		t.Fatalf("materializer catalog is stale: have %s want %s; run go generate ./themes", source.MaterializerDigest, got)
 	}
 }

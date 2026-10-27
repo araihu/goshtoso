@@ -53,7 +53,7 @@ func TestFileinputCoverageDemo(t *testing.T) {
 	uploads := page.Locator("[data-fileinput-variant='upload']")
 	upCount, err := uploads.Count()
 	require.NoError(t, err)
-	require.Equal(t, 1, upCount)
+	require.Equal(t, 2, upCount)
 
 	// Drive the drop zone's Alpine drag state: dragenter highlights the border,
 	// dragleave clears it. This exercises the @dragenter/@dragleave handlers.

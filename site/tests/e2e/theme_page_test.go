@@ -3,7 +3,10 @@
 package e2e
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/araihu/goshtoso/themes"
+	"strings"
 	"testing"
 
 	"github.com/mxschmitt/playwright-go"
@@ -146,9 +149,8 @@ func TestThemePage_ResponsiveThemeMatrix(t *testing.T) {
 					require.NoError(t, err)
 					require.Equal(t, true, fits)
 					require.NoError(t, page.Locator("#site-theme-editor-title-trigger").Click())
-					popupFits, err := page.Locator("#site-theme-editor-title-options").Evaluate(`el=>{const r=el.getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1}`, nil)
+					_, err = page.WaitForFunction(`()=>{const r=document.querySelector('#site-theme-editor-title-options').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1}`, nil)
 					require.NoError(t, err)
-					require.Equal(t, true, popupFits)
 					require.NoError(t, page.Locator("#site-theme-editor-title-trigger").Press("Escape"))
 					picker := page.Locator("#site-theme-editor-primary-picker-trigger")
 					require.NoError(t, picker.Click())
@@ -314,4 +316,74 @@ func TestThemePage_RadiusUpdatesWhileDragging(t *testing.T) {
   return input.valueAsNumber>2&&definition.radiusRem===input.valueAsNumber&&parseFloat(getComputedStyle(frame.documentElement).getPropertyValue('--radius-radius'))===input.valueAsNumber;
  }`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
 	require.NoError(t, err)
+}
+
+func TestThemePage_ColorEditPreservesPresetOverrides(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoThemePage(t, page)
+	for _, preset := range themes.BuiltIn() {
+		t.Run(string(preset.Key), func(t *testing.T) {
+			choosePreviewPreset(t, page, string(preset.Key))
+			before := editorDefinition(t, page)
+			_, err := page.Evaluate(`()=>{const input=document.querySelector('[data-theme-color=primary]');input.value='#165d9b';input.dispatchEvent(new Event('input',{bubbles:true}));}`, nil)
+			require.NoError(t, err)
+			after := editorDefinition(t, page)
+			for key, color := range before.Tokens {
+				if key != "primary" {
+					require.Equal(t, color, after.Tokens[key], "unrelated role %s", key)
+				}
+			}
+		})
+	}
+	choosePreviewPreset(t, page, "minimal")
+	before := editorDefinition(t, page)
+	_, err := page.Evaluate(`()=>{for(const key of ['outline','outline-dark']){const input=document.querySelector('[data-theme-color='+key+']');input.value='#165d9b';input.dispatchEvent(new Event('input',{bubbles:true}));}}`, nil)
+	require.NoError(t, err)
+	after := editorDefinition(t, page)
+	require.Equal(t, before.Tokens["control-outline"], after.Tokens["control-outline"])
+	require.Equal(t, before.Tokens["control-outline-dark"], after.Tokens["control-outline-dark"])
+}
+
+func TestThemePage_ProvenanceValidationAgreesWithGo(t *testing.T) {
+	page := newIsolatedPage(t)
+	gotoThemePage(t, page)
+	base := editorDefinition(t, page)
+	for _, field := range []struct {
+		name  string
+		limit int
+	}{{"presetKey", 100}, {"goshtosoVersion", 200}, {"catalogRevision", 128}} {
+		for _, char := range []string{"a", "é", "界"} {
+			for _, over := range []bool{false, true} {
+				t.Run(fmt.Sprintf("%s/%s/%t", field.name, char, over), func(t *testing.T) {
+					value := strings.Repeat(char, field.limit/len(char)) + strings.Repeat("a", field.limit%len(char))
+					if over {
+						value += "a"
+					}
+					candidate := base.Clone()
+					candidate.RadiusRem = .789
+					switch field.name {
+					case "presetKey":
+						candidate.Provenance.PresetKey = themes.Key(value)
+					case "goshtosoVersion":
+						candidate.Provenance.GoshtosoVersion = value
+					case "catalogRevision":
+						candidate.Provenance.CatalogRevision = value
+					}
+					expected := themes.Validate(candidate) == nil
+					original, _ := json.Marshal(base)
+					encoded, _ := json.Marshal(candidate)
+					accepted, err := page.Evaluate(`([original,candidate])=>{const root=document.querySelector('[data-theme-editor]'),id=JSON.parse(root.dataset.themeEditor).id;for(const definition of [JSON.parse(original),JSON.parse(candidate)])root.dispatchEvent(new CustomEvent('themeeditor:load',{detail:{id,definition}}));return JSON.parse(root.querySelector('[data-theme-definition]').value).radiusRem===.789}`, []string{string(original), string(encoded)})
+					require.NoError(t, err)
+					require.Equal(t, expected, accepted)
+				})
+			}
+		}
+	}
+	candidate := base.Clone()
+	candidate.Provenance.GoshtosoVersion = strings.Repeat("界", themes.MaxDefinitionBytes/3)
+	require.Error(t, themes.Validate(candidate))
+	encoded, _ := json.Marshal(candidate)
+	accepted, err := page.Evaluate(`encoded=>{const root=document.querySelector('[data-theme-editor]'),id=JSON.parse(root.dataset.themeEditor).id;root.dispatchEvent(new CustomEvent('themeeditor:load',{detail:{id,definition:JSON.parse(encoded)}}));return JSON.parse(root.querySelector('[data-theme-definition]').value).provenance.goshtosoVersion.length>200}`, string(encoded))
+	require.NoError(t, err)
+	require.Equal(t, false, accepted)
 }

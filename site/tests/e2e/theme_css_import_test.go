@@ -3,7 +3,6 @@
 package e2e
 
 import (
-	"encoding/json"
 	"os"
 	"strings"
 	"testing"
@@ -16,14 +15,6 @@ import (
 func cssImportFile(t *testing.T, page playwright.Page, name string, css []byte) {
 	t.Helper()
 	require.NoError(t, page.Locator("[data-theme-import-file]").SetInputFiles(playwright.InputFile{Name: name, MimeType: "text/css", Buffer: css}))
-}
-func editorDefinition(t *testing.T, page playwright.Page) themes.Definition {
-	t.Helper()
-	value, err := page.Locator("[data-theme-definition]").InputValue()
-	require.NoError(t, err)
-	var definition themes.Definition
-	require.NoError(t, json.Unmarshal([]byte(value), &definition))
-	return definition
 }
 func waitForCSSImport(t *testing.T, page playwright.Page) {
 	t.Helper()

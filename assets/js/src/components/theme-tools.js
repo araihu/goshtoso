@@ -3,9 +3,10 @@
   const only = (object, keys) => object && typeof object === "object" && Object.keys(object).length === keys.length && keys.every((k) => Object.hasOwn(object, k));
   const finite = (n) => typeof n === "number" && Number.isFinite(n);
   const colorValid = (c) => only(c, ["space", "channels", "alpha"]) && ["srgb", "oklch"].includes(c.space) && Array.isArray(c.channels) && c.channels.length === 3 && c.channels.every(finite) && finite(c.alpha) && c.alpha >= 0 && c.alpha <= 1 && (c.space === "srgb" ? c.channels.every((n) => n >= 0 && n <= 1) : c.channels[0] >= 0 && c.channels[0] <= 1 && c.channels[1] >= 0 && c.channels[1] <= 0.5 && c.channels[2] >= 0 && c.channels[2] < 360);
+  const byteLength = (s) => new TextEncoder().encode(s).length;
   const fontValid = (f) => only(f, ["source", "id"]) && ["system", "google", "bundled", "upload"].includes(f.source) && /^[A-Za-z0-9][A-Za-z0-9:._/-]{0,199}$/.test(f.id);
   function valid(d, keys) {
-    return only(d, ["schemaVersion", "tokens", "typography", "radiusRem", "provenance"]) && only(d.typography, ["title", "body"]) && only(d.provenance, ["presetKey", "goshtosoVersion", "catalogRevision"]) && ["presetKey", "goshtosoVersion", "catalogRevision"].every((k) => typeof d.provenance[k] === "string" && d.provenance[k].length <= 200) && d.schemaVersion === 1 && finite(d.radiusRem) && d.radiusRem >= 0 && d.radiusRem <= 4 && fontValid(d.typography?.title) && fontValid(d.typography?.body) && d.tokens && Object.keys(d.tokens).length === keys.length && keys.length <= 256 && keys.every((k) => colorValid(d.tokens[k])) && JSON.stringify(d).length <= 65536;
+    return only(d, ["schemaVersion", "tokens", "typography", "radiusRem", "provenance"]) && only(d.typography, ["title", "body"]) && only(d.provenance, ["presetKey", "goshtosoVersion", "catalogRevision"]) && Object.entries({presetKey: 100, goshtosoVersion: 200, catalogRevision: 128}).every(([k, max]) => typeof d.provenance[k] === "string" && byteLength(d.provenance[k]) <= max) && d.schemaVersion === 1 && finite(d.radiusRem) && d.radiusRem >= 0 && d.radiusRem <= 4 && fontValid(d.typography?.title) && fontValid(d.typography?.body) && d.tokens && Object.keys(d.tokens).length === keys.length && keys.length <= 256 && keys.every((k) => colorValid(d.tokens[k])) && byteLength(JSON.stringify(d)) <= 65536;
   }
   const colorCSS = (c) => c.space === "oklch" ? `oklch(${c.channels.join(" ")} / ${c.alpha})` : `color(srgb ${c.channels.join(" ")} / ${c.alpha})`;
   function parseColor(text) {
@@ -45,19 +46,31 @@
     return [4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s].map((v) => v <= 31308e-7 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055);
   }
   const clamp = (v) => Math.min(1, Math.max(0, v));
-  function derive(d, specs) {
+  function derive(d, specs, base, changedKey) {
     const derived = new Map(specs.filter((s) => !s.editable).map((s) => [s.key, s.expression]));
-    const get = (key, seen = []) => {
+    const get = (key, seen = [], tokens = d.tokens, expressions = derived) => {
       if (seen.includes(key)) throw Error("Cyclic derived token.");
-      const expression = derived.get(key);
-      if (!expression) return d.tokens[key];
+      const expression = expressions.get(key);
+      if (!expression) return tokens[key];
       const alias = expression.match(/^var\(--color-([\w-]+)\)$/);
-      if (alias) return get(alias[1], [...seen, key]);
+      if (alias) return get(alias[1], [...seen, key], tokens, expressions);
       const match = expression.match(/^color-mix\(in srgb, var\(--color-([\w-]+)\) ([\d.]+)%, var\(--color-([\w-]+)\) ([\d.]+)%\)$/);
       if (!match) throw Error("Unsupported derived token.");
-      const a = get(match[1], [...seen, key]), b = get(match[3], [...seen, key]), p = Number(match[2]) / 100, alpha = a.alpha * p + b.alpha * (1 - p), av = rgb(a), bv = rgb(b);
+      const a = get(match[1], [...seen, key], tokens, expressions), b = get(match[3], [...seen, key], tokens, expressions), p = Number(match[2]) / 100, alpha = a.alpha * p + b.alpha * (1 - p), av = rgb(a), bv = rgb(b);
       return { space: "srgb", channels: av.map((v, i) => alpha ? clamp((v * a.alpha * p + bv[i] * b.alpha * (1 - p)) / alpha) : 0), alpha };
     };
+    // Keep preset overrides and imported literals independent of default derivations.
+    for (const [key, expression] of derived) {
+      const expected = get(key, [], base.tokens, new Map([[key, expression]])), actual = base.tokens[key];
+      if (expected.space !== actual.space || Math.abs(expected.alpha - actual.alpha) > 1e-9 || expected.channels.some((v, i) => Math.abs(v - actual.channels[i]) > 1e-9)) derived.delete(key);
+    }
+    const affected = new Set([changedKey]);
+    for (let i = 0; i < derived.size; i++) {
+      for (const [key, expression] of derived) {
+        if ([...affected].some((input) => expression.includes("var(--color-" + input + ")"))) affected.add(key);
+      }
+    }
+    for (const key of derived.keys()) if (!affected.has(key)) derived.delete(key);
     for (const key of derived.keys()) d.tokens[key] = get(key);
   }
   const safeURL = (value) => {
@@ -331,8 +344,9 @@
         const el = e.target;
         feedback.textContent = "";
         if (el.hasAttribute("data-theme-color")) {
+          const before = copy(definition);
           definition.tokens[el.dataset.themeColor] = parseColor(el.value);
-          derive(definition, specs);
+          derive(definition, specs, before, el.dataset.themeColor);
           dirty = true;
         } else if (el.hasAttribute("data-theme-radius")) {
           definition.radiusRem = Number(el.value);

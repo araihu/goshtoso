@@ -16,8 +16,6 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		path    string
 		section string
 	}{
-		{"/components/theme-editor", "Composition"},
-		{"/components/theme-playground", "Composition"},
 		{"/components/app-shell", "Composition"},
 		{"/components/page-header", "Composition"},
 		{"/components/toolbar", "Composition"},
@@ -25,6 +23,8 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		{"/components/panel", "Composition"},
 		{"/components/empty-state", "Composition"},
 		{"/components/skeleton", "Composition"},
+		{"/components/theme-editor", "Composition"},
+		{"/components/theme-playground", "Composition"},
 		{"/components/accordion", "Display"},
 		{"/components/avatar", "Display"},
 		{"/components/badge", "Display"},

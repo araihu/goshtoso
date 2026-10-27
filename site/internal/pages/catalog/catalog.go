@@ -45,26 +45,6 @@ func (e Entry) GoDocsURL(version string) string {
 
 var componentPages = availableComponentPages([]Entry{
 	{
-		Key:         "components/theme-editor",
-		Path:        "/components/theme-editor",
-		Title:       "Theme Editor",
-		Active:      "theme-editor",
-		Description: "Edit complete theme snapshots with isolated previews and consumer-owned persistence.",
-		Section:     "Composition",
-		Order:       50,
-		Kinds:       []components.Kind{components.KindThemeEditor},
-	},
-	{
-		Key:         "components/theme-playground",
-		Path:        "/components/theme-playground",
-		Title:       "Theme Playground",
-		Active:      "theme-playground",
-		Description: "Preview theme definitions in an isolated same-origin document.",
-		Section:     "Composition",
-		Order:       51,
-		Kinds:       []components.Kind{components.KindThemePlayground},
-	},
-	{
 		Key:         "components/app-shell",
 		Path:        "/components/app-shell",
 		Title:       "App Shell",
@@ -133,6 +113,26 @@ var componentPages = availableComponentPages([]Entry{
 		Section:     "Composition",
 		Order:       6,
 		Kinds:       []components.Kind{components.KindSkeleton},
+	},
+	{
+		Key:         "components/theme-editor",
+		Path:        "/components/theme-editor",
+		Title:       "Theme Editor",
+		Active:      "theme-editor",
+		Description: "Edit complete theme snapshots with isolated previews and consumer-owned persistence.",
+		Section:     "Composition",
+		Order:       50,
+		Kinds:       []components.Kind{components.KindThemeEditor},
+	},
+	{
+		Key:         "components/theme-playground",
+		Path:        "/components/theme-playground",
+		Title:       "Theme Playground",
+		Active:      "theme-playground",
+		Description: "Preview theme definitions in an isolated same-origin document.",
+		Section:     "Composition",
+		Order:       51,
+		Kinds:       []components.Kind{components.KindThemePlayground},
 	},
 	{
 		Key:         "components/accordion",

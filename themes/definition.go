@@ -232,7 +232,8 @@ func Preset(key Key) (Definition, error) {
 	return d, Validate(d)
 }
 
-// Materialize applies edits and recomputes derived roles into literal values.
+// Materialize applies edits and recomputes default-derived roles into literal values.
+// Preset overrides and imported literals that differ from the default relation stay frozen.
 func Materialize(base Definition, edits Overrides) (Definition, error) {
 	if err := Validate(base); err != nil {
 		return Definition{}, err
@@ -256,18 +257,49 @@ func Materialize(base Definition, edits Overrides) (Definition, error) {
 		d.RadiusRem = *edits.RadiusRem
 	}
 	if len(edits.Tokens) > 0 {
+		original := map[string]string{}
+		for key, c := range base.Tokens {
+			original["--color-"+key] = c.CSS()
+		}
+		derived := map[string]bool{}
+		for _, spec := range Tokens() {
+			if spec.Editable {
+				continue
+			}
+			value, err := resolveColor(spec.Expression, original, map[string]bool{})
+			derived[spec.Key] = err == nil && sameColor(value, base.Tokens[spec.Key])
+		}
+		affected := map[string]bool{}
+		for key := range edits.Tokens {
+			affected[key] = true
+		}
+		for range derived {
+			for _, spec := range Tokens() {
+				if !derived[spec.Key] {
+					continue
+				}
+				for key := range affected {
+					if strings.Contains(spec.Expression, "var(--color-"+key+")") {
+						affected[spec.Key] = true
+					}
+				}
+			}
+		}
+		for key := range derived {
+			derived[key] = derived[key] && affected[key]
+		}
 		vars := map[string]string{}
 		for key, c := range d.Tokens {
 			vars["--color-"+key] = c.CSS()
 		}
 		for _, spec := range Tokens() {
-			if spec.Editable {
+			if !derived[spec.Key] {
 				continue
 			}
 			vars["--color-"+spec.Key] = spec.Expression
 		}
 		for _, spec := range Tokens() {
-			if spec.Editable {
+			if !derived[spec.Key] {
 				continue
 			}
 			c, err := resolveColor(vars["--color-"+spec.Key], vars, map[string]bool{})
@@ -278,6 +310,18 @@ func Materialize(base Definition, edits Overrides) (Definition, error) {
 		}
 	}
 	return d, Validate(d)
+}
+
+func sameColor(a, b Color) bool {
+	if a.Space != b.Space || math.Abs(a.Alpha-b.Alpha) > 1e-9 {
+		return false
+	}
+	for i := range a.Channels {
+		if math.Abs(a.Channels[i]-b.Channels[i]) > 1e-9 {
+			return false
+		}
+	}
+	return true
 }
 
 // UnmarshalJSON rejects extra or missing color channels and unknown color fields.

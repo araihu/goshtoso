@@ -17,7 +17,8 @@ func TestSidebarNavigationPreservesScrollThroughoutSwap(t *testing.T) {
 	for _, route := range []string{"schema-form", "kbd", "schema-form"} {
 		_, err = page.Evaluate(`() => {
    const sidebar = document.querySelector('.sidebar-scroll');
-   sidebar.scrollTop = 800;
+   const destinations = ['kbd','schema-form'].map(route=>sidebar.querySelector('a[href="/components/'+route+'"]').getBoundingClientRect().top-sidebar.getBoundingClientRect().top+sidebar.scrollTop);
+   sidebar.scrollTop = Math.max(0, Math.min(...destinations)-32);
    window.sidebarProbe = {node: sidebar, start: sidebar.scrollTop, samples: [], done: false};
    const sample = () => {
     const current = document.querySelector('.sidebar-scroll');
