@@ -42,6 +42,20 @@ func settleSelectEvents(t *testing.T, page playwright.Page) {
 	require.NoError(t, err)
 }
 
+func TestSelectSavedThemeFontsWithoutEditor(t *testing.T) {
+	page := selectEventPage(t)
+	count, err := page.Locator("[data-theme-editor]").Count()
+	require.NoError(t, err)
+	require.Zero(t, count)
+	_, err = page.WaitForFunction(`()=>Array.from(document.fonts).some(face=>face.family.includes('goshtoso-font-go-regular')&&face.status==='loaded')`, nil)
+	require.NoError(t, err)
+	require.NoError(t, page.Locator("#saved-theme-trigger").Click())
+	require.NoError(t, page.Locator("#saved-theme-option-0").Click())
+	style, err := page.Locator("#saved-theme-trigger [x-text]").GetAttribute("style")
+	require.NoError(t, err)
+	require.Contains(t, style, "goshtoso-font-go-regular")
+}
+
 func TestSelectUserChangeTriggersHTMXFilter(t *testing.T) {
 	for _, mode := range []string{"light", "dark", "minimal-light", "minimal-dark"} {
 		t.Run(mode, func(t *testing.T) {

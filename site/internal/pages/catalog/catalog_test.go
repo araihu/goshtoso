@@ -23,6 +23,8 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		{"/components/panel", "Composition"},
 		{"/components/empty-state", "Composition"},
 		{"/components/skeleton", "Composition"},
+		{"/components/theme-editor", "Composition"},
+		{"/components/theme-playground", "Composition"},
 		{"/components/accordion", "Display"},
 		{"/components/avatar", "Display"},
 		{"/components/badge", "Display"},

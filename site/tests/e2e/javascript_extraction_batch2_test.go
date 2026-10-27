@@ -142,39 +142,8 @@ func TestJavaScriptBatch2_ProviderLifecycleCleansOwnedResources(t *testing.T) {
 	dismissCookieBanner(t, page)
 	require.NoError(t, page.AddInitScript(playwright.Script{Content: new(`(() => {
 		const stats = window.__batch2Lifecycle = {
-			themeActive: 0, themeDisconnects: 0, themeCallbacks: 0,
 			tickerAdds: 0, tickerRemoves: 0, chatAdds: 0,
 			urlsCreated: 0, urlsRevoked: 0,
-		};
-
-		const NativeObserver = window.MutationObserver;
-		window.MutationObserver = class extends NativeObserver {
-			constructor(callback) {
-				let instance;
-				super((records, observer) => {
-					if (instance && instance.__batch2ThemeObserver) stats.themeCallbacks += 1;
-					callback(records, observer);
-				});
-				instance = this;
-				this.__batch2ThemeObserver = false;
-			}
-			observe(target, options) {
-				const filter = options && options.attributeFilter;
-				if (!this.__batch2ThemeObserver && target === document.documentElement &&
-					Array.isArray(filter) && filter.includes('class') && filter.includes('data-theme')) {
-					this.__batch2ThemeObserver = true;
-					stats.themeActive += 1;
-				}
-				return super.observe(target, options);
-			}
-			disconnect() {
-				if (this.__batch2ThemeObserver) {
-					this.__batch2ThemeObserver = false;
-					stats.themeActive -= 1;
-					stats.themeDisconnects += 1;
-				}
-				return super.disconnect();
-			}
 		};
 
 		const nativeAdd = EventTarget.prototype.addEventListener;
@@ -220,28 +189,22 @@ func TestJavaScriptBatch2_ProviderLifecycleCleansOwnedResources(t *testing.T) {
 			`path => window.htmx.ajax('GET', path, {target: '#main-content', swap: 'innerHTML'})`, path)
 		require.NoError(t, navigateErr)
 	}
-	_, err = page.Evaluate(`() => localStorage.setItem('themeOverrides', JSON.stringify({
-		primary: 'blue-700', danger: 17, unknown: 'red-500'
-	}))`, nil)
-	require.NoError(t, err)
-
 	navigateFragment("/docs/theme")
-	_, err = page.WaitForFunction(
-		`() => {
-			const root = document.querySelector('[x-data=themePage]');
-			if (!root?._x_dataStack || window.__batch2Lifecycle.themeActive !== 1) return false;
-			const overrides = Alpine.$data(root).overrides;
-			return overrides.primary === 'blue-700' && !('danger' in overrides) && !('unknown' in overrides);
-		}`, nil)
-	require.NoError(t, err, "theme provider should own one active observer")
+	waitForThemeEditor(t, page)
+	_, err = page.Evaluate(`()=>{window.oldThemeEditor=document.querySelector('[data-theme-editor]');window.oldThemeEvents=0;oldThemeEditor.addEventListener('themeeditor:change',()=>oldThemeEvents++);}`, nil)
+	require.NoError(t, err)
 
 	navigateFragment("/examples/ticker")
 	_, err = page.WaitForFunction(`() => {
 		const stats = window.__batch2Lifecycle;
 		return document.querySelector('#ticker-fragment')?._x_dataStack &&
-			stats.themeActive === 0 && stats.themeDisconnects >= 1 && stats.tickerAdds >= 2;
+			!document.querySelector('[data-theme-editor]') && stats.tickerAdds >= 2;
 	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
-	require.NoError(t, err, "theme observer should disconnect and ticker listeners should attach")
+	require.NoError(t, err, "theme editor should detach and ticker listeners should attach")
+
+	detached, err := page.Evaluate(`()=>{const root=window.oldThemeEditor,config=JSON.parse(root.dataset.themeEditor),input=root.querySelector('[data-theme-color=primary]');input.value='#ff0000';input.dispatchEvent(new Event('input',{bubbles:true}));root.dispatchEvent(new CustomEvent('themeeditor:load',{detail:{id:config.id,definition:config.initial}}));return window.oldThemeEvents===0}`, nil)
+	require.NoError(t, err)
+	require.Equal(t, true, detached, "detached editor must release owned input/load listeners")
 
 	navigateFragment("/examples/profile")
 	_, err = page.WaitForFunction(`() => {

@@ -2,7 +2,10 @@ package selectpage
 
 import (
 	selectfield "github.com/araihu/goshtoso/components/select"
+	"github.com/araihu/goshtoso/components/themeeditor"
+ "github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
+	"github.com/araihu/goshtoso/themes"
 )
 
 // SelectDemoPage renders the Select component demo
@@ -33,6 +36,17 @@ templ selectDemoContent() {
 })`,
 		)
 		@demo.ExpressionOverridesNote("Select")
+		@demo.DemoSection(demo.DemoSectionProps{Title: "Saved theme selection", Description: "Snapshot swatches and title typefaces work on a read-only selection page without mounting ThemeEditor."}, selectThemePreview(), `options := themeeditor.Config{Catalog: catalog, Fonts: fonts}.PresetOptions()
+@selectfield.Select(selectfield.Config{ID: "saved-theme", Label: "Saved theme", Options: options})`)
+		@demo.DemoSection(demo.DemoSectionProps{Title: "Rich options", Description: "Leading content, right-aligned Trailing badges and label styles appear on each option and follow the selected value. Selection and keyboard behavior remain owned by Select."}, selectRichPreview(), `@selectfield.Select(selectfield.Config{
+    ID: "rich-style", Label: "Style",
+    Options: []selectfield.Option{
+        {Value: "code", Label: "Code", Leading: colorSwatch(),
+         Trailing: badge.Badge(badge.Config{Label: "Built-in", Appearance: badge.AppearanceSoft}),
+         LabelAttrs: templ.Attributes{"style": "font-family:ui-monospace,monospace"}},
+    },
+})`,
+		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "HTMX Filter",
@@ -55,7 +69,6 @@ templ selectDemoContent() {
     <p id="allocation-result" aria-live="polite">Showing all types</p>
 </form>`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Error State",
@@ -183,6 +196,14 @@ templ selectDemoContent() {
 </div>`,
 		)
 	</div>
+}
+
+templ selectThemePreview() {
+	{{ definition, _ := themes.Preset(themes.KeyGoshtoso) }}
+	{{ definition.Typography.Title = themes.FontRef{Source: "bundled", ID: "go-regular"} }}
+	{{ options := (themeeditor.Config{ID: "saved-theme-fonts", Fonts: themes.DefaultFonts(), Catalog: []themeeditor.CatalogItem{{ID: "go-title", Label: "Goshtoso with Go title", Definition: definition}}}).PresetOptions() }}
+	{{ options[0].Selected = true }}
+	@selectfield.Select(selectfield.Config{ID: "saved-theme", Label: "Saved theme", Options: options})
 }
 
 // selectHTMXFilterPreview uses only the public submission-input contract.
@@ -501,4 +522,15 @@ func countryOptions() []selectfield.Option {
 		{Value: "Venezuela", Label: "Venezuela"},
 		{Value: "Vietnam", Label: "Vietnam"},
 	}
+}
+
+templ selectRichPreview() {
+	@selectfield.Select(selectfield.Config{ID: "rich-theme", Label: "Style", Options: []selectfield.Option{
+		{Value: "code", Label: "Code", Trailing: badge.Badge(badge.Config{Label: "Built-in", Size: badge.SizeSM, Appearance: badge.AppearanceSoft, RootClass: "demo-theme-kind"}), Leading: selectRichSwatch("#7c3aed"), LabelAttrs: templ.Attributes{"style": "font-family:ui-monospace,monospace"}},
+		{Value: "editorial", Label: "Editorial", Trailing: badge.Badge(badge.Config{Label: "Custom", Size: badge.SizeSM, Tone: badge.TonePrimary, Appearance: badge.AppearanceSoft, RootClass: "demo-theme-kind"}), Leading: selectRichSwatch("#0284c7"), LabelAttrs: templ.Attributes{"style": "font-family:ui-serif,serif"}},
+	}})
+}
+
+templ selectRichSwatch(color string) {
+	<span class="inline-block size-4 rounded-full" style={ "background-color:" + color } aria-hidden="true"></span>
 }

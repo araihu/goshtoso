@@ -216,3 +216,21 @@ func TestRadioReducedMotionStopsVisualTransitions(t *testing.T) {
 	}`, nil)
 	require.NoError(t, err, "radio visual transitions should be disabled under reduced motion")
 }
+
+func TestRadioIconSegmentsKeepNativeKeyboardSelection(t *testing.T) {
+	page := newIsolatedPage(t)
+	_, err := page.Goto(baseURL + "/components/radio")
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+	require.True(t, radioIsChecked(t, page, "#mode-system"))
+	require.NoError(t, page.Locator("#mode-light").Click())
+	require.True(t, radioIsChecked(t, page, "#mode-light"))
+	require.False(t, radioIsChecked(t, page, "#mode-system"))
+	require.NoError(t, page.Locator("#mode-light").Press("ArrowRight"))
+	require.True(t, radioIsChecked(t, page, "#mode-dark"))
+	require.NoError(t, page.Locator("#mode-dark").Press("ArrowRight"))
+	require.True(t, radioIsChecked(t, page, "#mode-system"))
+	count, err := page.Locator("label[for='mode-light'] svg").Count()
+	require.NoError(t, err)
+	require.Equal(t, 1, count)
+}

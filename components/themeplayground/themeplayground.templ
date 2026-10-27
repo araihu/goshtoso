@@ -1,0 +1,26 @@
+package themeplayground
+import "github.com/araihu/goshtoso/components/head"
+templ playgroundTemplate(c Config) {
+ <iframe id={ c.ID } src={ templ.SafeURL(c.Src) } title={ c.Title } class={ "w-full min-h-64 rounded-radius border border-outline " + c.RootClass } sandbox="allow-scripts allow-same-origin" data-theme-playground { c.RootAttrs... }></iframe>
+}
+templ Frame(c FrameConfig) {
+ <!DOCTYPE html>
+ <html lang="en" data-theme="goshtoso" data-theme-frame={ c.data() }>
+  <head>
+   <meta charset="utf-8"/>
+   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+   <meta name="robots" content="noindex"/>
+   <title>{ c.Title }</title>
+   @head.DependenciesMinimal(head.WithLocalRuntime())
+   if c.Head != nil {
+ @c.Head
+ }
+  </head>
+  <body class="bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
+   <p data-theme-font-warning role="status"></p>
+   if c.Content != nil {
+ @c.Content
+ }
+  </body>
+ </html>
+}

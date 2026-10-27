@@ -16,6 +16,8 @@ type Component interface {
 }
 
 const (
+	KindThemeEditor            Kind = "theme-editor"
+	KindThemePlayground        Kind = "theme-playground"
 	KindAccordion              Kind = "accordion"
 	KindAlert                  Kind = "alert"
 	KindAvatar                 Kind = "avatar"
@@ -106,6 +108,7 @@ const (
 )
 
 var allKinds = []Kind{
+	KindThemeEditor, KindThemePlayground,
 	KindAccordion,
 	KindAlert,
 	KindAvatar,

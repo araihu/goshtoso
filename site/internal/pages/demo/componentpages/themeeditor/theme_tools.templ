@@ -1,0 +1,8 @@
+package themeeditorpage
+import (
+ "github.com/araihu/goshtoso/site/internal/pages/demo"
+ start "github.com/araihu/goshtoso/site/internal/pages/demo/contentpages/start"
+)
+templ themeToolsContent() {
+ @demo.ComponentDemo(demo.ComponentDemoProps{Title: "Theme Editor", Description: "Preview complete theme snapshots in an isolated document. The application owns saving and font storage."}, start.ThemeToolsDemo(), `@themeeditor.ThemeEditor(themeeditor.Config{ID: "editor", Initial: definition, Catalog: presets, Fonts: themes.DefaultFonts(), PreviewID: "preview"})`)
+}

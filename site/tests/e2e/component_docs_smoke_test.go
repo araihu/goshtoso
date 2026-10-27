@@ -26,6 +26,7 @@ func TestAllComponentDocsDirectLoad(t *testing.T) {
 	for _, entry := range catalog.ComponentPages() {
 		t.Run(entry.Active, func(t *testing.T) {
 			page := newPage(t, sharedBrowser)
+			useLocalGoogleFontFixture(t, page)
 			failures := watchPageFailures(page)
 			response, err := page.Goto(baseURL+entry.Path, playwright.PageGotoOptions{
 				WaitUntil: playwright.WaitUntilStateDomcontentloaded,
@@ -66,6 +67,7 @@ func TestComponentDocsPreserveApplicationHeadAndRuntimeContracts(t *testing.T) {
 	}
 
 	page := newPage(t, sharedBrowser)
+	useLocalGoogleFontFixture(t, page)
 	response, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
@@ -98,9 +100,10 @@ func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 		// covered by icon_test.go rather than this core-family traversal.
 		return entry.Active == "app-shell" || entry.Active == "icon"
 	})
-	require.Len(t, entries, 52)
+	require.Len(t, entries, 54)
 
 	page := newPage(t, sharedBrowser)
+	useLocalGoogleFontFixture(t, page)
 	failures := watchPageFailures(page)
 	response, err := page.Goto(baseURL+entries[0].Path, playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
@@ -278,7 +281,14 @@ func requireComponentDocsDestination(
 	require.NoError(t, err)
 	require.Equal(t, true, runtimesReady)
 
-	waitForPageSettled(t, page)
+	if entry.Active == "theme-editor" || entry.Active == "theme-playground" {
+		waitForThemeEditor(t, page)
+		require.NoError(t, page.FrameLocator("#theme-playground-frame").Locator("#home-table").ScrollIntoViewIfNeeded())
+		_, err := page.WaitForFunction(`()=>{const frame=document.querySelector('#theme-playground-frame')?.contentDocument;return frame?.documentElement.dataset.theme==='custom'&&frame.fonts.status==='loaded'&&frame.querySelector('#home-table-tbody')?.textContent.includes('Sarah Adams');}`, nil)
+		require.NoError(t, err)
+	} else {
+		waitForPageSettled(t, page)
+	}
 	failures.RequireEmpty(t)
 }
 
@@ -293,6 +303,7 @@ func TestComponentDocsHTMXProofRejectsFullPageReload(t *testing.T) {
 	require.GreaterOrEqual(t, len(entries), 2)
 
 	page := newPage(t, sharedBrowser)
+	useLocalGoogleFontFixture(t, page)
 	failures := watchPageFailures(page)
 	response, err := page.Goto(baseURL+entries[0].Path, playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
@@ -326,6 +337,7 @@ func TestComponentDocsComponentPageSpacing(t *testing.T) {
 	}
 
 	page := newPage(t, sharedBrowser)
+	useLocalGoogleFontFixture(t, page)
 	response, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
@@ -391,6 +403,7 @@ func TestComponentDocsThemeMatrix(t *testing.T) {
 		for _, state := range states {
 			t.Run(strings.TrimPrefix(path, "/components/")+"/"+state.name, func(t *testing.T) {
 				page := newPage(t, sharedBrowser)
+				useLocalGoogleFontFixture(t, page)
 				failures := watchPageFailures(page)
 				script := fmt.Sprintf(`
     document.cookie = "gt_storage=allowed; Path=/; SameSite=Lax";

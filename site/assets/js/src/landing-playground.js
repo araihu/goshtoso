@@ -4,7 +4,7 @@
   var frameID = "theme-playground-frame";
   var root = document.documentElement;
 
-  if (!root.hasAttribute("data-landing-playground")) {
+  if (!root.hasAttribute("data-theme-frame")) {
     window.addEventListener("message", function (event) {
       if (event.origin !== window.location.origin || !event.data || event.data.type !== messageType) {
         return;

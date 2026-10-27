@@ -30,7 +30,9 @@ templ radioTemplate(cfg Config) {
 templ radioSegmented(cfg Config) {
 	<label for={ cfg.ID } class={ cfg.segmentedLabelClasses() + " " + cfg.RootClass }>
 		@segmentedInput(cfg)
-		<span>{ cfg.Label }</span>
+		<span>
+			@radioLabelContent(cfg)
+		</span>
 	</label>
 }
 
@@ -123,7 +125,9 @@ templ radioBarTemplate() {
 templ standardRadio(cfg Config) {
 	<label for={ cfg.ID } class={ "flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75 " + cfg.RootClass }>
 		@radioInput(cfg)
-		<span>{ cfg.Label }</span>
+		<span>
+			@radioLabelContent(cfg)
+		</span>
 	</label>
 }
 
@@ -133,7 +137,7 @@ templ radioWithDescription(cfg Config) {
 		@radioInput(cfg)
 		<div class="flex flex-col">
 			<label for={ cfg.ID } class="text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
-				{ cfg.Label }
+				@radioLabelContent(cfg)
 			</label>
 			if cfg.HelperTextID != "" {
 				<span id={ cfg.HelperTextID } class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">{ cfg.HelperText }</span>
@@ -147,7 +151,9 @@ templ radioWithDescription(cfg Config) {
 // radioWithContainer renders a radio inside a bordered container (segmented look)
 templ radioWithContainer(cfg Config) {
 	<label for={ cfg.ID } class={ "inline-flex min-w-52 items-center justify-between gap-3 rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm font-medium text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:opacity-75 has-disabled:cursor-not-allowed " + cfg.RootClass }>
-		<span>{ cfg.Label }</span>
+		<span>
+			@radioLabelContent(cfg)
+		</span>
 		@radioInput(cfg)
 	</label>
 }
@@ -270,7 +276,9 @@ templ radioGroupTemplate(cfg GroupConfig) {
 templ groupRadioItem(cfg Config) {
 	<label for={ cfg.ID } class="flex items-center gap-2 p-3 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
 		@radioInput(cfg)
-		<span>{ cfg.Label }</span>
+		<span>
+			@radioLabelContent(cfg)
+		</span>
 	</label>
 }
 
@@ -282,11 +290,26 @@ templ groupRadioItemWithDescription(cfg Config) {
 		</span>
 		<div class="flex min-w-0 flex-col gap-0.5">
 			if cfg.BadgeColor != "" {
-				<span class={ badgeClasses(cfg.BadgeColor) }>{ cfg.Label }</span>
+				<span class={ badgeClasses(cfg.BadgeColor) }>
+					@radioLabelContent(cfg)
+				</span>
 			} else {
-				<span>{ cfg.Label }</span>
+				<span>
+					@radioLabelContent(cfg)
+				</span>
 			}
 			<span class="truncate text-xs font-normal text-on-surface-muted dark:text-on-surface-dark-muted" title={ cfg.HelperText }>{ cfg.HelperText }</span>
 		</div>
 	</label>
+}
+
+templ radioLabelContent(cfg Config) {
+	if cfg.LabelLeading != nil {
+		<span class="inline-flex items-center gap-2">
+			@cfg.LabelLeading
+			<span>{ cfg.Label }</span>
+		</span>
+	} else {
+		{ cfg.Label }
+	}
 }

@@ -17,8 +17,19 @@ const (
 	AppearanceUpload Appearance = "upload"
 )
 
+// State represents file validation state.
+type State string
+
+const (
+	StateDefault State = ""
+	StateError   State = "error"
+)
+
 // Config holds configuration for the file input component
 type Config struct {
+	// State sets initial validation state. StateError emits aria-invalid="true".
+	// Updating aria-invalid through InputAttrs or JavaScript also updates styling.
+	State State
 	// Appearance controls the visual treatment (default: drop zone).
 	Appearance Appearance
 	// ID is the HTML id for the file input element
@@ -44,6 +55,9 @@ type Config struct {
 func (cfg Config) inputAttributes() templ.Attributes {
 	attrs := make(templ.Attributes, len(cfg.InputAttrs)+1)
 	maps.Copy(attrs, cfg.InputAttrs)
+	if cfg.State == StateError {
+		attrs["aria-invalid"] = "true"
+	}
 	if cfg.HelperText != "" && cfg.ID != "" {
 		existing, _ := attrs["aria-describedby"].(string)
 		attrs["aria-describedby"] = mergeAttributeTokens(existing, cfg.ID+"-helper")
@@ -67,7 +81,7 @@ func mergeAttributeTokens(values ...string) string {
 
 // ContainerClasses returns CSS classes for the outermost wrapper div
 func (cfg Config) containerClasses() string {
-	base := "flex min-w-0 w-full max-w-xl flex-col gap-1 text-center"
+	base := "group/fileinput flex min-w-0 w-full max-w-xl flex-col gap-1 text-center"
 	if cfg.RootClass != "" {
 		return base + " " + cfg.RootClass
 	}
@@ -76,7 +90,7 @@ func (cfg Config) containerClasses() string {
 
 // UploadContainerClasses returns classes for the compact upload wrapper.
 func (cfg Config) uploadContainerClasses() string {
-	base := "flex min-w-0 w-full max-w-xl flex-col gap-1 text-left text-on-surface dark:text-on-surface-dark"
+	base := "group/fileinput flex min-w-0 w-full max-w-xl flex-col gap-1 text-left text-on-surface dark:text-on-surface-dark"
 	if cfg.RootClass != "" {
 		return base + " " + cfg.RootClass
 	}
@@ -85,12 +99,12 @@ func (cfg Config) uploadContainerClasses() string {
 
 // LabelClasses returns CSS classes for the label text above the drop zone
 func (cfg Config) labelClasses() string {
-	return "w-fit pl-0.5 text-sm text-on-surface dark:text-on-surface-dark"
+	return "w-fit pl-0.5 text-sm text-on-surface dark:text-on-surface-dark group-has-[[aria-invalid=true]]/fileinput:text-danger dark:group-has-[[aria-invalid=true]]/fileinput:text-danger"
 }
 
 // DropZoneClasses returns the static (non-dynamic) CSS classes for the drop zone
 func (cfg Config) dropZoneClasses() string {
-	base := "flex w-full flex-col items-center justify-center gap-2 rounded-radius border border-dashed p-8 text-on-surface dark:text-on-surface-dark"
+	base := "flex w-full flex-col items-center justify-center gap-2 rounded-radius border border-dashed p-8 text-on-surface dark:text-on-surface-dark group-has-[[aria-invalid=true]]/fileinput:border-danger dark:group-has-[[aria-invalid=true]]/fileinput:border-danger"
 	if cfg.Disabled {
 		return base + " opacity-50 cursor-not-allowed"
 	}
@@ -109,7 +123,7 @@ func (cfg Config) isUpload() bool {
 
 // UploadControlClasses returns classes for the compact upload control.
 func (cfg Config) uploadControlClasses() string {
-	base := "flex w-full items-stretch overflow-hidden rounded-radius border border-outline bg-surface-alt text-sm text-on-surface focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark dark:focus-within:outline-primary-dark"
+	base := "flex w-full items-stretch overflow-hidden rounded-radius border border-outline bg-surface-alt text-sm text-on-surface focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark dark:focus-within:outline-primary-dark group-has-[[aria-invalid=true]]/fileinput:border-danger group-has-[[aria-invalid=true]]/fileinput:focus-within:outline-danger dark:group-has-[[aria-invalid=true]]/fileinput:border-danger dark:group-has-[[aria-invalid=true]]/fileinput:focus-within:outline-danger"
 	if cfg.Disabled {
 		return base + " cursor-not-allowed opacity-75"
 	}
@@ -132,5 +146,5 @@ func (cfg Config) uploadButtonClasses() string {
 
 // HelperTextClasses returns classes for helper text below the field.
 func (cfg Config) helperTextClasses() string {
-	return "pl-0.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted"
+	return "pl-0.5 text-xs text-on-surface-muted dark:text-on-surface-dark-muted group-has-[[aria-invalid=true]]/fileinput:text-danger dark:group-has-[[aria-invalid=true]]/fileinput:text-danger"
 }

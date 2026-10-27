@@ -452,3 +452,12 @@ func TestOptionTrailingIsSeparateFromSelection(t *testing.T) {
 		})
 	}
 }
+
+func TestStaticSearchDoesNotRequestTheCurrentPage(t *testing.T) {
+	cfg := Config{ID: "fonts", Name: "font", EnableSearch: true, DisablePersistence: true, Source: Source{Static: []Option{{Value: "a", Label: "Font A", LabelAttrs: templ.Attributes{"style": "font-family:serif", "data-font-example": "a"}}}}}
+	html := renderHTML(t, Combobox(cfg, cfg.InitialState()))
+	assert.Contains(t, html, "data-combobox-search")
+	assert.NotContains(t, html, `hx-get=""`)
+	assert.Contains(t, html, `style="font-family:serif"`)
+	assert.Contains(t, html, `data-font-example="a"`)
+}

@@ -26,7 +26,7 @@ import (
 	"time"
 )
 
-//go:embed styles.css goshtoso-theme.css js/*.js images icons
+//go:embed styles.css goshtoso-theme.css js/*.js images icons fonts
 var files embed.FS
 
 type embeddedAssetSource struct {
