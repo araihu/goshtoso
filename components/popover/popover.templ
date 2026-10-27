@@ -8,7 +8,7 @@ templ popoverTemplate(cfg Config) {
 	<div
 		data-popover-root
 		x-data="goshtosoPopover($el)"
-		x-on:keydown.esc.window="closeAndFocus()"
+		x-on:keydown.esc.window="handleEscape($event)"
 		x-on:click.outside="close()"
 		if cfg.activation() == ActivationHover {
 			x-on:mouseenter="clearScheduledClose(); open()"
