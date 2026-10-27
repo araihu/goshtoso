@@ -9,7 +9,7 @@ or store mixed values through the common interface and inspect their stable
 `Kind()`. Constructor signatures, config fields, options, and rendered defaults are
 listed below. See the selected Goshtoso tag's `docs/COMPONENT_MODEL.md`.
 
-58 component packages. Each is imported by its directory path; note the
+60 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -568,6 +568,7 @@ import "github.com/araihu/goshtoso/components/combobox"  // package combobox
 | `Value` | `string` |  |
 | `Label` | `string` |  |
 | `Disabled` | `bool` |  |
+| `LabelAttrs` | `templ.Attributes` | LabelAttrs adds non-conflicting attributes to the option label, such as typography styles. |
 | `Trailing` | `templ.Component` | Trailing renders non-interactive supporting content at the end of the option. It is excluded from the selected trigger label and submitted value. |
 
 **Source**
@@ -745,11 +746,13 @@ import "github.com/araihu/goshtoso/components/fileinput"  // package fileinput
 **Entry points:** `FileInput(cfg Config)`
 
 - **Appearance** — AppearanceDropZone = "", AppearanceUpload = "upload"
+- **State** — StateDefault = "", StateError = "error"
 
 **Config**
 
 | Field | Type | Description |
 |-------|------|-------------|
+| `State` | `State` | State sets initial validation state. StateError emits aria-invalid="true". Updating aria-invalid through InputAttrs or JavaScript also updates styling. |
 | `Appearance` | `Appearance` | Appearance controls the visual treatment (default: drop zone). |
 | `ID` | `string` | ID is the HTML id for the file input element |
 | `Name` | `string` | Name is the form field name |
@@ -1392,6 +1395,7 @@ import "github.com/araihu/goshtoso/components/radio"  // package radio
 | `Name` | `string` | Name is the form field name (shared by all radios in a group) |
 | `Value` | `string` | Value is the form field value |
 | `Label` | `string` | Label is the text displayed next to the radio |
+| `LabelLeading` | `templ.Component` | LabelLeading renders non-interactive content before the label, such as a decorative icon. |
 | `Checked` | `bool` | Checked sets the initial checked state |
 | `Disabled` | `bool` | Disabled disables the radio |
 | `Tone` | `Tone` | Tone determines the color scheme (default: TonePrimary) |
@@ -1709,6 +1713,9 @@ import "github.com/araihu/goshtoso/components/select"  // package selectfield
 | `Value` | `string` |  |
 | `Label` | `string` |  |
 | `Selected` | `bool` |  |
+| `Leading` | `templ.Component` | Leading renders non-interactive content before the option and selected label. |
+| `Trailing` | `templ.Component` | Trailing renders non-interactive content after the label, aligned to the right. It also follows the selected label in the trigger. |
+| `LabelAttrs` | `templ.Attributes` | LabelAttrs decorates the option label; its style also follows the selected label. |
 
 ## sidebar
 
@@ -2203,6 +2210,66 @@ import "github.com/araihu/goshtoso/components/textinput"  // package textinput
 | `Readonly` | `bool` | Readonly makes the input non-editable but still submittable |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the container. |
 | `InputAttrs` | `templ.Attributes` | InputAttrs allows arbitrary HTML attributes on the &lt;input&gt; element (e.g., hx-post, hx-indicator). |
+
+## themeeditor
+
+```go
+import "github.com/araihu/goshtoso/components/themeeditor"  // package themeeditor
+```
+
+**Entry points:** `ThemeEditor(cfg Config)`
+
+**CatalogItem**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` |  |
+| `Label` | `string` |  |
+| `Definition` | `themes.Definition` |  |
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` |  |
+| `Initial` | `themes.Definition` |  |
+| `Catalog` | `[]CatalogItem` |  |
+| `Fonts` | `[]themes.FontOption` |  |
+| `PreviewID` | `string` |  |
+| `InitialPreviewMode` | `string` |  |
+| `InputName` | `string` |  |
+| `Actions` | `templ.Component` |  |
+| `RootClass` | `string` |  |
+| `RootAttrs` | `templ.Attributes` |  |
+
+## themeplayground
+
+```go
+import "github.com/araihu/goshtoso/components/themeplayground"  // package themeplayground
+```
+
+**Entry points:** `Frame(c FrameConfig)` · `ThemePlayground(cfg Config)`
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` |  |
+| `Src` | `string` |  |
+| `Title` | `string` |  |
+| `RootClass` | `string` |  |
+| `RootAttrs` | `templ.Attributes` |  |
+
+**FrameConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` |  |
+| `Title` | `string` |  |
+| `Content` | `templ.Component` |  |
+| `Head` | `templ.Component` |  |
+| `Fonts` | `[]themes.FontOption` |  |
+| `FontCatalogURL` | `string` |  |
 
 ## toast
 

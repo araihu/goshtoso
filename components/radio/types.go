@@ -106,6 +106,8 @@ type Config struct {
 	Value string
 	// Label is the text displayed next to the radio
 	Label string
+	// LabelLeading renders non-interactive content before the label, such as a decorative icon.
+	LabelLeading templ.Component
 	// Checked sets the initial checked state
 	Checked bool
 	// Disabled disables the radio

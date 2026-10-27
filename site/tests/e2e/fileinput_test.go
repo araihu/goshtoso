@@ -186,7 +186,7 @@ func TestFileInputFragmentNavNoErrors(t *testing.T) {
 
 	require.NoError(t, page.Locator("a[href='/components/fileinput']").Click())
 	_, err = page.WaitForFunction(
-		"() => document.querySelectorAll('[data-fileinput-variant=\"dropzone\"]').length >= 1 && document.querySelectorAll('[data-fileinput-variant=\"upload\"]').length === 1",
+		"() => document.querySelectorAll('[data-fileinput-variant=\"dropzone\"]').length >= 1 && document.querySelectorAll('[data-fileinput-variant=\"upload\"]').length === 2",
 		nil,
 		playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)},
 	)
@@ -204,4 +204,35 @@ func TestFileInputFragmentNavNoErrors(t *testing.T) {
 	)
 	require.NoError(t, err)
 	require.Empty(t, jsErrors, "no JS console/page errors on fragment-nav file input page: %v", jsErrors)
+}
+
+func TestFileInputValidationState(t *testing.T) {
+	page := newIsolatedPage(t)
+	_, err := page.Goto(baseURL + "/components/fileinput")
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+	for _, width := range []int{390, 1440} {
+		require.NoError(t, page.SetViewportSize(width, 900))
+		for _, theme := range []string{"goshtoso", "minimal"} {
+			for _, dark := range []bool{false, true} {
+				_, err = page.Evaluate(`([theme,dark])=>{document.documentElement.dataset.theme=theme;document.documentElement.classList.toggle('dark',dark)}`, []any{theme, dark})
+				require.NoError(t, err)
+				for _, id := range []string{"demoUploadError", "demoDropError"} {
+					valid, err := page.Evaluate(`id=>{
+      const i=document.getElementById(id),r=i.closest('[class~="group/fileinput"]'),c=r.querySelector('[data-fileinput-variant]'),h=r.querySelector('small');
+      i.setAttribute('aria-invalid','true');
+      const danger=document.createElement('span');danger.className='text-danger';r.append(danger);
+      const expected=getComputedStyle(danger).color,before=getComputedStyle(c).borderTopColor;
+      const invalid=before===expected&&getComputedStyle(h).color===expected;
+      i.removeAttribute('aria-invalid');const normal=getComputedStyle(c).borderTopColor!==before;
+      i.setAttribute('aria-invalid','true');danger.remove();
+      const bounds=c.getBoundingClientRect();
+      return invalid&&normal&&bounds.left>=0&&bounds.right<=innerWidth+1;
+     }`, id)
+					require.NoError(t, err)
+					require.Equal(t, true, valid, "%d/%s/%t/%s", width, theme, dark, id)
+				}
+			}
+		}
+	}
 }

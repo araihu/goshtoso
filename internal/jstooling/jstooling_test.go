@@ -140,6 +140,7 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 
 	root := t.TempDir()
 	sources := map[string]string{
+		"assets/js/src/components/theme-tools.js":      `(() => { window.themeToolsFixture = true })();`,
 		"assets/js/src/components/requests.js":         `(() => {window.requestsFixture=true})();`,
 		"assets/js/src/combobox.js":                    `(() => { window.comboboxFixture = true })();`,
 		"assets/js/src/components/combobox-client.js":  `(() => { window.comboboxClientFixture = true })();`,
@@ -175,7 +176,6 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 		"site/assets/js/src/chat.js":                   `(() => { window.chatFixture = true })();`,
 		"site/assets/js/src/profile-images.js":         `(() => { window.profileImagesFixture = true })();`,
 		"site/assets/js/src/ticker-pane.js":            `(() => { window.tickerPaneFixture = true })();`,
-		"site/assets/js/src/theme-page.js":             `(() => { window.themePageFixture = true })();`,
 		"assets/js/src/darkmode.js":                    `document.addEventListener("alpine:init", () => window.darkFixture = true);`,
 		"assets/js/src/dependency-loader.js":           `(() => { window.loaderFixture = Promise.resolve(true) })();`,
 	}
@@ -249,6 +249,7 @@ func assertSplitBundleContents(t *testing.T, componentBundle, siteBundle []byte)
 	t.Helper()
 
 	componentFixtures := []string{
+		"themeToolsFixture",
 		"comboboxFixture", "comboboxClientFixture", "actionGroupFixture", "codeBlockFixture", "structuredInputFixture", "tooltipFixture", "popoverFixture",
 		"dataFixture", "navigationFixture", "sidebarFixture", "searchFixture", "tableFixture", "carouselFixture", "dropdownFixture",
 		"paletteFixture", "selectFixture", "tabsFixture",
@@ -256,7 +257,7 @@ func assertSplitBundleContents(t *testing.T, componentBundle, siteBundle []byte)
 	demoFixtures := []string{
 		"siteBootstrapFixture", "siteNavigationFixture", "demoLayoutFixture", "selectDemoFixture",
 		"actionGroupDemoFixture", "avatarShowcaseFixture", "iconCatalogFixture", "logFeedFixture",
-		"chatFixture", "profileImagesFixture", "tickerPaneFixture", "themePageFixture",
+		"chatFixture", "profileImagesFixture", "tickerPaneFixture",
 	}
 	assertBundleContainsOnly(t, "component bundle", componentBundle, componentFixtures, demoFixtures)
 	assertBundleContainsOnly(t, "site bundle", siteBundle, demoFixtures, componentFixtures)

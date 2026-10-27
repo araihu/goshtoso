@@ -55,8 +55,8 @@ func TestLandingThemePlaygroundRouteRendersIsolatedDocument(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, rec.Code)
 	require.Equal(t, "text/html; charset=utf-8", rec.Header().Get("Content-Type"))
-	require.Contains(t, rec.Body.String(), `<html lang="en" data-theme="araihu" data-landing-playground`)
-	require.Contains(t, rec.Body.String(), `id="home-theme-picker"`)
+	require.Contains(t, rec.Body.String(), `<html lang="en" data-theme="goshtoso" data-theme-frame=`)
+	require.Contains(t, rec.Body.String(), `data-theme-frame=`)
 }
 
 func TestAgentsPageRendersSkillInstallGuidance(t *testing.T) {

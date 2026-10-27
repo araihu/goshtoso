@@ -1,0 +1,134 @@
+package themeeditor
+
+import (
+	"github.com/araihu/goshtoso/components/badge"
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/combobox"
+	"github.com/araihu/goshtoso/components/fileinput"
+	"github.com/araihu/goshtoso/components/icon"
+	"github.com/araihu/goshtoso/components/icon/heroicons"
+	"github.com/araihu/goshtoso/components/modal"
+	"github.com/araihu/goshtoso/components/palette"
+	"github.com/araihu/goshtoso/components/panel"
+	"github.com/araihu/goshtoso/components/radio"
+	rangeinput "github.com/araihu/goshtoso/components/range"
+	selectfield "github.com/araihu/goshtoso/components/select"
+	"github.com/araihu/goshtoso/components/textinput"
+	"github.com/araihu/goshtoso/themes"
+)
+
+templ editorTemplate(c Config) {
+	<section id={ c.ID } data-theme-editor={ c.data() } class={ "space-y-4 " + c.RootClass } { c.RootAttrs... }>
+		<input type="hidden" name={ c.InputName } data-theme-definition/>
+		@templ.Raw("<style data-theme-font-faces>" + c.fontFaces() + "</style>")
+		if len(c.Catalog)>0 {
+			@selectfield.Select(selectfield.Config{ID: c.ID + "-preset", Label: "Base theme", Options: c.presetOptions(), InputAttrs: templ.Attributes{"data-theme-preset": ""}})
+		}
+		<div class="space-y-2">
+			@fileinput.FileInput(fileinput.Config{ID: c.ID + "-import", Label: "Import theme CSS", Appearance: fileinput.AppearanceUpload, Accept: ".css,text/css", HelperText: "Imports on selection. Single Goshtoso theme export, up to 1 MiB. Fonts must already be available.", InputAttrs: templ.Attributes{"data-theme-import-file": "", "aria-describedby": c.ID + "-import-feedback"}})
+			<p id={ c.ID + "-import-feedback" } data-theme-import-feedback class="text-sm" role="status" aria-live="polite" hidden></p>
+		</div>
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+			for _,role:=range []string{"title","body"} {
+				{{ picker := c.fontPicker(role) }}
+				@combobox.Combobox(picker, picker.InitialState())
+			}
+		</div>
+		@rangeinput.Range(rangeinput.Config{ID: c.ID + "-radius", Label: "Border radius (rem)", Value: radiusValue(c), Min: "0", Max: "4", Step: "0.05", InputAttrs: templ.Attributes{"data-theme-radius": ""}})
+		<fieldset class="space-y-2">
+			<legend class="text-sm">Preview mode</legend>
+			@radio.RadioBar() {
+				@radio.Radio(radio.Config{ID: c.ID + "-mode-light", Name: c.ID + "-preview-mode", Value: "light", Label: "Light", Checked: c.InitialPreviewMode != "dark", Segmented: true, LabelLeading: icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidSun, Decorative: true, RootClass: "size-4"}), InputAttrs: templ.Attributes{"data-theme-mode": ""}})
+				@radio.Radio(radio.Config{ID: c.ID + "-mode-dark", Name: c.ID + "-preview-mode", Value: "dark", Label: "Dark", Checked: c.InitialPreviewMode == "dark", Segmented: true, LabelLeading: icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: heroicons.Icon16SolidMoon, Decorative: true, RootClass: "size-4"}), InputAttrs: templ.Attributes{"data-theme-mode": ""}})
+			}
+		</fieldset>
+		<section aria-labelledby={ c.ID + "-colors-heading" } class="space-y-2">
+			<h3 id={ c.ID + "-colors-heading" } class="text-sm font-medium">Color roles</h3>
+			<p class="text-sm">Hex, color(srgb …) or oklch(…). Derived roles update automatically.</p>
+			<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+				for _, t := range themes.Tokens() {
+					if t.Editable {
+						<div data-theme-color-row={ t.Key } data-theme-initial-color={ colorValue(c.Initial.Tokens[t.Key]) } x-data="{colorValue:''}" x-init="colorValue=$el.dataset.themeInitialColor">
+							@selectfield.Select(selectfield.Config{ID: c.ID + "-" + t.Key + "-picker", Label: t.Label, Shell: true, ValueExpr: "colorValue", TriggerLeading: colorTriggerSwatch(), TriggerAttrs: templ.Attributes{"data-theme-color-trigger": t.Key}}) {
+								@palette.Palette(palette.Config{ID: c.ID + "-" + t.Key + "-palette", LazyWhen: "isOpen || openedWithKeyboard"})
+								<div class="p-2">
+									@textinput.TextInput(textinput.Config{ID: c.ID + "-" + t.Key, Label: "Exact value", Value: colorValue(c.Initial.Tokens[t.Key]), InputAttrs: templ.Attributes{"data-theme-color": t.Key, "x-on:input": "colorValue=$event.target.value", "x-on:change": "colorValue=$event.target.value"}})
+								</div>
+							}
+						</div>
+					}
+				}
+			</div>
+		</section>
+		<p data-theme-feedback role="status" aria-live="polite"></p>
+		@contrastAdvisory(c.ID)
+		<div class="flex flex-wrap gap-2">
+			@button.Button(button.WithType("button"), button.WithAttrs(templ.Attributes{"data-theme-reset": ""})) {
+				Reset draft
+			}
+			@button.Button(button.WithType("button"), button.WithAttrs(templ.Attributes{"data-theme-export": ""})) {
+				Export CSS
+			}
+			if c.Actions != nil {
+				@c.Actions
+			}
+		</div>
+		@modal.Dialog(modal.DialogConfig{ID: c.ID + "-confirm", Title: "Confirm draft change", Content: confirmationContent()})
+	</section>
+}
+
+templ confirmationContent() {
+	<p data-theme-confirm-message></p>
+	<div class="flex justify-end gap-2 mt-4">
+		@button.Button(button.WithType("button"), button.WithAttrs(templ.Attributes{"data-theme-confirm-cancel": "", "autofocus": true})) {
+			Cancel
+		}
+		@button.Button(button.WithType("button"), button.WithAttrs(templ.Attributes{"data-theme-confirm-accept": ""})) {
+			Confirm
+		}
+	</div>
+}
+
+// A theme's colors remain literal and independent of the surrounding document.
+templ themeSwatches(d themes.Definition) {
+	<span class="inline-flex items-center gap-1" aria-hidden="true" data-theme-swatches>
+		for _,key:=range []string{"primary","secondary","surface"} {
+			<span class="size-4 shrink-0 rounded-full border border-outline" data-theme-swatch={ key } style={ "background-color:" + d.Tokens[key].CSS() }></span>
+		}
+	</span>
+}
+
+templ colorTriggerSwatch() {
+	<span class="size-4 shrink-0 rounded-full border border-outline" x-bind:style="{backgroundColor:colorValue}" aria-hidden="true" data-theme-color-swatch></span>
+}
+
+templ contrastAdvisory(id string) {
+	<section data-theme-contrast aria-labelledby={ id + "-contrast-heading" } class="@container space-y-2">
+		<h3 id={ id + "-contrast-heading" } class="text-sm font-medium">Color contrast</h3>
+		<p class="text-xs">Text contrast estimates for the current preview mode.</p>
+		<div class="grid grid-cols-1 gap-3 @xl:grid-cols-3">
+			for _, pair := range []struct{ Key, Label string }{{"surface", "Surface"}, {"primary", "Primary"}, {"secondary", "Secondary"}} {
+				@panel.Panel(panel.Config{Density: panel.DensityCompact, BodyClass: "space-y-3", RootAttrs: templ.Attributes{"data-theme-contrast-pair": pair.Key}}) {
+					<h4 class="text-sm font-semibold">{ pair.Label }</h4>
+					<div class="overflow-hidden rounded-radius border border-outline dark:border-outline-dark" aria-hidden="true">
+						<div data-theme-contrast-sample class="flex items-center justify-center gap-2 px-3 py-2">
+							<span class="text-xl">Aa</span><strong class="text-xl">Aa</strong>
+						</div>
+						<div data-theme-contrast-reverse class="flex items-center justify-center gap-2 px-3 py-2">
+							<span class="text-xl">Aa</span><strong class="text-xl">Aa</strong>
+						</div>
+					</div>
+					<output data-theme-contrast-ratio class="block font-mono text-xl font-bold tabular-nums"></output>
+					<div>
+						<span data-theme-contrast-grade="aaa" hidden>@badge.Badge(badge.Config{Label: "AAA", Tone: badge.ToneSuccess, Appearance: badge.AppearanceSoft, Indicator: true})</span>
+						<span data-theme-contrast-grade="aa" hidden>@badge.Badge(badge.Config{Label: "AA", Tone: badge.ToneSuccess, Appearance: badge.AppearanceSoft, Indicator: true})</span>
+						<span data-theme-contrast-grade="aa-large" hidden>@badge.Badge(badge.Config{Label: "AA large", Tone: badge.ToneWarning, Appearance: badge.AppearanceSoft, Indicator: true})</span>
+						<span data-theme-contrast-grade="fail" hidden>@badge.Badge(badge.Config{Label: "Fail", Tone: badge.ToneDanger, Appearance: badge.AppearanceSoft, Indicator: true})</span>
+						<span data-theme-contrast-grade="unrated" hidden>@badge.Badge(badge.Config{Label: "Not rated", Appearance: badge.AppearanceSoft})</span>
+					</div>
+					<p data-theme-contrast-transparency class="text-xs" hidden>Transparent colors depend on the background.</p>
+				}
+			}
+		</div>
+	</section>
+}

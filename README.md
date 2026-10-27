@@ -27,7 +27,7 @@ dependencies and render most HTML on the server.
 
 ## Highlights
 
-- **58 public component packages**, **54 documentation pages**, and **87 renderable primitives**
+- **60 public component packages**, **56 documentation pages**, and **89 renderable primitives**
   for composition, forms, navigation, overlays, data
   display, feedback, layout, and richer inputs.
 - **Server-rendered by default** with HTMX-friendly markup and Alpine.js where

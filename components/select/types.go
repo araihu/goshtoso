@@ -23,6 +23,13 @@ type Option struct {
 	Value    string
 	Label    string
 	Selected bool
+	// Leading renders non-interactive content before the option and selected label.
+	Leading templ.Component
+	// Trailing renders non-interactive content after the label, aligned to the right.
+	// It also follows the selected label in the trigger.
+	Trailing templ.Component
+	// LabelAttrs decorates the option label; its style also follows the selected label.
+	LabelAttrs templ.Attributes
 }
 
 // ToOptions converts a slice of any type into []Option using the provided accessor functions.
@@ -234,9 +241,10 @@ type factoryData struct {
 }
 
 type factoryOption struct {
-	Value    string `json:"value"`
-	Label    string `json:"label"`
-	Selected bool   `json:"selected"`
+	Value      string `json:"value"`
+	Label      string `json:"label"`
+	Selected   bool   `json:"selected"`
+	LabelStyle string `json:"labelStyle,omitempty"`
 }
 
 // factoryDataJSON serializes Select's non-executable state for its factory.
@@ -247,7 +255,8 @@ func (cfg Config) factoryDataJSON() string {
 		SelectedValues: []string{},
 	}
 	for _, option := range cfg.Options {
-		data.Options = append(data.Options, factoryOption(option))
+		style, _ := option.LabelAttrs["style"].(string)
+		data.Options = append(data.Options, factoryOption{Value: option.Value, Label: option.Label, Selected: option.Selected, LabelStyle: style})
 	}
 	for index, option := range cfg.Options {
 		if option.Selected {
@@ -291,4 +300,13 @@ func jsEscapeSingle(s string) string {
 		}
 	}
 	return result.String()
+}
+
+func (cfg Config) hasRichOptions() bool {
+	for _, option := range cfg.Options {
+		if option.Leading != nil || option.Trailing != nil || len(option.LabelAttrs) > 0 {
+			return true
+		}
+	}
+	return false
 }

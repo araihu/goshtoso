@@ -84,6 +84,7 @@ templ bodyInner(cfg Config, state State) {
 				value={ state.Search }
 				placeholder={ expressions.From(ctx).Combobox.SearchPlaceholder }
 				class="w-full bg-transparent py-2.5 pl-9 pr-3 text-sm text-on-surface placeholder:text-on-surface/40 focus:outline-none dark:text-on-surface-dark dark:placeholder:text-on-surface-dark/40"
+ if cfg.OptionsEndpoint!="" {
 				hx-get={ cfg.OptionsEndpoint }
 				hx-sync="this:replace"
 				hx-on::before:request="goshtosoRequests.latest(this,event.detail.ctx)"
@@ -91,6 +92,7 @@ templ bodyInner(cfg Config, state State) {
 				hx-target={ "#" + cfg.ID + "-options" }
 				hx-swap="outerHTML"
 				hx-include={ cfg.hxIncludeSelector() }
+ }
 				name="q"
 			/>
 		</div>
@@ -139,7 +141,7 @@ templ clientOptionLI(cfg Config, state State, opt Option) {
 		if cfg.Mode == ModeMultiple {
 			@optionCheckbox(state.isSelected(opt.Value))
 		}
-		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.isSelected(opt.Value)) }>{ opt.Label }</span>
+		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.isSelected(opt.Value)) } { opt.LabelAttrs... }>{ opt.Label }</span>
 		if opt.Trailing != nil {
 			<span class="ml-auto shrink-0">@opt.Trailing</span>
 		}
@@ -171,7 +173,7 @@ templ serverOptionLI(cfg Config, state State, opt Option) {
 		if cfg.Mode == ModeMultiple {
 			@optionCheckbox(state.isSelected(opt.Value))
 		}
-		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.isSelected(opt.Value)) }>{ opt.Label }</span>
+		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.isSelected(opt.Value)) } { opt.LabelAttrs... }>{ opt.Label }</span>
 		if opt.Trailing != nil {
 			<span class="ml-auto shrink-0">@opt.Trailing</span>
 		}
@@ -253,7 +255,7 @@ templ comboboxTemplate(cfg Config, state State) {
 			x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"
 			x-transition:leave-start="opacity-100 scale-100"
 			x-transition:leave-end="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"
-			class="absolute left-0 top-full z-30 mt-1 min-w-full overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt"
+			class="absolute left-0 top-full z-30 mt-1 w-full overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt"
 		>
 			@body(cfg, state)
 		</div>

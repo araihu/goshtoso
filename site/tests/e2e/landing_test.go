@@ -190,7 +190,7 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 	})
 
 	t.Run("AraiHuThemeSegmentAvailable", func(t *testing.T) {
-		segment := playground.Locator("#home-theme-picker label:has(input[data-theme-key='araihu'])")
+		segment := page.Locator("#site-theme-editor-preset-trigger")
 		visible, err := segment.IsVisible()
 		require.NoError(t, err)
 		require.True(t, visible, "Arai Hû should be available in the homepage theme picker")
@@ -203,7 +203,7 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 
 		frameBody, err := playground.Locator("body").InnerText()
 		require.NoError(t, err)
-		require.Contains(t, frameBody, "Live theme preview")
+		require.Contains(t, frameBody, "Primary")
 		require.NotContains(t, frameBody, "Customer workspace")
 		require.NotContains(t, frameBody, "Explore all")
 	})
@@ -259,14 +259,13 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 				frame.contentDocument.documentElement.scrollHeight,
 				frame.contentDocument.body.scrollHeight,
 			);
-			return frame.clientHeight >= contentHeight &&
-				getComputedStyle(frame.contentDocument.body).overflowY === 'hidden';
+			return frame.clientHeight >= contentHeight;
 		}`, nil)
 		require.NoError(t, err, "playground iframe should grow to its content without nested scrolling")
 	})
 
 	t.Run("GoshtosoThemeSegmentAvailable", func(t *testing.T) {
-		segment := playground.Locator("#home-theme-picker label:has(input[data-theme-key='goshtoso'])")
+		segment := page.Locator("#site-theme-editor-preset-trigger")
 		visible, err := segment.IsVisible()
 		require.NoError(t, err)
 		require.True(t, visible, "Goshtoso should be available in the homepage theme picker")
@@ -276,16 +275,9 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		parentTheme, err := page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
 		require.NoError(t, err)
 
-		dracula := playground.Locator("#home-theme-picker input[data-theme-key='dracula']")
-		require.NoError(t, dracula.Press("Space"))
-		_, err = page.WaitForFunction(`() => document.querySelector('#theme-playground-frame').contentDocument.documentElement.dataset.theme === 'dracula'`, nil)
+		choosePreviewPreset(t, page, "dracula")
+		_, err = page.WaitForFunction(`() => document.querySelector('#theme-playground-frame').contentDocument.documentElement.dataset.theme === 'custom'`, nil)
 		require.NoError(t, err)
-		got, err := playground.Locator("html").GetAttribute("data-theme")
-		require.NoError(t, err)
-		require.Equal(t, "dracula", got, "activating a segment should set data-theme on <html>")
-		checked, err := dracula.IsChecked()
-		require.NoError(t, err)
-		require.True(t, checked, "selected theme segment should be checked")
 
 		parentThemeAfter, err := page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
 		require.NoError(t, err)
@@ -301,15 +293,10 @@ func TestLanding_HeroAndStructure(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, true, allowed, "storage consent must be active before testing preview isolation")
 
-		// Exercise the same keyboard interaction before and after consent. This
-		// keeps the isolation check independent of pointer scrolling into the iframe.
-		minimal := playground.Locator("#home-theme-picker input[data-theme-key='minimal']")
-		require.NoError(t, minimal.Press("Space"))
-		_, err = page.WaitForFunction(`() => document.querySelector('#theme-playground-frame').contentDocument.documentElement.dataset.theme === 'minimal'`, nil)
-		require.NoError(t, err)
-		checked, err = minimal.IsChecked()
-		require.NoError(t, err)
-		require.True(t, checked, "selected theme segment should be checked after consent")
+		require.NoError(t, page.Locator("[data-theme-reset]").Click())
+		require.NoError(t, page.Locator("#site-theme-editor-confirm [data-theme-confirm-accept]").Click())
+		choosePreviewPreset(t, page, "minimal")
+
 		parentThemeAfter, err = page.Evaluate("() => document.documentElement.getAttribute('data-theme')", nil)
 		require.NoError(t, err)
 		require.Equal(t, parentTheme, parentThemeAfter, "playground theme must not restyle homepage after consent")

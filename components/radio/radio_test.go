@@ -5,6 +5,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/a-h/templ"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -34,4 +36,19 @@ func TestRadio_AnimationsProvideReducedMotionContracts(t *testing.T) {
 
 	segmented := renderRadio(t, Config{ID: "reduced-segmented", Name: "reduced", Value: "segmented", Label: "Segmented", Segmented: true})
 	assert.Contains(t, segmented, "transition-colors motion-reduce:transition-none")
+}
+
+func TestLabelLeadingRendersWithAccessibleText(t *testing.T) {
+	for _, cfg := range []Config{
+		{ID: "mode-dark", Name: "mode", Value: "dark", Label: "Dark", Segmented: true},
+		{ID: "mode-standard", Name: "mode", Value: "system", Label: "System"},
+		{ID: "mode-container", Name: "mode", Value: "light", Label: "Light", Container: true},
+	} {
+		cfg.LabelLeading = templ.Raw(`<svg aria-hidden="true" data-radio-leading></svg>`)
+		html := renderRadio(t, cfg)
+		assert.Contains(t, html, `data-radio-leading`)
+		assert.Contains(t, html, cfg.Label)
+		assert.Contains(t, html, `type="radio"`)
+		assert.Contains(t, html, `for="`+cfg.ID+`"`)
+	}
 }

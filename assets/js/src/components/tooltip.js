@@ -233,7 +233,7 @@
     panel.setAttribute("popover", "manual");
     Object.assign(panel.style, {
       position: "fixed", inset: "auto", margin: "0", transform: "none", translate: "none",
-      maxWidth: "calc(100vw - 16px)", fontWeight: "normal",
+      maxWidth: "calc(100vw - 16px)", fontWeight: "normal", transitionProperty: "opacity",
     });
     function show() {
       if (!root.isConnected) return;

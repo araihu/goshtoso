@@ -1,6 +1,8 @@
 package radiopage
 
 import (
+	"github.com/araihu/goshtoso/components/icon"
+	"github.com/araihu/goshtoso/components/icon/heroicons"
 	"github.com/araihu/goshtoso/components/radio"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -51,6 +53,11 @@ templ radioDemoContent() {
     @radio.Radio(radio.Config{ID: "r-seg-b", Name: "g", Value: "b", Label: "B", Segmented: true})
 }`,
 		)
+		@demo.DemoSection(demo.DemoSectionProps{Title: "Segmented with icons", Description: "LabelLeading adds a decorative icon while native radios retain one-choice selection and arrow-key navigation."}, radioIconPreview(), `@radio.RadioBar() {
+    @radio.Radio(radio.Config{ID: "mode-system", Name: "mode", Value: "system", Label: "System", Segmented: true, Checked: true, LabelLeading: modeIcon()})
+    @radio.Radio(radio.Config{ID: "mode-light", Name: "mode", Value: "light", Label: "Light", Segmented: true, LabelLeading: sunIcon()})
+    @radio.Radio(radio.Config{ID: "mode-dark", Name: "mode", Value: "dark", Label: "Dark", Segmented: true, LabelLeading: moonIcon()})
+}`)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Description",
@@ -329,4 +336,16 @@ templ radioHybridPreview() {
 			</div>
 		</div>
 	</div>
+}
+
+templ radioIconPreview() {
+	@radio.RadioBar() {
+		@radio.Radio(radio.Config{ID: "mode-system", Name: "mode", Value: "system", Label: "System", Segmented: true, Checked: true, LabelLeading: radioModeIcon(heroicons.Icon16SolidWindow)})
+		@radio.Radio(radio.Config{ID: "mode-light", Name: "mode", Value: "light", Label: "Light", Segmented: true, LabelLeading: radioModeIcon(heroicons.Icon16SolidSun)})
+		@radio.Radio(radio.Config{ID: "mode-dark", Name: "mode", Value: "dark", Label: "Dark", Segmented: true, LabelLeading: radioModeIcon(heroicons.Icon16SolidMoon)})
+	}
+}
+
+templ radioModeIcon(symbol icon.Symbol) {
+	@icon.Icon(icon.Config{SpriteURL: heroicons.SpriteURL, Symbol: symbol, Decorative: true})
 }

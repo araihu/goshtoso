@@ -29,6 +29,8 @@ type Option struct {
 	Value    string
 	Label    string
 	Disabled bool
+	// LabelAttrs adds non-conflicting attributes to the option label, such as typography styles.
+	LabelAttrs templ.Attributes
 	// Trailing renders non-interactive supporting content at the end of the option.
 	// It is excluded from the selected trigger label and submitted value.
 	Trailing templ.Component

@@ -67,6 +67,7 @@
    - @layer base with [data-theme=X] overrides for 16 themes
    ============================================ */
 @theme {
+    --radius-none: 0rem;
     /* Fonts */
     --font-title: 'Poppins', sans-serif;
     --font-paragraph: 'Inter', sans-serif;

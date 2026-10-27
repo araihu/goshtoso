@@ -14,11 +14,13 @@ import (
 	"testing"
 
 	"github.com/araihu/goshtoso/components"
+	"github.com/araihu/goshtoso/components/themeeditor"
+	"github.com/araihu/goshtoso/components/themeplayground"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
-	got := make([]components.Kind, 0, 87)
+	got := make([]components.Kind, 0, 89)
 	for _, inventory := range publicRenderableInventories() {
 		for want, value := range inventory {
 			require.Equal(t, want, value.Kind())
@@ -27,13 +29,16 @@ func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
 	}
 
 	require.ElementsMatch(t, components.AllKinds(), got)
-	require.Len(t, got, 87)
+	require.Len(t, got, 89)
 	require.Len(t, got, len(components.AllKinds()))
 }
 
 func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 	allowedFunctions := map[string]struct{}{
-		"components.AllKinds": {},
+		"components.AllKinds":             {},
+		"themeeditor.ThemeEditor":         {},
+		"themeplayground.ThemePlayground": {},
+		"themeplayground.Frame":           {},
 
 		"accordion.Accordion":             {},
 		"actiongroup.ActionGroup":         {},
@@ -266,6 +271,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"modal.DialogInstance.Kind":              {},
 		"modal.DialogInstance.Render":            {},
 		"head.metadataComponent.Render":          {},
+		"themeeditor.Config.PresetOptions":       {},
 		"combobox.Config.Validate":               {},
 		"combobox.Config.InitialState":           {},
 		"combobox.comboHandler.ServeHTTP":        {},
@@ -435,6 +441,7 @@ func unexpectedPublicSurface(
 
 func publicRenderableInventories() []map[components.Kind]components.Component {
 	return []map[components.Kind]components.Component{
+		{components.KindThemeEditor: themeeditor.ThemeEditor(themeeditor.Config{}), components.KindThemePlayground: themeplayground.ThemePlayground(themeplayground.Config{})},
 		compositionRenderables(),
 		displayRenderables(),
 		inputRenderables(),
@@ -465,7 +472,7 @@ func allowedRenderableMethods(t *testing.T) map[string]struct{} {
 			methods[receiver+".Render"] = struct{}{}
 		}
 	}
-	require.Len(t, methods, 174)
+	require.Len(t, methods, 178)
 	return methods
 }
 

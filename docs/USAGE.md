@@ -597,8 +597,8 @@ so trailing buttons are never nested inside a clickable row. Avoid adding
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The public surface has 58 public component packages and 87 renderable primitives;
-the demo catalog has 54 documentation pages.
+The public surface has 60 public component packages and 89 renderable primitives;
+the demo catalog has 56 documentation pages.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
@@ -690,6 +690,9 @@ points generally use target-specific names such as `RootClass`, `InputAttrs`,
 `HTMX`, and `Alpine`.
 
 ## Theming
+
+For complete snapshots, the public editor, isolated preview, controlled font
+pickers and event contracts, see [Theme tools](THEME_TOOLS.md).
 
 ### Available Themes
 

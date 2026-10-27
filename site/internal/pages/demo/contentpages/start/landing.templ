@@ -6,7 +6,9 @@ import (
 	"github.com/araihu/goshtoso/components/card"
 	"github.com/araihu/goshtoso/components/codeblock"
 	"github.com/araihu/goshtoso/components/head"
-	"github.com/araihu/goshtoso/components/radio"
+	"github.com/araihu/goshtoso/components/themeeditor"
+ "github.com/araihu/goshtoso/components/themeplayground"
+ publicthemes "github.com/araihu/goshtoso/themes"
 	"github.com/araihu/goshtoso/components/table"
 	"github.com/araihu/goshtoso/components/toggle"
 	siteassets "github.com/araihu/goshtoso/site/assets"
@@ -29,22 +31,6 @@ func getShowcaseApps() []showcaseApp {
 		{Title: "Manja", Tag: "OpenAPI publishing", Desc: "Source-connected OpenAPI publishing that keeps public API documentation stable.", URL: "https://manja.araihu.com/", Image: "/assets/images/homepage/products/manja.webp", ImageAlt: "Manja product site showing source-connected OpenAPI publishing", WorkInProgress: true},
 		{Title: "X-9", Tag: "Infrastructure monitoring", Desc: "An external monitoring control plane for infrastructure across mixed failure domains.", URL: "https://x9.araihu.com/", Image: "/assets/images/homepage/products/x9.webp", ImageAlt: "X-9 product site showing its external monitoring control plane", WorkInProgress: true},
 		{Title: "Arai Hû", Tag: "Independent software", Desc: "The organization behind Goshtoso and durable open software for work that matters.", URL: "https://araihu.com/", Image: "/assets/images/homepage/products/araihu.webp", ImageAlt: "Arai Hû organization site and its independent software mission"},
-	}
-}
-
-type themeChip struct {
-	Key   string
-	Label string
-}
-
-// Curated subset of themes: visually distinct, not the whole set.
-func getThemeChips() []themeChip {
-	return []themeChip{
-		{Key: "araihu", Label: "Arai Hû"},
-		{Key: "goshtoso", Label: "Goshtoso"},
-		{Key: "minimal", Label: "Minimal"},
-		{Key: "modern", Label: "Modern"},
-		{Key: "dracula", Label: "Dracula"},
 	}
 }
 
@@ -81,50 +67,30 @@ templ LandingPage() {
 // LandingPlaygroundPage renders the interactive theme surface in an isolated
 // document so preview choices cannot restyle or persist into the homepage.
 templ LandingPlaygroundPage() {
-	<!DOCTYPE html>
-	<html lang="en" data-theme="araihu" data-landing-playground class="overflow-hidden">
-		<head>
-			<meta charset="UTF-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<meta name="robots" content="noindex"/>
-			<title>Goshtoso theme playground</title>
-			<script src={ siteassets.LandingPlaygroundBundleURL }></script>
-			@head.DependenciesMinimal(head.WithLocalRuntime())
-			<link rel="stylesheet" href="/componentdocshell/assets/araihu.css"/>
-		</head>
-		<body class="m-0 overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
-			@landingPlaygroundSurface()
-		</body>
-	</html>
+ @themeplayground.Frame(themeplayground.FrameConfig{ID:"theme-playground-frame",Title:"Goshtoso theme playground",Content:landingPlaygroundSurface(),Head:playgroundHead(),Fonts:publicthemes.DefaultFonts()})
+}
+
+templ playgroundHead() {
+ <script src={ siteassets.LandingPlaygroundBundleURL }></script>
+}
+
+func editorConfig() themeeditor.Config {
+ initial,err:=publicthemes.Preset(publicthemes.KeyAraiHu);if err!=nil{panic(err)}
+ catalog:=[]themeeditor.CatalogItem{}
+ for _,t:=range themes.All(){d,err:=publicthemes.Preset(publicthemes.Key(t.Key));if err!=nil{panic(err)};catalog=append(catalog,themeeditor.CatalogItem{ID:string(t.Key),Label:t.Label,Definition:d})}
+ return themeeditor.Config{ID:"site-theme-editor",Initial:initial,Catalog:catalog,Fonts:publicthemes.DefaultFonts(),PreviewID:"theme-playground-frame"}
+}
+
+// ThemeToolsDemo uses the same public controls and isolated frame as consumers.
+templ ThemeToolsDemo() {
+ <div class="grid gap-6 lg:grid-cols-2">
+  @themeeditor.ThemeEditor(editorConfig())
+  @themeplayground.ThemePlayground(themeplayground.Config{ID:"theme-playground-frame",Src:"/playground/theme",Title:"Interactive Goshtoso theme playground",RootClass:"h-[34rem]"})
+ </div>
 }
 
 templ landingPlaygroundSurface() {
 	<div class="overflow-hidden rounded-radius border border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark">
-		<div class="flex flex-col gap-4 border-b border-outline bg-surface-alt/70 px-4 py-4 dark:border-outline-dark dark:bg-surface-dark-alt/70 sm:flex-row sm:items-center sm:justify-between sm:px-6" x-data="{ theme: document.documentElement.dataset.theme || 'araihu' }">
-			<p class="font-title text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Live theme preview</p>
-			<div class="flex max-w-full sm:items-end">
-				<div id="home-theme-picker" class="max-w-full overflow-x-auto pb-1" role="radiogroup" aria-label="Homepage theme">
-					@radio.RadioBar() {
-						for _, c := range getThemeChips() {
-							@radio.Radio(radio.Config{
-								ID:        "home-theme-" + c.Key,
-								Name:      "home-theme",
-								Value:     c.Key,
-								Label:     c.Label,
-								Checked:   c.Key == "araihu",
-								Segmented: true,
-								RootClass: "min-w-28 px-4",
-								Alpine: &radio.AlpineConfig{
-									BindChecked: "theme === $el.value",
-									OnChange:    "theme = $el.value; document.documentElement.dataset.theme = theme",
-								},
-								InputAttrs: templ.Attributes{"data-theme-key": c.Key},
-							})
-						}
-					}
-				</div>
-			</div>
-		</div>
 		<div class="space-y-6 p-4 sm:p-6">
 			<div class="flex flex-wrap items-center gap-3 border-b border-outline pb-6 dark:border-outline-dark">
 				@button.Button() {
@@ -250,14 +216,7 @@ templ landingContent() {
 					<p class="mb-3 text-xs font-bold text-primary dark:text-primary-dark">LIVE PLAYGROUND</p>
 					<h2 class="font-title text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong sm:text-4xl">Change the theme. Keep the behavior.</h2>
 				</div>
-				<iframe
-					id="theme-playground-frame"
-					title="Interactive Goshtoso theme playground"
-					src="/playground/theme"
-					loading="lazy"
-					scrolling="no"
-					class="block h-[34rem] w-full overflow-hidden rounded-radius bg-transparent sm:h-[28rem]"
-				></iframe>
+ @ThemeToolsDemo()
 			</section>
 			<!-- How it works -->
 			<section id="how-it-works" class="mb-20 sm:mb-24">

@@ -47,6 +47,7 @@ css:
     go tool muamba sync --strict tailwindcss/cli
     go run ./cmd/themegen
     .tools/tailwindcss -i css/main.css -o assets/styles.css
+    go generate ./themes
 
 # Watch Tailwind CSS for changes.
 css-watch:

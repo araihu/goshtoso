@@ -1,4 +1,5 @@
 @theme {
+    --radius-none: 0rem;
     /* Fonts */
     --font-title: 'Poppins', sans-serif;
     --font-paragraph: 'Inter', sans-serif;

@@ -1,12 +1,13 @@
 package selectfield
 
 import "github.com/araihu/goshtoso/expressions"
+import "strconv"
 
 // Select renders a custom dropdown select with Alpine.js, matching
 // the combobox component styling. Supports validation states,
 // disabled/readonly, Alpine.js binding, and hidden input for form submission.
 templ selectTemplate(cfg Config) {
- {{ cfg = cfg.withExpressions(ctx) }}
+	{{ cfg = cfg.withExpressions(ctx) }}
 	<div class={ cfg.containerClasses() }>
 		if cfg.Label != "" {
 			<label for={ cfg.ID + "-trigger" } class={ cfg.labelClasses() }>
@@ -77,7 +78,19 @@ templ selectTemplate(cfg Config) {
 					if cfg.TriggerLeading != nil {
 						@cfg.TriggerLeading
 					}
-					<span class="truncate text-sm font-normal" x-text="selectedOption ? selectedOption.label : placeholder"></span>
+					for _, option := range cfg.Options {
+						if option.Leading != nil {
+							<span x-cloak x-show={ "selectedOption && selectedOption.value === " + jsStringLiteral(option.Value) } class="shrink-0">
+								@option.Leading
+							</span>
+						}
+					}
+					<span class="min-w-0 flex-1 truncate text-left text-sm font-normal" x-bind:style="selectedOption ? selectedOption.labelStyle : ''" x-text="selectedOption ? selectedOption.label : placeholder"></span>
+					for _, option := range cfg.Options {
+						if option.Trailing != nil {
+							<span x-cloak x-show={ "selectedOption && selectedOption.value === " + jsStringLiteral(option.Value) } class="shrink-0">@option.Trailing</span>
+						}
+					}
 				}
 				<!-- Chevron -->
 				<svg
@@ -120,7 +133,7 @@ templ selectTemplate(cfg Config) {
 				x-transition:leave="transition ease-in duration-100 motion-reduce:transition-none"
 				x-transition:leave-start="opacity-100 scale-100"
 				x-transition:leave-end="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"
-				class="absolute left-0 top-full z-30 mt-1 min-w-full overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt"
+				class="absolute left-0 top-full z-30 mt-1 w-full overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt"
 				if cfg.Shell {
 					id={ cfg.ID + "-listbox" }
 					role="listbox"
@@ -139,39 +152,45 @@ templ selectTemplate(cfg Config) {
 						role="listbox"
 						aria-label={ expressions.From(ctx).Select.ListAriaLabel(cfg.Label) }
 					>
-						<template x-for="(item, index) in allOptions" x-bind:key="item.value">
-							<li
-								role="option"
-								x-bind:aria-selected="selectedOption && selectedOption.value === item.value"
-								class="combobox-option inline-flex justify-between items-center gap-4 bg-surface-alt px-4 py-2 text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/5 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong cursor-pointer"
-								x-on:click="selectOption(item)"
-								x-on:keydown.enter.prevent="selectOption(item)"
-								x-on:keydown.space.prevent="selectOption(item)"
-								x-bind:id={ jsStringLiteral(cfg.ID+"-option-") + " + index" }
-								x-bind:tabindex="activeIndex === index ? '0' : '-1'"
-								x-on:keydown.down.prevent="moveActiveOption($el, 1)"
-								x-on:keydown.up.prevent="moveActiveOption($el, -1)"
-							>
-								<span
-									x-bind:class="selectedOption && selectedOption.value === item.value ? 'font-bold' : ''"
-									x-text="item.label"
-								></span>
-								<!-- Checkmark for selected item -->
-								<svg
-									x-cloak
-									x-show="selectedOption && selectedOption.value === item.value"
-									xmlns="http://www.w3.org/2000/svg"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									fill="none"
-									stroke-width="2"
-									class="size-4"
-									aria-hidden="true"
+						if cfg.hasRichOptions() {
+							for index, option := range cfg.Options {
+								@richOption(cfg.ID, index, option)
+							}
+						} else {
+							<template x-for="(item, index) in allOptions" x-bind:key="item.value">
+								<li
+									role="option"
+									x-bind:aria-selected="selectedOption && selectedOption.value === item.value"
+									class="combobox-option inline-flex justify-between items-center gap-4 bg-surface-alt px-4 py-2 text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/5 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong cursor-pointer"
+									x-on:click="selectOption(item)"
+									x-on:keydown.enter.prevent="selectOption(item)"
+									x-on:keydown.space.prevent="selectOption(item)"
+									x-bind:id={ jsStringLiteral(cfg.ID+"-option-") + " + index" }
+									x-bind:tabindex="activeIndex === index ? '0' : '-1'"
+									x-on:keydown.down.prevent="moveActiveOption($el, 1)"
+									x-on:keydown.up.prevent="moveActiveOption($el, -1)"
 								>
-									<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"></path>
-								</svg>
-							</li>
-						</template>
+									<span
+										x-bind:class="selectedOption && selectedOption.value === item.value ? 'font-bold' : ''"
+										x-text="item.label"
+									></span>
+									<!-- Checkmark for selected item -->
+									<svg
+										x-cloak
+										x-show="selectedOption && selectedOption.value === item.value"
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										fill="none"
+										stroke-width="2"
+										class="size-4"
+										aria-hidden="true"
+									>
+										<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"></path>
+									</svg>
+								</li>
+							</template>
+						}
 					</ul>
 				}
 			</div>
@@ -197,4 +216,32 @@ func helperTextClasses(state State) string {
 
 func jsStringLiteral(s string) string {
 	return "'" + jsEscapeSingle(s) + "'"
+}
+
+// Rich options retain Select's keyboard and submitted-value behavior.
+templ richOption(id string, index int, option Option) {
+	<li
+		role="option"
+		id={ id + "-option-" + strconv.Itoa(index) }
+		aria-selected={ strconv.FormatBool(option.Selected) }
+		x-bind:aria-selected={ "selectedOption && selectedOption.value === " + jsStringLiteral(option.Value) }
+		x-bind:tabindex={ "activeIndex === " + strconv.Itoa(index) + " ? '0' : '-1'" }
+		x-on:click={ "selectOption(allOptions[" + strconv.Itoa(index) + "])" }
+		x-on:keydown.enter.prevent={ "selectOption(allOptions[" + strconv.Itoa(index) + "])" }
+		x-on:keydown.space.prevent={ "selectOption(allOptions[" + strconv.Itoa(index) + "])" }
+		x-on:keydown.down.prevent="moveActiveOption($el,1)"
+		x-on:keydown.up.prevent="moveActiveOption($el,-1)"
+		class="flex items-center gap-3 px-4 py-2 text-sm cursor-pointer text-on-surface hover:bg-surface focus-visible:outline-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-surface-dark"
+	>
+		if option.Leading != nil {
+			<span class="shrink-0">
+				@option.Leading
+			</span>
+		}
+		<span class="min-w-0 flex-1 truncate" x-bind:class={ "selectedOption && selectedOption.value === " + jsStringLiteral(option.Value) + " ? 'font-bold' : ''" } { option.LabelAttrs... }>{ option.Label }</span>
+		if option.Trailing != nil {
+			<span class="shrink-0">@option.Trailing</span>
+		}
+		<span aria-hidden="true" x-cloak x-show={ "selectedOption && selectedOption.value === " + jsStringLiteral(option.Value) }>✓</span>
+	</li>
 }

@@ -29,9 +29,7 @@ templ fileInputDemoContent() {
     HelperText: "PNG, JPG, WebP - Max 5MB",
 })`,
 		)
-
 		@demo.ExpressionOverridesNote("FileInput")
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Upload",
@@ -47,7 +45,14 @@ templ fileInputDemoContent() {
     HelperText: "PDF or DOCX - Max 10MB",
 })`,
 		)
-
+		@demo.DemoSection(
+			demo.DemoSectionProps{Title: "Validation error", Description: "StateError marks the input invalid. Set or remove aria-invalid after client-side uploads to update the border, label and helper text in either appearance."},
+			fileInputErrorPreview(),
+			`@fileinput.FileInput(fileinput.Config{
+    ID: "logo", Label: "Logo image", Appearance: fileinput.AppearanceUpload,
+    State: fileinput.StateError, HelperText: "The image exceeds 2 MiB.",
+})`,
+		)
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Required",
@@ -63,7 +68,6 @@ templ fileInputDemoContent() {
     Required:   true,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Disabled",
@@ -77,7 +81,6 @@ templ fileInputDemoContent() {
     Disabled: true,
 })`,
 		)
-
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Without Label",
@@ -157,5 +160,12 @@ templ fileInputNoLabelPreview() {
 			Accept:     "image/*,.pdf",
 			HelperText: "Any image or PDF - Max 5MB",
 		})
+	</div>
+}
+
+templ fileInputErrorPreview() {
+	<div id="fileinput-error" class="w-full max-w-md mx-auto space-y-4">
+		@fileinput.FileInput(fileinput.Config{ID: "demoUploadError", Label: "Logo image", Appearance: fileinput.AppearanceUpload, State: fileinput.StateError, HelperText: "The image exceeds 2 MiB."})
+		@fileinput.FileInput(fileinput.Config{ID: "demoDropError", Label: "Attachment", State: fileinput.StateError, HelperText: "This file type is not supported."})
 	</div>
 }

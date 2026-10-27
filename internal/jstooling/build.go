@@ -41,6 +41,7 @@ var defaultArtifacts = []artifact{
 	{
 		output: "assets/js/goshtoso.min.js",
 		inputs: []string{
+			"assets/js/src/components/theme-tools.js",
 			"assets/js/src/components/requests.js",
 			"assets/js/src/combobox.js",
 			"assets/js/src/components/combobox-client.js",
@@ -79,7 +80,6 @@ var defaultArtifacts = []artifact{
 			"site/assets/js/src/chat.js",
 			"site/assets/js/src/profile-images.js",
 			"site/assets/js/src/ticker-pane.js",
-			"site/assets/js/src/theme-page.js",
 		},
 	},
 	{

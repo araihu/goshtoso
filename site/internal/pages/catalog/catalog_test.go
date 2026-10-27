@@ -16,6 +16,8 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		path    string
 		section string
 	}{
+		{"/components/theme-editor", "Composition"},
+		{"/components/theme-playground", "Composition"},
 		{"/components/app-shell", "Composition"},
 		{"/components/page-header", "Composition"},
 		{"/components/toolbar", "Composition"},

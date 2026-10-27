@@ -66,11 +66,7 @@ func TestThemePage_PublicCatalogInventoryAndSocialContract(t *testing.T) {
 	}, playwright.PageExpectResponseOptions{Timeout: playwright.Float(5000)})
 	require.NoError(t, err)
 	require.NoError(t, page.WaitForURL("**/docs/theme"))
-	_, err = page.WaitForFunction(`() => {
-		const root = document.querySelector('[x-data="themePage"]');
-		const data = root && Alpine.$data(root);
-		return root && root._x_dataStack && data && data.allThemes.length > 0;
-	}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+	waitForThemeEditor(t, page)
 	require.NoError(t, err)
 
 	for _, mode := range []struct {
@@ -142,14 +138,9 @@ func TestThemePage_PublicCatalogInventoryAndSocialContract(t *testing.T) {
 func assertRenderedThemeInventory(t *testing.T, page playwright.Page, expectedKeys []string, expected []renderedTheme) {
 	t.Helper()
 	rawInventory, err := page.Evaluate(`() => {
-		const themePage = document.querySelector('[x-data="themePage"]');
-		const selectorKeys = Alpine.$data(themePage).allThemes;
-		const cards = [...document.querySelectorAll('h2 + .grid button[data-theme-key]')].map(card => ({
-			key: card.dataset.themeKey,
-			label: card.querySelector('.text-xs.font-bold').textContent.trim(),
-		}));
-		return JSON.stringify({selectorKeys, cards});
-	}`, nil)
+  const catalog=JSON.parse(document.querySelector('[data-theme-editor]').dataset.themeEditor).catalog;
+  return JSON.stringify({selectorKeys:catalog.map(p=>p.id),cards:catalog.map(p=>({key:p.id,label:p.label}))});
+ }`, nil)
 	require.NoError(t, err)
 	inventoryJSON, ok := rawInventory.(string)
 	require.True(t, ok, "unexpected inventory type %T", rawInventory)

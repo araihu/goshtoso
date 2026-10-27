@@ -54,6 +54,8 @@ import (
 	tagslistpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/tagslist"
 	textareapage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/textarea"
 	textinputpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/textinput"
+	themeeditorpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/themeeditor"
+	themeplaygroundpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/themeplayground"
 	toastpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/toast"
 	togglepage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/toggle"
 	toolbarpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/toolbar"
@@ -77,6 +79,7 @@ var defaultPages = mustDefault()
 
 func mustDefault() *Registry {
 	definitions := []demo.PageDefinition{
+		themeeditorpage.Definition, themeplaygroundpage.Definition,
 		accordionpage.Definition,
 		actiongrouppage.Definition,
 		alertpage.Definition,
