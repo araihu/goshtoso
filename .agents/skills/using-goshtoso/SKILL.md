@@ -16,11 +16,15 @@ modifying the Goshtoso component library or demo site itself.
 
 ## Release baseline
 
-This skill targets **Goshtoso v0.4.0**, with **htmx 4.0.0** and
+This skill targets **Goshtoso v0.4.6**, with **htmx 4.0.0** and
 **Alpine.js 3.17.2**. For a new application, start with this explicit release;
 for an existing application, inspect `go.mod` before changing dependencies.
+Goshtoso v0.4.6 requires templ v0.3.1100. Upgrade the runtime and generator
+together, then regenerate the consumer application templates. Native event
+handlers in `templ.Attributes` require `templ.JSFuncCall`, or
+`templ.JSUnsafeFuncCall` for trusted developer-authored JavaScript.
 Read [the v0.3.0 migration reference](references/migration-v0.3.0.md) when
-upgrading a 0.2.x consumer. Do not add HTMX 2 compatibility shims to a v0.4.0 app.
+upgrading a 0.2.x consumer. Do not add HTMX 2 compatibility shims to a v0.4.6 app.
 
 ## When to Use
 
@@ -77,7 +81,7 @@ Use this path unless the app deliberately owns a custom Tailwind build.
 Goshtoso requires **Go 1.27.3 or newer**.
 
 ```bash
-GOSHTOSO_VERSION=v0.4.0
+GOSHTOSO_VERSION=v0.4.6
 go get github.com/araihu/goshtoso@"$GOSHTOSO_VERSION"
 go get github.com/a-h/templ
 TEMPL_VERSION="$(go list -m -f '{{.Version}}' github.com/a-h/templ)"

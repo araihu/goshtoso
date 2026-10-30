@@ -2,6 +2,34 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.4.6] - 2026-10-30
+
+### Added
+
+- Public Theme Editor and isolated Theme Playground components for configuring
+  semantic colors, fonts, and live previews.
+
+### Fixed
+
+- Tooltip hover portals dismiss when their trigger is activated.
+- Table click and keyboard actions, chat Enter-to-send, dropdown shortcut text,
+  and inline keyboard examples retain their behavior with the new templ runtime.
+- The documentation site preserves sidebar scroll position and reveals active
+  navigation entries only when they are outside the viewport.
+
+### Upgrading
+
+- Use Go 1.27.3 or newer. Upgrade the templ runtime and generator to v0.3.1100
+  together, then regenerate your application's own `.templ` files. Library
+  components remain pre-generated; never regenerate the Go module cache.
+- Native event handlers supplied through `templ.Attributes` require
+  `templ.JSFuncCall`, or `templ.JSUnsafeFuncCall` for trusted application-authored
+  JavaScript. Plain strings are sanitized. Use served image URLs for ordinary
+  image attributes rather than relying on unrestricted data URLs.
+- Update the library and served assets together. Tailwind CSS remains 4.3.3,
+  HTMX remains 4.0.0, and Alpine.js remains 3.17.2. Refresh Arai Hû identity
+  fallbacks from the pinned Assets v0.2.6 distribution.
+
 ## [v0.4.5] - 2026-10-26
 
 ### Fixed
