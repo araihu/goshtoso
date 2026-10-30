@@ -37,6 +37,11 @@ helpers used by older generated code and sanitizes native event attributes:
 use `templ.JSFuncCall`, or `templ.JSUnsafeFuncCall` for trusted application-authored
 JavaScript, when supplying handlers through `templ.Attributes`.
 
+Templ also validates URL and style attribute values. Prefer served image URLs
+for ordinary image attributes; converting arbitrary input to a trusted type
+would bypass that validation. Keep any explicit trust conversion at the point
+where application-owned bytes are validated and encoded.
+
 Create at least one consumer `.templ` file before generation. Generate before
 tidying: without generated Go imports, `go mod tidy` can correctly remove the
 templ runtime that the next step needs.
