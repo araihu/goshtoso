@@ -85,7 +85,8 @@ type Row struct {
 	// LinkMode controls how Link navigates. Default (empty) = SPA swap of #main-content-area.
 	// Use LinkBoost for full-body swap, or LinkFull for plain navigation.
 	LinkMode LinkMode
-	// OnClick is a JS/Alpine expression executed on row click.
+	// OnClick is trusted JavaScript executed on row click. Never populate it
+	// from user input; use HTMX actions for data-driven row interactions.
 	// Use for opening modals, toggling state, etc.
 	// Ignored when Link is set (Link takes precedence).
 	OnClick string

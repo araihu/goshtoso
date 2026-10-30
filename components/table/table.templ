@@ -565,7 +565,7 @@ func rowActionAttrs(row Row) templ.Attributes {
 	if row.OnClick != "" {
 		// Use onclick (not x-on:click) so it works without an Alpine x-data ancestor on the table container.
 		return templ.Attributes{
-			"onclick": row.OnClick,
+			"onclick": templ.JSUnsafeFuncCall(row.OnClick),
 		}
 	}
 	if row.HTMX != nil && row.HTMX.Get != "" {
@@ -618,7 +618,7 @@ func rowA11yAttrs(row Row) templ.Attributes {
 		// Enter and Space trigger a native click, which HTMX and onclick
 		// handlers both pick up. Guard against repeat firings from a focused
 		// nested input accepting space as a character.
-		"onkeydown": "if((event.key==='Enter'||event.key===' ')&&event.target===event.currentTarget){event.preventDefault();event.currentTarget.click();}",
+		"onkeydown": templ.JSUnsafeFuncCall("if((event.key==='Enter'||event.key===' ')&&event.target===event.currentTarget){event.preventDefault();event.currentTarget.click();}"),
 	}
 }
 

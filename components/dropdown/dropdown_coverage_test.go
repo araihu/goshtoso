@@ -100,7 +100,7 @@ func TestCoverageRenderContextDropdownItems(t *testing.T) {
 		`tabindex="0"`,
 		`data-icon="rename"`,
 		`data-icon="shift"`,
-		`>R</div>`,
+		`<span>R</span></div>`,
 		`id="delete-item"`,
 		`x-on:click="deleted = true"`,
 		`text-danger`,

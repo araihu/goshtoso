@@ -3,7 +3,7 @@ module github.com/araihu/goshtoso
 go 1.27.3
 
 require (
-	github.com/a-h/templ v0.3.1070
+	github.com/a-h/templ v0.3.1100
 	github.com/alecthomas/chroma/v2 v2.27.0
 	github.com/araihu/assets v0.2.3
 	github.com/araihu/muamba v0.0.6

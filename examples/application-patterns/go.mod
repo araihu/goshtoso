@@ -3,7 +3,7 @@ module github.com/araihu/goshtoso/examples/application-patterns
 go 1.27.3
 
 require (
-	github.com/a-h/templ v0.3.1070
+	github.com/a-h/templ v0.3.1100
 	github.com/araihu/goshtoso v0.0.0-00010101000000-000000000000
 )
 
