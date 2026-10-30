@@ -6,8 +6,8 @@ github.com/alecthomas/chroma/v2 v2.27.0 h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r
 github.com/alecthomas/chroma/v2 v2.27.0/go.mod h1:NjJ3ciIgrqBNeIkWZ4e46nseoLDslxU1LmfCoL+wcY8=
 github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
 github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
-github.com/araihu/goshtoso-app-shells v0.1.9-0.20261030162658-e1a09f4d4eb6 h1:TIFx/t4y2Fae9WA6aR7lvxbCY7Pf3DbAN9bw3TGaRdg=
-github.com/araihu/goshtoso-app-shells v0.1.9-0.20261030162658-e1a09f4d4eb6/go.mod h1:0GwFRSuL2C879CAsMptW/ww8XIDqCtfjei0Sx9b8P5g=
+github.com/araihu/goshtoso-app-shells v0.1.9-0.20261030165845-6828796a4187 h1:RbwoKYptT10fg1P1620FfbqdSc+QbY/2/23mWR6BXcs=
+github.com/araihu/goshtoso-app-shells v0.1.9-0.20261030165845-6828796a4187/go.mod h1:0GwFRSuL2C879CAsMptW/ww8XIDqCtfjei0Sx9b8P5g=
 github.com/araihu/goshtoso-charts v0.0.5-0.20261030162347-2b0c54d84b20 h1:NbmiLKIETQcKqcPVQU3tRab3tMzCZmsUpzZSz3Sz3Io=
 github.com/araihu/goshtoso-charts v0.0.5-0.20261030162347-2b0c54d84b20/go.mod h1:FgECOKNVoO+hVGUOJi1j/RpWnInMQw9xzi43OLbfkzM=
 github.com/coder/websocket v1.8.15 h1:6B2JPeOGlpff2Uz6vOEH1Vzpi0iUz20A+lPVhPHtNUA=
