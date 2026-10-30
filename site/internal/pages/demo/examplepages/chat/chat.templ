@@ -158,9 +158,8 @@ templ ChatApp(me chat.Identity) {
 							// Enter sends (requestSubmit fires htmx's hx-ws:send submit
 							// listener; the form's onsubmit="return false" only blocks
 							// the NATIVE submit). Shift+Enter falls through to insert a
-							// newline. Handler string carries no quotes or && so templ's
-							// attribute escaping cannot corrupt it.
-							InputAttrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
+							// newline. The handler is trusted application-authored JavaScript.
+							InputAttrs: templ.Attributes{"onkeydown": templ.JSUnsafeFuncCall("if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}")},
 						})
 					</div>
 					@button.Button(button.WithType("submit")) {

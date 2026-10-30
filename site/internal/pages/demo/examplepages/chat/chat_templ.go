@@ -358,9 +358,8 @@ func ChatApp(me chat.Identity) templ.Component {
 			// Enter sends (requestSubmit fires htmx's hx-ws:send submit
 			// listener; the form's onsubmit="return false" only blocks
 			// the NATIVE submit). Shift+Enter falls through to insert a
-			// newline. Handler string carries no quotes or && so templ's
-			// attribute escaping cannot corrupt it.
-			InputAttrs: templ.Attributes{"onkeydown": "if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}"},
+			// newline. The handler is trusted application-authored JavaScript.
+			InputAttrs: templ.Attributes{"onkeydown": templ.JSUnsafeFuncCall("if(event.keyCode===13){if(!event.shiftKey){event.preventDefault();this.form.requestSubmit()}}")},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -438,7 +437,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templruntime.NewAttributeExpression("chat-hidden-" + name).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 184, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 183, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 		if templ_7745c5c3_Err != nil {
@@ -451,7 +450,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templruntime.NewAttributeExpression(name).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 184, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 183, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 		if templ_7745c5c3_Err != nil {
@@ -464,7 +463,7 @@ func chatHidden(name, value string) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templruntime.NewAttributeExpression(value).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 184, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 183, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 		if templ_7745c5c3_Err != nil {
@@ -504,7 +503,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(me.Nick)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 190, Col: 142}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 189, Col: 142}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -517,7 +516,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templruntime.NewAttributeExpression(me.Nick).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 191, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 190, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 		if templ_7745c5c3_Err != nil {
@@ -530,7 +529,7 @@ func RenameResult(me chat.Identity) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templruntime.NewAttributeExpression(me.Color).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 192, Col: 93}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/examplepages/chat/chat.templ`, Line: 191, Col: 93}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
 		if templ_7745c5c3_Err != nil {

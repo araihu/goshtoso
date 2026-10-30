@@ -81,10 +81,8 @@ func (c Config) containerClasses() string {
 	return base
 }
 
-// swatchStyle returns the swatch's inline style as a raw attribute map. Using
-// templ.Attributes (a string value) routes through HTML-escaping only, NOT
-// templ's CSS sanitizer — so the value is emitted verbatim with no trailing
-// semicolon. The hue/shade tokens contain no HTML-special characters.
+// swatchStyle returns the swatch's inline style for templ to sanitize and
+// serialize as a CSS declaration.
 func swatchStyle(hue, shade string) templ.Attributes {
 	return templ.Attributes{"style": "background-color: var(--color-" + hue + "-" + shade + ")"}
 }
