@@ -44,4 +44,24 @@ func TestTooltip_PortalTracksNestedScroll(t *testing.T) {
  }`, nil)
 	require.NoError(t, err)
 	require.Equal(t, true, attached)
+
+	triggerButton := page.Locator("#portal-scroll-trigger")
+	for _, action := range []string{"click", "Enter", "Space"} {
+		t.Run("dismiss-on-"+action, func(t *testing.T) {
+			require.NoError(t, triggerButton.Press("Tab"))
+			require.NoError(t, triggerButton.Focus())
+			_, err := page.WaitForFunction(`() => document.querySelector('#portal-scroll-tip').matches(':popover-open')`, nil)
+			require.NoError(t, err)
+			if action == "click" {
+				require.NoError(t, triggerButton.Click())
+			} else {
+				require.NoError(t, triggerButton.Press(action))
+			}
+			_, err = page.WaitForFunction(`() => !document.querySelector('#portal-scroll-tip').matches(':popover-open')`, nil)
+			require.NoError(t, err)
+			focused, err := triggerButton.Evaluate(`el => document.activeElement === el`, nil)
+			require.NoError(t, err)
+			require.Equal(t, true, focused)
+		})
+	}
 }

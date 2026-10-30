@@ -263,6 +263,7 @@
       });
       return;
     }
+    root.addEventListener("click", function () { hide(panel); });
     root.addEventListener("mouseenter", show);
     root.addEventListener("focusin", show);
     root.addEventListener("mouseleave", function () {
