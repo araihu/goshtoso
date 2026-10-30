@@ -458,6 +458,6 @@ func TestStaticSearchDoesNotRequestTheCurrentPage(t *testing.T) {
 	html := renderHTML(t, Combobox(cfg, cfg.InitialState()))
 	assert.Contains(t, html, "data-combobox-search")
 	assert.NotContains(t, html, `hx-get=""`)
-	assert.Contains(t, html, `style="font-family:serif"`)
+	assert.Contains(t, html, `style="font-family:serif;"`)
 	assert.Contains(t, html, `data-font-example="a"`)
 }

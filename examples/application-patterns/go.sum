@@ -1,5 +1,5 @@
-github.com/a-h/templ v0.3.1070 h1:3iCOXHXqFXa99OQzgkUOLJbNzv/QjFGLwKZkBAg+ADA=
-github.com/a-h/templ v0.3.1070/go.mod h1:iIqB3g2RHBe/WlnPwa+Bvhh1TKXHWLRnBD9NWHOLm78=
+github.com/a-h/templ v0.3.1100 h1:lQhjVs1IL+M6QWUvojaFBd21+kzwATppSyWkWB9oHoM=
+github.com/a-h/templ v0.3.1100/go.mod h1:j1WAOR7749mlo1AxFLQ7qbDFW5VwyoqszRTlKqEHN9M=
 github.com/alecthomas/chroma/v2 v2.27.0 h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r5BXYZs=
 github.com/alecthomas/chroma/v2 v2.27.0/go.mod h1:NjJ3ciIgrqBNeIkWZ4e46nseoLDslxU1LmfCoL+wcY8=
 github.com/dlclark/regexp2/v2 v2.2.1 h1:mf4KkFUj0gJuarK8P+LgiS+Lit7m9N1yAwEfPbee7R0=

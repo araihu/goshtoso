@@ -3,6 +3,7 @@ package table
 import (
 	"bytes"
 	"context"
+	"html"
 	"strings"
 	"testing"
 
@@ -431,6 +432,28 @@ func TestRenderRowActionAttrs(t *testing.T) {
 		Cells: cell,
 	}))
 	mustContainAll(t, post, `hx-post="/row/3"`, `hx-swap="outerHTML"`)
+}
+
+func TestRowHandlersSurviveTemplSanitization(t *testing.T) {
+	for name, row := range map[string]Row{
+		"click": {OnClick: `openModal("recordA")`},
+		"get":   {HTMX: &RowHTMXConfig{Get: "/row/1"}},
+		"post":  {HTMX: &RowHTMXConfig{Post: "/row/1"}},
+		"link":  {Link: "/row/1"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			rendered := renderT(t, TableRow(Config{}, row))
+			mustNotContain(t, rendered, "failed sanitization")
+			decoded := html.UnescapeString(rendered)
+			mustContainAll(t, decoded,
+				"event.key==='Enter'", "event.key===' '",
+				"event.target===event.currentTarget", "event.currentTarget.click()",
+			)
+			if row.OnClick != "" {
+				mustContainAll(t, rendered, `onclick="openModal(&#34;recordA&#34;)"`)
+			}
+		})
+	}
 }
 
 func TestRenderRowAlpineAttrs(t *testing.T) {

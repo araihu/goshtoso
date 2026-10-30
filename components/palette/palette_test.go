@@ -25,7 +25,7 @@ func TestPalette_GridAndStaticDispatch(t *testing.T) {
 	want := len(defaultHues) * len(defaultShades)
 	assert.Equal(t, want, strings.Count(html, `style="background-color: var(--color-`), "one grid button per hue×shade")
 	assert.Contains(t, html, `data-cls="blue-700"`)
-	assert.Contains(t, html, `style="background-color: var(--color-blue-700)"`)
+	assert.Contains(t, html, `style="background-color: var(--color-blue-700);"`)
 	assert.Contains(t, html, `@click="pick($el.dataset.cls, $el)"`)
 	assert.Contains(t, html, `data-cls="white"`)
 	assert.Contains(t, html, `data-cls="black"`)

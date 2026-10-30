@@ -2074,7 +2074,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | `Cells` | `map[string]Cell` | Cells maps column keys to cell content |
 | `Link` | `string` | Link makes the row clickable — navigates when clicked. When Actions is also set, Goshtoso renders Link as a native anchor in the first data cell instead of making the row interactive, avoiding nested controls. The navigation strategy is controlled by LinkMode. |
 | `LinkMode` | `LinkMode` | LinkMode controls how Link navigates. Default (empty) = SPA swap of #main-content-area. Use LinkBoost for full-body swap, or LinkFull for plain navigation. |
-| `OnClick` | `string` | OnClick is a JS/Alpine expression executed on row click. Use for opening modals, toggling state, etc. Ignored when Link is set (Link takes precedence). |
+| `OnClick` | `string` | OnClick is trusted JavaScript executed on row click. Never populate it from user input; use HTMX actions for data-driven row interactions. Use for opening modals, toggling state, etc. Ignored when Link is set (Link takes precedence). |
 | `HTMX` | `*RowHTMXConfig` | HTMX configures row-level HTMX click behavior. Ignored when Link or OnClick is set. |
 | `AlpineAttrs` | `map[string]string` | AlpineAttrs is a pass-through for per-row Alpine directives (e.g. `x-show`, `x-data`, `x-bind:class`). Keys become HTML attribute names verbatim; values go through templ's attribute escaping. Use for client-side row filters (x-show) that sit on top of a gotable. |
 | `Expandable` | `bool` | Expandable shows a chevron toggle and an expandable detail section below the row |
