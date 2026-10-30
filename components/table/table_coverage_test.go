@@ -436,7 +436,7 @@ func TestRenderRowActionAttrs(t *testing.T) {
 
 func TestRowHandlersSurviveTemplSanitization(t *testing.T) {
 	for name, row := range map[string]Row{
-		"click": {OnClick: `openModal("row-1")`},
+		"click": {OnClick: `openModal("recordA")`},
 		"get":   {HTMX: &RowHTMXConfig{Get: "/row/1"}},
 		"post":  {HTMX: &RowHTMXConfig{Post: "/row/1"}},
 		"link":  {Link: "/row/1"},
@@ -450,7 +450,7 @@ func TestRowHandlersSurviveTemplSanitization(t *testing.T) {
 				"event.target===event.currentTarget", "event.currentTarget.click()",
 			)
 			if row.OnClick != "" {
-				mustContainAll(t, rendered, `onclick="openModal(&#34;row-1&#34;)"`)
+				mustContainAll(t, rendered, `onclick="openModal(&#34;recordA&#34;)"`)
 			}
 		})
 	}

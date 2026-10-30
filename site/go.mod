@@ -4,9 +4,9 @@ go 1.27.3
 
 require (
 	github.com/a-h/templ v0.3.1100
-	github.com/araihu/goshtoso v0.3.3
-	github.com/araihu/goshtoso-app-shells v0.1.9-0.20260910224508-5b2222e54637
-	github.com/araihu/goshtoso-charts v0.0.4
+	github.com/araihu/goshtoso v0.4.6-0.20261030162228-79bae652aa33
+	github.com/araihu/goshtoso-app-shells v0.1.9-0.20261030162658-e1a09f4d4eb6
+	github.com/araihu/goshtoso-charts v0.0.5-0.20261030162347-2b0c54d84b20
 	github.com/coder/websocket v1.8.15
 	github.com/mxschmitt/playwright-go v0.6201.1
 	github.com/stretchr/testify v1.12.1
@@ -18,8 +18,8 @@ require (
 	github.com/deckarep/golang-set/v2 v2.8.0 // indirect
 	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/go-analyze/bulk v0.1.5 // indirect
-	github.com/go-analyze/charts v0.6.1 // indirect
+	github.com/go-analyze/bulk v0.1.6 // indirect
+	github.com/go-analyze/charts v0.6.4 // indirect
 	github.com/go-echarts/go-echarts/v2 v2.7.3 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
