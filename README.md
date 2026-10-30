@@ -53,6 +53,11 @@ Install the library:
 go get github.com/araihu/goshtoso@latest
 ```
 
+Goshtoso v0.4.6 uses templ v0.3.1100. Upgrade your application's templ
+generator and runtime together and regenerate your own `.templ` files; the
+library's components are already generated. See the
+[templ setup and migration instructions](docs/USAGE.md#1-add-the-dependency).
+
 Mount the embedded assets in your server:
 
 ```go

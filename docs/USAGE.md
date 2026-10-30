@@ -24,11 +24,18 @@ Goshtoso's own components ship **pre-generated** — you never run `templ genera
 against the library. But your *own* `.templ` pages do need the templ toolchain:
 
 ```bash
-go get github.com/a-h/templ                       # runtime (your generated code imports it)
-go install github.com/a-h/templ/cmd/templ@latest  # the CLI, if not already installed
-templ generate                                    # YOUR .templ → _templ.go
-go mod tidy                                       # run after generation sees templ imports
+go get github.com/a-h/templ@v0.3.1100
+TEMPL_VERSION="$(go list -m -f '{{.Version}}' github.com/a-h/templ)"
+go install github.com/a-h/templ/cmd/templ@"$TEMPL_VERSION"
+templ generate # YOUR .templ → _templ.go
+go mod tidy    # run after generation sees templ imports
 ```
+
+When upgrading from an older Goshtoso version, regenerate your application's
+templates with the matching compiler before building. Templ v0.3.1100 removes
+helpers used by older generated code and sanitizes native event attributes:
+use `templ.JSFuncCall`, or `templ.JSUnsafeFuncCall` for trusted application-authored
+JavaScript, when supplying handlers through `templ.Attributes`.
 
 Create at least one consumer `.templ` file before generation. Generate before
 tidying: without generated Go imports, `go mod tidy` can correctly remove the
