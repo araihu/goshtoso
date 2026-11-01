@@ -2,6 +2,33 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.5.0] - 2026-11-01
+
+### Added
+
+- Core `layout.Container` arranges arbitrary components in responsive Stack,
+  Grid or Masonry, with natural-height content and full-width items.
+- Optional pointer, keyboard and named-command movement works within and between
+  compatible containers. Nested containers retain their own movement scope.
+- Typed layout expressions provide accessible handle names, instructions and
+  announcements. Native disabled fieldsets, identity collisions and structural
+  changes during a gesture prevent stale moves.
+- A public Layout documentation page demonstrates Card, Panel, chart, table,
+  TextInput and plain content together, with nested groups and an empty inbox.
+
+### Upgrading
+
+- Existing components remain compatible. Layout is part of the core module;
+  it does not require a separate dependency.
+- Update the library and served CSS/JavaScript together. Go 1.27.3 and templ
+  v0.3.1100 remain unchanged, as do Tailwind 4.3.3, HTMX 4.0.0 and Alpine 3.17.2.
+- Applications own order, validation, drafts and persistence. `layout:move`
+  reports an accepted local move, not a server save. Use distinct movement
+  groups for page groups and the widgets inside them.
+- Masonry uses responsive Grid without measurement support. Movement handles
+  stay hidden and disabled without JavaScript; applications needing editing
+  in that mode must provide their own explicit server controls.
+
 ## [v0.4.7] - 2026-11-01
 
 ### Fixed
