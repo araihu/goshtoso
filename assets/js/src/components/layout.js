@@ -242,7 +242,7 @@
       if (changed) invalidate(); else schedule();
     });
     owners.set(root,state); observeSizes(state,root);
-    
+
     startObserver(); validateRegistry(); invalidate();
   }
   function disconnect(root) {
