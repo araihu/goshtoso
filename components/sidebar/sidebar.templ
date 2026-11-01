@@ -1,6 +1,7 @@
 package sidebar
 
 import "github.com/araihu/goshtoso/expressions"
+import "strconv"
 
 // Sidebar renders a collapsible sidebar navigation component based on PenguinUI
 // Usage:
@@ -14,9 +15,11 @@ import "github.com/araihu/goshtoso/expressions"
 //	})
 templ sidebarTemplate(cfg Config) {
 	{{ logoHref := cfg.LogoHref }}
-	{{ if logoHref == "" {
-	logoHref = "/"
-} }}
+	{{
+		if logoHref == "" {
+			logoHref = "/"
+		}
+	}}
 	<nav
 		class={ cfg.containerClasses() + " " + cfg.RootClass }
 		aria-label={ expressions.From(ctx).Sidebar.AriaLabel }
@@ -96,7 +99,7 @@ templ sidebarTemplate(cfg Config) {
 // The inner panel renders a normal Sidebar so consumers keep the same item,
 // section, slot, and HTMX APIs.
 templ overlayTemplate(cfg OverlayConfig) {
- {{ cfg = cfg.withExpressions(ctx) }}
+	{{ cfg = cfg.withExpressions(ctx) }}
 	{{ panelID := cfg.panelID() }}
 	<div
 		x-data="goshtosoSidebarOverlay()"
@@ -155,46 +158,81 @@ templ overlayTemplate(cfg OverlayConfig) {
 
 // sidebarItem renders a single sidebar navigation item (top-level icon links)
 templ sidebarItem(item Item) {
-	if item.Disabled {
-		<span class="flex items-center gap-2 py-2 text-base text-on-surface-muted cursor-not-allowed dark:text-on-surface-dark-muted">
-			if item.Icon != nil {
-				<span class="shrink-0 size-8 rounded-sm p-1.5 bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark">
-					@item.Icon
-				</span>
-			}
-			<span>{ item.Label }</span>
-		</span>
-	} else if item.Active {
-		<a href={ templ.URL(item.Href) } { sidebarLinkAttrs(item)... } aria-current="page" class="flex items-center gap-2 py-2 text-base font-medium text-primary dark:text-primary-dark">
-			if item.Icon != nil {
-				<span class="shrink-0 size-8 rounded-sm p-1.5 bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark">
-					@item.Icon
-				</span>
-			}
-			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
-			<span class="sr-only">{ expressions.From(ctx).Sidebar.ActiveLabel }</span>
-		</a>
+	if item.Collapsible && len(item.Items) > 0 {
+		@sidebarCollapsibleItem(item)
 	} else {
-		<a href={ templ.URL(item.Href) } { sidebarLinkAttrs(item)... } class="flex items-center gap-2 py-2 text-base text-on-surface transition-colors motion-reduce:transition-none hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:text-on-surface-dark-strong">
+		if item.Disabled {
+			<span class="flex items-center gap-2 py-2 text-base text-on-surface-muted cursor-not-allowed dark:text-on-surface-dark-muted">
+				if item.Icon != nil {
+					<span class="shrink-0 size-8 rounded-sm p-1.5 bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark">
+						@item.Icon
+					</span>
+				}
+				<span>{ item.Label }</span>
+			</span>
+		} else if item.Active {
+			<a href={ templ.URL(item.Href) } { sidebarLinkAttrs(item)... } aria-current="page" class="flex items-center gap-2 py-2 text-base font-medium text-primary dark:text-primary-dark">
+				if item.Icon != nil {
+					<span class="shrink-0 size-8 rounded-sm p-1.5 bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark">
+						@item.Icon
+					</span>
+				}
+				<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
+				<span class="sr-only">{ expressions.From(ctx).Sidebar.ActiveLabel }</span>
+			</a>
+		} else {
+			<a href={ templ.URL(item.Href) } { sidebarLinkAttrs(item)... } class="flex items-center gap-2 py-2 text-base text-on-surface transition-colors motion-reduce:transition-none hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:text-on-surface-dark-strong">
+				if item.Icon != nil {
+					<span class="shrink-0 size-8 rounded-sm p-1.5 bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark">
+						@item.Icon
+					</span>
+				}
+				<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
+				if item.Badge != "" {
+					<span class={ sidebarBadgeClasses(item, false) }>{ item.Badge }</span>
+				}
+			</a>
+		}
+		<!-- Render child items if any -->
+		if len(item.Items) > 0 {
+			<div class="ml-4 mt-1 flex flex-col gap-1">
+				for _, child := range item.Items {
+					@sidebarItem(child)
+				}
+			</div>
+		}
+	}
+}
+
+templ sidebarCollapsibleItem(item Item) {
+	<div x-data={ sidebarDisclosureData(item.Open) }>
+		<button
+			type="button"
+			disabled?={ item.Disabled }
+			{ sidebarLinkAttrs(item)... }
+			x-on:click="open = !open"
+			x-bind:aria-expanded="open.toString()"
+			aria-expanded={ strconv.FormatBool(item.Open) }
+			aria-controls={ sidebarChildrenID(item) }
+			class="flex w-full items-center gap-2 py-2 text-left text-base text-on-surface transition-colors motion-reduce:transition-none hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50 dark:text-on-surface-dark dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark"
+		>
 			if item.Icon != nil {
-				<span class="shrink-0 size-8 rounded-sm p-1.5 bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark">
-					@item.Icon
-				</span>
+				<span class="shrink-0 size-8 rounded-sm p-1.5 bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark">@item.Icon</span>
 			}
 			<span class="min-w-0 flex-1 truncate">{ item.Label }</span>
 			if item.Badge != "" {
 				<span class={ sidebarBadgeClasses(item, false) }>{ item.Badge }</span>
 			}
-		</a>
-	}
-	<!-- Render child items if any -->
-	if len(item.Items) > 0 {
-		<div class="ml-4 mt-1 flex flex-col gap-1">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-on-surface-muted transition-transform duration-150 motion-reduce:transition-none dark:text-on-surface-dark-muted" x-bind:class="open ? 'rotate-180' : ''" aria-hidden="true">
+				<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
+			</svg>
+		</button>
+		<div id={ sidebarChildrenID(item) } x-show="open" { sidebarChildrenAttrs(item.Open)... } class="ml-4 mt-1 flex flex-col gap-1">
 			for _, child := range item.Items {
 				@sidebarItem(child)
 			}
 		</div>
-	}
+	</div>
 }
 
 // sidebarSection renders a grouped section with PenguinUI-style left border items

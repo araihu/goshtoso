@@ -2,6 +2,18 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.4.7] - 2026-11-01
+
+### Fixed
+
+- Top-level Sidebar items honor `Collapsible` and `Open`, with a native
+  disclosure button, keyboard controls and an accessible expanded state.
+
+### Upgrading
+
+- Existing public fields control this behavior. The templ requirement remains
+  v0.3.1100. CSS and bundled JavaScript versions remain unchanged.
+
 ## [v0.4.6] - 2026-10-30
 
 ### Added
