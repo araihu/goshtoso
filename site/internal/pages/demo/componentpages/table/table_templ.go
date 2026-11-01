@@ -101,7 +101,7 @@ func tableDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.DemoSection(demo.DemoSectionProps{Title: "Stacked fields with optional expansion", Description: "Set Expandable and mark MobileSecondary columns to reveal them with Additional details. Stable Row.ID values keep disclosure state across row updates. Without JavaScript, every field stays visible. Sorting and header help remain available."}, tableMobilePreview(true), `@table.Table(table.Config{
+		templ_7745c5c3_Err = demo.DemoSection(demo.DemoSectionProps{Title: "Stacked fields with optional expansion", Description: "Set Expandable and mark MobileSecondary columns to reveal them with Additional details. Stable Row.ID values keep disclosure state across row updates. Without JavaScript, every field stays visible. Sorting and select-all remain available; static column headings stay visually hidden."}, tableMobilePreview(true), `@table.Table(table.Config{
     ID: "hosts",
     Mobile: &table.MobileConfig{PrimaryColumn: "name", Expandable: true},
     Columns: []table.Column{
@@ -403,7 +403,7 @@ func tableMobilePreview(expandable bool) templ.Component {
 			ID:      fmt.Sprintf("mobile-hosts-%t", expandable),
 			Caption: "Example hosts and latest reported usage",
 			Mobile:  &table.MobileConfig{PrimaryColumn: "name", Expandable: expandable},
-			Columns: []table.Column{{Key: "name", Label: "Host"}, {Key: "cpu", Label: "CPU"}, {Key: "memory", Label: "Memory"}, {Key: "arch", Label: "Architecture", MobileSecondary: true}},
+			Columns: []table.Column{{Key: "name", Label: "Host", HeaderSuffix: tooltip.Help(fmt.Sprintf("mobile-host-help-%t", expandable), "About hosts", "The host that reported these readings.")}, {Key: "cpu", Label: "CPU"}, {Key: "memory", Label: "Memory"}, {Key: "arch", Label: "Architecture", MobileSecondary: true}},
 			Rows: []table.Row{
 				{ID: "worker-01", Cells: map[string]table.Cell{"name": {Text: "worker-01", Description: "Reporting"}, "cpu": {Text: "38.7%"}, "memory": {Text: "67.2%"}, "arch": {Text: "amd64"}}},
 				{ID: "raspi-01", Cells: map[string]table.Cell{"name": {Text: "raspi-01", Description: "Partial data"}, "cpu": {Text: "Unavailable"}, "memory": {Text: "73.5%"}, "arch": {Text: "arm64"}}},

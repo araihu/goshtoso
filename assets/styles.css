@@ -7731,6 +7731,13 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
+  .goshtoso-table-responsive thead:not(:has([data-table-sort-request], [data-table-header-control])) {
+    height: 0;
+    border: 0;
+  }
+  .goshtoso-table-responsive thead .goshtoso-table-header-suffix {
+    display: none;
+  }
   .goshtoso-table-responsive > table > tbody > tr {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
