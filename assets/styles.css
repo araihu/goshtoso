@@ -1491,6 +1491,9 @@
   .flex-\[1_1_24rem\] {
     flex: 1 1 24rem;
   }
+  .flex-auto {
+    flex: auto;
+  }
   .shrink-0 {
     flex-shrink: 0;
   }

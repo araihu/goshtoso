@@ -4,7 +4,7 @@ import "github.com/araihu/goshtoso/expressions"
 
 // Dialog renders a native modal in the browser top layer, including above drawers.
 // Dispatch modal:open or modal:close with {id: ID}. Escape closes only this dialog;
-// the browser restores focus to the opener. Content remains mounted while closed.
+// the browser restores previously focused content. Content remains mounted while closed.
 templ dialogTemplate(cfg DialogConfig) {
  <dialog
   id={cfg.ID} data-modal-id={cfg.ID} aria-labelledby={cfg.ID+"Title"}
@@ -29,7 +29,8 @@ templ dialogTemplate(cfg DialogConfig) {
    <button type="button" aria-label={ expressions.From(ctx).Modal.DialogCloseAriaLabel } x-on:click="open=false" class="cursor-pointer rounded-radius p-2 focus-visible:outline-2 focus-visible:outline-primary">@closeIcon()</button>
   </header>
   }
-  <div class={"min-h-0 flex-1 overflow-y-auto",templ.KV("p-4",!cfg.Compact)}>
+  // WebKit needs an intrinsic flex basis to size auto-height native dialogs.
+  <div class={"min-h-0 flex-auto overflow-y-auto",templ.KV("p-4",!cfg.Compact)}>
  if cfg.Content != nil {
  @cfg.Content
  }

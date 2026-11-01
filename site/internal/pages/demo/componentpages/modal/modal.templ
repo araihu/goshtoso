@@ -95,6 +95,12 @@ templ modalDemoContent() {
     PrimaryAction: &modal.ButtonAction{OnClick: "alert('Deleted!')"},
 })`,
 		)
+		@demo.DemoSection(demo.DemoSectionProps{Title:"Compact content dialog",Description:"A headerless dialog keeps its editable content visible and retains the draft when closed."},modalCompactPreview(),`@modal.Dialog(modal.DialogConfig{
+    ID:      "compactNote",
+    Title:   "Quick note",
+    Compact: true,
+    Content: compactNoteContent(),
+})`)
 	</div>
 }
 
@@ -236,5 +242,19 @@ templ pickerContent() {
    <button type="button" class="cursor-pointer rounded-radius px-4 py-2 text-sm font-medium text-on-surface dark:text-on-surface-dark focus-visible:outline-2 focus-visible:outline-primary" x-on:click="$dispatch('modal:close', {id:'contentPicker'})">Cancel</button>
    @button.Button(button.WithType("button"),button.WithAttrs(templ.Attributes{"x-on:click":"selectedItem = pendingItem; $dispatch('modal:close', {id:'contentPicker'})"})) { Select item }
   </div>
+ </div>
+}
+
+templ modalCompactPreview() {
+ <div id="modal-compact" x-data="{}">
+  @button.Button(button.WithAttrs(templ.Attributes{"x-on:click":"$dispatch('modal:open', {id:'compactNote'})"})) { Open compact dialog }
+  @modal.Dialog(modal.DialogConfig{ID:"compactNote",Title:"Quick note",Compact:true,Content:compactNoteContent()})
+ </div>
+}
+
+templ compactNoteContent() {
+ <div class="space-y-4 p-4">
+  @textinput.TextInput(textinput.Config{ID:"compact-note",Label:"Quick note",Value:"Keep this draft",InputAttrs:templ.Attributes{"autofocus":true}})
+  @button.Button(button.WithAttrs(templ.Attributes{"x-on:click":"$dispatch('modal:close', {id:'compactNote'})"})) { Done }
  </div>
 }

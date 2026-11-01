@@ -35,6 +35,28 @@ runs stay strict and do not retry.
 go test -tags=e2e,full ./tests/e2e/... -v -run TestAccordion_StaticContent
 ```
 
+### Check native dialog layout in WebKit
+
+This opt-in smoke test checks that compact, desktop and fullscreen dialogs expose
+their content in Playwright WebKit. It does not reproduce the content-height
+collapse observed in native Safari 26.6.2: Playwright WebKit 26.5 passes with
+both `flex-1` and `flex-auto`. The default CI browser is Chromium, and the shared
+test setup also requires it for this command.
+
+```bash
+go run github.com/mxschmitt/playwright-go/cmd/playwright@v0.6201.1 install chromium webkit
+go test -tags=e2e,webkit ./tests/e2e -run TestDialogContentWebKit -count=1
+```
+
+Also check native Safari in Responsive Design Mode at 390 × 844. Open the modal
+demo's Quick note dialog, enter text, dismiss it, and reopen it. The field and
+Done button must stay visible and interactive. Repeat with the fullscreen demo.
+Open with Tab and Enter, then press Escape and check that focus returns to the
+previously focused button. A Safari mouse click need not focus a button first.
+For consumers with compact search dialogs, open search, enter a query, check
+matching results, then dismiss search and open navigation. A dimmed page with
+an invisible dialog is a failure even if the input appears in accessibility tools.
+
 ### Prove a generated consumer-local icon pack
 
 This focused browser test creates a verified release fixture, generates a

@@ -13,7 +13,7 @@ import "github.com/araihu/goshtoso/expressions"
 
 // Dialog renders a native modal in the browser top layer, including above drawers.
 // Dispatch modal:open or modal:close with {id: ID}. Escape closes only this dialog;
-// the browser restores focus to the opener. Content remains mounted while closed.
+// the browser restores previously focused content. Content remains mounted while closed.
 func dialogTemplate(cfg DialogConfig) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -212,7 +212,7 @@ func dialogTemplate(cfg DialogConfig) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var12 = []any{"min-h-0 flex-1 overflow-y-auto", templ.KV("p-4", !cfg.Compact)}
+			var templ_7745c5c3_Var12 = []any{"min-h-0 flex-auto overflow-y-auto", templ.KV("p-4", !cfg.Compact)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_ElementWriter, templ_7745c5c3_Var12...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
