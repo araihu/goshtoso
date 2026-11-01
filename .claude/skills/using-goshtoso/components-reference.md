@@ -1973,7 +1973,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 |-------|------|-------------|
 | `Key` | `string` | Key is the column identifier used to look up cell values in Row.Cells |
 | `Label` | `string` | Label is the display text for the column header |
-| `HeaderSuffix` | `templ.Component` | HeaderSuffix renders optional content beside the column label. Interactions within it do not trigger column sorting. |
+| `HeaderSuffix` | `templ.Component` | HeaderSuffix renders optional content beside the column label. Interactions within it do not trigger column sorting. Stacked layouts hide suffixes on static column headers. |
 | `Sortable` | `bool` | Sortable marks this column as sortable (renders clickable header) |
 | `Width` | `string` | Width is an optional Tailwind width class (e.g. "w-32", "min-w-[200px]") |
 | `Align` | `string` | Align is "left" (default), "center", or "right" |
