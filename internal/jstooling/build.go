@@ -62,6 +62,7 @@ var defaultArtifacts = []artifact{
 			"assets/js/src/components/tabs.js",
 			"assets/js/src/components/toast.js",
 			"assets/js/src/components/scroll-region.js",
+			"assets/js/src/components/layout.js",
 		},
 	},
 	{

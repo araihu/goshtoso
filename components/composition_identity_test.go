@@ -7,6 +7,7 @@ import (
 	"github.com/araihu/goshtoso/components/actiongroup"
 	"github.com/araihu/goshtoso/components/appshell"
 	"github.com/araihu/goshtoso/components/emptystate"
+	"github.com/araihu/goshtoso/components/layout"
 	"github.com/araihu/goshtoso/components/pageheader"
 	"github.com/araihu/goshtoso/components/panel"
 	"github.com/araihu/goshtoso/components/schematree"
@@ -21,6 +22,7 @@ func compositionRenderables() map[components.Kind]components.Component {
 		components.KindAppShell:    appshell.AppShell(appshell.Config{}),
 		components.KindPageHeader:  pageheader.PageHeader(pageheader.Config{}),
 		components.KindToolbar:     toolbar.Toolbar(toolbar.Config{}),
+		components.KindLayout:      layout.Container(layout.Config{ID: "inventory", Label: "Inventory"}),
 		components.KindPanel:       panel.Panel(panel.Config{}),
 		components.KindSchemaTree:  schematree.SchemaTree(schematree.Config{}),
 		components.KindEmptyState:  emptystate.EmptyState(emptystate.Config{}),
@@ -30,7 +32,7 @@ func compositionRenderables() map[components.Kind]components.Component {
 
 func TestCompositionRenderablesExposeKinds(t *testing.T) {
 	values := compositionRenderables()
-	require.Len(t, values, 8)
+	require.Len(t, values, 9)
 	for want, value := range values {
 		require.Equal(t, want, value.Kind())
 	}

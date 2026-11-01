@@ -227,3 +227,10 @@
     buildTOC();
   }
 })();
+
+// The layout demo owns its command; the library owns only generic movement.
+document.addEventListener("click", function (event) {
+  if (!event.target.closest("[data-layout-demo-transfer]")) return;
+  var source = document.getElementById("layout-mixed");
+  if (source) source.dispatchEvent(new CustomEvent("layout:request-move", {bubbles: true, detail: {itemId: "service", fromContainerId: "layout-mixed", toContainerId: "layout-inbox", beforeItemId: null}}));
+});

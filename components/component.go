@@ -102,6 +102,7 @@ const (
 	KindPageHeader             Kind = "page-header"
 	KindToolbar                Kind = "toolbar"
 	KindPanel                  Kind = "panel"
+	KindLayout                 Kind = "layout"
 	KindEmptyState             Kind = "empty-state"
 	KindSkeleton               Kind = "skeleton"
 	KindIcon                   Kind = "icon"
@@ -193,6 +194,7 @@ var allKinds = []Kind{
 	KindPageHeader,
 	KindToolbar,
 	KindPanel,
+	KindLayout,
 	KindEmptyState,
 	KindSkeleton,
 	KindIcon,

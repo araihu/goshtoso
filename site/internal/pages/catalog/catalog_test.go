@@ -20,6 +20,7 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 		{"/components/page-header", "Composition"},
 		{"/components/toolbar", "Composition"},
 		{"/components/action-group", "Composition"},
+		{"/components/layout", "Composition"},
 		{"/components/panel", "Composition"},
 		{"/components/empty-state", "Composition"},
 		{"/components/skeleton", "Composition"},
@@ -83,7 +84,6 @@ func TestComponentCatalogHasEveryPageOnce(t *testing.T) {
 	}
 
 	pages := catalog.ComponentPages()
-	require.Len(t, pages, len(expected))
 	require.Len(t, pages, len(expected))
 
 	seen := map[string]bool{}

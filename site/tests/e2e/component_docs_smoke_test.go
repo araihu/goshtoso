@@ -100,7 +100,7 @@ func TestAllComponentDocsFragmentNavigation(t *testing.T) {
 		// covered by icon_test.go rather than this core-family traversal.
 		return entry.Active == "app-shell" || entry.Active == "icon"
 	})
-	require.Len(t, entries, 54)
+	require.Len(t, entries, 55)
 
 	page := newPage(t, sharedBrowser)
 	useLocalGoogleFontFixture(t, page)

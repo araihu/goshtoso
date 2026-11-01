@@ -101,7 +101,7 @@ func TestConsumerDocsPublishCurrentInventoryCounts(t *testing.T) {
 	primitiveCount := len(components.AllKinds())
 	themeCount := strings.Count(readDoc(t, "../site/internal/themes/catalog.go"), "{Key:")
 
-	if packageCount != 60 || documentationPageCount != 56 || primitiveCount != 89 || themeCount != 16 {
+	if packageCount != 61 || documentationPageCount != 57 || primitiveCount != 90 || themeCount != 16 {
 		t.Fatalf(
 			"unexpected source inventory: packages=%d pages=%d primitives=%d themes=%d",
 			packageCount,

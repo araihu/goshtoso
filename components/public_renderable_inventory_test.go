@@ -20,7 +20,7 @@ import (
 )
 
 func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
-	got := make([]components.Kind, 0, 89)
+	got := make([]components.Kind, 0, 90)
 	for _, inventory := range publicRenderableInventories() {
 		for want, value := range inventory {
 			require.Equal(t, want, value.Kind())
@@ -29,7 +29,7 @@ func TestPublicRenderableInventoryMatchesAllKinds(t *testing.T) {
 	}
 
 	require.ElementsMatch(t, components.AllKinds(), got)
-	require.Len(t, got, 89)
+	require.Len(t, got, 90)
 	require.Len(t, got, len(components.AllKinds()))
 }
 
@@ -106,6 +106,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 		"navbar.Navbar":                   {},
 		"navbar.SecondaryRow":             {},
 		"pagination.Pagination":           {},
+		"layout.Container":                {},
 		"panel.Panel":                     {},
 		"pageheader.PageHeader":           {},
 		"palette.Palette":                 {},
@@ -199,6 +200,8 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 	}
 
 	allowedMethods := map[string]struct{}{
+		"layout.Instance.WithExpressions":      {},
+		"layout.ValidationError.Error":         {},
 		"schematree.Instance.WithExpressions":  {},
 		"modal.DialogInstance.WithExpressions": {},
 		"appshell.Instance.WithExpressions":    {},
@@ -473,7 +476,7 @@ func allowedRenderableMethods(t *testing.T) map[string]struct{} {
 			methods[receiver+".Render"] = struct{}{}
 		}
 	}
-	require.Len(t, methods, 178)
+	require.Len(t, methods, 180)
 	return methods
 }
 

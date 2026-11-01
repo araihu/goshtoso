@@ -1221,6 +1221,9 @@
   .min-h-11 {
     min-height: calc(var(--spacing) * 11);
   }
+  .min-h-24 {
+    min-height: calc(var(--spacing) * 24);
+  }
   .min-h-36 {
     min-height: calc(var(--spacing) * 36);
   }
@@ -7781,6 +7784,69 @@
   .goshtoso-table-responsive td[colspan] {
     grid-column: 1 / -1;
   }
+}
+.goshtoso-layout {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(var(--layout-columns, auto-fit), minmax(var(--layout-track-min, min(100%, max(var(--layout-min), calc((100% - (var(--layout-max) - 1) * var(--layout-gap)) / var(--layout-max))))), 1fr));
+  grid-auto-flow: row;
+  gap: 16px;
+}
+.goshtoso-layout[data-layout-gap="12"] {
+  gap: 12px;
+}
+.goshtoso-layout[data-layout-gap="24"] {
+  gap: 24px;
+}
+.goshtoso-layout[data-layout-mode="masonry"] {
+  grid-auto-rows: var(--layout-masonry, auto);
+}
+.goshtoso-layout[data-layout-mode="masonry"][data-layout-geometry-state="pending"], .goshtoso-layout[data-layout-mode="masonry"][data-layout-geometry-state="settled"] {
+  row-gap: 0;
+}
+.goshtoso-layout-item {
+  min-width: 0;
+  align-self: start;
+}
+.goshtoso-layout[data-layout-mode="masonry"] > .goshtoso-layout-item {
+  grid-row-end: span var(--layout-row-span, 1);
+}
+.goshtoso-layout > [data-layout-span="full"] {
+  grid-column: 1 / -1;
+}
+.goshtoso-layout > .goshtoso-layout-item > [data-layout-content] {
+  display: flow-root;
+}
+.goshtoso-layout > .goshtoso-layout-item > [data-layout-handle-row]:has(+ [data-layout-content]:not(:empty)) {
+  margin-bottom: 4px;
+}
+.goshtoso-layout-handle {
+  min-height: 44px;
+  touch-action: none;
+}
+.goshtoso-layout > .goshtoso-layout-feedback[hidden], .goshtoso-layout > .goshtoso-layout-item > [data-layout-handle-row] > [data-layout-handle][hidden] {
+  display: none !important;
+}
+.goshtoso-layout-feedback {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.goshtoso-layout[data-layout-drop-target], .goshtoso-layout > .goshtoso-layout-item[data-layout-drop-target] {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+.goshtoso-layout:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+.dark .goshtoso-layout[data-layout-drop-target], .dark .goshtoso-layout > .goshtoso-layout-item[data-layout-drop-target], .dark .goshtoso-layout:focus-visible {
+  outline-color: var(--color-primary-dark);
 }
 @property --tw-translate-x {
   syntax: "*";
