@@ -375,6 +375,33 @@ func TestSectionItemsWithChildrenCanCollapse(t *testing.T) {
 	}
 }
 
+func TestTopLevelItemsWithChildrenCanCollapse(t *testing.T) {
+	for _, open := range []bool{false, true} {
+		html := renderSidebar(t, Config{Items: []Item{{
+			ID: "config", Label: "Config", Href: "/settings", Collapsible: true, Open: open,
+			Icon: testComponent(`<svg data-testid="config-icon"></svg>`), Badge: "2",
+			Items: []Item{{Label: "Appearance", Href: "/settings/appearance", Active: true}},
+		}}})
+		assertContainsAll(t, html, `type="button"`, `aria-controls="config-children"`,
+			`x-on:click="open = !open"`, `x-bind:aria-expanded="open.toString()"`,
+			`data-testid="config-icon"`, `>2</span>`, `aria-current="page"`,
+			`href="/settings/appearance"`, `id="config-children"`)
+		if strings.Contains(html, `href="/settings"`) {
+			t.Fatal("collapsible group must toggle instead of navigating")
+		}
+		want := `aria-expanded="false"`
+		if open {
+			want = `aria-expanded="true"`
+		}
+		assertContainsAll(t, html, want)
+		if hidden := strings.Contains(html, `id="config-children" x-show="open" style="display: none;"`); hidden == open {
+			t.Fatalf("open=%v: children initial visibility does not match", open)
+		}
+	}
+	html := renderSidebar(t, Config{Items: []Item{{ID: "disabled", Label: "Config", Disabled: true, Collapsible: true, Items: []Item{{Label: "Child"}}}}})
+	assertContainsAll(t, html, `type="button" disabled`)
+}
+
 func TestCollapsibleSectionCollapsesChildGroupsByDefault(t *testing.T) {
 	html := renderSidebar(t, Config{
 		Sections: []Section{

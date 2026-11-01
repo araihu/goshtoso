@@ -414,6 +414,28 @@ func requireSidebarTriggerKeyboardFocus(t *testing.T, trigger playwright.Locator
 	require.GreaterOrEqual(t, outlineWidth, 2.0)
 }
 
+func TestSidebarTopLevelDisclosure(t *testing.T) {
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+	page := newPage(t, browser)
+	_, err := page.Goto(baseURL + "/components/sidebar")
+	require.NoError(t, err)
+	group := page.Locator("#sidebar-collapsible-items")
+	trigger := group.Locator("button")
+	child := group.Locator(`a[href="#notifications"]`)
+	require.NoError(t, trigger.WaitFor())
+	require.NoError(t, child.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	require.NoError(t, trigger.Focus())
+	require.NoError(t, trigger.Press("Enter"))
+	waitForSidebarExpanded(t, page, "#sidebar-collapsible-items", true)
+	require.NoError(t, child.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateVisible}))
+	require.NoError(t, trigger.Press("Space"))
+	waitForSidebarExpanded(t, page, "#sidebar-collapsible-items", false)
+	require.NoError(t, child.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+}
+
 func waitForSidebarExpanded(t *testing.T, page playwright.Page, scope string, expanded bool) {
 	t.Helper()
 	want := "false"

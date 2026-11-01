@@ -35,6 +35,21 @@ templ sidebarDemoContent() {
 		@demo.ExpressionOverridesNote("Sidebar")
 
 		@demo.DemoSection(
+			demo.DemoSectionProps{Title: "Collapsible navigation group", Description: "Set Collapsible on a top-level item to toggle its children. Set Open when a child page is active."},
+			sidebarCollapsibleItemsPreview(),
+			`@sidebar.Sidebar(sidebar.Config{
+    Items: []sidebar.Item{{
+        ID: "config", Label: "Config", Icon: settingsIcon(), Collapsible: true,
+        Open: false,
+        Items: []sidebar.Item{
+            {Label: "Appearance", Href: "#appearance"},
+            {Label: "Notifications", Href: "#notifications"},
+        },
+    }},
+})`,
+		)
+
+		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "With Sections",
 				Description: "Use Sections (each with a Title and Items) to group links logically.",
@@ -95,6 +110,15 @@ templ sidebarDemoContent() {
 }
 
 // --- Example 1: Simple Sidebar ---
+
+templ sidebarCollapsibleItemsPreview() {
+	<div id="sidebar-collapsible-items" class="w-64">
+		@sidebar.Sidebar(sidebar.Config{Items: []sidebar.Item{{
+			ID: "config", Label: "Config", Icon: settingsIcon(), Collapsible: true,
+			Items: []sidebar.Item{{Label: "Appearance", Href: "#appearance"}, {Label: "Notifications", Href: "#notifications"}},
+		}}})
+	</div>
+}
 
 templ sidebarSimplePreview() {
 	<div id="sidebar-simple" class="w-full">
