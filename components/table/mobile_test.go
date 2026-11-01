@@ -17,11 +17,11 @@ func TestMobileFieldsAndFragments(t *testing.T) {
 	}
 	for _, component := range []templ.Component{Table(cfg), TableRows(cfg), TableRow(cfg, cfg.Rows[0])} {
 		html := renderT(t, component)
-		mustContainAll(t, html, `data-table-mobile-row="worker/one"`, `data-table-mobile-primary`, `headers="hosts-column-name"`, `id="hosts-mobile-worker%2Fone-arch"`, `aria-controls="hosts-mobile-worker%2Fone-arch"`, `arm64`, `Additional details`)
+		mustContainAll(t, html, `data-table-mobile-row="worker/one"`, `data-table-mobile-primary`, `headers="hosts-column-name"`, `id="hosts-mobile-776f726b65722f6f6e65-61726368"`, `aria-controls="hosts-mobile-776f726b65722f6f6e65-61726368"`, `arm64`, `Additional details`)
 		if count := strings.Count(html, `id="pin-worker"`); count != 1 {
 			t.Fatalf("each interactive cell must render once, got %d", count)
 		}
-		if strings.Contains(html, `id="hosts-mobile-worker%2Fone-name"`) {
+		if strings.Contains(html, `id="hosts-mobile-776f726b65722f6f6e65-6e616d65"`) {
 			t.Fatal("the primary field must not collapse even when marked secondary")
 		}
 	}
@@ -118,5 +118,72 @@ func TestMobileRowLinkUsesIdentityAndRetainsEmptyNameFallback(t *testing.T) {
 			label = "Open row one"
 		}
 		mustContainAll(t, markup, `href="/record"`, ">"+label+"</a>", `Reported host`)
+	}
+}
+
+func TestMobileDisclosureIDsStayUniqueAcrossFragments(t *testing.T) {
+	cfg := Config{ID: "hosts", Mobile: &MobileConfig{PrimaryColumn: "name", Expandable: true},
+		Columns: []Column{{Key: "name", Label: "Host"}, {Key: "c", Label: "C", MobileSecondary: true}, {Key: "b-c", Label: "B-C", MobileSecondary: true}},
+		Rows:    []Row{{ID: "a-b"}, {ID: "a"}},
+	}
+	fragments := ""
+	for _, row := range cfg.Rows {
+		fragments += renderT(t, TableRow(cfg, row))
+	}
+	for name, markup := range map[string]string{
+		"table": renderT(t, Table(cfg)),
+		"rows":  "<table><tbody>" + renderT(t, TableRows(cfg)) + "</tbody></table>",
+		"row":   "<table><tbody>" + fragments + "</tbody></table>",
+	} {
+		t.Run(name, func(t *testing.T) {
+			document, err := html.Parse(strings.NewReader(markup))
+			if err != nil {
+				t.Fatal(err)
+			}
+			ids := map[string]*html.Node{}
+			var toggles []*html.Node
+			var visit func(*html.Node)
+			visit = func(node *html.Node) {
+				for _, attr := range node.Attr {
+					if attr.Key == "id" {
+						if ids[attr.Val] != nil {
+							t.Errorf("duplicate id %q", attr.Val)
+						}
+						ids[attr.Val] = node
+					}
+					if attr.Key == "aria-controls" {
+						toggles = append(toggles, node)
+					}
+				}
+				for child := node.FirstChild; child != nil; child = child.NextSibling {
+					visit(child)
+				}
+			}
+			visit(document)
+			if len(toggles) != len(cfg.Rows) {
+				t.Fatalf("got %d toggles, want %d", len(toggles), len(cfg.Rows))
+			}
+			for _, toggle := range toggles {
+				row := toggle.Parent
+				for row != nil && row.Data != "tr" {
+					row = row.Parent
+				}
+				for _, attr := range toggle.Attr {
+					if attr.Key != "aria-controls" {
+						continue
+					}
+					controls := strings.Fields(attr.Val)
+					if len(controls) != 2 {
+						t.Fatalf("got %d controlled cells, want 2", len(controls))
+					}
+					for _, id := range controls {
+						cell := ids[id]
+						if cell == nil || cell.Data != "td" || cell.Parent != row {
+							t.Errorf("controlled cell %q must belong to its toggle's row", id)
+						}
+					}
+				}
+			}
+		})
 	}
 }

@@ -1,6 +1,7 @@
 package table
 
 import (
+	"encoding/hex"
 	"net/url"
 	"strconv"
 	"strings"
@@ -771,7 +772,8 @@ func (cfg Config) mobileExpandable(row Row) bool {
 }
 
 func (cfg Config) mobileCellID(row Row, col Column) string {
-	return cfg.getID() + "-mobile-" + url.PathEscape(row.ID) + "-" + url.PathEscape(col.Key)
+	// Hex keeps tuple separators out of row and column identifiers.
+	return cfg.getID() + "-mobile-" + hex.EncodeToString([]byte(row.ID)) + "-" + hex.EncodeToString([]byte(col.Key))
 }
 
 func (cfg Config) mobileHeaderID(col Column) string {
