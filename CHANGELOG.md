@@ -8,8 +8,8 @@ All notable changes to Goshtoso are documented in this file.
 
 - Core `layout.Container` arranges arbitrary components in responsive Stack,
   Grid or Masonry, with natural-height content and full-width items.
-- Optional pointer, keyboard and named-command movement works within and between
-  compatible containers. Nested containers retain their own movement scope.
+- Optional movement supports pointer, keyboard and named commands within and
+  between compatible containers. Nested containers retain their own movement scope.
 - Typed layout expressions provide accessible handle names, instructions and
   announcements. Native disabled fieldsets, identity collisions and structural
   changes during a gesture prevent stale moves.
@@ -25,9 +25,9 @@ All notable changes to Goshtoso are documented in this file.
 - Applications own order, validation, drafts and persistence. `layout:move`
   reports an accepted local move, not a server save. Use distinct movement
   groups for page groups and the widgets inside them.
-- Masonry uses responsive Grid without measurement support. Movement handles
-  stay hidden and disabled without JavaScript; applications needing editing
-  in that mode must provide their own explicit server controls.
+- Without JavaScript or ResizeObserver, Masonry falls back to responsive Grid.
+  Movement handles stay hidden and disabled without JavaScript; applications
+  needing editing in that mode must provide their own explicit server controls.
 
 ## [v0.4.7] - 2026-11-01
 

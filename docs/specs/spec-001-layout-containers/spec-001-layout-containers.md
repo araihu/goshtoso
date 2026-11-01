@@ -1,9 +1,10 @@
 # Spec 001: Generic layout containers and item movement
 
-Status: proposed public component contract, design-review draft. Runtime readiness is assessed separately.
+Status: implemented; public API and interaction reviews accepted. Preparing v0.5.0; publication pending.
 Date: 2026-11-01. Owner: Goshtoso. Release stage: v0.1.0+; tagged baseline v0.4.7.
-Current milestone: define a reusable component for a mixed-content layout editor.
-No implementation, generated catalog entry or release is claimed by this spec.
+Current milestone: complete upstream release verification before downstream integration.
+The component, generated catalog entry and demo are implemented. No publication or deployment is claimed.
+Implementation and review are tracked in [PR #363](https://github.com/araihu/goshtoso/pull/363).
 
 ## 1. Purpose and verified gap
 
@@ -28,7 +29,7 @@ as a Balemoh-only sortable/masonry runtime.
 
 ## 2. Responsibility and exclusions
 
-One proposed public package, `components/layout`, owns container/item wrappers,
+One public package, `components/layout`, owns container/item wrappers,
 responsive direct-child geometry, optional movement handles, keyboard/pointer
 interaction, announcements and cleanup. It composes arbitrary child components.
 The consumer owns all data semantics, sorting rules, validation, API calls, draft
@@ -39,11 +40,11 @@ alphabetical sorting, saved ranks, arbitrary-depth tree editors, absolute x/y
 positioning, resizing a widget's internal content, browser storage and remote code.
 A library `Kind` identifies type; it never substitutes for an item instance ID.
 
-## 3. Proposed public surface
+## 3. Public API
 
 Add `layout.Container(Config) Instance`, implementing `components.Component` with
-stable Kind `layout`. The declarations below are normative proposed Go API. They follow
-[component API naming](../../COMPONENT_API_NAMING.md); none is already available.
+stable Kind `layout`. The declarations below are normative public Go API. They follow
+[component API naming](../../COMPONENT_API_NAMING.md); the tagged v0.4.7 baseline does not include this package.
 
 | Type | Fields |
 |---|---|
@@ -202,7 +203,7 @@ Numeric pluralization and locale negotiation are not new guarantees of this comp
 
 ## 4. Public markup and ownership
 
-Library-owned markers are proposed as:
+Library-owned markers are:
 
 ```html
 <div id="operations" role="list" aria-label="Operations" tabindex="-1"
@@ -480,15 +481,15 @@ animation is not claimed to have a quiescent settlement deadline.
 Implementation must include a public leaf demo with mixed/nested examples, browser
 coverage of these journeys, generated templ/CSS/runtime outputs, component catalog
 registration, `cmd/skillgen` output and the published-consumer/current-source checks.
-Follow AGENTS.md. This document defines gates; it does not claim they ran.
+Follow AGENTS.md. These gates apply to each release; CI supplies execution evidence.
 
 ## 8. Integration and release boundary
 
 Goshtoso owns these generic behaviors first. Balemoh owns the API and grouping/order
 policy that consume them. No upstream component embeds Balemoh IDs or imports it.
-After review, implementation must be completed and released upstream before the
-Balemoh dependency is updated. An unreleased branch or this spec is not a usable
-public API. The library's existing supported components remain backward compatible.
+Implementation and tests have passed independent review. A verified upstream
+release must be published before Balemoh updates its dependency. An unreleased
+branch or this specification does not provide a published module version. The library's existing supported components remain backward compatible.
 
 The first downstream slice excludes tabs, absolute placement, resizing and nested
 group editing. Broader editor orchestration is separate application work. Existing
