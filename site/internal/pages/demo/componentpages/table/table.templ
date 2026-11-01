@@ -1,6 +1,7 @@
 package tablepage
 
 import (
+	"fmt"
 	"github.com/araihu/goshtoso/components/badge"
 	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/table"
@@ -36,6 +37,22 @@ templ tableDemoContent() {
 })`,
 		)
         @demo.ExpressionOverridesNote("Table")
+		@demo.DemoSection(demo.DemoSectionProps{Title: "Stacked mobile fields", Description: "Below 48rem of container width, reuse each cell as a labelled field. PrimaryColumn identifies the record even when selection is the first column. Desktop remains a table."}, tableMobilePreview(false), `@table.Table(table.Config{
+    ID: "hosts",
+    Mobile: &table.MobileConfig{PrimaryColumn: "name"},
+    Columns: columns,
+    Rows: rows,
+})`)
+		@demo.DemoSection(demo.DemoSectionProps{Title: "Stacked fields with optional expansion", Description: "Set Expandable and mark MobileSecondary columns to reveal them with Additional details. Stable Row.ID values keep disclosure state across row updates. Without JavaScript, every field stays visible. Sorting and header help remain available."}, tableMobilePreview(true), `@table.Table(table.Config{
+    ID: "hosts",
+    Mobile: &table.MobileConfig{PrimaryColumn: "name", Expandable: true},
+    Columns: []table.Column{
+        {Key: "name", Label: "Host"},
+        {Key: "cpu", Label: "CPU"},
+        {Key: "arch", Label: "Architecture", MobileSecondary: true},
+    },
+    Rows: rows, // Use stable, nonempty row IDs.
+})`)
 
 		@demo.DemoSection(demo.DemoSectionProps{Title: "Column help", Description: "Explain a column with HeaderSuffix and a compact help tooltip."}, tableHeaderHelpPreview(), `table.Column{
     Key: "name", Label: "Service",
@@ -244,6 +261,21 @@ templ tableEditButton() {
 		)
 	</div>
 	// rows don't pollute the page-level "table" selectors the e2e suite counts.
+}
+
+templ tableMobilePreview(expandable bool) {
+	<div class="max-w-md" id={ fmt.Sprintf("table-mobile-%t", expandable) }>
+		@table.Table(table.Config{
+			ID: fmt.Sprintf("mobile-hosts-%t", expandable),
+			Caption: "Example hosts and latest reported usage",
+			Mobile: &table.MobileConfig{PrimaryColumn: "name", Expandable: expandable},
+			Columns: []table.Column{{Key: "name", Label: "Host"}, {Key: "cpu", Label: "CPU"}, {Key: "memory", Label: "Memory"}, {Key: "arch", Label: "Architecture", MobileSecondary: true}},
+			Rows: []table.Row{
+				{ID: "worker-01", Cells: map[string]table.Cell{"name": {Text: "worker-01", Description: "Reporting"}, "cpu": {Text: "38.7%"}, "memory": {Text: "67.2%"}, "arch": {Text: "amd64"}}},
+				{ID: "raspi-01", Cells: map[string]table.Cell{"name": {Text: "raspi-01", Description: "Partial data"}, "cpu": {Text: "Unavailable"}, "memory": {Text: "73.5%"}, "arch": {Text: "arm64"}}},
+			},
+		})
+	</div>
 }
 
 // tableDefaultPreview renders the default static table.

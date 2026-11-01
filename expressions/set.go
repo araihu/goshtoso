@@ -393,6 +393,10 @@ type StructuredInput struct {
 
 // Table contains optional expressions for the Table component family.
 type Table struct {
+	// DetailsLabel defaults to "Additional details".
+	DetailsLabel string
+	// RowDetailsLabel defaults to "Row details".
+	RowDetailsLabel string
 	// LoadingText defaults to "Loading...".
 	LoadingText string
 	// ActionsLabel defaults to "Actions".
@@ -651,10 +655,12 @@ func English() Set {
 			RemoveAriaLabel: "Remove row",
 		},
 		Table: Table{
-			LoadingText:   "Loading...",
-			ActionsLabel:  "Actions",
-			LoadMoreLabel: "Load more",
-			FiltersLabel:  "Filters",
+			DetailsLabel:    "Additional details",
+			RowDetailsLabel: "Row details",
+			LoadingText:     "Loading...",
+			ActionsLabel:    "Actions",
+			LoadMoreLabel:   "Load more",
+			FiltersLabel:    "Filters",
 			OpenRowLabel: func(id string) string {
 				if id == "" {
 					return "Open row"
@@ -1186,6 +1192,12 @@ func mergeStructuredInput(base, overrides StructuredInput) StructuredInput {
 }
 
 func mergeTable(base, overrides Table) Table {
+	if overrides.RowDetailsLabel != "" {
+		base.RowDetailsLabel = overrides.RowDetailsLabel
+	}
+	if overrides.DetailsLabel != "" {
+		base.DetailsLabel = overrides.DetailsLabel
+	}
 	if overrides.LoadingText != "" {
 		base.LoadingText = overrides.LoadingText
 	}

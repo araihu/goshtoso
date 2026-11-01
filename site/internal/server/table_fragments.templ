@@ -3,6 +3,7 @@ package server
 templ tableHeadOOBFragment(id string, sortBy string, sortDir string, content templ.Component) {
 	<hx-partial hx-target={ "#" + id } hx-swap="outerHTML">
 		<thead
+			role="rowgroup"
 			id={ id }
 			data-table-sort-by={ sortBy }
 			data-table-sort-dir={ sortDir }

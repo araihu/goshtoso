@@ -47,14 +47,14 @@ func tableHeadOOBFragment(id string, sortBy string, sortDir string, content temp
 			templ_7745c5c3_ElementWriter := templ_7745c5c3_Buffer
 			templ_7745c5c3_Buffer := templ.GetBuffer()
 			var templ_7745c5c3_ElementScripts []templ.ComponentScript
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<thead id=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<thead role=\"rowgroup\" id=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templruntime.NewAttributeExpression(id).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 6, Col: 10}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 7, Col: 10}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -67,7 +67,7 @@ func tableHeadOOBFragment(id string, sortBy string, sortDir string, content temp
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templruntime.NewAttributeExpression(sortBy).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 7, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 8, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 			if templ_7745c5c3_Err != nil {
@@ -80,7 +80,7 @@ func tableHeadOOBFragment(id string, sortBy string, sortDir string, content temp
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templruntime.NewAttributeExpression(sortDir).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 8, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 9, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
@@ -158,7 +158,7 @@ func tablePaginationOOBFragment(id string, page int, totalPages int, navigation 
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templruntime.NewAttributeExpression(id).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 18, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 19, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -186,7 +186,7 @@ func tablePaginationOOBFragment(id string, page int, totalPages int, navigation 
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(page)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 25, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 26, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -199,7 +199,7 @@ func tablePaginationOOBFragment(id string, page int, totalPages int, navigation 
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(totalPages)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 25, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/server/table_fragments.templ`, Line: 26, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
