@@ -34,6 +34,7 @@ type Column struct {
 	Label string
 	// HeaderSuffix renders optional content beside the column label.
 	// Interactions within it do not trigger column sorting.
+	// Stacked layouts hide suffixes on static column headers.
 	HeaderSuffix templ.Component
 	// Sortable marks this column as sortable (renders clickable header)
 	Sortable bool
