@@ -48,8 +48,9 @@ type Column struct {
 // MobileConfig enables a stacked field layout below 48rem of container width.
 // The same cells and controls are reused at every width. Nil Config.Mobile
 // retains the horizontally scrollable table layout.
-// Row links and actions use a separate native control in the primary cell,
-// preserving table semantics and independent interactive cell content.
+// Row links and actions use the plain primary-cell content as a native control.
+// Component cells keep their own controls and get a labelled row-action fallback.
+// To link only part of a custom component, render its link and omit Row.Link.
 // This applies at every width; when PrimaryColumn is absent or unmatched,
 // the action is placed in the first column.
 type MobileConfig struct {

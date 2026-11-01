@@ -107,3 +107,16 @@ func TestMobileAuxiliaryRowsKeepTableRoles(t *testing.T) {
 		})
 	}
 }
+
+func TestMobileRowLinkUsesIdentityAndRetainsEmptyNameFallback(t *testing.T) {
+	for _, name := range []string{"Worker", "", " "} {
+		cfg := Config{ID: "hosts", Mobile: &MobileConfig{PrimaryColumn: "name"}, Columns: []Column{{Key: "name", Label: "Host"}}}
+		row := Row{ID: "one", Link: "/record", LinkMode: LinkFull, Cells: map[string]Cell{"name": {Text: name, Description: "Reported host"}}}
+		markup := renderT(t, TableRow(cfg, row))
+		label := name
+		if strings.TrimSpace(label) == "" {
+			label = "Open row one"
+		}
+		mustContainAll(t, markup, `href="/record"`, ">"+label+"</a>", `Reported host`)
+	}
+}

@@ -23,7 +23,7 @@ func mobileTableFixture(expandable bool) table.Config {
 		Columns: []table.Column{{Key: "pin", Label: "Pinned"}, {Key: "name", Label: "Host", Sortable: true}, {Key: "cpu", Label: "CPU"}, {Key: "arch", Label: "Architecture", MobileSecondary: true}},
 		Rows: []table.Row{{ID: "__proto__", Link: "/row-destination", LinkMode: table.LinkFull,
 			Expandable: true, Detail: templ.Raw(`<p>Full row details</p>`), Actions: templ.Raw(`<button id="nested-action" type="button">Action</button>`), Cells: map[string]table.Cell{
-				"name": {Text: "worker-with-a-long-but-complete-identity.example.internal"}, "cpu": {Text: "Unavailable"},
+				"name": {Text: "worker-with-a-long-but-complete-identity.example.internal", Description: "Reported host"}, "cpu": {Text: "Unavailable"},
 				"arch": {Text: "arm64"}, "pin": {Component: templ.Raw(`<input id="mobile-pin" type="checkbox" aria-label="Pin worker">`)},
 			}}},
 	}
@@ -58,6 +58,10 @@ func TestTableMobileStackedExpansion(t *testing.T) {
 			_, err = page.WaitForFunction(`() => document.querySelector('[data-table-mobile-expanded="false"]') !== null`, nil)
 			require.NoError(t, err)
 			setThemeMode(t, page, theme.name, theme.dark)
+			identity := page.Locator(`tbody a[href="/row-destination"]`)
+			identityText, err := identity.InnerText()
+			require.NoError(t, err)
+			require.Equal(t, "worker-with-a-long-but-complete-identity.example.internal", identityText)
 			role, err := page.Locator("tbody tr").First().GetAttribute("role")
 			require.NoError(t, err)
 			require.Equal(t, "row", role)
