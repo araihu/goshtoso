@@ -163,14 +163,14 @@
     validateRegistry();
     if (!available(root) || button.matches(":disabled")) return;
     cancel(); button.focus({preventScroll:true});
-    pickup = {source:root,item:button.closest(itemSelector),button:button,pointer:event.pointerId,config:pickupConfig(root),members:items(root).map(function (item) { return {node:item,id:item.dataset.layoutItemId}; })};
+    pickup = {source:root,item:button.closest(itemSelector),button:button,row:button.parentElement,pointer:event.pointerId,config:pickupConfig(root),members:items(root).map(function (item) { return {node:item,id:item.dataset.layoutItemId}; })};
     button.setPointerCapture(event.pointerId); event.preventDefault();
   }
   function pickupConfig(root) {
     return JSON.stringify([root.id, root.dataset.layoutId, root.dataset.layoutMode, root.dataset.layoutColumns, root.dataset.layoutMinWidth, root.dataset.layoutGap, root.dataset.layoutGroup, root.dataset.layoutReorder]);
   }
   function validPickup() {
-    if (!pickup || !pickup.source.isConnected || pickupConfig(pickup.source) !== pickup.config) return false;
+    if (!pickup || !pickup.source.isConnected || !pickup.button.isConnected || handle(pickup.item) !== pickup.button || pickup.button.parentElement !== pickup.row || pickup.row.parentElement !== pickup.item || pickupConfig(pickup.source) !== pickup.config) return false;
     var current = items(pickup.source);
     return current.length === pickup.members.length && current.every(function (item, n) { return item === pickup.members[n].node && item.dataset.layoutItemId === pickup.members[n].id; });
   }

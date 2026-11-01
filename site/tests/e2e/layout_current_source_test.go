@@ -48,7 +48,7 @@ func layoutFixture(t *testing.T) *httptest.Server {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_, _ = io.WriteString(w, `<!doctype html><html data-theme="goshtoso"><head>`)
 		require.NoError(t, head.Dependencies(head.WithLocalRuntime()).Render(r.Context(), w))
-		_, _ = io.WriteString(w, `</head><body><main style="max-width:1000px;padding:16px"><h1>Layout fixture</h1><span id="outside-markers" data-layout-content data-layout-drop-target>Unrelated content</span><div id="status" tabindex="-1">Status</div><button id="refresh" hx-get="/fragment" hx-target="#alpha" hx-swap="outerMorph">Refresh</button><div id="bounds" style="width:100%">`)
+		_, _ = io.WriteString(w, `</head><body class="bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark"><main style="max-width:1000px;padding:16px"><h1>Layout fixture</h1><span id="outside-markers" data-layout-content data-layout-drop-target>Unrelated content</span><div id="status" tabindex="-1">Status</div><button id="refresh" hx-get="/fragment" hx-target="#alpha" hx-swap="outerMorph">Refresh</button><div id="bounds" style="width:100%">`)
 		require.NoError(t, source(false).Render(r.Context(), w))
 		_, _ = io.WriteString(w, `</div><h2>Inbox</h2>`)
 		require.NoError(t, empty("inbox").Render(r.Context(), w))
@@ -264,7 +264,7 @@ func layoutDrop(t *testing.T, page playwright.Page, target string, nearStart boo
 }
 func TestLayout_PickupIdentityAndFocus(t *testing.T) {
 	server := layoutFixture(t)
-	for _, change := range []string{"identity", "membership", "disable"} {
+	for _, change := range []string{"identity", "membership", "handle", "handle-row", "disable"} {
 		t.Run(change, func(t *testing.T) {
 			page := newPage(t, sharedBrowser)
 			_, err := page.Goto(server.URL)
@@ -277,6 +277,10 @@ func TestLayout_PickupIdentityAndFocus(t *testing.T) {
 				layoutEval(t, page, `()=>document.querySelector('#alpha > [data-layout-item-id="a"]').dataset.layoutItemId='changed-during-pickup'`)
 			case "membership":
 				layoutEval(t, page, `()=>{const root=document.getElementById('alpha');root.insertBefore(root.querySelector('[data-layout-item-id="b"]'),root.firstElementChild)}`)
+			case "handle":
+				layoutEval(t, page, `()=>{const h=document.querySelector('#alpha > [data-layout-item-id="a"] > [data-layout-handle-row] > [data-layout-handle]');h.replaceWith(h.cloneNode(true))}`)
+			case "handle-row":
+				layoutEval(t, page, `()=>{const row=document.querySelector('#alpha > [data-layout-item-id="a"] > [data-layout-handle-row]');row.replaceWith(row.cloneNode(true))}`)
 			case "disable":
 				layoutEval(t, page, `()=>{document.getElementById('status').focus();document.getElementById('disabled').append(document.getElementById('alpha'))}`)
 			}
@@ -327,4 +331,64 @@ func TestLayout_AttributeMarkerIsolation(t *testing.T) {
 		require.Equal(t, true, layoutEval(t, page, `id=>{const node=document.getElementById(id),s=getComputedStyle(node);return s.display==='inline'&&s.outlineStyle==='none'&&s.marginBottom==='0px'}`, id))
 	}
 	require.Equal(t, "flow-root", layoutEval(t, page, `()=>getComputedStyle(document.querySelector('#alpha > [data-layout-item-id="a"] > [data-layout-content]')).display`))
+}
+
+func TestLayout_AccessibilityStates(t *testing.T) {
+	server := layoutFixture(t)
+	for _, theme := range []string{"goshtoso", "minimal"} {
+		for _, dark := range []bool{false, true} {
+			t.Run(fmt.Sprintf("%s/dark=%t", theme, dark), func(t *testing.T) {
+				page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 1000, Height: 1100}})
+				failures := watchPageFailures(page)
+				_, err := page.Goto(server.URL)
+				require.NoError(t, err)
+				layoutReady(t, page)
+				layoutEval(t, page, `([theme,dark])=>{document.documentElement.dataset.theme=theme;document.documentElement.classList.toggle('dark',dark)}`, []any{theme, dark})
+				root := page.GetByRole("list", playwright.PageGetByRoleOptions{Name: "Alpha", Exact: playwright.Bool(true)})
+				count, err := root.Count()
+				require.NoError(t, err)
+				require.Equal(t, 1, count)
+				button := root.GetByRole("button", playwright.LocatorGetByRoleOptions{Name: "Move A <unsafe>", Exact: playwright.Bool(true)})
+				count, err = button.Count()
+				require.NoError(t, err)
+				require.Equal(t, 1, count)
+				require.NoError(t, page.Keyboard().Press("Tab"))
+				require.NoError(t, button.Focus())
+				require.Equal(t, true, layoutElementValue(t, button, `el=>el===document.activeElement&&el.matches(':focus-visible')`))
+				require.Equal(t, "solid", layoutElementValue(t, button, `el=>getComputedStyle(el).outlineStyle`))
+				require.Equal(t, "2px", layoutElementValue(t, button, `el=>getComputedStyle(el).outlineWidth`))
+				require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, button, "outlineColor").Ratio, 3.0)
+				require.GreaterOrEqual(t, measureRenderedContrast(t, button).Ratio, 4.5)
+				require.Equal(t, true, layoutElementValue(t, button, `el=>{const id=el.getAttribute('aria-describedby'),node=document.getElementById(id);return !!node&&!node.hidden&&node.textContent.includes('Alt+Up')&&node.textContent.includes('Escape')&&Array.from(document.querySelectorAll('[id]')).filter(n=>n.id===id).length===1}`))
+				require.NoError(t, root.Focus())
+				require.Equal(t, true, layoutElementValue(t, root, `el=>el===document.activeElement&&el.matches(':focus-visible')`))
+				require.Equal(t, "solid", layoutElementValue(t, root, `el=>getComputedStyle(el).outlineStyle`))
+				require.Equal(t, "2px", layoutElementValue(t, root, `el=>getComputedStyle(el).outlineWidth`))
+				require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, root, "outlineColor").Ratio, 3.0)
+				layoutPickup(t, page, "alpha", "a")
+				inbox := page.Locator("#inbox")
+				box, err := inbox.BoundingBox()
+				require.NoError(t, err)
+				require.NoError(t, page.Mouse().Move(box.X+20, box.Y+10))
+				require.Equal(t, true, layoutElementValue(t, inbox, `el=>el.hasAttribute('data-layout-drop-target')`))
+				require.Equal(t, "solid", layoutElementValue(t, inbox, `el=>getComputedStyle(el).outlineStyle`))
+				require.GreaterOrEqual(t, measureRenderedPropertyContrast(t, inbox, "outlineColor").Ratio, 3.0)
+				require.NoError(t, page.Keyboard().Press("Escape"))
+				require.NoError(t, page.Mouse().Up())
+				require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{ReducedMotion: playwright.ReducedMotionReduce}))
+				for _, loc := range []playwright.Locator{root, button} {
+					require.Equal(t, "none", layoutElementValue(t, loc, `el=>getComputedStyle(el).transitionProperty`))
+					require.Equal(t, "none", layoutElementValue(t, loc, `el=>getComputedStyle(el).animationName`))
+				}
+				failures.RequireEmpty(t)
+			})
+		}
+	}
+}
+
+func layoutElementValue(t *testing.T, locator playwright.Locator, script string) any {
+	t.Helper()
+	value, err := locator.Evaluate(script, nil)
+	require.NoError(t, err)
+	return value
 }
