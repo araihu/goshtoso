@@ -6,6 +6,7 @@ import (
  "github.com/araihu/goshtoso/components/card"
  "github.com/araihu/goshtoso/components/panel"
  "github.com/araihu/goshtoso/components/button"
+ "github.com/araihu/goshtoso/components/textinput"
  "github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -37,7 +38,7 @@ templ mixedPreview() {
  <div x-data class="space-y-4">
  @layout.Container(layout.Config{ID:"layout-mixed",Label:"Operations",Mode:layout.ModeMasonry,Columns:2,Reorder:&layout.ReorderConfig{Group:"demo-widgets"},Items:[]layout.Item{
  {ID:"service",Label:"Service",Content:card.Card(card.Config{Title:"Media service",Description:"Healthy. Content keeps its own card presentation."})},
- {ID:"notes",Label:"Notes",Content:notes()},
+ {ID:"notes",Label:"Notes",Content:notes("layout-note")},
  {ID:"metrics",Label:"Metrics",Content:panel.Panel(panel.Config{Body:metrics()})},
  {ID:"chart",Label:"Trend",Content:line.Line(line.Config{Label:"Storage trend",Labels:[]string{"Mon","Tue","Wed"},Series:[]line.Series{{Name:"Used",Values:[]float64{40,42,45}}},Width:400,Height:240})},
  {ID:"short",Label:"Short note",Content:shortNote()},
@@ -48,14 +49,14 @@ templ mixedPreview() {
  </div>
 }
 
-templ notes() {
- <div class="space-y-3"><h3 class="font-semibold">Maintenance notes</h3><p>This is plain content without a card wrapper. The renderer owns its natural height.</p><a href="#layout-fragment" class="underline">Read notes</a><label class="block">Draft note <input class="border p-2" value="Keep this draft"/></label></div>
+templ notes(id string) {
+ <div class="space-y-3"><h3 class="font-semibold">Maintenance notes</h3><p>This is plain content without a card wrapper. The renderer owns its natural height.</p><a href="#layout-fragment" class="underline">Read notes</a>@textinput.TextInput(textinput.Config{ID:id,Name:"draft-note",Label:"Draft note",Value:"Keep this draft"})</div>
 }
 templ shortNote() { <p>A short plain note.</p> }
 templ metrics() { <div><h3>Storage usage</h3><table class="w-full"><caption class="sr-only">Storage usage by pool</caption><thead><tr><th>Pool</th><th>Used</th></tr></thead><tbody><tr><td>Fast</td><td>42%</td></tr><tr><td>Archive</td><td>71%</td></tr></tbody></table></div> }
 templ nestedPreview() {
  <div class="w-full">
- @layout.Container(layout.Config{ID:"layout-groups",Label:"Groups",Mode:layout.ModeGrid,Columns:2,Reorder:&layout.ReorderConfig{Group:"demo-groups"},Items:[]layout.Item{{ID:"group-a",Label:"First group",Content:innerLayout()},{ID:"group-b",Label:"Second group",Content:notes()}}})
+ @layout.Container(layout.Config{ID:"layout-groups",Label:"Groups",Mode:layout.ModeGrid,Columns:2,Reorder:&layout.ReorderConfig{Group:"demo-groups"},Items:[]layout.Item{{ID:"group-a",Label:"First group",Content:innerLayout()},{ID:"group-b",Label:"Second group",Content:notes("layout-group-note")}}})
  </div>
 }
 templ innerLayout() {

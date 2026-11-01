@@ -15,6 +15,7 @@ import (
 	"github.com/araihu/goshtoso/components/card"
 	"github.com/araihu/goshtoso/components/layout"
 	"github.com/araihu/goshtoso/components/panel"
+	"github.com/araihu/goshtoso/components/textinput"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -124,7 +125,7 @@ func mixedPreview() templ.Component {
 		}
 		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-mixed", Label: "Operations", Mode: layout.ModeMasonry, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-widgets"}, Items: []layout.Item{
 			{ID: "service", Label: "Service", Content: card.Card(card.Config{Title: "Media service", Description: "Healthy. Content keeps its own card presentation."})},
-			{ID: "notes", Label: "Notes", Content: notes()},
+			{ID: "notes", Label: "Notes", Content: notes("layout-note")},
 			{ID: "metrics", Label: "Metrics", Content: panel.Panel(panel.Config{Body: metrics()})},
 			{ID: "chart", Label: "Trend", Content: line.Line(line.Config{Label: "Storage trend", Labels: []string{"Mon", "Tue", "Wed"}, Series: []line.Series{{Name: "Used", Values: []float64{40, 42, 45}}}, Width: 400, Height: 240})},
 			{ID: "short", Label: "Short note", Content: shortNote()},
@@ -148,7 +149,7 @@ func mixedPreview() templ.Component {
 	})
 }
 
-func notes() templ.Component {
+func notes(id string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -165,7 +166,15 @@ func notes() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"space-y-3\"><h3 class=\"font-semibold\">Maintenance notes</h3><p>This is plain content without a card wrapper. The renderer owns its natural height.</p><a href=\"#layout-fragment\" class=\"underline\">Read notes</a><label class=\"block\">Draft note <input class=\"border p-2\" value=\"Keep this draft\"></label></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"space-y-3\"><h3 class=\"font-semibold\">Maintenance notes</h3><p>This is plain content without a card wrapper. The renderer owns its natural height.</p><a href=\"#layout-fragment\" class=\"underline\">Read notes</a>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = textinput.TextInput(textinput.Config{ID: id, Name: "draft-note", Label: "Draft note", Value: "Keep this draft"}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -190,7 +199,7 @@ func shortNote() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<p>A short plain note.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<p>A short plain note.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -215,7 +224,7 @@ func metrics() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div><h3>Storage usage</h3><table class=\"w-full\"><caption class=\"sr-only\">Storage usage by pool</caption><thead><tr><th>Pool</th><th>Used</th></tr></thead><tbody><tr><td>Fast</td><td>42%</td></tr><tr><td>Archive</td><td>71%</td></tr></tbody></table></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div><h3>Storage usage</h3><table class=\"w-full\"><caption class=\"sr-only\">Storage usage by pool</caption><thead><tr><th>Pool</th><th>Used</th></tr></thead><tbody><tr><td>Fast</td><td>42%</td></tr><tr><td>Archive</td><td>71%</td></tr></tbody></table></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -240,15 +249,15 @@ func nestedPreview() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-groups", Label: "Groups", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-groups"}, Items: []layout.Item{{ID: "group-a", Label: "First group", Content: innerLayout()}, {ID: "group-b", Label: "Second group", Content: notes()}}}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-groups", Label: "Groups", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-groups"}, Items: []layout.Item{{ID: "group-a", Label: "First group", Content: innerLayout()}, {ID: "group-b", Label: "Second group", Content: notes("layout-group-note")}}}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -298,7 +307,7 @@ func stackPreview() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -306,7 +315,7 @@ func stackPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
