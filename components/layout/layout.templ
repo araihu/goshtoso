@@ -1,0 +1,52 @@
+package layout
+
+import (
+ "strconv"
+ "github.com/araihu/goshtoso/components/button"
+ "github.com/araihu/goshtoso/expressions"
+)
+
+templ containerTemplate(c Config, e expressions.Layout, announcement string) {
+ <div
+  id={ c.ID } role="list" aria-label={ c.Label } tabindex="-1"
+  class={ classes("goshtoso-layout",c.RootClass,c.RootAttrs) }
+ style={ c.rootStyle() }
+  data-goshtoso-layout="container" data-layout-id={ c.ID }
+  data-layout-mode={ string(c.Mode) } data-layout-columns={ strconv.Itoa(c.Columns) }
+  data-layout-min-width={ strconv.FormatFloat(c.MinItemWidthRem,'f',-1,64) }
+  data-layout-gap={ strconv.Itoa(c.gapPixels()) } data-layout-group={ c.group() }
+  data-layout-reorder={ strconv.FormatBool(c.enabled()) }
+  data-layout-announcement={ announcement }
+  x-layout x-init
+  { normalizedAttrs(c.RootAttrs)... }
+ >
+  for _, item := range c.Items {
+   <div role="listitem" aria-label={ item.Label }
+    class={ classes("goshtoso-layout-item",item.RootClass,item.RootAttrs) }
+    data-goshtoso-layout="item" data-layout-item-id={ item.ID } data-layout-span={ string(item.Span) }
+    data-layout-cancel={ e.CancelAnnouncement(item.Label) }
+    { normalizedAttrs(item.RootAttrs)... }
+   >
+    if c.enabled() {
+     <div data-layout-handle-row>
+      @button.Button(button.WithAppearance(button.AppearancePlain),button.WithRootClass("goshtoso-layout-handle"),button.Disabled(),button.WithAttrs(templ.Attributes{"hidden":"hidden","data-layout-handle":"","aria-describedby":c.ID+"--layout-instructions"})) {
+ { e.HandleLabel(item.Label) }
+ }
+     </div>
+    }
+    <div data-layout-content>
+     if item.Content != nil {
+      @item.Content
+     }
+    </div>
+   </div>
+  }
+  if c.enabled() {
+   <span id={ c.ID+"--layout-instructions" } data-layout-instructions class="goshtoso-layout-feedback" hidden>{ e.Instructions }</span>
+   <span data-layout-status class="goshtoso-layout-feedback" role="status" aria-live="polite" aria-atomic="true"></span>
+  }
+ </div>
+ if c.Reorder != nil {
+  <noscript><p>{ e.MovementUnavailable }</p></noscript>
+ }
+}

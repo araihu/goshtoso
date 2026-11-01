@@ -152,11 +152,11 @@
           "type": "string"
         },
         "SlideLabel": {
-          "description": "SlideLabel returns the carousel counter text for slide. Rendering prepares values\nfrom zero through the number of slides; visible slide numbers start at one. In files, use {slide} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "description": "SlideLabel returns the carousel counter text for slide. Rendering prepares values\nfrom zero through the number of slides; visible slide numbers start at one. In files, use named placeholders {slide} and {{ or }} for literal braces. An empty string inherits the default.",
           "examples": [
             "slide {slide}"
           ],
-          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{slide\\})*$",
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:slide)\\})*$",
           "type": "string",
           "x-parameter": "slide"
         },
@@ -210,11 +210,11 @@
           "type": "string"
         },
         "CopyAriaLabel": {
-          "description": "CopyAriaLabel returns the copy button’s accessible name for the code block header\nlabel, or its ID when no label is available. In files, use {label} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "description": "CopyAriaLabel returns the copy button’s accessible name for the code block header\nlabel, or its ID when no label is available. In files, use named placeholders {label} and {{ or }} for literal braces. An empty string inherits the default.",
           "examples": [
             "Copy {label} code"
           ],
-          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{label\\})*$",
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:label)\\})*$",
           "type": "string",
           "x-parameter": "label"
         },
@@ -266,11 +266,11 @@
           "type": "string"
         },
         "SelectedLabel": {
-          "description": "SelectedLabel returns the complete selection summary for count selected values. It\nmust handle zero and positive counts; client components prepare all possible counts\nduring rendering. In files, use {count} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "description": "SelectedLabel returns the complete selection summary for count selected values. It\nmust handle zero and positive counts; client components prepare all possible counts\nduring rendering. In files, use named placeholders {count} and {{ or }} for literal braces. An empty string inherits the default.",
           "examples": [
             "{count} selected"
           ],
-          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{count\\})*$",
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:count)\\})*$",
           "type": "string",
           "x-parameter": "count"
         }
@@ -404,6 +404,55 @@
       },
       "type": "object"
     },
+    "Layout": {
+      "additionalProperties": false,
+      "description": "Layout expressions. Omitted or empty fields inherit defaults.",
+      "properties": {
+        "CancelAnnouncement": {
+          "description": "CancelAnnouncement reports cancellation for itemLabel. In files, use named placeholders {itemLabel} and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "Move cancelled for {itemLabel}."
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:itemLabel)\\})*$",
+          "type": "string",
+          "x-parameter": "itemLabel"
+        },
+        "HandleLabel": {
+          "description": "HandleLabel names the movement handle for itemLabel. In files, use named placeholders {itemLabel} and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "Move {itemLabel}"
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:itemLabel)\\})*$",
+          "type": "string",
+          "x-parameter": "itemLabel"
+        },
+        "Instructions": {
+          "default": "Use Alt+Up or Alt+Down to reorder, Alt+Home or Alt+End for first or last, Alt+PageUp or Alt+PageDown to change collection. Escape cancels movement.",
+          "description": "Instructions describes keyboard movement and cancellation.",
+          "type": "string"
+        },
+        "MoveAnnouncement": {
+          "description": "MoveAnnouncement reports itemLabel, containerLabel and one-based position. In files, use named placeholders {itemLabel}, {containerLabel}, {position} and {{ or }} for literal braces. An empty string inherits the default.",
+          "examples": [
+            "{itemLabel} moved to {containerLabel}, position {position}."
+          ],
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:itemLabel|containerLabel|position)\\})*$",
+          "type": "string",
+          "x-parameter": "itemLabel",
+          "x-parameters": [
+            "itemLabel",
+            "containerLabel",
+            "position"
+          ]
+        },
+        "MovementUnavailable": {
+          "default": "Movement controls are unavailable. Use the application's explicit move controls.",
+          "description": "MovementUnavailable explains the non-JavaScript fallback.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "Modal": {
       "additionalProperties": false,
       "description": "Modal expressions. Omitted or empty fields inherit defaults.",
@@ -478,11 +527,11 @@
           "type": "string"
         },
         "PageAriaLabel": {
-          "description": "PageAriaLabel returns the accessible name for a page link. Page numbers start at one. In files, use {page} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "description": "PageAriaLabel returns the accessible name for a page link. Page numbers start at one. In files, use named placeholders {page} and {{ or }} for literal braces. An empty string inherits the default.",
           "examples": [
             "page {page}"
           ],
-          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{page\\})*$",
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:page)\\})*$",
           "type": "string",
           "x-parameter": "page"
         },
@@ -568,11 +617,11 @@
           "type": "string"
         },
         "StarLabel": {
-          "description": "StarLabel returns the complete label for a star rating value. Values include zero\nfor an unrated display and run through the configured maximum. In files, use {value} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "description": "StarLabel returns the complete label for a star rating value. Values include zero\nfor an unrated display and run through the configured maximum. In files, use named placeholders {value} and {{ or }} for literal braces. An empty string inherits the default.",
           "examples": [
             "{value} stars"
           ],
-          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{value\\})*$",
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:value)\\})*$",
           "type": "string",
           "x-parameter": "value"
         },
@@ -599,11 +648,11 @@
           "type": "string"
         },
         "DefaultLabel": {
-          "description": "DefaultLabel returns the default-value annotation for a schema field. The argument is\nthe field’s default value as supplied by the application. In files, use {value} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "description": "DefaultLabel returns the default-value annotation for a schema field. The argument is\nthe field’s default value as supplied by the application. In files, use named placeholders {value} and {{ or }} for literal braces. An empty string inherits the default.",
           "examples": [
             "default: {value}"
           ],
-          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{value\\})*$",
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:value)\\})*$",
           "type": "string",
           "x-parameter": "value"
         },
@@ -682,11 +731,11 @@
           "type": "string"
         },
         "ResultsAriaLabel": {
-          "description": "ResultsAriaLabel returns the results region’s accessible name from the search\ncontrol’s resolved label. In files, use {label} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "description": "ResultsAriaLabel returns the results region’s accessible name from the search\ncontrol’s resolved label. In files, use named placeholders {label} and {{ or }} for literal braces. An empty string inherits the default.",
           "examples": [
             "{label} results"
           ],
-          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{label\\})*$",
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:label)\\})*$",
           "type": "string",
           "x-parameter": "label"
         },
@@ -703,11 +752,11 @@
       "description": "Select expressions. Omitted or empty fields inherit defaults.",
       "properties": {
         "ListAriaLabel": {
-          "description": "ListAriaLabel returns the option list’s accessible name from the select control’s\nconfigured label, which may be empty. In files, use {label} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "description": "ListAriaLabel returns the option list’s accessible name from the select control’s\nconfigured label, which may be empty. In files, use named placeholders {label} and {{ or }} for literal braces. An empty string inherits the default.",
           "examples": [
             "{label} list"
           ],
-          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{label\\})*$",
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:label)\\})*$",
           "type": "string",
           "x-parameter": "label"
         },
@@ -839,11 +888,11 @@
           "type": "string"
         },
         "OpenRowLabel": {
-          "description": "OpenRowLabel returns the screen-reader text for opening a table row. rowID is empty\nwhen the row has no ID. In files, use {rowID} for the argument and {{ or }} for literal braces. An empty string inherits the default.",
+          "description": "OpenRowLabel returns the screen-reader text for opening a table row. rowID is empty\nwhen the row has no ID. In files, use named placeholders {rowID} and {{ or }} for literal braces. An empty string inherits the default.",
           "examples": [
             "Open row {rowID}"
           ],
-          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{rowID\\})*$",
+          "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{(?:rowID)\\})*$",
           "type": "string",
           "x-parameter": "rowID"
         },

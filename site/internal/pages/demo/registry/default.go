@@ -28,6 +28,7 @@ import (
 	headpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/head"
 	iconpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/icon"
 	kbdpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/kbd"
+	layoutpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/layout"
 	linkpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/link"
 	modalpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/modal"
 	navbarpage "github.com/araihu/goshtoso/site/internal/pages/demo/componentpages/navbar"
@@ -111,6 +112,7 @@ func mustDefault() *Registry {
 		paginationpage.Definition,
 		palettepage.Definition,
 		panelpage.Definition,
+		layoutpage.Definition,
 		popoverpage.Definition,
 		radiopage.Definition,
 		rangepage.Definition,

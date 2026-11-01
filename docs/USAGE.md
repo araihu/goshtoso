@@ -609,8 +609,8 @@ so trailing buttons are never nested inside a clickable row. Avoid adding
 ## Component Catalog
 
 All components are imported from `github.com/araihu/goshtoso/components/<name>`.
-The public surface has 60 public component packages and 89 renderable primitives;
-the demo catalog has 56 documentation pages.
+The public surface has 61 public component packages and 90 renderable primitives;
+the demo catalog has 57 documentation pages.
 Run the demo server (`go run ./site/cmd/server`) or visit
 [goshtoso.araihu.com](https://goshtoso.araihu.com/) for interactive examples,
 configuration previews, and API tables.
@@ -640,6 +640,7 @@ configuration previews, and API tables.
 | `fileinput` | `components/fileinput` | File input controls with labels, helper text, and validation states |
 | `form` | `components/form` | Form orchestrator: Section, FlipSection, CollapsibleSection, FieldGroup |
 | `kbd` | `components/kbd` | Semantic keyboard shortcut and user input hints |
+| `layout` | `components/layout` | Natural-height Stack, Grid and Masonry collections with optional pointer, keyboard and event-based item movement |
 | `link` | `components/link` | Styled link primitives with external-link and navigation affordances |
 | `modal` | `components/modal` | General and confirmation dialogs as separate `Modal` and `AlertDialog` primitives; `Tone` belongs to `AlertDialog` |
 | `navbar` | `components/navbar` | Top navigation bar with links, user profile dropdown, action items |
@@ -955,3 +956,22 @@ panel inside the viewport. Other tooltips can opt in with `tooltip.WithPortal(tr
 Use the [expression API](EXPRESSIONS.md) to configure application defaults once,
 override them per request, or customize one component. English remains the fallback;
 your application owns translation and language selection.
+
+
+### Layout movement contract
+
+`layout.Container` accepts arbitrary `templ.Component` content. It preserves item
+order and renderer-owned height. Use a nonempty `Reorder.Group` only for containers
+that allow transfers; separate outer-group and inner-item scopes.
+
+Movement handles support Alt+Up/Down, Alt+Home/End and Alt+PageUp/PageDown. Named
+consumer controls can dispatch `layout:request-move` on the source container with
+`{itemId, fromContainerId, toContainerId, beforeItemId}`. Use JSON null for append.
+Cancel `layout:before-move` to reject a command. `layout:move` reports an accepted
+local DOM change; consumers still own their draft, validation and persistence.
+
+A native disabled fieldset blocks movement, including transfers into empty groups.
+Masonry falls back to responsive Grid without measurement support. Handles remain
+hidden and disabled without JavaScript; supply explicit application controls where
+non-JavaScript editing is required. Root attributes have a validated allowlist;
+keep styling inside Content when it would override structural geometry.

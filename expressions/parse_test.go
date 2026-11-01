@@ -159,7 +159,7 @@ func TestSchemaCoversEveryExpression(t *testing.T) {
 			if field.Type().In(0).Kind() == reflect.Int {
 				arg = reflect.ValueOf(4)
 			}
-			if got := field.Call([]reflect.Value{arg})[0].String(); !strings.HasPrefix(got, "value ") {
+			if got := field.Call(reflectArguments(field.Type(), arg))[0].String(); !strings.HasPrefix(got, "value ") {
 				t.Fatal(got)
 			}
 		}
@@ -180,4 +180,12 @@ func FuzzParseExpressions(f *testing.F) {
 		_, _ = expressions.ParseJSON(data)
 		_, _ = expressions.ParseYAML(data)
 	})
+}
+
+func reflectArguments(typ reflect.Type, first reflect.Value) []reflect.Value {
+	args := []reflect.Value{first}
+	for n := 1; n < typ.NumIn(); n++ {
+		args = append(args, reflect.ValueOf("test"))
+	}
+	return args
 }

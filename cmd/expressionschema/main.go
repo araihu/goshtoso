@@ -74,17 +74,28 @@ func properties(group *ast.StructType, defaults reflect.Value) (map[string]any, 
 		property := map[string]any{"type": "string", "description": description}
 		value := defaults.FieldByName(name)
 		if fn, ok := field.Type.(*ast.FuncType); ok {
-			arg := fn.Params.List[0].Names[0].Name
-			property["x-parameter"] = arg
-			property["pattern"] = `^(?:[^{}]|\{\{|\}\}|\{` + arg + `\})*$`
-			property["description"] = description + " In files, use {" + arg + "} for the argument and {{ or }} for literal braces. An empty string inherits the default."
-			sample := reflect.ValueOf("{" + arg + "}")
-			if value.Type().In(0).Kind() == reflect.Int {
-				sample = reflect.ValueOf(123456789)
+			var parameters []string
+			var samples []reflect.Value
+			for _, field := range fn.Params.List {
+				for _, param := range field.Names {
+					arg := param.Name
+					parameters = append(parameters, arg)
+					sample := reflect.ValueOf("{" + arg + "}")
+					if value.Type().In(len(samples)).Kind() == reflect.Int {
+						sample = reflect.ValueOf(123456789)
+					}
+					samples = append(samples, sample)
+				}
 			}
-			example := value.Call([]reflect.Value{sample})[0].String()
+			property["x-parameter"] = parameters[0]
+			if len(parameters) > 1 {
+				property["x-parameters"] = parameters
+			}
+			property["pattern"] = `^(?:[^{}]|\{\{|\}\}|\{(?:` + strings.Join(parameters, "|") + `)\})*$`
+			property["description"] = description + " In files, use named placeholders {" + strings.Join(parameters, "}, {") + "} and {{ or }} for literal braces. An empty string inherits the default."
+			example := value.Call(samples)[0].String()
 			if value.Type().In(0).Kind() == reflect.Int {
-				example = strings.ReplaceAll(example, strconv.Itoa(123456789), "{"+arg+"}")
+				example = strings.ReplaceAll(example, strconv.Itoa(123456789), "{"+parameters[0]+"}")
 			}
 			property["examples"] = []string{example}
 		} else {

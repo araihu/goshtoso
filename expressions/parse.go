@@ -209,6 +209,7 @@ type fileSchema struct {
 type fileProperty struct {
 	Properties map[string]fileProperty `json:"properties"`
 	Parameter  string                  `json:"x-parameter"`
+	Parameters []string                `json:"x-parameters"`
 }
 
 func parseGroups(groups map[string]map[string]string) (Set, error) {
@@ -236,7 +237,11 @@ func parseGroups(groups map[string]map[string]string) (Set, error) {
 				continue
 			}
 			parameter := schema.Properties[group].Properties[name].Parameter
-			parts, err := parseMessage(text, parameter)
+			parameters := schema.Properties[group].Properties[name].Parameters
+			if len(parameters) == 0 {
+				parameters = []string{parameter}
+			}
+			parts, err := parseMessage(text, parameters...)
 			if err != nil {
 				return Set{}, fmt.Errorf("expressions: %s.%s: %w", group, name, err)
 			}

@@ -85,6 +85,16 @@ var componentPages = availableComponentPages([]Entry{
 		Kinds:       []components.Kind{components.KindActionGroup},
 	},
 	{
+		Key:         "components/layout",
+		Path:        "/components/layout",
+		Title:       "Layout",
+		Active:      "layout",
+		Description: "Arrange arbitrary content in responsive Stack, Grid and Masonry containers with accessible item movement.",
+		Section:     "Composition",
+		Order:       4,
+		Kinds:       []components.Kind{components.KindLayout},
+	},
+	{
 		Key:         "components/panel",
 		Path:        "/components/panel",
 		Title:       "Panel",

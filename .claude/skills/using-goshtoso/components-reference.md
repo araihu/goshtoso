@@ -9,7 +9,7 @@ or store mixed values through the common interface and inspect their stable
 `Kind()`. Constructor signatures, config fields, options, and rendered defaults are
 listed below. See the selected Goshtoso tag's `docs/COMPONENT_MODEL.md`.
 
-60 component packages. Each is imported by its directory path; note the
+61 component packages. Each is imported by its directory path; note the
 **package name** when it differs from the directory (e.g. `select` → `selectfield`).
 
 ## accordion
@@ -1051,6 +1051,58 @@ import "github.com/araihu/goshtoso/components/kbd"  // package kbd
 **Options:** `WithAttrs(attrs templ.Attributes)` · `WithIcon(icon templ.Component)` · `WithLabel(label string)` · `WithRootClass(class string)` · `WithSize(size Size)`
 
 - **Size** — SizeXS = "xs", SizeSM = "sm", SizeMD = "md", SizeLG = "lg"
+
+## layout
+
+```go
+import "github.com/araihu/goshtoso/components/layout"  // package layout
+```
+
+**Entry points:** `Container(c Config)`
+
+- **Gap** — GapMedium = "", GapSmall = "small", GapLarge = "large"
+- **Mode** — ModeStack = "", ModeGrid = "grid", ModeMasonry = "masonry"
+- **Span** — SpanAuto = "", SpanFullWidth = "full"
+
+**Config**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` | ID is the stable document-unique container DOM ID, at most 256 UTF-8 bytes. |
+| `Label` | `string` | Label names the collection without choosing a heading level. |
+| `Mode` | `Mode` | Mode selects Stack, Grid or Masonry geometry. |
+| `Columns` | `int` | Columns is the maximum responsive column count, 1 through 4; zero means 1. |
+| `MinItemWidthRem` | `float64` | MinItemWidthRem is the desired minimum track width, 8 through 40; zero means 12. |
+| `Gap` | `Gap` | Gap selects 12, 16 or 24 CSS pixels between items. |
+| `Items` | `[]Item` | Items renders direct children in canonical consumer order, without sorting. |
+| `Reorder` | `*ReorderConfig` | Reorder opts into generic movement. Nil preserves geometry without handles. |
+| `RootClass` | `string` | RootClass appends classes without overriding structural grid properties. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs adds supported semantic, data, HTMX and Alpine event attributes. |
+
+**Item**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ID` | `string` | ID is an opaque stable identity, unique within its movement scope. |
+| `Label` | `string` | Label names the item and its movement handle. |
+| `Content` | `templ.Component` | Content retains its own renderer, semantics and natural height. Nil is valid. |
+| `Span` | `Span` | Span chooses one or all parent columns. |
+| `RootClass` | `string` | RootClass appends classes; positive padding, borders and margins are measured. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs adds supported attributes, including an optional document-unique id. |
+
+**ReorderConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Group` | `string` | Group permits transfers among containers with the same nonempty value. |
+| `Disabled` | `bool` | Disabled omits handles and movement listeners while preserving geometry. |
+
+**ValidationError**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `Path` | `string` |  |
+| `Code` | `string` |  |
 
 ## link
 

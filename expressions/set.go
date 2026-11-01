@@ -9,6 +9,7 @@ import "strconv"
 // inherit the next layer. Treat sets and captured function state as immutable
 // when sharing them between concurrent renders.
 type Set struct {
+	Layout          Layout
 	ActionGroup     ActionGroup
 	Alert           Alert
 	Avatar          Avatar
@@ -484,9 +485,26 @@ type EmptyState struct {
 	Description string
 }
 
+// Layout contains complete accessible movement messages.
+type Layout struct {
+	// HandleLabel names the movement handle for itemLabel.
+	HandleLabel func(itemLabel string) string
+	// Instructions describes keyboard movement and cancellation.
+	Instructions string
+	// MoveAnnouncement reports itemLabel, containerLabel and one-based position.
+	MoveAnnouncement func(itemLabel, containerLabel, position string) string
+	// CancelAnnouncement reports cancellation for itemLabel.
+	CancelAnnouncement func(itemLabel string) string
+	// MovementUnavailable explains the non-JavaScript fallback.
+	MovementUnavailable string
+}
+
 // English returns a fresh set of the built-in English defaults.
 func English() Set {
 	return Set{
+		Layout: Layout{HandleLabel: func(label string) string { return "Move " + label }, Instructions: "Use Alt+Up or Alt+Down to reorder, Alt+Home or Alt+End for first or last, Alt+PageUp or Alt+PageDown to change collection. Escape cancels movement.", MoveAnnouncement: func(item, container, position string) string {
+			return item + " moved to " + container + ", position " + position + "."
+		}, CancelAnnouncement: func(label string) string { return "Move cancelled for " + label + "." }, MovementUnavailable: "Movement controls are unavailable. Use the application's explicit move controls."},
 		ActionGroup: ActionGroup{
 			AriaLabel:         "Actions",
 			OverflowAriaLabel: "More actions",
@@ -710,6 +728,7 @@ func English() Set {
 
 // Merge overlays nonempty expressions onto base, without modifying either set.
 func Merge(base, overrides Set) Set {
+	base.Layout = mergeLayout(base.Layout, overrides.Layout)
 	base.ActionGroup = mergeActionGroup(base.ActionGroup, overrides.ActionGroup)
 	base.Alert = mergeAlert(base.Alert, overrides.Alert)
 	base.Avatar = mergeAvatar(base.Avatar, overrides.Avatar)
@@ -1305,6 +1324,25 @@ func mergeEmptyState(base, overrides EmptyState) EmptyState {
 	}
 	if overrides.Description != "" {
 		base.Description = overrides.Description
+	}
+	return base
+}
+
+func mergeLayout(base, overrides Layout) Layout {
+	if overrides.HandleLabel != nil {
+		base.HandleLabel = overrides.HandleLabel
+	}
+	if overrides.Instructions != "" {
+		base.Instructions = overrides.Instructions
+	}
+	if overrides.MoveAnnouncement != nil {
+		base.MoveAnnouncement = overrides.MoveAnnouncement
+	}
+	if overrides.CancelAnnouncement != nil {
+		base.CancelAnnouncement = overrides.CancelAnnouncement
+	}
+	if overrides.MovementUnavailable != "" {
+		base.MovementUnavailable = overrides.MovementUnavailable
 	}
 	return base
 }

@@ -8,12 +8,12 @@ import (
 
 type messagePart struct {
 	text     string
-	argument bool
+	argument int
 }
 
 // parseMessage deliberately supports substitution only: no evaluation or plural rules.
-func parseMessage(text, parameter string) ([]messagePart, error) {
-	if parameter == "" {
+func parseMessage(text string, parameters ...string) ([]messagePart, error) {
+	if len(parameters) == 0 || parameters[0] == "" {
 		return nil, fmt.Errorf("missing placeholder definition")
 	}
 	var parts []messagePart
@@ -36,14 +36,20 @@ func parseMessage(text, parameter string) ([]messagePart, error) {
 			i += 2
 			continue
 		}
-		token := "{" + parameter + "}"
-		if strings.HasPrefix(text[i:], token) {
-			flush()
-			parts = append(parts, messagePart{argument: true})
-			i += len(token)
-			continue
+		matched := false
+		for index, parameter := range parameters {
+			token := "{" + parameter + "}"
+			if strings.HasPrefix(text[i:], token) {
+				flush()
+				parts = append(parts, messagePart{argument: index + 1})
+				i += len(token)
+				matched = true
+				break
+			}
 		}
-		return nil, fmt.Errorf("invalid placeholder at byte %d; use %s, {{, or }}", i, token)
+		if !matched {
+			return nil, fmt.Errorf("invalid placeholder at byte %d; use %s, {{, or }}", i, strings.Join(parameters, ", "))
+		}
 	}
 	flush()
 	return parts, nil
@@ -52,10 +58,9 @@ func parseMessage(text, parameter string) ([]messagePart, error) {
 func messageFunc(typ reflect.Type, parts []messagePart) reflect.Value {
 	return reflect.MakeFunc(typ, func(args []reflect.Value) []reflect.Value {
 		var out strings.Builder
-		argument := fmt.Sprint(args[0].Interface())
 		for _, part := range parts {
-			if part.argument {
-				out.WriteString(argument)
+			if part.argument > 0 {
+				_, _ = fmt.Fprint(&out, args[part.argument-1].Interface())
 			} else {
 				out.WriteString(part.text)
 			}
