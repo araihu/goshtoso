@@ -3,6 +3,7 @@ package layout_test
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"html"
 	"math"
 	"strings"
@@ -99,5 +100,44 @@ func TestExpressionSlotsAndPrecedence(t *testing.T) {
 	err := c.WithExpressions(expressions.Layout{MoveAnnouncement: func(_, _, _ string) string { return "missing tokens" }}).Render(t.Context(), &out)
 	if err == nil || out.Len() != 0 {
 		t.Fatalf("err=%v bytes=%d", err, out.Len())
+	}
+}
+
+func TestAttributeNamesAndIDAuthority(t *testing.T) {
+	for _, key := range []string{"data-bad name", "x-on:click bad", "aria-label=bad", "data-bad\x00name"} {
+		c := layout.Config{ID: "test", Label: "Test", RootAttrs: templ.Attributes{key: "value"}}
+		var out bytes.Buffer
+		err := layout.Container(c).Render(t.Context(), &out)
+		var validation layout.ValidationError
+		if !errors.As(err, &validation) || validation.Code != "unsupported_attribute" || out.Len() != 0 {
+			t.Fatalf("%q: %v, output %q", key, err, out.String())
+		}
+	}
+	for _, key := range []string{"id", "ID", "x-bind:id", "X-BIND:ID", ":Id"} {
+		for _, item := range []bool{false, true} {
+			if item && strings.EqualFold(key, "id") {
+				continue
+			}
+			c := layout.Config{ID: "test", Label: "Test"}
+			attrs := templ.Attributes{key: "replacement"}
+			path := fmt.Sprintf("RootAttrs[%q]", key)
+			if item {
+				c.Items = []layout.Item{{ID: "a", Label: "Alpha", RootAttrs: attrs}}
+				path = "Items[0]." + path
+			} else {
+				c.RootAttrs = attrs
+			}
+			var out bytes.Buffer
+			err := layout.Container(c).Render(t.Context(), &out)
+			var validation layout.ValidationError
+			if !errors.As(err, &validation) || validation.Path != path || validation.Code != "reserved_attribute" || out.Len() != 0 {
+				t.Fatalf("%s: %v, output %q", path, err, out.String())
+			}
+		}
+	}
+	var out bytes.Buffer
+	err := layout.Container(layout.Config{ID: "test", Label: "Test", Items: []layout.Item{{ID: "a", Label: "Alpha", RootAttrs: templ.Attributes{"ID": "fragment-a"}}}}).Render(t.Context(), &out)
+	if err != nil || !strings.Contains(out.String(), `id="fragment-a"`) {
+		t.Fatalf("valid item ID: %v %s", err, out.String())
 	}
 }

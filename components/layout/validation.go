@@ -9,6 +9,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/a-h/templ"
+	templruntime "github.com/a-h/templ/runtime"
 )
 
 func validID(s string) bool {
@@ -94,7 +95,10 @@ func validateAttrs(attrs templ.Attributes, path string, item bool) error {
 			return invalid(target, "duplicate_attribute")
 		}
 		seen[name] = true
-		if reserved(name) {
+		if templruntime.SanitizeAttributeName(key) != key {
+			return invalid(target, "unsupported_attribute")
+		}
+		if reserved(name) && (!item || name != "id") {
 			return invalid(target, "reserved_attribute")
 		}
 		if !allowed(name, item) {
@@ -119,7 +123,7 @@ func reserved(name string) bool {
 			return true
 		}
 	}
-	return slices.Contains([]string{"role", "tabindex", "aria-label", "aria-labelledby", "aria-describedby", "hidden", "draggable", "x-layout", "x-data", "x-init", "style"}, name)
+	return slices.Contains([]string{"id", "role", "tabindex", "aria-label", "aria-labelledby", "aria-describedby", "hidden", "draggable", "x-layout", "x-data", "x-init", "style"}, name)
 }
 func allowed(name string, item bool) bool {
 	if name == "id" {

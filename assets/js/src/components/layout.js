@@ -11,10 +11,12 @@
     return Array.from(root.children).filter(function (node) { return node.matches(itemSelector); });
   }
   function local(root, marker) {
-    return Array.from(root.querySelectorAll(marker)).filter(function (node) { return node.closest(selector) === root; });
+    var candidates = Array.from(root.children);
+    items(root).forEach(function (item) { var button = handle(item); if (button) candidates.push(button); });
+    return candidates.filter(function (node) { return node.matches(marker); });
   }
   function handle(item) {
-    return Array.from(item.querySelectorAll("[data-layout-handle]")).find(function (node) { return node.closest(itemSelector) === item; });
+    return item.querySelector(":scope > [data-layout-handle-row] > [data-layout-handle]");
   }
   function emit(root, name, detail, cancelable) {
     return root.dispatchEvent(new CustomEvent(name, { bubbles: true, cancelable: !!cancelable, detail: detail }));
@@ -48,12 +50,13 @@
     else if (fallback && fallback.isConnected) fallback.focus({preventScroll: true});
   }
   function announce(root, text) { var status = local(root,"[data-layout-status]")[0]; if (status) status.textContent = text; }
-  function cancel() {
+  function cancel(restoreFocus) {
     if (!pickup) return;
     var old = pickup; pickup = null;
     clearTarget();
     announce(old.source, old.item.dataset.layoutCancel || "");
-    focusItem(old.item, old.source);
+    if (old.button && old.button.hasPointerCapture(old.pointer)) old.button.releasePointerCapture(old.pointer);
+    if (restoreFocus !== false || document.activeElement === old.button) focusItem(old.item, old.source);
   }
   function clearTarget() {
     owners.forEach(function (_, root) { local(root, "[data-layout-drop-target]").forEach(function (node) { node.removeAttribute("data-layout-drop-target"); }); root.removeAttribute("data-layout-drop-target"); });
@@ -95,7 +98,7 @@
       local(root,"[data-layout-handle]").forEach(function (button) { if (button.getAttribute("aria-describedby") !== root.id+"--layout-instructions") button.setAttribute("aria-describedby",root.id+"--layout-instructions"); });
       toggleHandles(root,!code && enabled);
     });
-    if (pickup && (!available(pickup.source) || pickup.item.parentElement !== pickup.source)) cancel();
+    if (pickup && (!available(pickup.source) || !validPickup())) cancel(false);
   }
   function resolve(source, detail) {
     if (!detail || typeof detail !== "object" || Array.isArray(detail)) return null;
@@ -106,7 +109,7 @@
     if (source.dataset.layoutId !== detail.fromContainerId) return null;
     var target = Array.from(owners.keys()).find(function (root) { return root.dataset.layoutId === detail.toContainerId; });
     var item = items(source).find(function (node) { return node.dataset.layoutItemId === detail.itemId; });
-    if (!target || !item || !compatible(source,target)) return null;
+    if (!target || !item || item.contains(target) || !compatible(source,target)) return null;
     var anchor = detail.beforeItemId === null ? null : items(target).find(function (node) { return node.dataset.layoutItemId === detail.beforeItemId; });
     if (detail.beforeItemId !== null && (!anchor || anchor === item)) return null;
     return {target:target,item:item,anchor:anchor};
@@ -140,7 +143,7 @@
   function keyboard(root,event) {
     if (event.key === "Escape" && pickup) { event.preventDefault(); cancel(); return; }
     var button = event.target.closest("[data-layout-handle]");
-    if (!button || button.closest(selector) !== root || !event.altKey || !available(root) || button.matches(":disabled")) return;
+    if (!button || button.closest(selector) !== root || !event.altKey || handle(button.closest(itemSelector)) !== button || !available(root) || button.matches(":disabled")) return;
     var item = button.closest(itemSelector), members = items(root), index = members.indexOf(item), anchor, target = root;
     if (event.key === "ArrowUp") { if (index === 0) return; anchor = members[index-1]; }
     else if (event.key === "ArrowDown") { if (index === members.length-1) return; anchor = members[index+2] || null; }
@@ -156,19 +159,30 @@
   }
   function pointerDown(root,event) {
     var button = event.target.closest("[data-layout-handle]");
-    if (event.button !== 0 || !button || button.closest(selector) !== root) return;
+    if (event.button !== 0 || !button || button.closest(selector) !== root || handle(button.closest(itemSelector)) !== button) return;
     validateRegistry();
     if (!available(root) || button.matches(":disabled")) return;
     cancel(); button.focus({preventScroll:true});
-    pickup = {source:root,item:button.closest(itemSelector),pointer:event.pointerId};
+    pickup = {source:root,item:button.closest(itemSelector),button:button,pointer:event.pointerId,config:pickupConfig(root),members:items(root).map(function (item) { return {node:item,id:item.dataset.layoutItemId}; })};
     button.setPointerCapture(event.pointerId); event.preventDefault();
+  }
+  function pickupConfig(root) {
+    return JSON.stringify([root.id, root.dataset.layoutId, root.dataset.layoutMode, root.dataset.layoutColumns, root.dataset.layoutMinWidth, root.dataset.layoutGap, root.dataset.layoutGroup, root.dataset.layoutReorder]);
+  }
+  function validPickup() {
+    if (!pickup || !pickup.source.isConnected || pickupConfig(pickup.source) !== pickup.config) return false;
+    var current = items(pickup.source);
+    return current.length === pickup.members.length && current.every(function (item, n) { return item === pickup.members[n].node && item.dataset.layoutItemId === pickup.members[n].id; });
   }
   function pointerTarget(event) {
     var hit = document.elementFromPoint(event.clientX,event.clientY);
     var root = hit && hit.closest(selector);
-    if (!pickup || !root || !available(root) || !compatible(pickup.source,root)) return null;
+    if (!pickup) return null;
+    // An outer gesture may hit an inner renderer; ownership stays at its level.
+    while (root && (!available(root) || !compatible(pickup.source,root) || pickup.item.contains(root))) root = root.parentElement && root.parentElement.closest(selector);
+    if (!root) return null;
     var anchor = hit.closest(itemSelector);
-    if (!anchor || anchor.parentElement !== root) anchor = null;
+    while (anchor && anchor.parentElement !== root) anchor = anchor.parentElement && anchor.parentElement.closest(itemSelector);
     if (anchor === pickup.item) return null;
     if (anchor) { var box = anchor.getBoundingClientRect(); if (event.clientY > box.top+box.height/2) anchor = items(root)[items(root).indexOf(anchor)+1] || null; }
     if (anchor === pickup.item) anchor = items(root)[items(root).indexOf(anchor)+1] || null;
@@ -176,11 +190,13 @@
   }
   function pointerMove(event) {
     if (!pickup || pickup.pointer !== event.pointerId) return;
+    if (!validPickup() || !available(pickup.source)) { cancel(false); return; }
     var target = pointerTarget(event); clearTarget();
     if (target) (target.anchor || target.root).setAttribute("data-layout-drop-target","");
   }
   function pointerUp(event) {
     if (!pickup || pickup.pointer !== event.pointerId) return;
+    if (!validPickup() || !available(pickup.source)) { cancel(false); return; }
     var old = pickup, target = pointerTarget(event);
     if (!target) { cancel(); return; }
     pickup = null; clearTarget(); move(old.source,detailFor(old.source,old.item,target.root,target.anchor));
@@ -247,7 +263,7 @@
   }
   function disconnect(root) {
     var state = owners.get(root); if (!state) return;
-    if (pickup && (pickup.source === root || root.contains(pickup.item))) cancel();
+    if (pickup && (pickup.source === root || root.contains(pickup.item))) cancel(false);
     toggleHandles(root,false);
     if (state.resize) state.resize.disconnect();
     root.removeEventListener("keydown",state.key); root.removeEventListener("pointerdown",state.down); root.removeEventListener("layout:request-move",state.request);
@@ -269,11 +285,7 @@
     observer = new MutationObserver(function (records) {
       var relevant = records.filter(function (record) { return !internal(record) && !record.target.closest?.("[data-layout-status]"); });
       if (!relevant.length) return;
-      if (pickup && relevant.some(function (record) {
-        var structural = record.type === "childList" && (record.target === pickup.source || record.target.contains(pickup.source));
-        var config = record.type === "attributes" && record.target === pickup.source && record.attributeName.startsWith("data-layout-");
-        return structural || config;
-      })) cancel();
+      if (pickup && !validPickup()) cancel(false);
       Array.from(owners.keys()).forEach(function (root) { if (!root.isConnected) disconnect(root); });
       scan(document);
       owners.forEach(function (state,root) { if (relevant.some(function (record) { return record.type === "childList" && record.target === root; })) observeSizes(state,root); });

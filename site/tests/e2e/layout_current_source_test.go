@@ -1,4 +1,4 @@
-//go:build e2e && full && goshtoso_current_source
+//go:build e2e && full
 
 package e2e
 
@@ -22,7 +22,7 @@ func layoutFixture(t *testing.T) *httptest.Server {
 	t.Helper()
 	source := func(changed bool) layout.Instance {
 		c := layout.Config{ID: "alpha", Label: "Alpha", Mode: layout.ModeMasonry, Columns: 3, Reorder: &layout.ReorderConfig{Group: "widgets"}, Items: []layout.Item{
-			{ID: "a", Label: `A <unsafe>`, RootClass: "p-3 border m-2", Content: templ.Raw(`<p>Plain content</p><label>Draft<input id="layout-draft" value="initial"></label><a href="#help" id="content-link">Help</a>`)},
+			{ID: "a", Label: `A <unsafe>`, RootClass: "p-3 border m-2", Content: templ.Raw(`<p>Plain content</p><span id="inside-markers" data-layout-content data-layout-drop-target>Consumer content</span><label>Draft<input id="layout-draft" value="initial"></label><a href="#help" id="content-link">Help</a>`)},
 			{ID: "b", Label: "Beta", Content: templ.Raw(`<div style="height:111.5px">Tall content</div>`)},
 			{ID: "c", Label: "Gamma"},
 			{ID: "d", Label: "Delta", Span: layout.SpanFullWidth, Content: templ.Raw(`<p>Full width</p>`)},
@@ -48,7 +48,7 @@ func layoutFixture(t *testing.T) *httptest.Server {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_, _ = io.WriteString(w, `<!doctype html><html data-theme="goshtoso"><head>`)
 		require.NoError(t, head.Dependencies(head.WithLocalRuntime()).Render(r.Context(), w))
-		_, _ = io.WriteString(w, `</head><body><main style="max-width:1000px;padding:16px"><h1>Layout fixture</h1><div id="status" tabindex="-1">Status</div><button id="refresh" hx-get="/fragment" hx-target="#alpha" hx-swap="outerMorph">Refresh</button><div id="bounds" style="width:100%">`)
+		_, _ = io.WriteString(w, `</head><body><main style="max-width:1000px;padding:16px"><h1>Layout fixture</h1><span id="outside-markers" data-layout-content data-layout-drop-target>Unrelated content</span><div id="status" tabindex="-1">Status</div><button id="refresh" hx-get="/fragment" hx-target="#alpha" hx-swap="outerMorph">Refresh</button><div id="bounds" style="width:100%">`)
 		require.NoError(t, source(false).Render(r.Context(), w))
 		_, _ = io.WriteString(w, `</div><h2>Inbox</h2>`)
 		require.NoError(t, empty("inbox").Render(r.Context(), w))
@@ -240,4 +240,91 @@ func TestLayout_CurrentSourceDemo(t *testing.T) {
 	require.Equal(t, "notes,metrics,chart,short", layoutEval(t, page, layoutOrder, "layout-mixed"))
 	require.Equal(t, 2, layoutEval(t, page, `()=>document.querySelectorAll('#layout-nested > [data-goshtoso-layout="item"]').length`))
 	failures.RequireEmpty(t)
+}
+
+func layoutPickup(t *testing.T, page playwright.Page, root, item string) {
+	t.Helper()
+	loc := page.Locator(fmt.Sprintf(`#%s > [data-layout-item-id="%s"] > [data-layout-handle-row] > [data-layout-handle]`, root, item))
+	require.NoError(t, loc.ScrollIntoViewIfNeeded())
+	box, err := loc.BoundingBox()
+	require.NoError(t, err)
+	require.NoError(t, page.Mouse().Move(box.X+10, box.Y+10))
+	require.NoError(t, page.Mouse().Down())
+}
+func layoutDrop(t *testing.T, page playwright.Page, target string, nearStart bool) {
+	t.Helper()
+	box, err := page.Locator(target).BoundingBox()
+	require.NoError(t, err)
+	y := box.Y + box.Height - 2
+	if nearStart {
+		y = box.Y + 2
+	}
+	require.NoError(t, page.Mouse().Move(box.X+box.Width/2, y, playwright.MouseMoveOptions{Steps: playwright.Int(5)}))
+	require.NoError(t, page.Mouse().Up())
+}
+func TestLayout_PickupIdentityAndFocus(t *testing.T) {
+	server := layoutFixture(t)
+	for _, change := range []string{"identity", "membership", "disable"} {
+		t.Run(change, func(t *testing.T) {
+			page := newPage(t, sharedBrowser)
+			_, err := page.Goto(server.URL)
+			require.NoError(t, err)
+			layoutReady(t, page)
+			layoutEval(t, page, `()=>{window.moves=0;window.beforeMoves=0;document.addEventListener('layout:move',()=>moves++);document.addEventListener('layout:before-move',()=>beforeMoves++)}`)
+			layoutPickup(t, page, "alpha", "a")
+			switch change {
+			case "identity":
+				layoutEval(t, page, `()=>document.querySelector('#alpha > [data-layout-item-id="a"]').dataset.layoutItemId='changed-during-pickup'`)
+			case "membership":
+				layoutEval(t, page, `()=>{const root=document.getElementById('alpha');root.insertBefore(root.querySelector('[data-layout-item-id="b"]'),root.firstElementChild)}`)
+			case "disable":
+				layoutEval(t, page, `()=>{document.getElementById('status').focus();document.getElementById('disabled').append(document.getElementById('alpha'))}`)
+			}
+			if change == "disable" {
+				require.Equal(t, "status", layoutEval(t, page, `()=>document.activeElement.id`))
+				require.Equal(t, true, layoutEval(t, page, `()=>{const h=document.querySelector('#alpha [data-layout-handle]');return !h.hidden&&h.matches(':disabled')&&h.getBoundingClientRect().height>=44}`))
+			}
+			// Coordinates are read after reparenting; a stale gesture must still be rejected.
+			layoutDrop(t, page, "#inbox", true)
+			require.Equal(t, 0, layoutEval(t, page, `()=>moves`))
+			require.Equal(t, 0, layoutEval(t, page, `()=>beforeMoves`))
+			require.Equal(t, "", layoutEval(t, page, layoutOrder, "inbox"))
+			if change == "disable" {
+				layoutEval(t, page, `()=>document.getElementById('disabled').disabled=false`)
+				require.Equal(t, "status", layoutEval(t, page, `()=>document.activeElement.id`))
+			}
+		})
+	}
+}
+func TestLayout_NestedPointerOwnership(t *testing.T) {
+	server := layoutFixture(t)
+	page := newPage(t, sharedBrowser)
+	failures := watchPageFailures(page)
+	_, err := page.Goto(server.URL)
+	require.NoError(t, err)
+	layoutReady(t, page)
+	require.NoError(t, page.Locator("#outer").ScrollIntoViewIfNeeded())
+	layoutPickup(t, page, "outer", "outer-b")
+	layoutDrop(t, page, "#inner", true)
+	require.Equal(t, "outer-b,outer-a", layoutEval(t, page, layoutOrder, "outer"))
+	require.Equal(t, "inner-a,inner-b", layoutEval(t, page, layoutOrder, "inner"))
+	layoutPickup(t, page, "inner", "inner-a")
+	layoutDrop(t, page, `#inner > [data-layout-item-id="inner-b"]`, false)
+	require.Equal(t, "inner-b,inner-a", layoutEval(t, page, layoutOrder, "inner"))
+	require.Equal(t, "outer-b,outer-a", layoutEval(t, page, layoutOrder, "outer"))
+	layoutEval(t, page, `()=>{window.moves=0;window.errors=[];document.addEventListener('layout:move',()=>moves++);document.addEventListener('layout:error',e=>errors.push(e.detail.code));document.getElementById('inner').dataset.layoutGroup='groups';document.getElementById('outer').dispatchEvent(new CustomEvent('layout:request-move',{bubbles:true,detail:{itemId:'outer-a',fromContainerId:'outer',toContainerId:'inner',beforeItemId:null}}));}`)
+	require.Equal(t, 0, layoutEval(t, page, `()=>moves`))
+	require.Equal(t, "invalid_move_request", layoutEval(t, page, `()=>errors.at(-1)`))
+	failures.RequireEmpty(t)
+}
+func TestLayout_AttributeMarkerIsolation(t *testing.T) {
+	server := layoutFixture(t)
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(server.URL)
+	require.NoError(t, err)
+	layoutReady(t, page)
+	for _, id := range []string{"inside-markers", "outside-markers"} {
+		require.Equal(t, true, layoutEval(t, page, `id=>{const node=document.getElementById(id),s=getComputedStyle(node);return s.display==='inline'&&s.outlineStyle==='none'&&s.marginBottom==='0px'}`, id))
+	}
+	require.Equal(t, "flow-root", layoutEval(t, page, `()=>getComputedStyle(document.querySelector('#alpha > [data-layout-item-id="a"] > [data-layout-content]')).display`))
 }
