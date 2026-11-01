@@ -4,8 +4,10 @@ import "github.com/araihu/goshtoso/expressions"
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/araihu/goshtoso/components/avatar"
+	"github.com/araihu/goshtoso/components/button"
 	"github.com/araihu/goshtoso/components/pagination"
 )
 
@@ -96,41 +98,15 @@ templ tableContent(cfg Config) {
 //     capped, internally-scrollable container. Use only when a page hosts
 //     multiple independently-scrollable widgets (dashboards, split panes).
 templ tableContainer(cfg Config) {
-	if cfg.Pagination.isContained() {
-		if cfg.ShowCheckbox && cfg.hasExpandableRows() {
-			<div x-data="{ checkAll: false, openRows: {} }" class={ cfg.containerClasses() } style={ "max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;" }>
-				@tableInner(cfg)
-			</div>
-		} else if cfg.ShowCheckbox {
-			<div x-data="{ checkAll: false }" class={ cfg.containerClasses() } style={ "max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;" }>
-				@tableInner(cfg)
-			</div>
-		} else if cfg.hasExpandableRows() {
-			<div x-data="{ openRows: {} }" class={ cfg.containerClasses() } style={ "max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;" }>
-				@tableInner(cfg)
-			</div>
-		} else {
-			<div class={ cfg.containerClasses() } style={ "max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;" }>
-				@tableInner(cfg)
-			</div>
+	<div
+		class={ cfg.containerClasses() }
+		{ cfg.containerAlpineAttrs()... }
+		if cfg.Pagination.isContained() {
+			style={ "max-height: " + cfg.Pagination.getContainerHeight() + "; overflow-y: auto;" }
 		}
-	} else if cfg.ShowCheckbox && cfg.hasExpandableRows() {
-		<div x-data="{ checkAll: false, openRows: {} }" class={ cfg.containerClasses() }>
-			@tableInner(cfg)
-		</div>
-	} else if cfg.ShowCheckbox {
-		<div x-data="{ checkAll: false }" class={ cfg.containerClasses() }>
-			@tableInner(cfg)
-		</div>
-	} else if cfg.hasExpandableRows() {
-		<div x-data="{ openRows: {} }" class={ cfg.containerClasses() }>
-			@tableInner(cfg)
-		</div>
-	} else {
-		<div class={ cfg.containerClasses() }>
-			@tableInner(cfg)
-		</div>
-	}
+	>
+		@tableInner(cfg)
+	</div>
 }
 
 func showTraditionalPagination(cfg Config) bool {
@@ -290,9 +266,9 @@ templ filterToggleInput(cfg Config, filter Filter) {
 
 // tableHeadRow renders the header row contents.
 templ tableHeadRow(cfg Config) {
-	<tr>
+	<tr if cfg.Mobile != nil { role="row" }>
 		if cfg.ShowCheckbox {
-			<th scope="col" class={ cfg.headerCellClasses() }>
+			<th scope="col" class={ cfg.headerCellClasses() } data-table-header-control>
 				@checkboxLabel(cfg, "checkAll", true)
 			</th>
 		}
@@ -300,7 +276,7 @@ templ tableHeadRow(cfg Config) {
 			if col.Sortable && cfg.htmxEndpointValue() != "" {
 				@sortableHeader(cfg, col)
 			} else {
-				<th scope="col" class={ columnHeaderClasses(col) }>
+				<th scope="col" class={ columnHeaderClasses(col) } data-table-header-control?={ col.HeaderSuffix != nil } if cfg.Mobile != nil { id={ cfg.mobileHeaderID(col) } role="columnheader" }>
 					if col.HeaderSuffix != nil {
 						<div class="flex items-center gap-2">
 							<span>{ col.Label }</span>@col.HeaderSuffix
@@ -311,6 +287,9 @@ templ tableHeadRow(cfg Config) {
 				</th>
 			}
 		}
+		if cfg.hasMobileDetails() {
+			<th scope="col" class="goshtoso-table-mobile-toggle"><span class="sr-only">{ expressions.From(ctx).Table.DetailsLabel }</span></th>
+		}
 		if cfg.hasActions() || cfg.hasExpandableRows() {
 			<th scope="col" class={ cfg.headerCellClasses() }><span class="sr-only">{ expressions.From(ctx).Table.ActionsLabel }</span></th>
 		}
@@ -320,6 +299,9 @@ templ tableHeadRow(cfg Config) {
 // tableHead renders the thead element for initial page render.
 templ tableHead(cfg Config) {
 	<thead
+		if cfg.Mobile != nil {
+			role="rowgroup"
+		}
 		id={ cfg.theadID() }
 		data-table-sort-by={ cfg.SortBy }
 		data-table-sort-dir={ string(cfg.SortDir) }
@@ -336,21 +318,24 @@ templ tableHeadContentTemplate(cfg Config) {
 }
 
 templ tableInner(cfg Config) {
-	<table class={ cfg.tableClasses() } id={ cfg.getID() }>
+	<table class={ cfg.tableClasses() } id={ cfg.getID() } if cfg.Mobile != nil { role="table" }>
 		if cfg.Caption != "" {
 			<caption class="sr-only">{ cfg.Caption }</caption>
 		}
 		@tableHead(cfg)
 		if cfg.LazyLoad && cfg.htmxEndpointValue() != "" {
 			<tbody
+				if cfg.Mobile != nil {
+					role="rowgroup"
+				}
 				id={ cfg.tbodyID() }
 				class={ cfg.tbodyClasses() }
 				hx-get={ cfg.htmxEndpointValue() }
 				hx-trigger={ cfg.lazyLoadTrigger() }
 				hx-swap="innerHTML"
 			>
-				<tr>
-					<td colspan={ fmt.Sprintf("%d", len(cfg.Columns)+boolToInt(cfg.ShowCheckbox)) } class="p-8 text-center">
+				<tr if cfg.Mobile != nil { role="row" }>
+					<td if cfg.Mobile != nil { role="cell" } colspan={ fmt.Sprintf("%d", cfg.colCount()) } class="p-8 text-center">
 						@loadingIndicator()
 					</td>
 				</tr>
@@ -367,7 +352,7 @@ templ tableInner(cfg Config) {
 // so consumer CSS can fade in rows appended by the scroll sentinel. Consumers
 // opt into the animation by defining a rule on `[data-transition="append"] > .htmx-added`.
 templ tableBody(cfg Config) {
-	<tbody id={ cfg.tbodyID() } class={ cfg.tbodyClasses() } data-transition="append">
+	<tbody id={ cfg.tbodyID() } class={ cfg.tbodyClasses() } data-transition="append" if cfg.Mobile != nil { role="rowgroup" }>
 		for _, row := range cfg.Rows {
 			@TableRow(cfg, row)
 		}
@@ -407,27 +392,60 @@ func hasMoreRows(cfg Config) bool {
 // TableRow renders a single table row, optionally with expandable detail panel or row link
 templ tableRowTemplate(cfg Config, row Row) {
 	<tr
-		class={ cfg.rowClasses() + interactiveRowClasses(row) }
-		if row.Expandable && row.Link == "" && row.OnClick == "" && !row.hasHTMXAction() {
+		class={ cfg.rowClasses() + interactiveRowClasses(cfg, row) }
+		if cfg.Mobile != nil {
+			role="row"
+		}
+		if cfg.mobileExpandable(row) {
+			data-table-mobile-row={ row.ID }
+			x-bind:data-table-mobile-expanded="mobileRows['row:' + $el.dataset.tableMobileRow] ? 'true' : 'false'"
+		}
+		if cfg.Mobile == nil && row.Expandable && row.Link == "" && row.OnClick == "" && !row.hasHTMXAction() {
 			x-on:click={ fmt.Sprintf("openRows['%s'] = !openRows['%s']", row.ID, row.ID) }
 		}
-		if row.hasRowLink() {
+		if cfg.Mobile == nil && row.hasRowLink() {
 			{ rowLinkAttrs(row)... }
 		}
-		if row.Link == "" {
+		if cfg.Mobile == nil && row.Link == "" {
 			{ rowActionAttrs(row)... }
 		}
-		{ rowA11yAttrs(row)... }
+		if cfg.Mobile == nil {
+			{ rowA11yAttrs(row)... }
+		}
 		{ rowAlpineAttrs(row)... }
 	>
 		if cfg.ShowCheckbox {
-			<td class={ cfg.cellClasses() }>
+			<td class={ cfg.cellClasses() } if cfg.Mobile != nil { role="cell" }>
 				@checkboxLabel(cfg, fmt.Sprintf("user%s", row.ID), false)
 			</td>
 		}
 		for columnIndex, col := range cfg.Columns {
-			<td class={ columnCellClasses(col) }>
-				if row.usesPrimaryCellLink() && columnIndex == 0 {
+			<td
+				class={ columnCellClasses(col) }
+				if cfg.Mobile != nil {
+					role="cell"
+					headers={ cfg.mobileHeaderID(col) }
+					data-table-mobile-field
+					data-table-mobile-primary?={ cfg.mobilePrimary(col) }
+					data-table-mobile-secondary?={ col.MobileSecondary && !cfg.mobilePrimary(col) }
+				}
+				if cfg.mobileExpandable(row) && col.MobileSecondary && !cfg.mobilePrimary(col) {
+					id={ cfg.mobileCellID(row, col) }
+				}
+			>
+				if cfg.Mobile != nil {
+					<span class="goshtoso-table-field-label" aria-hidden="true">{ col.Label }</span>
+				}
+				if cfg.mobileActionColumn(columnIndex) && (row.Link != "" || row.OnClick != "" || row.hasHTMXAction()) {
+					if cell, ok := row.Cells[col.Key]; ok && cell.Component == nil {
+						@mobileRowAction(row, cell)
+					} else {
+						if cell, ok := row.Cells[col.Key]; ok {
+							@cellContent(cell)
+						}
+						@mobileRowAction(row, Cell{Text: expressions.From(ctx).Table.OpenRowLabel(row.ID)})
+					}
+				} else if cfg.Mobile == nil && row.usesPrimaryCellLink() && columnIndex == 0 {
 					<a
 						href={ templ.URL(row.Link) }
 						class="inline-flex min-w-0 items-center rounded-radius font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-primary-dark dark:focus-visible:outline-primary-dark"
@@ -446,13 +464,43 @@ templ tableRowTemplate(cfg Config, row Row) {
 				}
 			</td>
 		}
+		if cfg.hasMobileDetails() {
+			<td class="goshtoso-table-mobile-toggle" role="cell">
+				if cfg.mobileExpandable(row) {
+				@button.Button(
+					button.WithType("button"), button.WithSize(button.SizeSmall), button.WithAppearance(button.AppearancePlain), button.WithRootClass("min-h-11"),
+					button.WithAttrs(templ.Attributes{
+						"aria-expanded": "true",
+						"aria-controls": cfg.mobileControls(row),
+						"x-bind:aria-expanded": "mobileRows['row:' + $el.closest('[data-table-mobile-row]').dataset.tableMobileRow] ? 'true' : 'false'",
+						"x-on:click.stop": "const key = 'row:' + $el.closest('[data-table-mobile-row]').dataset.tableMobileRow; mobileRows[key] = !mobileRows[key]",
+						"x-on:keydown.stop": "",
+					}),
+				) {
+					{ expressions.From(ctx).Table.DetailsLabel }
+				}
+				}
+			</td>
+		}
 		if cfg.hasActions() || cfg.hasExpandableRows() {
-			<td class={ cfg.cellClasses() + " text-right whitespace-nowrap" }>
+			<td class={ cfg.cellClasses() + " text-right whitespace-nowrap" } if cfg.Mobile != nil { role="cell" }>
 				<div class="flex items-center justify-end gap-1">
 					if row.Actions != nil {
 						@row.Actions
 					}
 					if row.Expandable {
+						if cfg.Mobile != nil {
+							@button.Button(button.WithType("button"), button.WithAppearance(button.AppearancePlain), button.WithRootClass("goshtoso-table-row-detail-toggle min-h-11"), button.WithAttrs(templ.Attributes{
+								"data-table-detail-key": row.ID,
+								"aria-controls": cfg.detailID(row),
+								"aria-expanded": "false",
+								"x-bind:data-table-detail-ready": "true",
+								"x-bind:aria-expanded": "openRows['row:' + $el.dataset.tableDetailKey] ? 'true' : 'false'",
+								"x-on:click.stop": "const key = 'row:' + $el.dataset.tableDetailKey; openRows[key] = !openRows[key]",
+							})) {
+								{ expressions.From(ctx).Table.RowDetailsLabel }
+							}
+						} else {
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 20 20"
@@ -462,6 +510,7 @@ templ tableRowTemplate(cfg Config, row Row) {
 						>
 							<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path>
 						</svg>
+						}
 					}
 				</div>
 			</td>
@@ -469,14 +518,44 @@ templ tableRowTemplate(cfg Config, row Row) {
 	</tr>
 	if row.Expandable && row.Detail != nil {
 		<tr
-			x-show={ fmt.Sprintf("openRows['%s']", row.ID) }
+			if cfg.Mobile != nil { role="row" }
+			if cfg.Mobile != nil {
+				id={ cfg.detailID(row) }
+				data-table-detail-key={ row.ID }
+				x-show="openRows['row:' + $el.dataset.tableDetailKey]"
+			} else {
+				x-show={ fmt.Sprintf("openRows['%s']", row.ID) }
+			}
 			x-collapse
 			class="bg-surface-alt/50 dark:bg-surface-dark-alt/50 motion-reduce:transition-none!"
 		>
-			<td colspan={ fmt.Sprintf("%d", cfg.colCount()) }>
+			<td if cfg.Mobile != nil { role="cell" } colspan={ fmt.Sprintf("%d", cfg.colCount()) }>
 				@row.Detail
 			</td>
 		</tr>
+	}
+}
+
+// Use the record identity as its action; opaque components keep a labelled fallback.
+templ mobileRowAction(row Row, cell Cell) {
+	{{
+		description := cell.Description
+		cell.Description = ""
+		if strings.TrimSpace(cell.Text) == "" {
+			cell.Text = expressions.From(ctx).Table.OpenRowLabel(row.ID)
+		}
+	}}
+	if row.Link != "" {
+		<a href={ templ.URL(row.Link) } class="inline-flex min-h-11 min-w-0 items-center rounded-radius font-medium text-primary dark:text-primary-dark underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" { primaryCellLinkAttrs(row)... }>
+			@cellContent(cell)
+		</a>
+	} else if row.OnClick != "" || row.hasHTMXAction() {
+		@button.Button(button.WithType("button"), button.WithAppearance(button.AppearancePlain), button.WithRootClass("min-h-11"), button.WithAttrs(rowActionAttrs(row))) {
+			@cellContent(cell)
+		}
+	}
+	if description != "" {
+		<span class="block text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ description }</span>
 	}
 }
 
@@ -549,8 +628,8 @@ func primaryCellLinkAttrs(row Row) templ.Attributes {
 	return attrs
 }
 
-func interactiveRowClasses(row Row) string {
-	if row.hasRowInteraction() {
+func interactiveRowClasses(cfg Config, row Row) string {
+	if cfg.Mobile == nil && row.hasRowInteraction() {
 		return " cursor-pointer hover:bg-surface-alt/30 dark:hover:bg-surface-dark-alt/30"
 	}
 	return ""
@@ -638,16 +717,28 @@ func rowAlpineAttrs(row Row) templ.Attributes {
 templ sortableHeader(cfg Config, col Column) {
 	<th
 		scope="col"
+		if cfg.Mobile != nil {
+			id={ cfg.mobileHeaderID(col) }
+			role="columnheader"
+		}
 		class={ cfg.sortableHeaderClasses(col.Key) }
 		data-table-sort-request
+		aria-sort={ cfg.ariaSort(col.Key) }
 		hx-get={ cfg.SortURL(col.Key) }
 		hx-sync="closest [data-table-requests]:replace"
 		hx-target={ "#" + cfg.tbodyID() }
 		hx-swap="innerHTML"
 	>
 		<div class="flex items-center gap-1">
-			<span>{ col.Label }</span>
-			@sortIcon(cfg, col.Key)
+			if cfg.Mobile != nil {
+				@button.Button(button.WithType("button"), button.WithID(cfg.mobileHeaderID(col)+"-sort"), button.WithSize(button.SizeSmall), button.WithAppearance(button.AppearancePlain), button.WithAttrs(templ.Attributes{"hx-preserve":"true"})) {
+					{ col.Label }
+				}
+				@sortIcon(cfg, col.Key)
+			} else {
+				<span>{ col.Label }</span>
+				@sortIcon(cfg, col.Key)
+			}
 			if col.HeaderSuffix != nil {
 				<div x-data x-on:click.stop x-on:keydown.stop>
 					@col.HeaderSuffix
@@ -680,6 +771,7 @@ templ sortIcon(cfg Config, key string) {
 // extended selectors, which could otherwise select an unrelated page scroller.
 templ scrollSentinel(cfg Config) {
 	<tr
+		if cfg.Mobile != nil { role="row" }
 		id={ cfg.getID() + "-sentinel" }
 		data-table-scroll-sentinel
 		hx-get={ cfg.NextPageURL() }
@@ -691,7 +783,7 @@ templ scrollSentinel(cfg Config) {
 		hx-status:4xx="swap:none"
 		hx-status:5xx="swap:none"
 	>
-		<td colspan={ fmt.Sprintf("%d", cfg.colCount()) } class="p-4 text-center">
+		<td if cfg.Mobile != nil { role="cell" } colspan={ fmt.Sprintf("%d", cfg.colCount()) } class="p-4 text-center">
 			@loadingIndicator()
 			<button type="button" class="text-sm underline">{ expressions.From(ctx).Table.LoadMoreLabel }</button>
 		</td>

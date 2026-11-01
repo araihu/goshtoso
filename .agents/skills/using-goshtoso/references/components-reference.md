@@ -1977,6 +1977,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | `Sortable` | `bool` | Sortable marks this column as sortable (renders clickable header) |
 | `Width` | `string` | Width is an optional Tailwind width class (e.g. "w-32", "min-w-[200px]") |
 | `Align` | `string` | Align is "left" (default), "center", or "right" |
+| `MobileSecondary` | `bool` | MobileSecondary moves this field behind the mobile details toggle when Mobile.Expandable is enabled. The primary column always stays visible. |
 
 **Config**
 
@@ -1989,6 +1990,7 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 | `Appearance` | `Appearance` | Appearance determines the table's visual treatment. |
 | `ShowCheckbox` | `bool` | ShowCheckbox adds a select-all checkbox column |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the container. |
+| `Mobile` | `*MobileConfig` | Mobile opts into stacked fields and optional secondary-field expansion. |
 | `SortBy` | `string` | --- Sorting --- SortBy is the currently sorted column key |
 | `SortDir` | `SortDir` | SortDir is the current sort direction ("asc" or "desc") |
 | `HTMX` | `*HTMXConfig` | --- HTMX Integration --- HTMX configures server-side table updates. |
@@ -2054,6 +2056,13 @@ import "github.com/araihu/goshtoso/components/table"  // package table
 |-------|------|-------------|
 | `NextPage` | `int` | NextPage is the next page number to load |
 | `HasMore` | `bool` | HasMore indicates if more rows are available |
+
+**MobileConfig**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `PrimaryColumn` | `string` | PrimaryColumn names the identity column, shown first across the full row. Empty or unmatched keys leave all fields in their declared order. |
+| `Expandable` | `bool` | Expandable initially collapses MobileSecondary fields on small containers. Rows need stable, nonempty IDs. Without JavaScript or a row ID, all fields remain visible. Desktop always shows all columns. |
 
 **PaginationConfig**
 

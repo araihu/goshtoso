@@ -818,6 +818,11 @@
           "description": "ActionsLabel defaults to \"Actions\".",
           "type": "string"
         },
+        "DetailsLabel": {
+          "default": "Additional details",
+          "description": "DetailsLabel defaults to \"Additional details\".",
+          "type": "string"
+        },
         "FiltersLabel": {
           "default": "Filters",
           "description": "FiltersLabel defaults to \"Filters\".",
@@ -841,6 +846,11 @@
           "pattern": "^(?:[^{}]|\\{\\{|\\}\\}|\\{rowID\\})*$",
           "type": "string",
           "x-parameter": "rowID"
+        },
+        "RowDetailsLabel": {
+          "default": "Row details",
+          "description": "RowDetailsLabel defaults to \"Row details\".",
+          "type": "string"
         }
       },
       "type": "object"

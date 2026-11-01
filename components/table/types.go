@@ -1,6 +1,7 @@
 package table
 
 import (
+	"encoding/hex"
 	"net/url"
 	"strconv"
 	"strings"
@@ -40,6 +41,27 @@ type Column struct {
 	Width string
 	// Align is "left" (default), "center", or "right"
 	Align string
+	// MobileSecondary moves this field behind the mobile details toggle when
+	// Mobile.Expandable is enabled. The primary column always stays visible.
+	MobileSecondary bool
+}
+
+// MobileConfig enables a stacked field layout below 48rem of container width.
+// The same cells and controls are reused at every width. Nil Config.Mobile
+// retains the horizontally scrollable table layout.
+// Row links and actions use the plain primary-cell content as a native control.
+// Component cells keep their own controls and get a labelled row-action fallback.
+// To link only part of a custom component, render its link and omit Row.Link.
+// This applies at every width; when PrimaryColumn is absent or unmatched,
+// the action is placed in the first column.
+type MobileConfig struct {
+	// PrimaryColumn names the identity column, shown first across the full row.
+	// Empty or unmatched keys leave all fields in their declared order.
+	PrimaryColumn string
+	// Expandable initially collapses MobileSecondary fields on small containers.
+	// Rows need stable, nonempty IDs. Without JavaScript or a row ID, all fields
+	// remain visible. Desktop always shows all columns.
+	Expandable bool
 }
 
 // Cell holds the content for a single table cell
@@ -213,6 +235,9 @@ func (cfg Config) colCount() int {
 		n++
 	}
 	if cfg.hasActions() || cfg.hasExpandableRows() {
+		n++
+	}
+	if cfg.hasMobileDetails() {
 		n++
 	}
 	return n
@@ -419,6 +444,8 @@ type Config struct {
 	ShowCheckbox bool
 	// RootClass allows additional CSS classes on the container.
 	RootClass string
+	// Mobile opts into stacked fields and optional secondary-field expansion.
+	Mobile *MobileConfig
 
 	// --- Sorting ---
 	// SortBy is the currently sorted column key
@@ -691,10 +718,97 @@ func parseExtraQuery(extra string) map[string]string {
 // on infinite-scroll tables.
 func (cfg Config) containerClasses() string {
 	base := "overflow-x-auto overflow-y-clip w-full rounded-radius border border-outline dark:border-outline-dark"
+	if cfg.Mobile != nil {
+		base += " goshtoso-table-responsive"
+	}
 	if cfg.RootClass != "" {
 		base += " " + cfg.RootClass
 	}
 	return base
+}
+
+func (cfg Config) mobilePrimary(col Column) bool {
+	return cfg.Mobile != nil && cfg.Mobile.PrimaryColumn != "" && cfg.Mobile.PrimaryColumn == col.Key
+}
+
+func (cfg Config) mobileActionColumn(index int) bool {
+	if cfg.Mobile == nil {
+		return false
+	}
+	for i, col := range cfg.Columns {
+		if cfg.mobilePrimary(col) {
+			return i == index
+		}
+	}
+	return index == 0
+}
+
+func (cfg Config) ariaSort(key string) string {
+	if cfg.SortBy == key {
+		switch cfg.SortDir {
+		case SortAsc:
+			return "ascending"
+		case SortDesc:
+			return "descending"
+		}
+	}
+	return "none"
+}
+
+func (cfg Config) hasMobileDetails() bool {
+	if cfg.Mobile == nil || !cfg.Mobile.Expandable {
+		return false
+	}
+	for _, col := range cfg.Columns {
+		if col.MobileSecondary && !cfg.mobilePrimary(col) {
+			return true
+		}
+	}
+	return false
+}
+
+func (cfg Config) mobileExpandable(row Row) bool {
+	return row.ID != "" && cfg.hasMobileDetails()
+}
+
+func (cfg Config) mobileCellID(row Row, col Column) string {
+	// Hex keeps tuple separators out of row and column identifiers.
+	return cfg.getID() + "-mobile-" + hex.EncodeToString([]byte(row.ID)) + "-" + hex.EncodeToString([]byte(col.Key))
+}
+
+func (cfg Config) mobileHeaderID(col Column) string {
+	return cfg.getID() + "-column-" + url.PathEscape(col.Key)
+}
+
+func (cfg Config) detailID(row Row) string {
+	return cfg.getID() + "-detail-" + url.PathEscape(row.ID)
+}
+
+func (cfg Config) mobileControls(row Row) string {
+	var ids []string
+	for _, col := range cfg.Columns {
+		if col.MobileSecondary && !cfg.mobilePrimary(col) {
+			ids = append(ids, cfg.mobileCellID(row, col))
+		}
+	}
+	return strings.Join(ids, " ")
+}
+
+func (cfg Config) containerAlpineAttrs() templ.Attributes {
+	var state []string
+	if cfg.ShowCheckbox {
+		state = append(state, "checkAll: false")
+	}
+	if cfg.hasExpandableRows() {
+		state = append(state, "openRows: {}")
+	}
+	if cfg.hasMobileDetails() {
+		state = append(state, "mobileRows: {}")
+	}
+	if len(state) == 0 {
+		return nil
+	}
+	return templ.Attributes{"x-data": "{ " + strings.Join(state, ", ") + " }"}
 }
 
 // TableClasses returns the <table> element CSS classes
