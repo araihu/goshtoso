@@ -296,7 +296,7 @@
     width: auto;
   }
 
-  /* Keep header associations available while exposing sort and help controls. */
+  /* Keep header associations while exposing only table-wide actions. */
   .goshtoso-table-responsive thead th:not([data-table-sort-request]):not([data-table-header-control]) {
     position: absolute;
     width: 1px;
@@ -305,6 +305,16 @@
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
+  }
+
+  .goshtoso-table-responsive thead:not(:has([data-table-sort-request], [data-table-header-control])) {
+    height: 0;
+    border: 0;
+  }
+
+  /* Clipped informational headings must not leave invisible tab stops. */
+  .goshtoso-table-responsive thead .goshtoso-table-header-suffix {
+    display: none;
   }
 
   .goshtoso-table-responsive > table > tbody > tr {

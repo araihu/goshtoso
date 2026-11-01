@@ -276,10 +276,11 @@ templ tableHeadRow(cfg Config) {
 			if col.Sortable && cfg.htmxEndpointValue() != "" {
 				@sortableHeader(cfg, col)
 			} else {
-				<th scope="col" class={ columnHeaderClasses(col) } data-table-header-control?={ col.HeaderSuffix != nil } if cfg.Mobile != nil { id={ cfg.mobileHeaderID(col) } role="columnheader" }>
+				<th scope="col" class={ columnHeaderClasses(col) } if cfg.Mobile != nil { id={ cfg.mobileHeaderID(col) } role="columnheader" }>
 					if col.HeaderSuffix != nil {
 						<div class="flex items-center gap-2">
-							<span>{ col.Label }</span>@col.HeaderSuffix
+							<span>{ col.Label }</span>
+							<div class="goshtoso-table-header-suffix">@col.HeaderSuffix</div>
 						</div>
 					} else {
 						{ col.Label }
