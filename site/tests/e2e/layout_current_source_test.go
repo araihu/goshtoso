@@ -22,7 +22,7 @@ func layoutFixture(t *testing.T, contentDrag ...bool) *httptest.Server {
 	t.Helper()
 	source := func(changed bool) layout.Instance {
 		c := layout.Config{ID: "alpha", Label: "Alpha", Mode: layout.ModeMasonry, Columns: 3, Reorder: &layout.ReorderConfig{Group: "widgets"}, Items: []layout.Item{
-			{ID: "a", Label: `A <unsafe>`, RootClass: "p-3 border m-2", Content: templ.Raw(`<p>Plain content</p><span id="inside-markers" data-layout-content data-layout-drop-target>Consumer content</span><label>Draft<input id="layout-draft" value="initial"></label><a href="#help" id="content-link">Help</a><span id="interactive-checkbox" role="checkbox" style="display:inline-block;width:80px;height:20px">Checkbox</span><span id="focusable-content" tabindex="0" style="display:inline-block;width:80px;height:20px">Focusable</span><audio id="media-audio" controls style="width:100px;height:20px"></audio><video id="media-video" controls style="width:100px;height:20px"></video><layout-activation-probe style="display:inline-block;width:80px;height:20px">Embedded</layout-activation-probe>`)},
+			{ID: "a", Label: `A <unsafe>`, RootClass: "p-3 border m-2", Content: templ.Raw(`<p>Plain content</p><button is="layout-built-in-probe">Custom button</button><span id="inside-markers" data-layout-content data-layout-drop-target>Consumer content</span><label>Draft<input id="layout-draft" value="initial"></label><a href="#help" id="content-link">Help</a><span id="interactive-checkbox" role="checkbox" style="display:inline-block;width:80px;height:20px">Checkbox</span><span id="focusable-content" tabindex="0" style="display:inline-block;width:80px;height:20px">Focusable</span><audio id="media-audio" controls style="width:100px;height:20px"></audio><video id="media-video" controls style="width:100px;height:20px"></video><layout-activation-probe style="display:inline-block;width:80px;height:20px">Embedded</layout-activation-probe>`)},
 			{ID: "b", Label: "Beta", Content: templ.Raw(`<div style="height:111.5px">Tall content</div>`)},
 			{ID: "c", Label: "Gamma"},
 			{ID: "d", Label: "Delta", Span: layout.SpanFullWidth, Content: templ.Raw(`<p>Full width</p>`)},
@@ -540,11 +540,14 @@ func TestLayout_VisualPointerFeedback(t *testing.T) {
 				if reduced {
 					require.NoError(t, page.EmulateMedia(playwright.PageEmulateMediaOptions{ReducedMotion: playwright.ReducedMotionReduce}))
 				}
-				require.NoError(t, page.AddInitScript(playwright.Script{Content: playwright.String(`window.probeCount=0;customElements.define('layout-activation-probe',class extends HTMLElement {connectedCallback(){window.probeCount++}})`)}))
+				require.NoError(t, page.AddInitScript(playwright.Script{Content: playwright.String(`window.probeCount=0;window.builtInConstructors=0;window.builtInConnections=0;customElements.define('layout-activation-probe',class extends HTMLElement {connectedCallback(){window.probeCount++}});customElements.define('layout-built-in-probe',class extends HTMLButtonElement {constructor(){super();window.builtInConstructors++}connectedCallback(){window.builtInConnections++}},{extends:'button'})`)}))
 				_, err := page.Goto(server.URL)
 				require.NoError(t, err)
 				layoutReady(t, page)
-				layoutEval(t, page, `mode=>{document.getElementById('inbox').dataset.layoutMode=mode;window.moves=0;document.addEventListener('layout:move',()=>moves++);window.retainedItem=document.querySelector('#alpha > [data-layout-item-id="a"]')}`, mode)
+				if reduced {
+					layoutEval(t, page, `()=>document.documentElement.classList.add("dark")`)
+				}
+				layoutEval(t, page, `mode=>{document.documentElement.dataset.theme=mode==='grid'?'minimal':'goshtoso';document.getElementById('inbox').dataset.layoutMode=mode;document.querySelector('[is=layout-built-in-probe]').removeAttribute('is');window.moves=0;document.addEventListener('layout:move',()=>moves++);window.retainedItem=document.querySelector('#alpha > [data-layout-item-id="a"]')}`, mode)
 				itemBox, err := page.Locator(`#alpha > [data-layout-item-id="a"]`).BoundingBox()
 				require.NoError(t, err)
 				source, err := page.Locator("#alpha p").First().BoundingBox()
@@ -562,8 +565,9 @@ func TestLayout_VisualPointerFeedback(t *testing.T) {
 				require.NoError(t, err)
 				require.InDelta(t, tx-(x-itemBox.X), box.X, 1)
 				require.InDelta(t, ty-(y-itemBox.Y), box.Y, 1)
-				require.Equal(t, true, layoutEval(t, page, `()=>{const g=document.querySelector('[data-layout-ghost]');return g.hasAttribute('inert')&&g.getAttribute('aria-hidden')==='true'&&!g.querySelector('[id],[data-goshtoso-layout],[x-data],[hx-get]')&&new Set(Array.from(document.querySelectorAll('[id]'),n=>n.id)).size===document.querySelectorAll('[id]').length}`))
+				require.Equal(t, true, layoutEval(t, page, `()=>{const g=document.querySelector('[data-layout-ghost]');return g.hasAttribute('inert')&&g.getAttribute('aria-hidden')==='true'&&!g.querySelector('[id],[is],[data-goshtoso-layout],[x-data],[hx-get]')&&new Set(Array.from(document.querySelectorAll('[id]'),n=>n.id)).size===document.querySelectorAll('[id]').length}`))
 				require.Equal(t, 1, layoutEval(t, page, `()=>probeCount`))
+				require.Equal(t, []interface{}{1, 1}, layoutEval(t, page, `()=>[builtInConstructors,builtInConnections]`))
 				require.Equal(t, "inbox", layoutEval(t, page, `()=>document.querySelector("[data-layout-placeholder]").parentElement.id`))
 				require.Equal(t, 0, layoutEval(t, page, `()=>moves`))
 				require.Equal(t, "a,b,c,d", layoutEval(t, page, layoutOrder, "alpha"))

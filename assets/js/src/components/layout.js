@@ -168,9 +168,12 @@
       replacement.style.width = box.width+"px"; replacement.style.height = box.height+"px";
       return replacement;
     }
-    var copy = node.cloneNode(false);
-    Array.from(copy.attributes).forEach(function (attr) {
-      if (/^(id$|name$|for$|form$|autofocus$|on|x-|hx-|data-hx-|@|:)/i.test(attr.name) || attr.name.startsWith("data-") && !staticData.includes(attr.name)) copy.removeAttribute(attr.name);
+    // Creating an ordinary element avoids customized built-in lifecycle callbacks,
+    // even when the consumer removed its original `is` attribute after upgrade.
+    var copy = document.createElementNS(node.namespaceURI,node.localName);
+    Array.from(node.attributes).forEach(function (attr) {
+      if (/^(id$|is$|name$|for$|form$|autofocus$|on|x-|hx-|data-hx-|@|:)/i.test(attr.name) || attr.name.startsWith("data-") && !staticData.includes(attr.name)) return;
+      copy.setAttributeNS(attr.namespaceURI,attr.name,attr.value);
     });
     Array.from(node.childNodes).forEach(function (child) { var cloned = staticGhost(child); if (cloned) copy.append(cloned); });
     if (node.localName === "canvas") { try { copy.getContext("2d").drawImage(node,0,0); } catch (_) { /* A lost canvas has no snapshot. */ } }
@@ -307,7 +310,7 @@
     if (root !== pickup.source || directItem(hit,root)) return null;
     var source = pickup.bounds.get(root);
     if (!source || containsPoint(originalBox(root,source),event)) return null;
-    // A source gap can grow past its original bounds and cover the next container.
+    // A source gap can extend past its original bounds and cover the next container.
     var target = null;
     pickup.bounds.forEach(function (entry,candidate) {
       if (candidate !== root && available(candidate) && compatible(root,candidate) && containsPoint(originalBox(candidate,entry),event) && (!target || target.contains(candidate))) target = candidate;
