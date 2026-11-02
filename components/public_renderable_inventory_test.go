@@ -200,6 +200,7 @@ func TestPublicFunctionSurfaceMatchesContract(t *testing.T) {
 	}
 
 	allowedMethods := map[string]struct{}{
+		"layout.Instance.WithContentDrag":      {},
 		"layout.Instance.WithExpressions":      {},
 		"layout.ValidationError.Error":         {},
 		"schematree.Instance.WithExpressions":  {},
