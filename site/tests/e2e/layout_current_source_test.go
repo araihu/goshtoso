@@ -22,7 +22,7 @@ func layoutFixture(t *testing.T, contentDrag ...bool) *httptest.Server {
 	t.Helper()
 	source := func(changed bool) layout.Instance {
 		c := layout.Config{ID: "alpha", Label: "Alpha", Mode: layout.ModeMasonry, Columns: 3, Reorder: &layout.ReorderConfig{Group: "widgets"}, Items: []layout.Item{
-			{ID: "a", Label: `A <unsafe>`, RootClass: "p-3 border m-2", Content: templ.Raw(`<p>Plain content</p><button is="layout-built-in-probe">Custom button</button><span id="inside-markers" data-layout-content data-layout-drop-target>Consumer content</span><label>Draft<input id="layout-draft" value="initial"></label><a href="#help" id="content-link">Help</a><span id="interactive-checkbox" role="checkbox" style="display:inline-block;width:80px;height:20px">Checkbox</span><span id="focusable-content" tabindex="0" style="display:inline-block;width:80px;height:20px">Focusable</span><audio id="media-audio" controls style="width:100px;height:20px"></audio><video id="media-video" controls style="width:100px;height:20px"></video><layout-activation-probe style="display:inline-block;width:80px;height:20px">Embedded</layout-activation-probe>`)},
+			{ID: "a", Label: `A <unsafe>`, RootClass: "p-3 border m-2", Content: templ.Raw(`<p foo:bar="value" v-bind:class="unused" [unused]="binding">Plain content</p><button is="layout-built-in-probe">Custom button</button><span id="inside-markers" data-layout-content data-layout-drop-target>Consumer content</span><label>Draft<input id="layout-draft" value="initial"></label><a href="#help" id="content-link">Help</a><span id="interactive-checkbox" role="checkbox" style="display:inline-block;width:80px;height:20px">Checkbox</span><span id="focusable-content" tabindex="0" style="display:inline-block;width:80px;height:20px">Focusable</span><audio id="media-audio" controls style="width:100px;height:20px"></audio><video id="media-video" controls style="width:100px;height:20px"></video><layout-activation-probe style="display:inline-block;width:80px;height:20px">Embedded</layout-activation-probe>`)},
 			{ID: "b", Label: "Beta", Content: templ.Raw(`<div style="height:111.5px">Tall content</div>`)},
 			{ID: "c", Label: "Gamma"},
 			{ID: "d", Label: "Delta", Span: layout.SpanFullWidth, Content: templ.Raw(`<p>Full width</p>`)},
@@ -566,6 +566,7 @@ func TestLayout_VisualPointerFeedback(t *testing.T) {
 				require.InDelta(t, tx-(x-itemBox.X), box.X, 1)
 				require.InDelta(t, ty-(y-itemBox.Y), box.Y, 1)
 				require.Equal(t, true, layoutEval(t, page, `()=>{const g=document.querySelector('[data-layout-ghost]');return g.hasAttribute('inert')&&g.getAttribute('aria-hidden')==='true'&&!g.querySelector('[id],[is],[data-goshtoso-layout],[x-data],[hx-get]')&&new Set(Array.from(document.querySelectorAll('[id]'),n=>n.id)).size===document.querySelectorAll('[id]').length}`))
+				require.Equal(t, "value", layoutEval(t, page, `()=>document.querySelector("[data-layout-ghost] p").getAttribute("foo:bar")`))
 				require.Equal(t, 1, layoutEval(t, page, `()=>probeCount`))
 				require.Equal(t, []interface{}{1, 1}, layoutEval(t, page, `()=>[builtInConstructors,builtInConnections]`))
 				require.Equal(t, "inbox", layoutEval(t, page, `()=>document.querySelector("[data-layout-placeholder]").parentElement.id`))

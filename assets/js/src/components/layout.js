@@ -173,7 +173,9 @@
     var copy = document.createElementNS(node.namespaceURI,node.localName);
     Array.from(node.attributes).forEach(function (attr) {
       if (/^(id$|is$|name$|for$|form$|autofocus$|on|x-|hx-|data-hx-|@|:)/i.test(attr.name) || attr.name.startsWith("data-") && !staticData.includes(attr.name)) return;
-      copy.setAttributeNS(attr.namespaceURI,attr.name,attr.value);
+      // HTML parsing accepts some names that DOM attribute setters reject.
+      try { if (attr.namespaceURI) copy.setAttributeNS(attr.namespaceURI,attr.name,attr.value); else copy.setAttribute(attr.name,attr.value); }
+      catch (_) { /* Unsupported attributes are unnecessary in a passive snapshot. */ }
     });
     Array.from(node.childNodes).forEach(function (child) { var cloned = staticGhost(child); if (cloned) copy.append(cloned); });
     if (node.localName === "canvas") { try { copy.getContext("2d").drawImage(node,0,0); } catch (_) { /* A lost canvas has no snapshot. */ } }
