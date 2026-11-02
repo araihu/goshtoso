@@ -7821,9 +7821,6 @@
 .goshtoso-layout > .goshtoso-layout-item > [data-layout-handle-row]:has(+ [data-layout-content]:not(:empty)) {
   margin-bottom: 4px;
 }
-.goshtoso-layout[data-layout-content-drag="true"] > .goshtoso-layout-item > [data-layout-content] {
-  cursor: grab;
-}
 .goshtoso-layout-handle {
   min-height: 44px;
   touch-action: none;

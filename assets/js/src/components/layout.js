@@ -141,7 +141,7 @@
   }
   function detailFor(source,item,target,anchor) { return {itemId:item.dataset.layoutItemId,fromContainerId:source.dataset.layoutId,toContainerId:target.dataset.layoutId,beforeItemId:anchor ? anchor.dataset.layoutItemId : null}; }
   function keyboard(root,event) {
-    if (event.key === "Escape" && pickup) { event.preventDefault(); cancel(); return; }
+    if (event.key === "Escape" && pickup) { if (pickup.active) event.preventDefault(); cancel(); return; }
     var button = event.target.closest("[data-layout-handle]");
     if (!button || button.closest(selector) !== root || !event.altKey || handle(button.closest(itemSelector)) !== button || !available(root) || button.matches(":disabled")) return;
     var item = button.closest(itemSelector), members = items(root), index = members.indexOf(item), anchor, target = root;
@@ -157,14 +157,18 @@
     } else return;
     event.preventDefault(); move(root,detailFor(root,item,target,anchor));
   }
+  var interactiveContent = 'a,area,button,input,select,textarea,summary,label,audio[controls],video[controls],iframe,object,embed,img[usemap],[tabindex],[draggable="true"],[contenteditable]:not([contenteditable="false"])' +
+    ["button","checkbox","combobox","grid","gridcell","link","listbox","menu","menubar","menuitem","menuitemcheckbox","menuitemradio","option","radio","radiogroup","scrollbar","searchbox","slider","spinbutton","switch","tab","tablist","textbox","tree","treegrid","treeitem"].map(function (role) { return ',[role~="'+role+'"]'; }).join("");
   function pointerItem(root,event) {
     if (event.target.closest(selector) !== root) return null;
     var item = event.target.closest(itemSelector);
     if (!item || item.parentElement !== root) return null;
     var button = handle(item);
     if (event.target.closest("[data-layout-handle]") === button) return {item:item,button:button,active:true};
-    if (root.dataset.layoutContentDrag !== "true" || event.pointerType === "touch" || !item.querySelector(":scope > [data-layout-content]")?.contains(event.target)) return null;
-    if (event.target.closest('a,button,input,select,textarea,summary,label,[role="button"],[role="link"],[contenteditable]:not([contenteditable="false"])')) return null;
+    var content = item.querySelector(":scope > [data-layout-content]");
+    if (root.dataset.layoutContentDrag !== "true" || event.pointerType === "touch" || !content?.contains(event.target)) return null;
+    var control = event.target.closest(interactiveContent);
+    if (control && content.contains(control)) return null;
     return {item:item,button:button,active:false};
   }
   function pointerDown(root,event) {
@@ -326,7 +330,7 @@
     Object.keys(owned).forEach(function (key) { next.style.setProperty(key,owned[key]); });
   });
   document.addEventListener("pointermove",pointerMove); document.addEventListener("pointerup",pointerUp);
-  document.addEventListener("pointercancel",cancel); document.addEventListener("keydown",function (event) { if (event.key === "Escape" && pickup) { event.preventDefault(); cancel(); } });
+  document.addEventListener("pointercancel",cancel); document.addEventListener("keydown",function (event) { if (event.key === "Escape" && pickup) { if (pickup.active) event.preventDefault(); cancel(); } });
   window.addEventListener("resize",invalidate);
   if (document.fonts) document.fonts.addEventListener("loadingdone",invalidate);
   if (document.readyState !== "loading") scan(document);

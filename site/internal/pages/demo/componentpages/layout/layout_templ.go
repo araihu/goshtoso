@@ -40,14 +40,14 @@ func layoutDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.ComponentDemo(demo.ComponentDemoProps{Title: "Layout", Description: "Arrange arbitrary content in Stack, Grid or Masonry. Drag non-interactive content or use named handles to reorder or transfer items. Links and inputs remain usable. Touch uses the handles. Changes affect this preview only."}, mixedPreview(), `@layout.Container(layout.Config{
+		templ_7745c5c3_Err = demo.ComponentDemo(demo.ComponentDemoProps{Title: "Layout", Description: "Arrange arbitrary content in Stack, Grid or Masonry. Drag non-interactive content or use named handles to reorder or transfer items. Text dragging moves items in this opt-in demo. Links and inputs remain usable. Touch uses the handles. Changes affect this preview only."}, mixedPreview(), `@layout.Container(layout.Config{
     ID: "operations", Label: "Operations", Mode: layout.ModeMasonry, Columns: 2,
-    Reorder: &layout.ReorderConfig{Group: "widgets", DragFromContent: true},
+    Reorder: &layout.ReorderConfig{Group: "widgets"},
     Items: []layout.Item{
         {ID: "service", Label: "Service", Content: serviceCard()},
         {ID: "notes", Label: "Notes", Content: notes()},
     },
-})`).Render(ctx, templ_7745c5c3_Buffer)
+}).WithContentDrag(true)`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -123,13 +123,13 @@ func mixedPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-mixed", Label: "Operations", Mode: layout.ModeMasonry, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-widgets", DragFromContent: true}, Items: []layout.Item{
+		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-mixed", Label: "Operations", Mode: layout.ModeMasonry, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-widgets"}, Items: []layout.Item{
 			{ID: "service", Label: "Service", Content: card.Card(card.Config{Title: "Media service", Description: "Healthy. Content keeps its own card presentation."})},
 			{ID: "notes", Label: "Notes", Content: notes("layout-note")},
 			{ID: "metrics", Label: "Metrics", Content: panel.Panel(panel.Config{Body: metrics()})},
 			{ID: "chart", Label: "Trend", Content: line.Line(line.Config{Label: "Storage trend", Labels: []string{"Mon", "Tue", "Wed"}, Series: []line.Series{{Name: "Used", Values: []float64{40, 42, 45}}}, Width: 400, Height: 240})},
 			{ID: "short", Label: "Short note", Content: shortNote()},
-		}}).Render(ctx, templ_7745c5c3_Buffer)
+		}}).WithContentDrag(true).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -137,7 +137,7 @@ func mixedPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-inbox", Label: "Inbox", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-widgets", DragFromContent: true}, RootClass: "min-h-24 border border-dashed border-outline p-4 dark:border-outline-dark"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-inbox", Label: "Inbox", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-widgets"}, RootClass: "min-h-24 border border-dashed border-outline p-4 dark:border-outline-dark"}).WithContentDrag(true).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

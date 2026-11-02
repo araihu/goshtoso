@@ -116,7 +116,6 @@ type Item struct {
 }
 type ReorderConfig struct {
     Group string
-    DragFromContent bool
     Disabled bool
 }
 type ValidationError struct {
@@ -127,6 +126,7 @@ func (ValidationError) Error() string
 // Instance has unexported immutable configuration/expression fields.
 type Instance struct { /* unexported fields */ }
 func Container(Config) Instance
+func (Instance) WithContentDrag(bool) Instance
 func (Instance) Kind() components.Kind
 func (Instance) Render(context.Context, io.Writer) error
 func (Instance) WithExpressions(expressions.Layout) Instance
@@ -286,9 +286,11 @@ listeners; reading and geometry still work. Movement Group is an explicit compat
 scope. Distinct outer group and inner widget scopes prevent mixing levels.
 
 Pointer pickup starts from the explicit handle by default; links, text selection,
-fields and controls inside content remain usable. With `DragFromContent`, mouse or
+fields and controls inside content remain usable. With `WithContentDrag(true)`, mouse or
 pen movement of at least 6px also picks up non-interactive content. A click or smaller
-movement has no move event or cancellation announcement. Links, controls and editable
+movement has no move event or cancellation announcement. This opt-in replaces text
+selection with dragging in non-interactive content; use handle-only mode when text
+selection must remain available. Links, controls and editable
 regions are excluded. Consumers that render an inactive editing preview may mark its
 content `inert`; the surrounding item remains draggable and the named handle remains
 available to keyboard users. Touch retains native content scrolling and uses the
@@ -466,7 +468,8 @@ animation is not claimed to have a quiescent settlement deadline.
    never sorts by labels or silently rewrites that canonical order.
 5. Pointer and keyboard movement emit equivalent before/accepted event detail once.
 6. Cancellation, invalid anchors, no-op drops and incompatible scopes produce no move.
-7. Existing links/forms/text selection remain operable without initiating a drag.
+7. Existing links/forms remain operable without initiating a drag. Text selection
+   remains available in default handle-only mode; content-drag opt-in replaces it.
 8. Body content updates, font changes, visibility and resize preserve usable geometry.
 9. No-script/no-observer Masonry uses readable Grid; movement instructions do not
    promise unavailable dragging. Consumers retain explicit server/form alternatives.

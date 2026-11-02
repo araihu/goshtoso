@@ -17,6 +17,7 @@ import (
 type Instance struct {
 	cfg                 Config
 	expressionOverrides expressions.Layout
+	contentDrag         bool
 }
 
 // Container creates a natural-height collection without card chrome.
@@ -42,6 +43,14 @@ func (i Instance) WithExpressions(e expressions.Layout) Instance {
 	return i
 }
 
+// WithContentDrag returns a copy that permits mouse or pen pickup from non-interactive content.
+// When enabled, content text dragging moves the item instead of selecting text.
+// Links, controls and editable regions keep their actions. Touch uses the handle.
+func (i Instance) WithContentDrag(enabled bool) Instance {
+	i.contentDrag = enabled
+	return i
+}
+
 // Render validates the entire configuration before writing any markup.
 func (i Instance) Render(ctx context.Context, w io.Writer) error {
 	if err := i.cfg.validate(); err != nil {
@@ -60,7 +69,7 @@ func (i Instance) Render(ctx context.Context, w io.Writer) error {
 	if c.MinItemWidthRem == 0 {
 		c.MinItemWidthRem = 12
 	}
-	return containerTemplate(c, e, announcement).Render(ctx, w)
+	return containerTemplate(c, e, announcement, c.enabled() && i.contentDrag).Render(ctx, w)
 }
 
 var _ components.Component = Instance{}

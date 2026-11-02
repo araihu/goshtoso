@@ -143,20 +143,21 @@ func TestAttributeNamesAndIDAuthority(t *testing.T) {
 }
 
 func TestContentDragIsOptIn(t *testing.T) {
+	base := layout.Container(layout.Config{ID: "content", Label: "Content", Reorder: &layout.ReorderConfig{}})
 	for _, tc := range []struct {
-		name    string
-		reorder *layout.ReorderConfig
-		want    string
+		name     string
+		instance layout.Instance
+		want     string
 	}{
-		{"no movement", nil, "false"},
-		{"handle only", &layout.ReorderConfig{}, "false"},
-		{"content", &layout.ReorderConfig{DragFromContent: true}, "true"},
-		{"disabled", &layout.ReorderConfig{DragFromContent: true, Disabled: true}, "false"},
+		{"original", base, "false"},
+		{"content", base.WithContentDrag(true), "true"},
+		{"reset", base.WithContentDrag(true).WithContentDrag(false), "false"},
+		{"no movement", layout.Container(layout.Config{ID: "content", Label: "Content"}).WithContentDrag(true), "false"},
+		{"disabled", layout.Container(layout.Config{ID: "content", Label: "Content", Reorder: &layout.ReorderConfig{Disabled: true}}).WithContentDrag(true), "false"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			var out bytes.Buffer
-			err := layout.Container(layout.Config{ID: "content", Label: "Content", Reorder: tc.reorder}).Render(t.Context(), &out)
-			if err != nil {
+			if err := tc.instance.Render(t.Context(), &out); err != nil {
 				t.Fatal(err)
 			}
 			if !strings.Contains(out.String(), `data-layout-content-drag="`+tc.want+`"`) {

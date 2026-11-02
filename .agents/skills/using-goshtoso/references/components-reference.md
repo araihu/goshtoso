@@ -1095,7 +1095,6 @@ import "github.com/araihu/goshtoso/components/layout"  // package layout
 | Field | Type | Description |
 |-------|------|-------------|
 | `Group` | `string` | Group permits transfers among containers with the same nonempty value. |
-| `DragFromContent` | `bool` | DragFromContent also allows mouse or pen pickup from non-interactive item content. Links, form controls and editable content keep their actions. Touch uses the handle. |
 | `Disabled` | `bool` | Disabled omits handles and movement listeners while preserving geometry. |
 
 **ValidationError**

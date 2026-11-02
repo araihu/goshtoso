@@ -21,8 +21,8 @@ import (
 func layoutFixture(t *testing.T, contentDrag ...bool) *httptest.Server {
 	t.Helper()
 	source := func(changed bool) layout.Instance {
-		c := layout.Config{ID: "alpha", Label: "Alpha", Mode: layout.ModeMasonry, Columns: 3, Reorder: &layout.ReorderConfig{Group: "widgets", DragFromContent: len(contentDrag) > 0 && contentDrag[0]}, Items: []layout.Item{
-			{ID: "a", Label: `A <unsafe>`, RootClass: "p-3 border m-2", Content: templ.Raw(`<p>Plain content</p><span id="inside-markers" data-layout-content data-layout-drop-target>Consumer content</span><label>Draft<input id="layout-draft" value="initial"></label><a href="#help" id="content-link">Help</a>`)},
+		c := layout.Config{ID: "alpha", Label: "Alpha", Mode: layout.ModeMasonry, Columns: 3, Reorder: &layout.ReorderConfig{Group: "widgets"}, Items: []layout.Item{
+			{ID: "a", Label: `A <unsafe>`, RootClass: "p-3 border m-2", Content: templ.Raw(`<p>Plain content</p><span id="inside-markers" data-layout-content data-layout-drop-target>Consumer content</span><label>Draft<input id="layout-draft" value="initial"></label><a href="#help" id="content-link">Help</a><span id="interactive-checkbox" role="checkbox" style="display:inline-block;width:80px;height:20px">Checkbox</span><span id="focusable-content" tabindex="0" style="display:inline-block;width:80px;height:20px">Focusable</span><audio id="media-audio" controls style="width:100px;height:20px"></audio><video id="media-video" controls style="width:100px;height:20px"></video>`)},
 			{ID: "b", Label: "Beta", Content: templ.Raw(`<div style="height:111.5px">Tall content</div>`)},
 			{ID: "c", Label: "Gamma"},
 			{ID: "d", Label: "Delta", Span: layout.SpanFullWidth, Content: templ.Raw(`<p>Full width</p>`)},
@@ -33,10 +33,10 @@ func layoutFixture(t *testing.T, contentDrag ...bool) *httptest.Server {
 			c.RootClass = "border"
 			c.RootAttrs = templ.Attributes{"title": "Updated"}
 		}
-		return layout.Container(c).WithExpressions(expressions.Layout{MoveAnnouncement: func(item, container, position string) string { return position + " in " + container + " for " + item }})
+		return layout.Container(c).WithContentDrag(len(contentDrag) > 0 && contentDrag[0]).WithExpressions(expressions.Layout{MoveAnnouncement: func(item, container, position string) string { return position + " in " + container + " for " + item }})
 	}
 	empty := func(id string) layout.Instance {
-		return layout.Container(layout.Config{ID: id, Label: id, Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "widgets", DragFromContent: len(contentDrag) > 0 && contentDrag[0]}, RootClass: "min-h-24"})
+		return layout.Container(layout.Config{ID: id, Label: id, Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "widgets"}, RootClass: "min-h-24"}).WithContentDrag(len(contentDrag) > 0 && contentDrag[0])
 	}
 	mux := http.NewServeMux()
 	mux.Handle("GET /assets/", assets.Handler())
@@ -450,4 +450,78 @@ func TestLayout_ContentClicksAndCancellation(t *testing.T) {
 	require.NoError(t, page.Mouse().Up())
 	require.Equal(t, 0, layoutEval(t, page, `()=>moves`))
 	require.Equal(t, "a,b,c,d", layoutEval(t, page, layoutOrder, "alpha"))
+}
+
+func TestLayout_ContentSelectionAndControls(t *testing.T) {
+	for _, enabled := range []bool{false, true} {
+		t.Run(fmt.Sprintf("selection/%t", enabled), func(t *testing.T) {
+			server := layoutFixture(t, enabled)
+			page := newPage(t, sharedBrowser)
+			_, err := page.Goto(server.URL)
+			require.NoError(t, err)
+			layoutReady(t, page)
+			box, err := page.Locator("#alpha p").First().BoundingBox()
+			require.NoError(t, err)
+			require.NoError(t, page.Mouse().Move(box.X+2, box.Y+box.Height/2))
+			require.NoError(t, page.Mouse().Down())
+			require.NoError(t, page.Mouse().Move(box.X+90, box.Y+box.Height/2, playwright.MouseMoveOptions{Steps: playwright.Int(5)}))
+			require.NoError(t, page.Mouse().Up())
+			require.Equal(t, !enabled, layoutEval(t, page, `()=>getSelection().toString().length>0`))
+		})
+	}
+	server := layoutFixture(t, true)
+	for _, id := range []string{"interactive-checkbox", "focusable-content", "media-audio", "media-video"} {
+		t.Run(id, func(t *testing.T) {
+			page := newPage(t, sharedBrowser)
+			_, err := page.Goto(server.URL)
+			require.NoError(t, err)
+			layoutReady(t, page)
+			box, err := page.Locator("#" + id).BoundingBox()
+			require.NoError(t, err)
+			require.NoError(t, page.Mouse().Move(box.X+4, box.Y+4))
+			require.NoError(t, page.Mouse().Down())
+			layoutDrop(t, page, "#inbox", true)
+			require.Equal(t, "a,b,c,d", layoutEval(t, page, layoutOrder, "alpha"))
+			require.Equal(t, "", layoutEval(t, page, layoutOrder, "inbox"))
+		})
+	}
+}
+func TestLayout_ContentPendingEscape(t *testing.T) {
+	server := layoutFixture(t, true)
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(server.URL)
+	require.NoError(t, err)
+	layoutReady(t, page)
+	layoutEval(t, page, `()=>document.addEventListener('keydown',e=>{if(e.key==='Escape')window.escapePrevented=e.defaultPrevented})`)
+	box, err := page.Locator("#alpha p").First().BoundingBox()
+	require.NoError(t, err)
+	require.NoError(t, page.Mouse().Move(box.X+5, box.Y+5))
+	require.NoError(t, page.Mouse().Down())
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, page.Mouse().Up())
+	require.Equal(t, false, layoutEval(t, page, `()=>escapePrevented`))
+	require.Equal(t, "", layoutEval(t, page, `()=>document.querySelector('#alpha [data-layout-status]').textContent`))
+}
+func TestLayout_NestedContentOwnership(t *testing.T) {
+	server := layoutFixture(t)
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(server.URL)
+	require.NoError(t, err)
+	layoutReady(t, page)
+	layoutEval(t, page, `()=>['inner','outer'].forEach(id=>document.getElementById(id).dataset.layoutContentDrag='true')`)
+	require.NoError(t, page.Locator("#outer").ScrollIntoViewIfNeeded())
+	box, err := page.Locator("#inner p").BoundingBox()
+	require.NoError(t, err)
+	require.NoError(t, page.Mouse().Move(box.X+5, box.Y+5))
+	require.NoError(t, page.Mouse().Down())
+	layoutDrop(t, page, `#inner > [data-layout-item-id="inner-b"]`, false)
+	require.Equal(t, "inner-b,inner-a", layoutEval(t, page, layoutOrder, "inner"))
+	require.Equal(t, "outer-a,outer-b", layoutEval(t, page, layoutOrder, "outer"))
+	box, err = page.Locator(`#outer > [data-layout-item-id="outer-b"] p`).BoundingBox()
+	require.NoError(t, err)
+	require.NoError(t, page.Mouse().Move(box.X+5, box.Y+5))
+	require.NoError(t, page.Mouse().Down())
+	layoutDrop(t, page, "#inner", true)
+	require.Equal(t, "outer-b,outer-a", layoutEval(t, page, layoutOrder, "outer"))
+	require.Equal(t, "inner-b,inner-a", layoutEval(t, page, layoutOrder, "inner"))
 }
