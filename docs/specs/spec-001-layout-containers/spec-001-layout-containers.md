@@ -294,7 +294,16 @@ selection must remain available. Links, controls and editable
 regions are excluded. Consumers that render an inactive editing preview may mark its
 content `inert`; the surrounding item remains draggable and the named handle remains
 available to keyboard users. Touch retains native content scrolling and uses the
-handle or consumer's named move controls; pointer interaction must not require hover. Show a visible insertion target.
+handle or consumer's named move controls; pointer interaction must not require hover.
+
+During an active pointer gesture, a passive ghost follows the pointer at the pickup
+offset. A placeholder occupies the prospective insertion slot and displaces the
+surrounding items in Stack, Grid and Masonry. Hover does not reorder real items or
+emit movement events. Short displacement animations respect reduced motion. The
+original item retains its identity and state until release. The ghost has no IDs,
+runtime bindings or active custom elements, and stays outside keyboard and assistive
+technology navigation. Cancellation, veto, blur, resize and source removal remove
+all temporary visuals and restore the original presentation.
 Escape cancels and returns focus. Keyboard handle movement uses Alt+Up/Down in logical
 DOM order; Start/End actions can be supplied through consumer Button/Dropdown controls.
 Instructions and outcomes are announced through an accessible live region.
@@ -484,7 +493,12 @@ animation is not claimed to have a quiescent settlement deadline.
     moves with zero accepted events; destinations inside the first legend remain
     eligible unless another disabled ancestor applies. Ancestor changes, reparenting
     and synchronous before-move callbacks cannot commit using stale availability.
-14. Goshtoso/Minimal in light/dark pass the meaningful interaction states, visible focus,
+14. Pointer movement keeps a ghost under the pickup point and opens a prospective
+    insertion gap, including populated destinations and full-width source items.
+    Hover emits no move event. Escape, blur, resize, veto and source removal leave
+    no ghost, placeholder or temporary source styles. Reduced motion skips reflow
+    animations. Ghost creation does not mount consumer components or duplicate IDs.
+15. Goshtoso/Minimal in light/dark pass the meaningful interaction states, visible focus,
     contrast, reduced-motion and console/accessibility checks.
 
 Implementation must include a public leaf demo with mixed/nested examples, browser
