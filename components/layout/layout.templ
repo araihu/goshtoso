@@ -16,6 +16,7 @@ templ containerTemplate(c Config, e expressions.Layout, announcement string) {
   data-layout-min-width={ strconv.FormatFloat(c.MinItemWidthRem,'f',-1,64) }
   data-layout-gap={ strconv.Itoa(c.gapPixels()) } data-layout-group={ c.group() }
   data-layout-reorder={ strconv.FormatBool(c.enabled()) }
+  data-layout-content-drag={ strconv.FormatBool(c.dragFromContent()) }
   data-layout-announcement={ announcement }
   x-layout x-init
   { normalizedAttrs(c.RootAttrs)... }

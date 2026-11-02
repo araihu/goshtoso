@@ -54,9 +54,9 @@
     if (!pickup) return;
     var old = pickup; pickup = null;
     clearTarget();
-    announce(old.source, old.item.dataset.layoutCancel || "");
+    if (old.active) announce(old.source, old.item.dataset.layoutCancel || "");
     if (old.button && old.button.hasPointerCapture(old.pointer)) old.button.releasePointerCapture(old.pointer);
-    if (restoreFocus !== false || document.activeElement === old.button) focusItem(old.item, old.source);
+    if (old.active && (restoreFocus !== false || document.activeElement === old.button)) focusItem(old.item, old.source);
   }
   function clearTarget() {
     owners.forEach(function (_, root) { local(root, "[data-layout-drop-target]").forEach(function (node) { node.removeAttribute("data-layout-drop-target"); }); root.removeAttribute("data-layout-drop-target"); });
@@ -157,17 +157,34 @@
     } else return;
     event.preventDefault(); move(root,detailFor(root,item,target,anchor));
   }
+  function pointerItem(root,event) {
+    if (event.target.closest(selector) !== root) return null;
+    var item = event.target.closest(itemSelector);
+    if (!item || item.parentElement !== root) return null;
+    var button = handle(item);
+    if (event.target.closest("[data-layout-handle]") === button) return {item:item,button:button,active:true};
+    if (root.dataset.layoutContentDrag !== "true" || event.pointerType === "touch" || !item.querySelector(":scope > [data-layout-content]")?.contains(event.target)) return null;
+    if (event.target.closest('a,button,input,select,textarea,summary,label,[role="button"],[role="link"],[contenteditable]:not([contenteditable="false"])')) return null;
+    return {item:item,button:button,active:false};
+  }
   function pointerDown(root,event) {
-    var button = event.target.closest("[data-layout-handle]");
-    if (event.button !== 0 || !button || button.closest(selector) !== root || handle(button.closest(itemSelector)) !== button) return;
+    if (event.button !== 0) return;
+    var candidate = pointerItem(root,event);
+    if (!candidate || !candidate.button) return;
     validateRegistry();
-    if (!available(root) || button.matches(":disabled")) return;
-    cancel(); button.focus({preventScroll:true});
-    pickup = {source:root,item:button.closest(itemSelector),button:button,row:button.parentElement,pointer:event.pointerId,config:pickupConfig(root),members:items(root).map(function (item) { return {node:item,id:item.dataset.layoutItemId}; })};
-    button.setPointerCapture(event.pointerId); event.preventDefault();
+    if (!available(root) || candidate.button.matches(":disabled")) return;
+    cancel();
+    pickup = {source:root,item:candidate.item,button:candidate.button,row:candidate.button.parentElement,pointer:event.pointerId,active:candidate.active,x:event.clientX,y:event.clientY,config:pickupConfig(root),members:items(root).map(function (item) { return {node:item,id:item.dataset.layoutItemId}; })};
+    if (pickup.active) activatePickup();
+    event.preventDefault();
+  }
+  function activatePickup() {
+    pickup.active = true;
+    pickup.button.focus({preventScroll:true});
+    pickup.button.setPointerCapture(pickup.pointer);
   }
   function pickupConfig(root) {
-    return JSON.stringify([root.id, root.dataset.layoutId, root.dataset.layoutMode, root.dataset.layoutColumns, root.dataset.layoutMinWidth, root.dataset.layoutGap, root.dataset.layoutGroup, root.dataset.layoutReorder]);
+    return JSON.stringify([root.id, root.dataset.layoutId, root.dataset.layoutMode, root.dataset.layoutColumns, root.dataset.layoutMinWidth, root.dataset.layoutGap, root.dataset.layoutGroup, root.dataset.layoutReorder, root.dataset.layoutContentDrag]);
   }
   function validPickup() {
     if (!pickup || !pickup.source.isConnected || !pickup.button.isConnected || handle(pickup.item) !== pickup.button || pickup.button.parentElement !== pickup.row || pickup.row.parentElement !== pickup.item || pickupConfig(pickup.source) !== pickup.config) return false;
@@ -191,12 +208,17 @@
   function pointerMove(event) {
     if (!pickup || pickup.pointer !== event.pointerId) return;
     if (!validPickup() || !available(pickup.source)) { cancel(false); return; }
+    if (!pickup.active) {
+      if (Math.hypot(event.clientX-pickup.x,event.clientY-pickup.y) < 6) return;
+      activatePickup();
+    }
     var target = pointerTarget(event); clearTarget();
     if (target) (target.anchor || target.root).setAttribute("data-layout-drop-target","");
   }
   function pointerUp(event) {
     if (!pickup || pickup.pointer !== event.pointerId) return;
     if (!validPickup() || !available(pickup.source)) { cancel(false); return; }
+    if (!pickup.active) { pickup = null; return; }
     var old = pickup, target = pointerTarget(event);
     if (!target) { cancel(); return; }
     pickup = null; clearTarget(); move(old.source,detailFor(old.source,old.item,target.root,target.anchor));

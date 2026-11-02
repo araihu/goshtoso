@@ -40,9 +40,9 @@ func layoutDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.ComponentDemo(demo.ComponentDemoProps{Title: "Layout", Description: "Arrange arbitrary content in Stack, Grid or Masonry. Use named handles to reorder or transfer items. Changes affect this preview only."}, mixedPreview(), `@layout.Container(layout.Config{
+		templ_7745c5c3_Err = demo.ComponentDemo(demo.ComponentDemoProps{Title: "Layout", Description: "Arrange arbitrary content in Stack, Grid or Masonry. Drag non-interactive content or use named handles to reorder or transfer items. Links and inputs remain usable. Touch uses the handles. Changes affect this preview only."}, mixedPreview(), `@layout.Container(layout.Config{
     ID: "operations", Label: "Operations", Mode: layout.ModeMasonry, Columns: 2,
-    Reorder: &layout.ReorderConfig{Group: "widgets"},
+    Reorder: &layout.ReorderConfig{Group: "widgets", DragFromContent: true},
     Items: []layout.Item{
         {ID: "service", Label: "Service", Content: serviceCard()},
         {ID: "notes", Label: "Notes", Content: notes()},
@@ -123,7 +123,7 @@ func mixedPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-mixed", Label: "Operations", Mode: layout.ModeMasonry, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-widgets"}, Items: []layout.Item{
+		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-mixed", Label: "Operations", Mode: layout.ModeMasonry, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-widgets", DragFromContent: true}, Items: []layout.Item{
 			{ID: "service", Label: "Service", Content: card.Card(card.Config{Title: "Media service", Description: "Healthy. Content keeps its own card presentation."})},
 			{ID: "notes", Label: "Notes", Content: notes("layout-note")},
 			{ID: "metrics", Label: "Metrics", Content: panel.Panel(panel.Config{Body: metrics()})},
@@ -137,7 +137,7 @@ func mixedPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-inbox", Label: "Inbox", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-widgets"}, RootClass: "min-h-24 border border-dashed border-outline p-4 dark:border-outline-dark"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-inbox", Label: "Inbox", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-widgets", DragFromContent: true}, RootClass: "min-h-24 border border-dashed border-outline p-4 dark:border-outline-dark"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

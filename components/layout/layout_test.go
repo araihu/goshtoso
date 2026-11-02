@@ -141,3 +141,27 @@ func TestAttributeNamesAndIDAuthority(t *testing.T) {
 		t.Fatalf("valid item ID: %v %s", err, out.String())
 	}
 }
+
+func TestContentDragIsOptIn(t *testing.T) {
+	for _, tc := range []struct {
+		name    string
+		reorder *layout.ReorderConfig
+		want    string
+	}{
+		{"no movement", nil, "false"},
+		{"handle only", &layout.ReorderConfig{}, "false"},
+		{"content", &layout.ReorderConfig{DragFromContent: true}, "true"},
+		{"disabled", &layout.ReorderConfig{DragFromContent: true, Disabled: true}, "false"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var out bytes.Buffer
+			err := layout.Container(layout.Config{ID: "content", Label: "Content", Reorder: tc.reorder}).Render(t.Context(), &out)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !strings.Contains(out.String(), `data-layout-content-drag="`+tc.want+`"`) {
+				t.Fatal(out.String())
+			}
+		})
+	}
+}

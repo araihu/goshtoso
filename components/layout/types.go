@@ -85,6 +85,9 @@ type Item struct {
 type ReorderConfig struct {
 	// Group permits transfers among containers with the same nonempty value.
 	Group string
+	// DragFromContent also allows mouse or pen pickup from non-interactive item content.
+	// Links, form controls and editable content keep their actions. Touch uses the handle.
+	DragFromContent bool
 	// Disabled omits handles and movement listeners while preserving geometry.
 	Disabled bool
 }
@@ -120,3 +123,5 @@ func (c Config) rootStyle() templ.SafeCSS {
 	}
 	return templ.SafeCSS(fmt.Sprintf("--layout-max:%d;--layout-min:%grem;--layout-gap:%dpx", max, c.MinItemWidthRem, c.gapPixels()))
 }
+
+func (c Config) dragFromContent() bool { return c.enabled() && c.Reorder.DragFromContent }

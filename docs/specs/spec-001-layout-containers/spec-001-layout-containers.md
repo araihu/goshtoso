@@ -116,6 +116,7 @@ type Item struct {
 }
 type ReorderConfig struct {
     Group string
+    DragFromContent bool
     Disabled bool
 }
 type ValidationError struct {
@@ -284,9 +285,14 @@ Reorder is opt-in. Nil or Disabled means no movement handles and no active move
 listeners; reading and geometry still work. Movement Group is an explicit compatibility
 scope. Distinct outer group and inner widget scopes prevent mixing levels.
 
-Pointer pickup starts only from the explicit handle; links, text selection, fields
-and controls inside content remain usable. Touch may use the consumer's named move
-controls; pointer interaction must not require hover. Show a visible insertion target.
+Pointer pickup starts from the explicit handle by default; links, text selection,
+fields and controls inside content remain usable. With `DragFromContent`, mouse or
+pen movement of at least 6px also picks up non-interactive content. A click or smaller
+movement has no move event or cancellation announcement. Links, controls and editable
+regions are excluded. Consumers that render an inactive editing preview may mark its
+content `inert`; the surrounding item remains draggable and the named handle remains
+available to keyboard users. Touch retains native content scrolling and uses the
+handle or consumer's named move controls; pointer interaction must not require hover. Show a visible insertion target.
 Escape cancels and returns focus. Keyboard handle movement uses Alt+Up/Down in logical
 DOM order; Start/End actions can be supplied through consumer Button/Dropdown controls.
 Instructions and outcomes are announced through an accessible live region.

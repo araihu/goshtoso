@@ -18,10 +18,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func layoutFixture(t *testing.T) *httptest.Server {
+func layoutFixture(t *testing.T, contentDrag ...bool) *httptest.Server {
 	t.Helper()
 	source := func(changed bool) layout.Instance {
-		c := layout.Config{ID: "alpha", Label: "Alpha", Mode: layout.ModeMasonry, Columns: 3, Reorder: &layout.ReorderConfig{Group: "widgets"}, Items: []layout.Item{
+		c := layout.Config{ID: "alpha", Label: "Alpha", Mode: layout.ModeMasonry, Columns: 3, Reorder: &layout.ReorderConfig{Group: "widgets", DragFromContent: len(contentDrag) > 0 && contentDrag[0]}, Items: []layout.Item{
 			{ID: "a", Label: `A <unsafe>`, RootClass: "p-3 border m-2", Content: templ.Raw(`<p>Plain content</p><span id="inside-markers" data-layout-content data-layout-drop-target>Consumer content</span><label>Draft<input id="layout-draft" value="initial"></label><a href="#help" id="content-link">Help</a>`)},
 			{ID: "b", Label: "Beta", Content: templ.Raw(`<div style="height:111.5px">Tall content</div>`)},
 			{ID: "c", Label: "Gamma"},
@@ -36,7 +36,7 @@ func layoutFixture(t *testing.T) *httptest.Server {
 		return layout.Container(c).WithExpressions(expressions.Layout{MoveAnnouncement: func(item, container, position string) string { return position + " in " + container + " for " + item }})
 	}
 	empty := func(id string) layout.Instance {
-		return layout.Container(layout.Config{ID: id, Label: id, Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "widgets"}, RootClass: "min-h-24"})
+		return layout.Container(layout.Config{ID: id, Label: id, Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "widgets", DragFromContent: len(contentDrag) > 0 && contentDrag[0]}, RootClass: "min-h-24"})
 	}
 	mux := http.NewServeMux()
 	mux.Handle("GET /assets/", assets.Handler())
@@ -264,7 +264,7 @@ func layoutDrop(t *testing.T, page playwright.Page, target string, nearStart boo
 }
 func TestLayout_PickupIdentityAndFocus(t *testing.T) {
 	server := layoutFixture(t)
-	for _, change := range []string{"identity", "membership", "handle", "handle-row", "disable"} {
+	for _, change := range []string{"identity", "membership", "handle", "handle-row", "disable", "content-mode"} {
 		t.Run(change, func(t *testing.T) {
 			page := newPage(t, sharedBrowser)
 			_, err := page.Goto(server.URL)
@@ -273,6 +273,8 @@ func TestLayout_PickupIdentityAndFocus(t *testing.T) {
 			layoutEval(t, page, `()=>{window.moves=0;window.beforeMoves=0;document.addEventListener('layout:move',()=>moves++);document.addEventListener('layout:before-move',()=>beforeMoves++)}`)
 			layoutPickup(t, page, "alpha", "a")
 			switch change {
+			case "content-mode":
+				layoutEval(t, page, `()=>document.getElementById("alpha").dataset.layoutContentDrag="true"`)
 			case "identity":
 				layoutEval(t, page, `()=>document.querySelector('#alpha > [data-layout-item-id="a"]').dataset.layoutItemId='changed-during-pickup'`)
 			case "membership":
@@ -391,4 +393,61 @@ func layoutElementValue(t *testing.T, locator playwright.Locator, script string)
 	value, err := locator.Evaluate(script, nil)
 	require.NoError(t, err)
 	return value
+}
+
+func TestLayout_ContentPointer(t *testing.T) {
+	for _, enabled := range []bool{false, true} {
+		t.Run(fmt.Sprint(enabled), func(t *testing.T) {
+			server := layoutFixture(t, enabled)
+			page := newPage(t, sharedBrowser)
+			failures := watchPageFailures(page)
+			_, err := page.Goto(server.URL)
+			require.NoError(t, err)
+			layoutReady(t, page)
+			box, err := page.Locator("#alpha p").First().BoundingBox()
+			require.NoError(t, err)
+			require.NoError(t, page.Mouse().Move(box.X+10, box.Y+5))
+			require.NoError(t, page.Mouse().Down())
+			layoutDrop(t, page, "#inbox", true)
+			want := ""
+			if enabled {
+				want = "a"
+			}
+			require.Equal(t, want, layoutEval(t, page, layoutOrder, "inbox"))
+			if enabled {
+				require.NoError(t, page.Keyboard().Press("Alt+PageUp"))
+				require.Equal(t, "b,c,d,a", layoutEval(t, page, layoutOrder, "alpha"))
+			}
+			failures.RequireEmpty(t)
+		})
+	}
+}
+func TestLayout_ContentClicksAndCancellation(t *testing.T) {
+	server := layoutFixture(t, true)
+	page := newPage(t, sharedBrowser)
+	_, err := page.Goto(server.URL)
+	require.NoError(t, err)
+	layoutReady(t, page)
+	layoutEval(t, page, `()=>{window.moves=0;document.addEventListener('layout:move',()=>moves++)}`)
+	box, err := page.Locator("#alpha p").First().BoundingBox()
+	require.NoError(t, err)
+	require.NoError(t, page.Mouse().Move(box.X+10, box.Y+5))
+	require.NoError(t, page.Mouse().Down())
+	require.NoError(t, page.Mouse().Move(box.X+12, box.Y+7))
+	require.NoError(t, page.Mouse().Up())
+	require.Equal(t, 0, layoutEval(t, page, `()=>moves`))
+	require.Equal(t, "", layoutEval(t, page, `()=>document.querySelector('#alpha [data-layout-status]').textContent`))
+	require.NoError(t, page.Locator("#content-link").Click())
+	require.Equal(t, "#help", layoutEval(t, page, `()=>location.hash`))
+	require.NoError(t, page.Locator("#layout-draft").Fill("still editable"))
+	require.Equal(t, "still editable", layoutEval(t, page, `()=>document.getElementById('layout-draft').value`))
+	require.NoError(t, page.Mouse().Move(box.X+10, box.Y+5))
+	require.NoError(t, page.Mouse().Down())
+	target, err := page.Locator("#inbox").BoundingBox()
+	require.NoError(t, err)
+	require.NoError(t, page.Mouse().Move(target.X+10, target.Y+10, playwright.MouseMoveOptions{Steps: playwright.Int(5)}))
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, page.Mouse().Up())
+	require.Equal(t, 0, layoutEval(t, page, `()=>moves`))
+	require.Equal(t, "a,b,c,d", layoutEval(t, page, layoutOrder, "alpha"))
 }
