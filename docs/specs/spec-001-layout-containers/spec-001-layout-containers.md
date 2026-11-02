@@ -289,7 +289,9 @@ Each movement handle displays a six-dot grip with a visually hidden localized
 movement label and a matching tooltip. Its target is at least 44 by 44 CSS pixels.
 Pointer pickup starts from the explicit handle by default; links, text selection,
 fields and controls inside content remain usable. With `WithContentDrag(true)`, mouse or
-pen movement of at least 6px also picks up non-interactive content. A click or smaller
+pen movement of at least 6px also picks up non-interactive content, item padding
+and background inside nested collections. A nested item retains its own pickup
+scope; only unoccupied collection space can pick up the enclosing item. A click or smaller
 movement has no move event or cancellation announcement. This opt-in replaces text
 selection with dragging in non-interactive content; use handle-only mode when text
 selection must remain available. Links, controls and editable

@@ -20,12 +20,13 @@ templ layoutDemoContent() {
         {ID: "notes", Label: "Notes", Content: notes()},
     },
 }).WithContentDrag(true)`)
- @demo.DemoSection(demo.DemoSectionProps{Title:"Nested groups",Description:"An outer group controls its own columns. Inner containers use their own bounds and movement scope."}, nestedPreview(), `@layout.Container(layout.Config{
+ @demo.DemoSection(demo.DemoSectionProps{Title:"Nested groups",Description:"An outer group controls its own columns. Drag a group background or padding to move the group. Inner items keep their own bounds and movement scope."}, nestedPreview(), `@layout.Container(layout.Config{
     ID: "groups", Label: "Groups", Mode: layout.ModeGrid, Columns: 2,
+    Reorder: &layout.ReorderConfig{Group: "groups"},
     Items: []layout.Item{
         {ID: "nested", Label: "Nested group", Content: innerLayout()},
     },
-})`)
+}).WithContentDrag(true)`)
  @demo.DemoSection(demo.DemoSectionProps{Title:"Stack",Description:"Single-column reading order without movement handles."}, stackPreview(), `@layout.Container(layout.Config{ID: "reading", Label: "Reading", Items: items})`)
  @demo.ExpressionOverridesNote("Layout")
  </div>
@@ -56,7 +57,7 @@ templ shortNote() { <p>A short plain note.</p> }
 templ metrics() { <div><h3>Storage usage</h3><table class="w-full"><caption class="sr-only">Storage usage by pool</caption><thead><tr><th>Pool</th><th>Used</th></tr></thead><tbody><tr><td>Fast</td><td>42%</td></tr><tr><td>Archive</td><td>71%</td></tr></tbody></table></div> }
 templ nestedPreview() {
  <div class="w-full">
- @layout.Container(layout.Config{ID:"layout-groups",Label:"Groups",Mode:layout.ModeGrid,Columns:2,Reorder:&layout.ReorderConfig{Group:"demo-groups"},Items:[]layout.Item{{ID:"group-a",Label:"First group",Content:innerLayout()},{ID:"group-b",Label:"Second group",Content:notes("layout-group-note")}}})
+ @layout.Container(layout.Config{ID:"layout-groups",Label:"Groups",Mode:layout.ModeGrid,Columns:2,Reorder:&layout.ReorderConfig{Group:"demo-groups"},Items:[]layout.Item{{ID:"group-a",Label:"First group",Content:innerLayout()},{ID:"group-b",Label:"Second group",Content:notes("layout-group-note")}}}).WithContentDrag(true)
  </div>
 }
 templ innerLayout() {

@@ -267,15 +267,15 @@
   var interactiveContent = 'a,area,button,input,select,textarea,summary,label,audio[controls],video[controls],iframe,object,embed,img[usemap],[tabindex],[draggable="true"],[contenteditable]:not([contenteditable="false"])' +
     ["button","checkbox","combobox","grid","gridcell","link","listbox","menu","menubar","menuitem","menuitemcheckbox","menuitemradio","option","radio","radiogroup","scrollbar","searchbox","slider","spinbutton","switch","tab","tablist","textbox","tree","treegrid","treeitem"].map(function (role) { return ',[role~="'+role+'"]'; }).join("");
   function pointerItem(root,event) {
-    if (event.target.closest(selector) !== root) return null;
     var item = event.target.closest(itemSelector);
     if (!item || item.parentElement !== root) return null;
     var button = handle(item);
     if (event.target.closest("[data-layout-handle]") === button) return {item:item,button:button,active:true};
-    var content = item.querySelector(":scope > [data-layout-content]");
-    if (root.dataset.layoutContentDrag !== "true" || event.pointerType === "touch" || !content?.contains(event.target)) return null;
+    if (root.dataset.layoutContentDrag !== "true" || event.pointerType === "touch") return null;
     var control = event.target.closest(interactiveContent);
-    if (control && content.contains(control)) return null;
+    // Layout's own focus target is structural; consumer controls remain interactive.
+    while (control && owners.has(control) && control.getAttribute("tabindex") === "-1") control = control.parentElement?.closest(interactiveContent);
+    if (control && item.contains(control)) return null;
     return {item:item,button:button,active:false};
   }
   function pointerDown(root,event) {

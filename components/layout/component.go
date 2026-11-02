@@ -45,7 +45,8 @@ func (i Instance) WithExpressions(e expressions.Layout) Instance {
 
 // WithContentDrag returns a copy that permits mouse or pen pickup from non-interactive content.
 // When enabled, content text dragging moves the item instead of selecting text.
-// Links, controls and editable regions keep their actions. Touch uses the handle.
+// Item padding and nested collection background also permit pickup. Nested items
+// keep their own movement scope. Controls keep their actions; touch uses the handle.
 func (i Instance) WithContentDrag(enabled bool) Instance {
 	i.contentDrag = enabled
 	return i

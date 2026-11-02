@@ -630,3 +630,36 @@ func TestLayout_VisualCancellationCleanup(t *testing.T) {
 		})
 	}
 }
+
+func TestLayout_GroupBodyPickup(t *testing.T) {
+	for _, region := range []string{"nested background", "item padding", "handle row"} {
+		t.Run(region, func(t *testing.T) {
+			server := layoutFixture(t)
+			page := newPage(t, sharedBrowser)
+			_, err := page.Goto(server.URL)
+			require.NoError(t, err)
+			layoutReady(t, page)
+			layoutEval(t, page, `()=>{document.getElementById('outer').dataset.layoutContentDrag='true';document.getElementById('inner').style.padding='24px';document.getElementById('inner').style.minHeight='240px';document.querySelector('#outer > [data-layout-item-id="outer-a"]').style.padding='24px'}`)
+			source := page.Locator("#inner")
+			if region == "item padding" {
+				source = page.Locator(`#outer > [data-layout-item-id="outer-a"]`)
+			}
+			if region == "handle row" {
+				source = page.Locator(`#outer > [data-layout-item-id="outer-a"] > [data-layout-handle-row]`)
+			}
+			require.NoError(t, source.ScrollIntoViewIfNeeded())
+			box, err := source.BoundingBox()
+			require.NoError(t, err)
+			x, y := box.X+4, box.Y+4
+			if region == "handle row" {
+				x = box.X + box.Width - 4
+				y = box.Y + box.Height/2
+			}
+			require.NoError(t, page.Mouse().Move(x, y))
+			require.NoError(t, page.Mouse().Down())
+			layoutDrop(t, page, `#outer > [data-layout-item-id="outer-b"]`, false)
+			require.Equal(t, "outer-b,outer-a", layoutEval(t, page, layoutOrder, "outer"))
+			require.Equal(t, "inner-a,inner-b", layoutEval(t, page, layoutOrder, "inner"))
+		})
+	}
+}

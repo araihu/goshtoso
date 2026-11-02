@@ -51,12 +51,13 @@ func layoutDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.DemoSection(demo.DemoSectionProps{Title: "Nested groups", Description: "An outer group controls its own columns. Inner containers use their own bounds and movement scope."}, nestedPreview(), `@layout.Container(layout.Config{
+		templ_7745c5c3_Err = demo.DemoSection(demo.DemoSectionProps{Title: "Nested groups", Description: "An outer group controls its own columns. Drag a group background or padding to move the group. Inner items keep their own bounds and movement scope."}, nestedPreview(), `@layout.Container(layout.Config{
     ID: "groups", Label: "Groups", Mode: layout.ModeGrid, Columns: 2,
+    Reorder: &layout.ReorderConfig{Group: "groups"},
     Items: []layout.Item{
         {ID: "nested", Label: "Nested group", Content: innerLayout()},
     },
-})`).Render(ctx, templ_7745c5c3_Buffer)
+}).WithContentDrag(true)`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -253,7 +254,7 @@ func nestedPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-groups", Label: "Groups", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-groups"}, Items: []layout.Item{{ID: "group-a", Label: "First group", Content: innerLayout()}, {ID: "group-b", Label: "Second group", Content: notes("layout-group-note")}}}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-groups", Label: "Groups", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-groups"}, Items: []layout.Item{{ID: "group-a", Label: "First group", Content: innerLayout()}, {ID: "group-b", Label: "Second group", Content: notes("layout-group-note")}}}).WithContentDrag(true).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
