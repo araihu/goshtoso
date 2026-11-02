@@ -7822,8 +7822,15 @@
   margin-bottom: 4px;
 }
 .goshtoso-layout-handle {
+  min-width: 44px;
   min-height: 44px;
   touch-action: none;
+}
+.goshtoso-layout-handle:not(:disabled) {
+  cursor: grab;
+}
+.goshtoso-layout-handle:not(:disabled):active {
+  cursor: grabbing;
 }
 .goshtoso-layout > .goshtoso-layout-feedback[hidden], .goshtoso-layout > .goshtoso-layout-item > [data-layout-handle-row] > [data-layout-handle][hidden] {
   display: none !important;

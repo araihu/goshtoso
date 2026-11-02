@@ -285,6 +285,8 @@ Reorder is opt-in. Nil or Disabled means no movement handles and no active move
 listeners; reading and geometry still work. Movement Group is an explicit compatibility
 scope. Distinct outer group and inner widget scopes prevent mixing levels.
 
+Each movement handle displays a six-dot grip with a visually hidden localized
+movement label and a matching tooltip. Its target is at least 44 by 44 CSS pixels.
 Pointer pickup starts from the explicit handle by default; links, text selection,
 fields and controls inside content remain usable. With `WithContentDrag(true)`, mouse or
 pen movement of at least 6px also picks up non-interactive content. A click or smaller

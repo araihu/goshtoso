@@ -12,7 +12,7 @@ import (
 
 templ layoutDemoContent() {
  <div id="layout-fragment">
- @demo.ComponentDemo(demo.ComponentDemoProps{Title:"Layout",Description:"Arrange arbitrary content in Stack, Grid or Masonry. Drag non-interactive content or use named handles to reorder or transfer items. A ghost follows the pointer and an insertion gap shows where the item will land. Text dragging moves items in this opt-in demo. Links and inputs remain usable. Touch uses the handles. Changes affect this preview only."}, mixedPreview(), `@layout.Container(layout.Config{
+ @demo.ComponentDemo(demo.ComponentDemoProps{Title:"Layout",Description:"Arrange arbitrary content in Stack, Grid or Masonry. Drag non-interactive content or use grip handles to reorder or transfer items. Each icon keeps a named movement label for assistive technology. A ghost follows the pointer and an insertion gap shows where the item will land. Text dragging moves items in this opt-in demo. Links and inputs remain usable. Touch uses the handles. Changes affect this preview only."}, mixedPreview(), `@layout.Container(layout.Config{
     ID: "operations", Label: "Operations", Mode: layout.ModeMasonry, Columns: 2,
     Reorder: &layout.ReorderConfig{Group: "widgets"},
     Items: []layout.Item{

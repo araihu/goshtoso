@@ -128,6 +128,7 @@ func TestLayout_CurrentSourceMovement(t *testing.T) {
 	require.NoError(t, err)
 	layoutReady(t, page)
 	layoutEval(t, page, `()=>{window.moves=[];window.errors=[];document.addEventListener('layout:move',e=>moves.push(e.detail));document.addEventListener('layout:error',e=>errors.push(e.detail.code));window.retained=document.getElementById('layout-draft');}`)
+	require.Equal(t, true, layoutEval(t, page, `()=>{const b=document.querySelector('#alpha [data-layout-handle]'),r=b.getBoundingClientRect(),name=b.querySelector('span'),n=name.getBoundingClientRect();return b.title==='Move A <unsafe>'&&b.querySelector('svg[aria-hidden="true"]')?.querySelectorAll('circle').length===6&&r.width>=44&&r.height>=44&&n.width===1&&n.height===1&&getComputedStyle(b).cursor==='grab'}`))
 	require.NoError(t, page.Locator("#layout-draft").Fill("retained draft"))
 	require.NoError(t, page.Locator("#alpha [data-layout-handle]").First().Focus())
 	require.NoError(t, page.Keyboard().Press("Alt+ArrowDown"))

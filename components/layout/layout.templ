@@ -30,8 +30,13 @@ templ containerTemplate(c Config, e expressions.Layout, announcement string, con
    >
     if c.enabled() {
      <div data-layout-handle-row>
-      @button.Button(button.WithAppearance(button.AppearancePlain),button.WithRootClass("goshtoso-layout-handle"),button.Disabled(),button.WithAttrs(templ.Attributes{"hidden":"hidden","data-layout-handle":"","aria-describedby":c.ID+"--layout-instructions"})) {
- { e.HandleLabel(item.Label) }
+      @button.Button(button.WithAppearance(button.AppearancePlain),button.WithRootClass("goshtoso-layout-handle"),button.Disabled(),button.WithAttrs(templ.Attributes{"hidden":"hidden","data-layout-handle":"","aria-describedby":c.ID+"--layout-instructions","title":e.HandleLabel(item.Label)})) {
+ <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">
+  <circle cx="5" cy="3" r="1.5"/><circle cx="11" cy="3" r="1.5"/>
+  <circle cx="5" cy="8" r="1.5"/><circle cx="11" cy="8" r="1.5"/>
+  <circle cx="5" cy="13" r="1.5"/><circle cx="11" cy="13" r="1.5"/>
+ </svg>
+ <span class="goshtoso-layout-feedback">{ e.HandleLabel(item.Label) }</span>
  }
      </div>
     }
