@@ -2,7 +2,7 @@
 
 All notable changes to Goshtoso are documented in this file.
 
-## [v0.6.0] - 2026-11-02
+## [v0.6.0] - 2026-11-03
 
 ### Added
 
