@@ -40,23 +40,24 @@ func layoutDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.ComponentDemo(demo.ComponentDemoProps{Title: "Layout", Description: "Arrange arbitrary content in Stack, Grid or Masonry. Use named handles to reorder or transfer items. Changes affect this preview only."}, mixedPreview(), `@layout.Container(layout.Config{
+		templ_7745c5c3_Err = demo.ComponentDemo(demo.ComponentDemoProps{Title: "Layout", Description: "Arrange arbitrary content in Stack, Grid or Masonry. Drag non-interactive content or use grip handles to reorder or transfer items. Each icon keeps a named movement label for assistive technology. A ghost follows the pointer and an insertion gap shows where the item will land. Text dragging moves items in this opt-in demo. Links and inputs remain usable. Touch uses the handles. Changes affect this preview only."}, mixedPreview(), `@layout.Container(layout.Config{
     ID: "operations", Label: "Operations", Mode: layout.ModeMasonry, Columns: 2,
     Reorder: &layout.ReorderConfig{Group: "widgets"},
     Items: []layout.Item{
         {ID: "service", Label: "Service", Content: serviceCard()},
         {ID: "notes", Label: "Notes", Content: notes()},
     },
-})`).Render(ctx, templ_7745c5c3_Buffer)
+}).WithContentDrag(true)`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.DemoSection(demo.DemoSectionProps{Title: "Nested groups", Description: "An outer group controls its own columns. Inner containers use their own bounds and movement scope."}, nestedPreview(), `@layout.Container(layout.Config{
+		templ_7745c5c3_Err = demo.DemoSection(demo.DemoSectionProps{Title: "Nested groups", Description: "An outer group controls its own columns. Drag a group background or padding to move the group. Inner items keep their own bounds and movement scope."}, nestedPreview(), `@layout.Container(layout.Config{
     ID: "groups", Label: "Groups", Mode: layout.ModeGrid, Columns: 2,
+    Reorder: &layout.ReorderConfig{Group: "groups"},
     Items: []layout.Item{
         {ID: "nested", Label: "Nested group", Content: innerLayout()},
     },
-})`).Render(ctx, templ_7745c5c3_Buffer)
+}).WithContentDrag(true)`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -129,7 +130,7 @@ func mixedPreview() templ.Component {
 			{ID: "metrics", Label: "Metrics", Content: panel.Panel(panel.Config{Body: metrics()})},
 			{ID: "chart", Label: "Trend", Content: line.Line(line.Config{Label: "Storage trend", Labels: []string{"Mon", "Tue", "Wed"}, Series: []line.Series{{Name: "Used", Values: []float64{40, 42, 45}}}, Width: 400, Height: 240})},
 			{ID: "short", Label: "Short note", Content: shortNote()},
-		}}).Render(ctx, templ_7745c5c3_Buffer)
+		}}).WithContentDrag(true).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -137,7 +138,7 @@ func mixedPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-inbox", Label: "Inbox", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-widgets"}, RootClass: "min-h-24 border border-dashed border-outline p-4 dark:border-outline-dark"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-inbox", Label: "Inbox", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-widgets"}, RootClass: "min-h-24 border border-dashed border-outline p-4 dark:border-outline-dark"}).WithContentDrag(true).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -253,7 +254,7 @@ func nestedPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-groups", Label: "Groups", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-groups"}, Items: []layout.Item{{ID: "group-a", Label: "First group", Content: innerLayout()}, {ID: "group-b", Label: "Second group", Content: notes("layout-group-note")}}}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Container(layout.Config{ID: "layout-groups", Label: "Groups", Mode: layout.ModeGrid, Columns: 2, Reorder: &layout.ReorderConfig{Group: "demo-groups"}, Items: []layout.Item{{ID: "group-a", Label: "First group", Content: innerLayout()}, {ID: "group-b", Label: "Second group", Content: notes("layout-group-note")}}}).WithContentDrag(true).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

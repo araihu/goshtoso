@@ -141,3 +141,45 @@ func TestAttributeNamesAndIDAuthority(t *testing.T) {
 		t.Fatalf("valid item ID: %v %s", err, out.String())
 	}
 }
+
+func TestContentDragIsOptIn(t *testing.T) {
+	base := layout.Container(layout.Config{ID: "content", Label: "Content", Reorder: &layout.ReorderConfig{}})
+	for _, tc := range []struct {
+		name     string
+		instance layout.Instance
+		want     string
+	}{
+		{"original", base, "false"},
+		{"content", base.WithContentDrag(true), "true"},
+		{"reset", base.WithContentDrag(true).WithContentDrag(false), "false"},
+		{"no movement", layout.Container(layout.Config{ID: "content", Label: "Content"}).WithContentDrag(true), "false"},
+		{"disabled", layout.Container(layout.Config{ID: "content", Label: "Content", Reorder: &layout.ReorderConfig{Disabled: true}}).WithContentDrag(true), "false"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var out bytes.Buffer
+			if err := tc.instance.Render(t.Context(), &out); err != nil {
+				t.Fatal(err)
+			}
+			if !strings.Contains(out.String(), `data-layout-content-drag="`+tc.want+`"`) {
+				t.Fatal(out.String())
+			}
+		})
+	}
+}
+
+func TestGripHandleKeepsLocalizedNameAndInstructions(t *testing.T) {
+	c := layout.Config{ID: "grips", Label: "Groups", Reorder: &layout.ReorderConfig{}, Items: []layout.Item{{ID: "one", Label: "Remote hosts"}}}
+	var out bytes.Buffer
+	component := layout.Container(c).WithExpressions(expressions.Layout{HandleLabel: func(label string) string { return "Arrange " + label }})
+	if err := component.Render(t.Context(), &out); err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{`title="Arrange Remote hosts"`, `aria-describedby="grips--layout-instructions"`, `<span class="goshtoso-layout-feedback">Arrange Remote hosts</span>`, `aria-hidden="true" focusable="false"`} {
+		if !strings.Contains(out.String(), want) {
+			t.Fatalf("missing grip semantics %s", want)
+		}
+	}
+	if strings.Count(out.String(), "<circle ") != 6 {
+		t.Fatal("movement grip must have six dots")
+	}
+}

@@ -2,6 +2,31 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.6.0] - 2026-11-03
+
+### Added
+
+- `layout.Instance.WithContentDrag(true)` enables mouse or pen pickup from
+  non-interactive content, item padding and nested collection background.
+  Nested cards retain their own movement scope; controls keep their actions.
+- Pointer dragging displays a passive ghost and insertion gap in Stack, Grid
+  and Masonry. Real item order changes only after an accepted drop. Escape,
+  blur, resize and rejected moves clear temporary feedback; reduced motion
+  skips displacement animations.
+
+### Changed
+
+- Layout movement handles display six-dot grips with localized accessible
+  names, matching tooltips and targets of at least 44 by 44 CSS pixels.
+
+### Upgrading
+
+- Public configuration structs are unchanged. Body dragging is opt-in and
+  replaces non-interactive text selection. Default pickup remains handle-only;
+  touch keeps native body scrolling and uses the movement handles.
+- Update the library and served CSS/JavaScript together. Go 1.27.3, templ
+  v0.3.1100, Tailwind 4.3.3, HTMX 4.0.0 and Alpine 3.17.2 remain unchanged.
+
 ## [v0.5.0] - 2026-11-01
 
 ### Added

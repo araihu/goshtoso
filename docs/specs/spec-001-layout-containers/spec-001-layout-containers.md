@@ -126,6 +126,7 @@ func (ValidationError) Error() string
 // Instance has unexported immutable configuration/expression fields.
 type Instance struct { /* unexported fields */ }
 func Container(Config) Instance
+func (Instance) WithContentDrag(bool) Instance
 func (Instance) Kind() components.Kind
 func (Instance) Render(context.Context, io.Writer) error
 func (Instance) WithExpressions(expressions.Layout) Instance
@@ -284,9 +285,29 @@ Reorder is opt-in. Nil or Disabled means no movement handles and no active move
 listeners; reading and geometry still work. Movement Group is an explicit compatibility
 scope. Distinct outer group and inner widget scopes prevent mixing levels.
 
-Pointer pickup starts only from the explicit handle; links, text selection, fields
-and controls inside content remain usable. Touch may use the consumer's named move
-controls; pointer interaction must not require hover. Show a visible insertion target.
+Each movement handle displays a six-dot grip with a visually hidden localized
+movement label and a matching tooltip. Its target is at least 44 by 44 CSS pixels.
+Pointer pickup starts from the explicit handle by default; links, text selection,
+fields and controls inside content remain usable. With `WithContentDrag(true)`, mouse or
+pen movement of at least 6px also picks up non-interactive content, item padding
+and background inside nested collections. A nested item retains its own pickup
+scope; only unoccupied collection space can pick up the enclosing item. A click or smaller
+movement has no move event or cancellation announcement. This opt-in replaces text
+selection with dragging in non-interactive content; use handle-only mode when text
+selection must remain available. Links, controls and editable
+regions are excluded. Consumers that render an inactive editing preview may mark its
+content `inert`; the surrounding item remains draggable and the named handle remains
+available to keyboard users. Touch retains native content scrolling and uses the
+handle or consumer's named move controls; pointer interaction must not require hover.
+
+During an active pointer gesture, a passive ghost follows the pointer at the pickup
+offset. A placeholder occupies the prospective insertion slot and displaces the
+surrounding items in Stack, Grid and Masonry. Hover does not reorder real items or
+emit movement events. Short displacement animations respect reduced motion. The
+original item retains its identity and state until release. The ghost has no IDs,
+runtime bindings or active custom elements, and stays outside keyboard and assistive
+technology navigation. Cancellation, veto, blur, resize and source removal remove
+all temporary visuals and restore the original presentation.
 Escape cancels and returns focus. Keyboard handle movement uses Alt+Up/Down in logical
 DOM order; Start/End actions can be supplied through consumer Button/Dropdown controls.
 Instructions and outcomes are announced through an accessible live region.
@@ -460,7 +481,8 @@ animation is not claimed to have a quiescent settlement deadline.
    never sorts by labels or silently rewrites that canonical order.
 5. Pointer and keyboard movement emit equivalent before/accepted event detail once.
 6. Cancellation, invalid anchors, no-op drops and incompatible scopes produce no move.
-7. Existing links/forms/text selection remain operable without initiating a drag.
+7. Existing links/forms remain operable without initiating a drag. Text selection
+   remains available in default handle-only mode; content-drag opt-in replaces it.
 8. Body content updates, font changes, visibility and resize preserve usable geometry.
 9. No-script/no-observer Masonry uses readable Grid; movement instructions do not
    promise unavailable dragging. Consumers retain explicit server/form alternatives.
@@ -475,7 +497,12 @@ animation is not claimed to have a quiescent settlement deadline.
     moves with zero accepted events; destinations inside the first legend remain
     eligible unless another disabled ancestor applies. Ancestor changes, reparenting
     and synchronous before-move callbacks cannot commit using stale availability.
-14. Goshtoso/Minimal in light/dark pass the meaningful interaction states, visible focus,
+14. Pointer movement keeps a ghost under the pickup point and opens a prospective
+    insertion gap, including populated destinations and full-width source items.
+    Hover emits no move event. Escape, blur, resize, veto and source removal leave
+    no ghost, placeholder or temporary source styles. Reduced motion skips reflow
+    animations. Ghost creation does not mount consumer components or duplicate IDs.
+15. Goshtoso/Minimal in light/dark pass the meaningful interaction states, visible focus,
     contrast, reduced-motion and console/accessibility checks.
 
 Implementation must include a public leaf demo with mixed/nested examples, browser
