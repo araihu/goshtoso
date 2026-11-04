@@ -427,7 +427,7 @@
           "x-parameter": "itemLabel"
         },
         "Instructions": {
-          "default": "Use Alt+Up or Alt+Down to reorder, Alt+Home or Alt+End for first or last, Alt+PageUp or Alt+PageDown to change collection. Escape cancels movement.",
+          "default": "Use Alt+Up or Alt+Down to reorder, Alt+Home or Alt+End for first or last, Alt+PageUp or Alt+PageDown to change collection. Escape cancels dragging.",
           "description": "Instructions describes keyboard movement and cancellation.",
           "type": "string"
         },
