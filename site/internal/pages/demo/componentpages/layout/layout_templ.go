@@ -94,7 +94,7 @@ func mixedPreview() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div x-data class=\"w-full space-y-6\"><p class=\"text-sm\">Alt+Up/Down reorders. Alt+Home/End moves first or last. Alt+PageUp/PageDown transfers between compatible groups.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div x-data class=\"w-full space-y-6\"><p class=\"text-sm\">Alt+Up/Down reorders immediately. Alt+Home/End moves first or last. Alt+PageUp/PageDown transfers between compatible groups. Escape cancels dragging. Mouse and pen drags auto-scroll near a scroll edge, and gaps choose the nearest insertion slot.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

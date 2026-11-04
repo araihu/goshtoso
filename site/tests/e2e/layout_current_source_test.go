@@ -69,6 +69,35 @@ func layoutFixture(t *testing.T, contentDrag ...bool) *httptest.Server {
 	t.Cleanup(server.Close)
 	return server
 }
+
+func layoutAutoScrollFixture(t *testing.T) *httptest.Server {
+	t.Helper()
+	source := layout.Container(layout.Config{ID: "scroll-source", Label: "Scroll source", Mode: layout.ModeGrid, Columns: 1, Reorder: &layout.ReorderConfig{Group: "scroll"}, Items: []layout.Item{{ID: "source", Label: "Source", Content: templ.Raw(`<p style="height:96px">Source</p>`)}}})
+	target := layout.Container(layout.Config{ID: "scroll-target", Label: "Scroll target", Mode: layout.ModeGrid, Columns: 1, Reorder: &layout.ReorderConfig{Group: "scroll"}, RootClass: "min-h-24"})
+	mux := http.NewServeMux()
+	mux.Handle("GET /assets/", assets.Handler())
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_, _ = io.WriteString(w, `<!doctype html><html data-theme="goshtoso"><head>`)
+		require.NoError(t, head.Dependencies(head.WithLocalRuntime()).Render(r.Context(), w))
+		_, _ = io.WriteString(w, `</head><body style="margin:0"><main style="min-height:3200px;padding:16px">`)
+		if r.URL.Query().Get("mode") == "nested" {
+			_, _ = io.WriteString(w, `<div id="nested-scroll" style="height:220px;overflow:auto;border:1px solid"><div style="height:1800px;padding:16px">`)
+		}
+		require.NoError(t, source.Render(r.Context(), w))
+		require.NoError(t, target.Render(r.Context(), w))
+		if r.URL.Query().Get("mode") == "nested" {
+			_, _ = io.WriteString(w, `</div></div>`)
+		} else {
+			_, _ = io.WriteString(w, `<div style="height:1800px"></div>`)
+		}
+		_, _ = io.WriteString(w, `</main></body></html>`)
+	})
+	server := httptest.NewServer(mux)
+	t.Cleanup(server.Close)
+	return server
+}
+
 func layoutReady(t *testing.T, page playwright.Page) {
 	t.Helper()
 	_, err := page.WaitForFunction(`() => document.getElementById('alpha')?.dataset.layoutReorderState==='ready' && document.getElementById('alpha').dataset.layoutGeometryState==='settled'`, nil)
@@ -231,6 +260,91 @@ func TestLayout_CurrentSourcePointer(t *testing.T) {
 	require.NoError(t, page.Mouse().Move(target.X+20, target.Y+20, playwright.MouseMoveOptions{Steps: playwright.Int(5)}))
 	require.NoError(t, page.Mouse().Up())
 	require.Equal(t, "a", layoutEval(t, page, layoutOrder, "inbox"))
+}
+
+func TestLayout_GapPlacementUsesNearestSlot(t *testing.T) {
+	server := layoutFixture(t)
+	for _, mode := range []string{"grid", "masonry"} {
+		for _, direction := range []string{"ltr", "rtl"} {
+			t.Run(mode+"/"+direction, func(t *testing.T) {
+				page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 1200, Height: 1100}})
+				_, err := page.Goto(server.URL)
+				require.NoError(t, err)
+				layoutReady(t, page)
+				layoutEval(t, page, `([mode,direction])=>{const root=document.getElementById('alpha');root.dataset.layoutMode=mode;root.style.direction=direction}`, []string{mode, direction})
+				layoutReady(t, page)
+				layoutPickup(t, page, "alpha", "a")
+				point := layoutEval(t, page, `()=>{const root=document.getElementById('alpha'),direction=getComputedStyle(root).direction,cells=Array.from(root.children).filter(n=>n.dataset.goshtosoLayout==='item'&&n.dataset.layoutItemId!=='a').map(n=>{const b=n.getBoundingClientRect();return {id:n.dataset.layoutItemId,left:b.left,right:b.right,top:b.top,height:b.height}}).sort((a,b)=>a.top-b.top|| (direction==='rtl'?b.left-a.left:a.left-b.left));let pair;for(let n=0;n<cells.length-1;n++){if(Math.abs(cells[n].top-cells[n+1].top)<=1.5){pair=[cells[n],cells[n+1]];break}}if(!pair)throw new Error('no same-row gap');window.__layoutGapPoint={x:(pair[0].right+pair[1].left)/2,y:Math.max(pair[0].top,pair[1].top)+Math.min(pair[0].height,pair[1].height)/2,anchor:pair[1].id};return window.__layoutGapPoint}`)
+				values := point.(map[string]any)
+				x, y, anchor := layoutFloat(values["x"]), layoutFloat(values["y"]), values["anchor"].(string)
+				require.NoError(t, page.Mouse().Move(x, y, playwright.MouseMoveOptions{Steps: playwright.Int(5)}))
+				require.Equal(t, anchor, layoutEval(t, page, `()=>document.querySelector('[data-layout-placeholder]').nextElementSibling?.dataset.layoutItemId||''`))
+				require.Equal(t, true, layoutEval(t, page, `id=>document.querySelector('#alpha > [data-layout-item-id="'+id+'"]')?.hasAttribute('data-layout-drop-target')||false`, anchor))
+				require.NoError(t, page.Mouse().Up())
+				require.Equal(t, "b,a,c,d", layoutEval(t, page, layoutOrder, "alpha"))
+			})
+		}
+	}
+}
+
+func TestLayout_AutoScrollStopsAfterPointerEnd(t *testing.T) {
+	server := layoutAutoScrollFixture(t)
+	for _, scope := range []string{"nested", "page"} {
+		for _, action := range []string{"escape", "drop", "blur"} {
+			t.Run(scope+"/"+action, func(t *testing.T) {
+				page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 800, Height: 500}})
+				_, err := page.Goto(server.URL + "?mode=" + scope)
+				require.NoError(t, err)
+				_, err = page.WaitForFunction(`()=>document.getElementById('scroll-source')?.dataset.layoutReorderState==='ready'`, nil)
+				require.NoError(t, err)
+				layoutPickup(t, page, "scroll-source", "source")
+				x, y := 400.0, 496.0
+				if scope == "nested" {
+					box, boxErr := page.Locator("#nested-scroll").BoundingBox()
+					require.NoError(t, boxErr)
+					x, y = box.X+box.Width/2, box.Y+box.Height-3
+				}
+				require.NoError(t, page.Mouse().Move(x, y, playwright.MouseMoveOptions{Steps: playwright.Int(5)}))
+				_, err = page.WaitForFunction(`scope=>scope==='nested'?document.getElementById('nested-scroll').scrollTop>0:window.scrollY>0`, scope, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(1500)})
+				require.NoError(t, err)
+				before := layoutEval(t, page, `scope=>scope==='nested'?document.getElementById('nested-scroll').scrollTop:window.scrollY`, scope)
+				require.Greater(t, layoutFloat(before), float64(0))
+				switch action {
+				case "escape":
+					require.NoError(t, page.Keyboard().Press("Escape"))
+				case "blur":
+					layoutEval(t, page, `()=>window.dispatchEvent(new Event('blur'))`)
+				case "drop":
+					require.NoError(t, page.Mouse().Up())
+				}
+				page.WaitForTimeout(180)
+				stopped := layoutEval(t, page, `scope=>scope==='nested'?document.getElementById('nested-scroll').scrollTop:window.scrollY`, scope)
+				page.WaitForTimeout(180)
+				require.Equal(t, layoutFloat(stopped), layoutFloat(layoutEval(t, page, `scope=>scope==='nested'?document.getElementById('nested-scroll').scrollTop:window.scrollY`, scope)))
+				if action != "drop" {
+					require.NoError(t, page.Mouse().Up())
+				}
+			})
+		}
+	}
+}
+
+func TestLayout_AutoScrollRTLHorizontal(t *testing.T) {
+	server := layoutAutoScrollFixture(t)
+	page := newPage(t, sharedBrowser, playwright.BrowserNewPageOptions{Viewport: &playwright.Size{Width: 800, Height: 500}})
+	_, err := page.Goto(server.URL + "?mode=nested")
+	require.NoError(t, err)
+	_, err = page.WaitForFunction(`()=>document.getElementById('scroll-source')?.dataset.layoutReorderState==='ready'`, nil)
+	require.NoError(t, err)
+	layoutEval(t, page, `()=>{const root=document.getElementById('nested-scroll');root.style.direction='rtl';root.firstElementChild.style.width='1800px';}`)
+	layoutPickup(t, page, "scroll-source", "source")
+	box, err := page.Locator("#nested-scroll").BoundingBox()
+	require.NoError(t, err)
+	require.NoError(t, page.Mouse().Move(box.X+3, box.Y+100, playwright.MouseMoveOptions{Steps: playwright.Int(5)}))
+	_, err = page.WaitForFunction(`()=>document.getElementById('nested-scroll').scrollLeft<0`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(1500)})
+	require.NoError(t, err)
+	require.NoError(t, page.Keyboard().Press("Escape"))
+	require.NoError(t, page.Mouse().Up())
 }
 
 func TestLayout_CurrentSourceDemo(t *testing.T) {
@@ -398,6 +512,17 @@ func layoutElementValue(t *testing.T, locator playwright.Locator, script string)
 	value, err := locator.Evaluate(script, nil)
 	require.NoError(t, err)
 	return value
+}
+
+func layoutFloat(value any) float64 {
+	switch number := value.(type) {
+	case int:
+		return float64(number)
+	case float64:
+		return number
+	default:
+		panic(fmt.Sprintf("layout point %T", value))
+	}
 }
 
 func TestLayout_ContentPointer(t *testing.T) {
