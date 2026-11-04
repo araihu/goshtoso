@@ -5,7 +5,7 @@
   var owners = new Map();
   var styles = new WeakMap();
   var visualRoots = new WeakSet();
-  var observer, frame = 0, pickup = null;
+  var observer, frame = 0, pickup = null, scrollFrame = 0;
   var props = ["--layout-columns", "--layout-row-span", "--layout-masonry", "--layout-track-min", "--layout-drag-width", "--layout-origin-height"];
 
   function items(root) {
@@ -51,8 +51,13 @@
     else if (fallback && fallback.isConnected) fallback.focus({preventScroll: true});
   }
   function announce(root, text) { var status = local(root,"[data-layout-status]")[0]; if (status) status.textContent = text; }
+  function stopAutoScroll() {
+    if (scrollFrame) cancelAnimationFrame(scrollFrame);
+    scrollFrame = 0;
+  }
   function cancel(restoreFocus) {
-    if (!pickup) return;
+    if (!pickup) { stopAutoScroll(); return; }
+    stopAutoScroll();
     var old = pickup; pickup = null;
     clearTarget(); cleanupVisuals(old);
     if (old.active) announce(old.source, old.item.dataset.layoutCancel || "");
@@ -128,7 +133,7 @@
     var checked = resolve(source,detail);
     if (!checked || checked.item !== resolved.item || checked.target !== resolved.target || checked.anchor !== resolved.anchor) { error(source,"invalid_move_request"); return; }
     if (!permitted(source,checked)) { error(source,"reorder_unavailable",detail.itemId); return; }
-    var old = pickup; pickup = null; clearTarget(); cleanupVisuals(old);
+    var old = pickup; pickup = null; stopAutoScroll(); clearTarget(); cleanupVisuals(old);
     var reference = checked.anchor || local(checked.target,"[data-layout-instructions]")[0] || null;
     if (checked.target.moveBefore) checked.target.moveBefore(checked.item,reference);
     else checked.target.insertBefore(checked.item,reference);
@@ -264,6 +269,53 @@
     } else pickup.placeholder.remove();
     animateShift(before); invalidate();
   }
+  function edgeDelta(position, start, end) {
+    var edge = 48, speed = 24;
+    if (position < start + edge) return -Math.min(speed, Math.max(0, (start + edge - position) / edge * speed));
+    if (position > end - edge) return Math.min(speed, Math.max(0, (position - (end - edge)) / edge * speed));
+    return 0;
+  }
+  function scrollable(node) {
+    if (!node || node === document.body || node === document.documentElement) return false;
+    var style = getComputedStyle(node);
+    return (/auto|scroll|overlay/.test(style.overflowX) && node.scrollWidth > node.clientWidth + 1) ||
+      (/auto|scroll|overlay/.test(style.overflowY) && node.scrollHeight > node.clientHeight + 1);
+  }
+  function scrollDelta(node, x, y) {
+    var rect = node === (document.scrollingElement || document.documentElement) ?
+      {left:0,top:0,right:window.innerWidth,bottom:window.innerHeight} : node.getBoundingClientRect();
+    var dx = edgeDelta(x,rect.left,rect.right), dy = edgeDelta(y,rect.top,rect.bottom);
+    var maxX = Math.max(0,node.scrollWidth - node.clientWidth), maxY = Math.max(0,node.scrollHeight - node.clientHeight);
+    var minX = getComputedStyle(node).direction === "rtl" ? -maxX : 0;
+    if (minX < 0) maxX = 0;
+    if ((dx < 0 && node.scrollLeft <= minX) || (dx > 0 && node.scrollLeft >= maxX)) dx = 0;
+    if ((dy < 0 && node.scrollTop <= 0) || (dy > 0 && node.scrollTop >= maxY)) dy = 0;
+    return {x:dx,y:dy};
+  }
+  function autoScrollTarget(x, y) {
+    var hit = document.elementFromPoint(x,y), page = document.scrollingElement || document.documentElement, candidates = [];
+    for (var node = hit; node; node = node.parentElement) if (scrollable(node)) candidates.push(node);
+    if (!candidates.includes(page)) candidates.push(page);
+    for (var n = 0; n < candidates.length; n++) {
+      var delta = scrollDelta(candidates[n],x,y);
+      if (delta.x || delta.y) return {node:candidates[n],delta:delta};
+    }
+    return null;
+  }
+  function scheduleAutoScroll() {
+    if (!pickup || !pickup.active || (pickup.pointerType !== "mouse" && pickup.pointerType !== "pen")) { stopAutoScroll(); return; }
+    if (!autoScrollTarget(pickup.lastX,pickup.lastY)) { stopAutoScroll(); return; }
+    if (!scrollFrame) scrollFrame = requestAnimationFrame(autoScroll);
+  }
+  function autoScroll() {
+    scrollFrame = 0;
+    if (!pickup || !pickup.active || (pickup.pointerType !== "mouse" && pickup.pointerType !== "pen")) return;
+    var target = autoScrollTarget(pickup.lastX,pickup.lastY);
+    if (!target) return;
+    target.node.scrollLeft += target.delta.x; target.node.scrollTop += target.delta.y;
+    if (!validPickup() || !available(pickup.source)) { cancel(false); return; }
+    updatePointer({clientX:pickup.lastX,clientY:pickup.lastY,pointerId:pickup.pointer});
+  }
   var interactiveContent = 'a,area,button,input,select,textarea,summary,label,audio[controls],video[controls],iframe,object,embed,img[usemap],[tabindex],[draggable="true"],[contenteditable]:not([contenteditable="false"])' +
     ["button","checkbox","combobox","grid","gridcell","link","listbox","menu","menubar","menuitem","menuitemcheckbox","menuitemradio","option","radio","radiogroup","scrollbar","searchbox","slider","spinbutton","switch","tab","tablist","textbox","tree","treegrid","treeitem"].map(function (role) { return ',[role~="'+role+'"]'; }).join("");
   function pointerItem(root,event) {
@@ -285,7 +337,7 @@
     validateRegistry();
     if (!available(root) || candidate.button.matches(":disabled")) return;
     cancel();
-    pickup = {source:root,item:candidate.item,button:candidate.button,row:candidate.button.parentElement,pointer:event.pointerId,active:candidate.active,x:event.clientX,y:event.clientY,config:pickupConfig(root),members:items(root).map(function (item) { return {node:item,id:item.dataset.layoutItemId}; })};
+    pickup = {source:root,item:candidate.item,button:candidate.button,row:candidate.button.parentElement,pointer:event.pointerId,pointerType:event.pointerType,active:candidate.active,x:event.clientX,y:event.clientY,lastX:event.clientX,lastY:event.clientY,config:pickupConfig(root),members:items(root).map(function (item) { return {node:item,id:item.dataset.layoutItemId}; })};
     if (pickup.active) activatePickup();
     event.preventDefault();
   }
@@ -308,6 +360,44 @@
     while (item && item.parentElement !== root) item = item.parentElement?.closest(itemSelector);
     return item;
   }
+  function placementOrder(root,bounds) {
+    var rows = [];
+    items(root).forEach(function (item) {
+      if (item === pickup.item) return;
+      var entry = bounds && bounds.get(item), box = entry ? originalBox(item,entry) : item.getBoundingClientRect();
+      if (!box.width || !box.height) return;
+      var row = rows.find(function (candidate) { return Math.abs(candidate.top-box.top) <= 1.5; });
+      if (!row) { row = {top:box.top,items:[]}; rows.push(row); }
+      row.items.push({item:item,box:box});
+    });
+    var rtl = getComputedStyle(root).direction === "rtl";
+    rows.sort(function (a,b) { return a.top-b.top; });
+    rows.forEach(function (row) { row.items.sort(function (a,b) { return rtl ? b.box.left-a.box.left : a.box.left-b.box.left; }); });
+    return rows.reduce(function (all,row) { return all.concat(row.items.map(function (entry) { entry.row=row; return entry; })); },[]);
+  }
+  function pointDistance(box,x,y) {
+    var right = box.left+box.width, bottom = box.top+box.height;
+    var dx = x < box.left ? box.left-x : x > right ? x-right : 0;
+    var dy = y < box.top ? box.top-y : y > bottom ? y-bottom : 0;
+    return dx*dx+dy*dy;
+  }
+  function nearestInsertion(root,event,bounds) {
+    var order = placementOrder(root,bounds);
+    if (!order.length) return {root:root,anchor:null};
+    var nearest = order[0], distance = pointDistance(nearest.box,event.clientX,event.clientY);
+    order.slice(1).forEach(function (entry) {
+      var next = pointDistance(entry.box,event.clientX,event.clientY);
+      if (next < distance) { nearest = entry; distance = next; }
+    });
+    var centerX = nearest.box.left+nearest.box.width/2, centerY = nearest.box.top+nearest.box.height/2;
+    var inline = nearest.row.items.length > 1, inlineDistance = Math.abs(event.clientX-centerX), blockDistance = Math.abs(event.clientY-centerY);
+    var rtl = getComputedStyle(root).direction === "rtl", before;
+    var right = nearest.box.left+nearest.box.width;
+    if (inline && (event.clientX < nearest.box.left || event.clientX > right || inlineDistance > blockDistance)) before = rtl ? event.clientX > centerX : event.clientX < centerX;
+    else before = event.clientY < centerY;
+    var index = order.indexOf(nearest), anchor = before ? nearest.item : order[index+1]?.item || null;
+    return {root:root,anchor:anchor};
+  }
   function displacedTarget(root,hit,event) {
     if (root !== pickup.source || directItem(hit,root)) return null;
     var source = pickup.bounds.get(root);
@@ -328,32 +418,40 @@
     var displaced = displacedTarget(root,hit,event), anchor, box;
     if (displaced) {
       root = displaced;
-      pickup.bounds.get(root).items.forEach(function (entry,item) { var original = originalBox(item,entry); if (containsPoint(original,event)) { anchor = item; box = original; } });
+      var placement = nearestInsertion(root,event,pickup.bounds.get(root).items);
+      anchor = placement.anchor;
     } else {
       if (hit?.closest("[data-layout-placeholder]") === pickup.placeholder && pickup.target?.root === root) return pickup.target;
       anchor = directItem(hit,root); box = anchor?.getBoundingClientRect();
+      if (!anchor) return nearestInsertion(root,event);
+      if (anchor === pickup.item) return null;
+      if (event.clientY > box.top+box.height/2) anchor = items(root)[items(root).indexOf(anchor)+1] || null;
+      if (anchor === pickup.item) anchor = items(root)[items(root).indexOf(anchor)+1] || null;
     }
-    if (anchor === pickup.item) return null;
-    if (anchor && event.clientY > box.top+box.height/2) anchor = items(root)[items(root).indexOf(anchor)+1] || null;
-    if (anchor === pickup.item) anchor = items(root)[items(root).indexOf(anchor)+1] || null;
     return {root:root,anchor:anchor || null};
+  }
+  function updatePointer(event) {
+    if (!pickup || !pickup.active) return;
+    positionGhost(event);
+    var target = pointerTarget(event); clearTarget(); showInsertion(target);
+    if (target) (target.anchor || target.root).setAttribute("data-layout-drop-target","");
+    scheduleAutoScroll();
   }
   function pointerMove(event) {
     if (!pickup || pickup.pointer !== event.pointerId) return;
+    pickup.lastX = event.clientX; pickup.lastY = event.clientY;
     if (!validPickup() || !available(pickup.source)) { cancel(false); return; }
     if (!pickup.active) {
       if (Math.hypot(event.clientX-pickup.x,event.clientY-pickup.y) < 6) return;
       activatePickup();
     }
-    positionGhost(event);
-    var target = pointerTarget(event); clearTarget(); showInsertion(target);
-    if (target) (target.anchor || target.root).setAttribute("data-layout-drop-target","");
+    updatePointer(event);
   }
   function pointerUp(event) {
     if (!pickup || pickup.pointer !== event.pointerId) return;
     if (!validPickup() || !available(pickup.source)) { cancel(false); return; }
-    if (!pickup.active) { pickup = null; return; }
-    var old = pickup, target = pointerTarget(event);
+    if (!pickup.active) { pickup = null; stopAutoScroll(); return; }
+    var old = pickup; stopAutoScroll(); pickup.lastX = event.clientX; pickup.lastY = event.clientY; var target = pointerTarget(event);
     if (!target) { cancel(); return; }
     pickup = null; clearTarget(); cleanupVisuals(old); move(old.source,detailFor(old.source,old.item,target.root,target.anchor));
   }

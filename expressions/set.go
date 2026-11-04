@@ -502,7 +502,7 @@ type Layout struct {
 // English returns a fresh set of the built-in English defaults.
 func English() Set {
 	return Set{
-		Layout: Layout{HandleLabel: func(label string) string { return "Move " + label }, Instructions: "Use Alt+Up or Alt+Down to reorder, Alt+Home or Alt+End for first or last, Alt+PageUp or Alt+PageDown to change collection. Escape cancels movement.", MoveAnnouncement: func(item, container, position string) string {
+		Layout: Layout{HandleLabel: func(label string) string { return "Move " + label }, Instructions: "Use Alt+Up or Alt+Down to reorder, Alt+Home or Alt+End for first or last, Alt+PageUp or Alt+PageDown to change collection. Escape cancels dragging.", MoveAnnouncement: func(item, container, position string) string {
 			return item + " moved to " + container + ", position " + position + "."
 		}, CancelAnnouncement: func(label string) string { return "Move cancelled for " + label + "." }, MovementUnavailable: "Movement controls are unavailable. Use the application's explicit move controls."},
 		ActionGroup: ActionGroup{

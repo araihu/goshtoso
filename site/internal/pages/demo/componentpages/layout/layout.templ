@@ -34,7 +34,7 @@ templ layoutDemoContent() {
 
 templ mixedPreview() {
  <div x-data class="w-full space-y-6">
- <p class="text-sm">Alt+Up/Down reorders. Alt+Home/End moves first or last. Alt+PageUp/PageDown transfers between compatible groups.</p>
+ <p class="text-sm">Alt+Up/Down reorders immediately. Alt+Home/End moves first or last. Alt+PageUp/PageDown transfers between compatible groups. Escape cancels dragging. Mouse and pen drags auto-scroll near a scroll edge, and gaps choose the nearest insertion slot.</p>
  @button.Button(button.WithAppearance(button.AppearancePlain),button.WithAttrs(templ.Attributes{"data-layout-demo-transfer":""})) { <span>Move service to inbox</span> }
  <div x-data class="space-y-4">
  @layout.Container(layout.Config{ID:"layout-mixed",Label:"Operations",Mode:layout.ModeMasonry,Columns:2,Reorder:&layout.ReorderConfig{Group:"demo-widgets"},Items:[]layout.Item{

@@ -174,7 +174,7 @@ func TestGripHandleKeepsLocalizedNameAndInstructions(t *testing.T) {
 	if err := component.Render(t.Context(), &out); err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{`title="Arrange Remote hosts"`, `aria-describedby="grips--layout-instructions"`, `<span class="goshtoso-layout-feedback">Arrange Remote hosts</span>`, `aria-hidden="true" focusable="false"`} {
+	for _, want := range []string{`title="Arrange Remote hosts"`, `aria-describedby="grips--layout-instructions"`, `<span class="goshtoso-layout-feedback">Arrange Remote hosts</span>`, `Escape cancels dragging.`, `aria-hidden="true" focusable="false"`} {
 		if !strings.Contains(out.String(), want) {
 			t.Fatalf("missing grip semantics %s", want)
 		}

@@ -308,7 +308,7 @@ original item retains its identity and state until release. The ghost has no IDs
 runtime bindings or active custom elements, and stays outside keyboard and assistive
 technology navigation. Cancellation, veto, blur, resize and source removal remove
 all temporary visuals and restore the original presentation.
-Escape cancels and returns focus. Keyboard handle movement uses Alt+Up/Down in logical
+Escape cancels dragging and returns focus. Keyboard handle movement uses Alt+Up/Down in logical
 DOM order; Start/End actions can be supplied through consumer Button/Dropdown controls.
 Instructions and outcomes are announced through an accessible live region.
 
@@ -353,7 +353,9 @@ Alt+PageUp/PageDown transfers to the previous/next compatible container in conne
 DOM preorder, appending there. This reaches nonadjacent containers by repetition and
 empty destinations by append. Invisible, blocked and disabled containers are skipped.
 Distinct movement Groups never share this traversal. Prevent shortcut defaults only
-while handling a valid handle command; Escape cancels a pickup.
+while handling a valid handle command; Escape cancels a pickup. Mouse and pen drags
+auto-scroll the nearest scrollable ancestor or page at an edge, and gaps choose the
+nearest insertion slot in both Grid and Masonry, including right-to-left containers.
 
 Consumers' named destination/start/end controls dispatch a bubbling
 `layout:request-move` on the source container with the same normalized detail as
