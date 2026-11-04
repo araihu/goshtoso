@@ -353,7 +353,7 @@ Alt+PageUp/PageDown transfers to the previous/next compatible container in conne
 DOM preorder, appending there. This reaches nonadjacent containers by repetition and
 empty destinations by append. Invisible, blocked and disabled containers are skipped.
 Distinct movement Groups never share this traversal. Prevent shortcut defaults only
-while handling a valid handle command; Escape cancels a pickup. Pointer and pen drags
+while handling a valid handle command; Escape cancels a pickup. Mouse and pen drags
 auto-scroll the nearest scrollable ancestor or page at an edge, and gaps choose the
 nearest insertion slot in both Grid and Masonry, including right-to-left containers.
 
