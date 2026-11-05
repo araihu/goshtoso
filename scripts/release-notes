@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+  echo 'usage: scripts/release-notes vMAJOR.MINOR.PATCH [changelog]' >&2
+  exit 2
+fi
+tag=$1
+if [[ ! "$tag" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+  echo "invalid stable release tag: $tag" >&2
+  exit 1
+fi
+awk -v tag="$tag" '
+  function fail(message) { print message > "/dev/stderr"; failed=1 }
+  function uncomment(line, prefix, at) {
+    while (length(line)) {
+      if (comment) {
+        at=index(line,"-->")
+        if (!at) return prefix
+        line=substr(line,at+3); comment=0
+      } else {
+        at=index(line,"<!--")
+        if (!at) return prefix line
+        prefix=prefix substr(line,1,at-1)
+        line=substr(line,at+4); comment=1
+      }
+    }
+    return prefix
+  }
+  {
+    sub(/\r$/, "")
+    visible=(fence == "" ? uncomment($0) : $0)
+    # Fenced examples must not create or end a release section.
+    if (match(visible,/^ ? ? ?(`+|~+)/)) {
+      marker=substr(visible,RSTART,RLENGTH)
+      gsub(/ /,"",marker)
+      if (length(marker)>=3) {
+        if (fence == "") fence=marker
+        else if (substr(fence,1,1)==substr(marker,1,1) && length(marker)>=length(fence) && substr(visible,RLENGTH+1) ~ /^[[:space:]]*$/) fence=""
+        if (collect) notes=notes $0 "\n"
+        next
+      }
+    }
+    if (fence == "" && visible ~ /^## /) {
+      collect=0
+      heading="## [" tag "]"
+      if (index(visible,heading)==1) {
+        count++
+        date=substr(visible,length(heading)+1)
+        if (date !~ /^ - [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/)
+          fail("expected dated heading: " heading " - YYYY-MM-DD")
+        collect=1
+      }
+      next
+    }
+    if (collect) {
+      notes=notes $0 "\n"
+      if (fence == "" && visible !~ /^[[:space:]]*$/ && visible !~ /^#+ /)
+        content=1
+    }
+  }
+  END {
+    if (count==0) fail("missing changelog section for " tag)
+    else if (count!=1) fail("duplicate changelog sections for " tag)
+    else if (!content) fail("empty changelog section for " tag)
+    if (failed) exit 1
+    sub(/^[\n]+/, "", notes)
+    sub(/[\n]+$/, "", notes)
+    print notes
+  }
+' "${2:-CHANGELOG.md}"
