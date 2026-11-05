@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ $# != 1 ]]; then
+  echo 'usage: scripts/release-tag vMAJOR.MINOR.PATCH' >&2
+  exit 2
+fi
+root=$(git -C "$(dirname -- "${BASH_SOURCE[0]}")/.." rev-parse --show-toplevel)
+cd "$root"
+commit=$(git rev-parse HEAD)
+worktree_changes=$(git status --porcelain)
+if [[ -n "$worktree_changes" ]]; then
+  echo 'release tagging requires a clean worktree; commit the release notes first' >&2
+  exit 1
+fi
+# Check the committed notes for the exact commit the tag will reference.
+git show "$commit:CHANGELOG.md" | scripts/release-notes "$1" - >/dev/null
+git tag -- "$1" "$commit"
+printf 'Created local tag %s at %s; review before pushing it.\n' "$1" "$commit"

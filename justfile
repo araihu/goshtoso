@@ -140,6 +140,16 @@ published-consumer:
 
 site-module-contracts: site-current-source-integration published-consumer
 
+# Check the planned tag has a dated, nonempty changelog section.
+[positional-arguments]
+release-check version:
+    scripts/release-notes "$1" >/dev/null
+
+# Create a local tag only after checking the committed changelog and clean tree.
+[positional-arguments]
+release-tag version:
+    scripts/release-tag "$1"
+
 # Run the authoritative release-equivalent full coverage pipeline locally.
 coverage:
     scripts/run-release-coverage.sh

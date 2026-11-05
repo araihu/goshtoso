@@ -55,13 +55,25 @@ many of these steps, but the checklist keeps the public release story coherent.
   - asset/runtime version changes,
   - migration steps for consumers.
 - Give the release a dated `CHANGELOG.md` heading matching the tag. The release
-  workflow publishes that section as the GitHub release notes.
+  workflow publishes that section as the GitHub release notes. Use exactly
+  `## [vMAJOR.MINOR.PATCH] - YYYY-MM-DD` and include nonempty notes below it.
+- Run `just release-check vMAJOR.MINOR.PATCH` while preparing the notes. Commit
+  them, then dispatch the **Release** workflow on the intended main commit with
+  `version` set to that tag. This validates the changelog before full release
+  verification, without creating a tag or publishing anything.
+- After that run and main CI pass, use `just release-tag vMAJOR.MINOR.PATCH`.
+  It refuses a dirty worktree or missing, malformed, empty or duplicate notes,
+  checks the committed changelog, and creates only a local tag at that exact
+  commit. Review it, then push `refs/tags/vMAJOR.MINOR.PATCH` to origin.
+  Direct `git tag` bypasses this local guard; use the guarded command for
+  releases. Tag-triggered verification and publication also use the same parser.
 
 ## After the Tag Workflow
 
 - Confirm the `Full release verification + coverage` job passed before the
-  publishing job began. A manual workflow dispatch runs this same gate without
-  creating a release or updating either badge.
+  publishing job began. A manual workflow dispatch requires the planned
+  `version` and runs this same gate without creating a release or updating
+  either badge.
 - Confirm the GitHub release exists and includes `assets/styles.css` and
   `assets/goshtoso-theme.css`.
 - Confirm the release badge endpoint has the new tag.

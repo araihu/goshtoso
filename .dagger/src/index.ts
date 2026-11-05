@@ -209,12 +209,13 @@ scripts/run-release-coverage.sh --local-dry-run`
     if (!/^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(tag)) throw new Error(`invalid release tag: ${tag}`)
     const consumerCheck = await this.goProject(source, "trusted-release")
       .withEnvVariable("GOSHTOSO_RUN_NONCE", runNonce)
+      .withExec(["scripts/release-notes", tag])
       .withExec(["scripts/check-published-consumer", tag])
       .stdout()
     const script = `set -euo pipefail
 ver=$(scripts/release-tailwind-version)
 test -n "$ver"
-awk -v heading="## [$TAG]" 'index($0, heading) == 1 { found=1; next } found && /^## \\[/ { exit } found { print } END { if (!found) exit 1 }' CHANGELOG.md > /tmp/release-notes.md
+scripts/release-notes "$TAG" > /tmp/release-notes.md
 printf '\\n## Build artifacts\\n\\nBuilt with Tailwind CSS %s.\\nAssets attached: styles.css and goshtoso-theme.css.\\n' "$ver" >> /tmp/release-notes.md
 if gh release view "$TAG" --repo araihu/goshtoso >/dev/null 2>&1; then
   gh release edit "$TAG" --repo araihu/goshtoso --notes-file /tmp/release-notes.md
