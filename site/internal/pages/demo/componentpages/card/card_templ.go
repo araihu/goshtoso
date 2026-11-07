@@ -85,6 +85,20 @@ func cardDemoContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = demo.DemoSection(
+			demo.DemoSectionProps{Title: "Compact density", Description: "Use DensityCompact for compact media previews and metadata in application workspaces. The default density remains unchanged."},
+			cardCompactPreview(),
+			`@card.Card(card.Config{
+    Image: "/assets/images/cards/card-img-1.webp",
+    ImageAlt: "A penguin robot talking with a human",
+    Title: "Shared image",
+    Description: "A compact preview with the same content and accessibility semantics.",
+    Density: card.DensityCompact,
+})`,
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = demo.DemoSection(
 			demo.DemoSectionProps{Title: "Title icon", Description: "TitlePrefix places an icon beside a wrapping title."},
 			cardTitlePrefixPreview(),
 			`@card.Card(card.Config{
@@ -874,6 +888,39 @@ func testimonialCard() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</div></article>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func cardCompactPreview() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<div id=\"card-compact\" class=\"w-full max-w-sm mx-auto\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = card.Card(card.Config{Image: "/assets/images/cards/card-img-1.webp", ImageAlt: "A penguin robot talking with a human", Title: "Shared image", Description: "A compact preview with the same content and accessibility semantics.", Density: card.DensityCompact}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

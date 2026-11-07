@@ -33,6 +33,18 @@ templ cardDemoContent() {
 })`,
 		)
 
+  @demo.DemoSection(
+   demo.DemoSectionProps{Title:"Compact density",Description:"Use DensityCompact for compact media previews and metadata in application workspaces. The default density remains unchanged."},
+   cardCompactPreview(),
+   `@card.Card(card.Config{
+    Image: "/assets/images/cards/card-img-1.webp",
+    ImageAlt: "A penguin robot talking with a human",
+    Title: "Shared image",
+    Description: "A compact preview with the same content and accessibility semantics.",
+    Density: card.DensityCompact,
+})`,
+  )
+
 		@demo.DemoSection(
 			demo.DemoSectionProps{Title: "Title icon", Description: "TitlePrefix places an icon beside a wrapping title."},
 			cardTitlePrefixPreview(),
@@ -375,3 +387,9 @@ templ testimonialCard() {
 		</div>
 	</article>
 }
+
+ templ cardCompactPreview() {
+  <div id="card-compact" class="w-full max-w-sm mx-auto">
+   @card.Card(card.Config{Image:"/assets/images/cards/card-img-1.webp",ImageAlt:"A penguin robot talking with a human",Title:"Shared image",Description:"A compact preview with the same content and accessibility semantics.",Density:card.DensityCompact})
+  </div>
+ }
