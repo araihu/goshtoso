@@ -59,6 +59,14 @@ func TestCardComponentFragmentThemes(t *testing.T) {
 
 func assertCardVariants(t *testing.T, page playwright.Page) {
 	t.Helper()
+	compact := page.Locator("#card-compact article")
+	require.NoError(t, compact.WaitFor())
+	compactSize, err := compact.Locator("h3").Evaluate(`el => getComputedStyle(el).fontSize`, nil)
+	require.NoError(t, err)
+	assert.Equal(t, "14px", compactSize)
+	mediaRatio, err := compact.Locator("img").Evaluate(`el => {const b=el.parentElement.getBoundingClientRect();return b.width/b.height}`, nil)
+	require.NoError(t, err)
+	assert.InDelta(t, 16.0/9.0, mediaRatio, .03)
 	prefixTitle := page.Locator("#card-title-prefix h3")
 	require.NoError(t, prefixTitle.Locator("svg").WaitFor())
 	prefixLayout, err := prefixTitle.Evaluate(`el => getComputedStyle(el).display`, nil)
