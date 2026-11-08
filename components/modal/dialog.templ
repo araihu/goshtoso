@@ -23,6 +23,9 @@ templ dialogTemplate(cfg DialogConfig) {
  >
   if cfg.Compact {
    <h2 id={cfg.ID+"Title"} class="sr-only">{cfg.Title}</h2>
+  } else if cfg.HeaderContent != nil {
+   <h2 id={cfg.ID+"Title"} class="sr-only">{cfg.Title}</h2>
+   @cfg.HeaderContent
   } else {
   <header class="flex shrink-0 items-center justify-between gap-4 border-b border-outline p-4 dark:border-outline-dark">
    <h2 id={cfg.ID+"Title"} class="font-semibold">{cfg.Title}</h2>
