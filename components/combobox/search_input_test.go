@@ -66,3 +66,12 @@ func searchInputAttrs(node *html.Node) map[string]string {
 	}
 	return nil
 }
+
+func TestSelectedTriggerLabelKeepsReadableTextAndAccentBorder(t *testing.T) {
+	state := State{Selected: []string{"account"}}
+	label := triggerLabelClass(state)
+	require.Contains(t, label, "text-on-surface-strong")
+	require.Contains(t, label, "dark:text-on-surface-dark-strong")
+	require.NotContains(t, label, "text-secondary")
+	require.Contains(t, triggerBtnClass(state), "border-secondary")
+}
