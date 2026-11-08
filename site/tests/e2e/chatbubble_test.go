@@ -25,6 +25,11 @@ func TestChatBubbleComponentDemoVariants(t *testing.T) {
 	require.NoError(t, page.Locator("#chatbubble-fragment").First().WaitFor(
 		playwright.LocatorWaitForOptions{Timeout: playwright.Float(5000)}))
 
+	t.Run("rich message slot", func(t *testing.T) {
+		count, err := page.Locator("#chatbubble-rich blockquote strong").Count()
+		require.NoError(t, err)
+		assert.Equal(t, 1, count)
+	})
 	t.Run("default preview renders sent and received alignment hooks", func(t *testing.T) {
 		defaultPreview := page.Locator("#chatbubble-default")
 		require.NoError(t, defaultPreview.GetByText("Hi there! How can I assist you today?", playwright.LocatorGetByTextOptions{

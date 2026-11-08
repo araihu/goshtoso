@@ -35,6 +35,12 @@ templ chatBubbleDemoContent() {
 		)
 
 		@demo.ExpressionOverridesNote("ChatBubble")
+@demo.DemoSection(demo.DemoSectionProps{Title:"Rich message content",Description:"MessageContent accepts an application-owned templ component. A nil slot keeps the plain Message renderer; callers own safe rendering of untrusted content."},chatBubbleRichPreview(),`@chatbubble.ChatBubble(chatbubble.Config{
+ Side: chatbubble.Received,
+ SenderName: "Ada",
+ MessageContent: quotedMessage(),
+})`)
+
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -254,4 +260,13 @@ templ chatBubbleTypingPreview() {
 			AvatarTone:     avatar.ToneInfo,
 		})
 	</div>
+}
+
+templ chatBubbleRichPreview(){
+<div id="chatbubble-rich" class="w-full">
+@chatbubble.ChatBubble(chatbubble.Config{Side:chatbubble.Received,SenderName:"Ada",MessageContent:quotedMessage()})
+</div>
+}
+templ quotedMessage(){
+<blockquote><p>A quoted <strong>message</strong>.</p></blockquote>
 }

@@ -3,6 +3,7 @@ package chatbubble
 import (
 	"bytes"
 	"context"
+	"io"
 	"strings"
 	"testing"
 
@@ -114,4 +115,21 @@ func TestTypingIndicatorReducedMotionContract(t *testing.T) {
 	html := render(t, TypingIndicator(Config{}))
 
 	assert.Equal(t, 3, strings.Count(html, "motion-reduce:animate-none"))
+}
+
+func TestMessageContentReplacesPlainMessageAndPreservesMetadata(t *testing.T) {
+	content := templ.ComponentFunc(func(_ context.Context, w io.Writer) error {
+		_, err := io.WriteString(w, "<blockquote><p>Quoted content</p></blockquote>")
+		return err
+	})
+	html := render(t, ChatBubble(Config{Side: Sent, Message: "plain fallback", MessageContent: content, SenderName: "Ada", Timestamp: "12:34", Status: StatusSeen}))
+	assert.Contains(t, html, "<blockquote><p>Quoted content</p></blockquote>")
+	assert.NotContains(t, html, "plain fallback")
+	assert.Contains(t, html, `data-mine="true"`)
+	assert.Contains(t, html, "Ada")
+	assert.Contains(t, html, "12:34")
+	assert.Contains(t, html, "Seen")
+	plain := render(t, ChatBubble(Config{Message: "<unsafe>\nsecond"}))
+	assert.Contains(t, plain, "&lt;unsafe&gt;\nsecond")
+	assert.Contains(t, plain, "whitespace-pre-wrap")
 }
