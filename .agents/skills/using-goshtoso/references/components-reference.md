@@ -1415,7 +1415,7 @@ import "github.com/araihu/goshtoso/components/popover"  // package popover
 | `Trigger` | `templ.Component` | Trigger is the consumer-owned interactive trigger component. |
 | `Content` | `templ.Component` | Content is the consumer-owned panel content. |
 | `Activation` | `Activation` | Activation controls whether the popover opens on click, hover, or context-menu activation. The default is ActivationClick. |
-| `Placement` | `Placement` | Placement controls the panel's CSS placement. The default is PlacementBottomStart. |
+| `Placement` | `Placement` | Placement is the preferred panel placement. The default is PlacementBottomStart. The runtime flips or shifts near viewport edges, constrains oversized panels with scrolling, and uses the native popover top layer to escape clipping or transformed ancestors when supported. Without that browser capability, positioning respects clipping bounds. Scrolling keeps an open panel available and clamped within those bounds. |
 | `Role` | `string` | Role sets the optional ARIA role on the panel, such as "menu" or "dialog". |
 | `Label` | `string` | Label sets the optional accessible name on the panel. |
 | `RootClass` | `string` | RootClass appends classes to the relative root. |

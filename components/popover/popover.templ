@@ -3,10 +3,11 @@ package popover
 import "github.com/araihu/goshtoso/expressions"
 
 // Popover renders consumer-owned trigger and content with shared open/close
-// lifecycle, focus restoration, ARIA wiring, and CSS placement.
+// lifecycle, focus restoration, ARIA wiring, and collision-aware placement.
 templ popoverTemplate(cfg Config) {
 	<div
 		data-popover-root
+		data-popover-placement={ string(cfg.placement()) }
 		x-data="goshtosoPopover($el)"
 		x-on:keydown.esc.window="handleEscape($event)"
 		x-on:click.outside="close()"
