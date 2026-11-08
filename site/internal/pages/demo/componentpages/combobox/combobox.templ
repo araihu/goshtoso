@@ -12,6 +12,7 @@ var IndustryCfg = combobox.Config{
 	Label:       "Industry (client mode)",
 	Placeholder: "Select an industry",
 	Mode:        combobox.ModeSingle,
+    EnableSearch: true,
 	Source: combobox.Source{Static: []combobox.Option{
 		{Value: "tech", Label: "Technology"},
 		{Value: "health", Label: "Healthcare"},
@@ -205,7 +206,12 @@ clustersProvider := func(ctx context.Context, search string, deps map[string]str
 // comboboxIndustryPreview renders the client-mode single-select.
 templ comboboxIndustryPreview() {
 	<div id="combobox-industry" class="w-full max-w-xs mx-auto">
-		@combobox.Combobox(IndustryCfg, combobox.State{Options: IndustryCfg.Source.Static})
+        <form id="combobox-client-form" class="flex flex-col gap-3">
+            <label for="combobox-record-search">Search records</label>
+            <input id="combobox-record-search" type="search" name="q" value="records" class="w-full rounded-radius border border-outline bg-surface px-3 py-2 dark:border-outline-dark dark:bg-surface-dark"/>
+            @combobox.Combobox(IndustryCfg, combobox.State{Options: IndustryCfg.Source.Static})
+            <p class="text-sm">Option filtering stays internal. This form submits its record query and selected industry.</p>
+        </form>
 	</div>
 }
 

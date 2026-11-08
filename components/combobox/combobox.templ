@@ -83,6 +83,7 @@ templ bodyInner(cfg Config, state State) {
 				data-combobox-search
 				value={ state.Search }
 				placeholder={ expressions.From(ctx).Combobox.SearchPlaceholder }
+                aria-label={ expressions.From(ctx).Combobox.SearchPlaceholder }
 				class="w-full bg-transparent py-2.5 pl-9 pr-3 text-sm text-on-surface placeholder:text-on-surface/40 focus:outline-none dark:text-on-surface-dark dark:placeholder:text-on-surface-dark/40"
  if cfg.OptionsEndpoint!="" {
 				hx-get={ cfg.OptionsEndpoint }
@@ -93,11 +94,16 @@ templ bodyInner(cfg Config, state State) {
 				hx-swap="outerHTML"
 				hx-include={ cfg.hxIncludeSelector() }
  }
-				name="q"
+                if !cfg.isClientMode() {
+                    name="q"
+                }
 			/>
 		</div>
 	}
 	@optionsList(cfg, state)
+    if cfg.isClientMode() && cfg.EnableSearch {
+        <p data-combobox-empty hidden role="status" class="px-4 py-3 text-sm text-on-surface dark:text-on-surface-dark">{ expressions.From(ctx).Combobox.EmptyText }</p>
+    }
 }
 
 // hxValsJSON returns the JSON payload for hx-vals carrying the toggled value.
@@ -109,8 +115,8 @@ func hxValsJSON(value string) string {
 // optionsList renders just the <ul>. Swap target for search and lazy first-load.
 templ optionsList(cfg Config, state State) {
  {{ cfg = cfg.withExpressions(ctx) }}
-	<ul id={ cfg.ID + "-options" } class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox">
-		if len(state.Options) == 0 {
+	<ul id={ cfg.ID + "-options" } class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox" aria-labelledby={ cfg.ID + "-trigger" }>
+		if len(state.Options) == 0 && (!cfg.isClientMode() || !cfg.EnableSearch) {
 			<li class="px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60">{ expressions.From(ctx).Combobox.EmptyText }</li>
 		}
 		for _, opt := range state.Options {
