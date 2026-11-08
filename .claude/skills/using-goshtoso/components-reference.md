@@ -458,6 +458,7 @@ import "github.com/araihu/goshtoso/components/chatbubble"  // package chatbubble
 |-------|------|-------------|
 | `Side` | `Side` | Side determines alignment + color (received/sent/auto). |
 | `Message` | `string` | Message is the bubble text. |
+| `MessageContent` | `templ.Component` | MessageContent replaces Message with application-owned rich content when nonnil. The caller owns sanitization and accessible content. A nil value preserves the escaped, whitespace-preserving plain Message renderer. |
 | `SenderName` | `string` | SenderName is shown above the bubble (hidden when Grouped). |
 | `Timestamp` | `string` | Timestamp is shown next to the sender name, e.g. "11:32 AM". |
 | `Status` | `Status` | Status renders under any bubble; conventionally use it for sent messages. |
