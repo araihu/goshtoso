@@ -14,6 +14,12 @@
     '[tabindex]:not([tabindex="-1"])',
   ].join(',');
 
+  // Alpine refs may resolve through ancestor scopes. Only use refs owned by
+  // this popover, never another component's trigger or panel.
+  function ownedRef(root, element) {
+    return element && element.closest('[data-popover-root]') === root ? element : null;
+  }
+
   function firstTrigger(root) {
     var marker = root.querySelector('[data-popover-trigger]');
     if (!marker) return null;
@@ -249,10 +255,10 @@
         this.closeAndFocus();
       },
       triggerElement: function () {
-        return this.$refs.trigger || firstTrigger(root);
+        return ownedRef(root, this.$refs.trigger) || firstTrigger(root);
       },
       panelElement: function () {
-        return this.$refs.panel || panel(root);
+        return ownedRef(root, this.$refs.panel) || panel(root);
       },
       syncTrigger: function () {
         var trigger = this.triggerElement();
