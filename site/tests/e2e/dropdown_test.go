@@ -785,3 +785,64 @@ func TestDropdown_ActionsMenu(t *testing.T) {
 		assert.Contains(t, cls, "text-danger", "danger item should carry text-danger class")
 	})
 }
+
+// Enabled actions must remain distinguishable when a consumer maps both
+// surface-alt tokens to the same color, as Oie does.
+func TestDropdownItemPointerAndFeedback(t *testing.T) {
+	page := newIsolatedPage(t)
+	_, err := page.Goto(baseURL + "/components/dropdown")
+	require.NoError(t, err)
+	require.NoError(t, waitForAlpine(page))
+	for _, width := range []int{390, 1440} {
+		require.NoError(t, page.SetViewportSize(width, 900))
+		for _, theme := range []string{"goshtoso", "minimal"} {
+			for _, dark := range []bool{false, true} {
+				for _, consumer := range []bool{false, true} {
+					_, err = page.Evaluate(`([theme,dark,consumer])=>{
+      const root=document.documentElement;root.dataset.theme=theme;root.classList.toggle('dark',dark);
+      for(const token of ['--color-surface-alt','--color-surface-dark-alt']){
+       if(consumer)root.style.setProperty(token,dark?'#2b2c2b':'#f0f2f1');else root.style.removeProperty(token);
+      }
+     }`, []any{theme, dark, consumer})
+					require.NoError(t, err)
+					trigger := page.Locator("#dropdown-actions button").First()
+					require.NoError(t, trigger.Click())
+					for _, id := range []string{"dropdown-actions-view", "dropdown-actions-edit", "dropdown-actions-archive"} {
+						item := page.Locator("#" + id)
+						require.NoError(t, page.Mouse().Move(0, 0))
+						normal, err := item.Evaluate(`el=>{
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const ctx=canvas.getContext('2d');
+ ctx.fillStyle=getComputedStyle(el.closest('[role="menu"]')).backgroundColor;ctx.fillRect(0,0,1,1);
+ ctx.fillStyle=getComputedStyle(el).backgroundColor;ctx.fillRect(0,0,1,1);
+ return Array.from(ctx.getImageData(0,0,1,1).data).slice(0,3);
+}`, nil)
+						require.NoError(t, err)
+						require.NoError(t, item.Hover())
+						hovered, err := item.Evaluate(`(el,normal)=>{
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const ctx=canvas.getContext('2d');
+ ctx.fillStyle=getComputedStyle(el.closest('[role="menu"]')).backgroundColor;ctx.fillRect(0,0,1,1);
+ ctx.fillStyle=getComputedStyle(el).backgroundColor;ctx.fillRect(0,0,1,1);
+ const painted=ctx.getImageData(0,0,1,1).data;
+ return {difference:normal.reduce((sum,value,i)=>sum+Math.abs(value-painted[i]),0),cursor:getComputedStyle(el).cursor};
+}`, normal)
+						require.NoError(t, err)
+						state := hovered.(map[string]any)
+						require.Equal(t, "pointer", state["cursor"])
+						require.Greater(t, state["difference"].(int), 20, "%d/%s/dark=%t/consumer=%t", width, theme, dark, consumer)
+					}
+					require.NoError(t, page.Mouse().Move(0, 0))
+					require.NoError(t, trigger.Focus())
+					require.NoError(t, page.Keyboard().Press("Tab"))
+					focused, err := page.Locator("#dropdown-actions-view").Evaluate(`el=>el===document.activeElement&&el.matches(':focus-visible')&&getComputedStyle(el).backgroundColor!=='rgba(0, 0, 0, 0)'`, nil)
+					require.NoError(t, err)
+					require.Equal(t, true, focused)
+					disabled := page.Locator("#dropdown-actions-locked")
+					isDisabled, err := disabled.IsDisabled()
+					require.NoError(t, err)
+					require.True(t, isDisabled)
+					require.NoError(t, page.Keyboard().Press("Escape"))
+				}
+			}
+		}
+	}
+}

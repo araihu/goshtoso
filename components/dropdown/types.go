@@ -227,7 +227,7 @@ func (cfg Config) panelClass() string {
 
 // ItemClasses returns the CSS classes for a dropdown menu item
 func (cfg Config) itemClasses(hasIcon bool) string {
-	base := "bg-surface-alt px-4 py-2 text-left text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/10 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong"
+	base := "bg-surface-alt px-4 py-2 text-left text-sm text-on-surface hover:bg-on-surface/10 hover:text-on-surface-strong focus-visible:bg-on-surface/15 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-on-surface-dark/10 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-on-surface-dark/15 dark:focus-visible:text-on-surface-dark-strong"
 	if hasIcon {
 		return "flex items-center gap-2 " + base
 	}
