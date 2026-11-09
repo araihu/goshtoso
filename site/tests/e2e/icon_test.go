@@ -169,16 +169,40 @@ func TestIconCatalogSpriteWorkbench(t *testing.T) {
 	})
 
 	t.Run("decorative and blank labels hide the live preview", func(t *testing.T) {
-		page, _, dialog := openMagnifyingGlassModal(t)
-		decorativeControl := page.Locator("#icon-catalog-fragment input[type='checkbox']")
-		require.NoError(t, decorativeControl.Check())
-		preview := dialog.Locator("[data-testid='icon-live-preview']")
-		require.NoError(t, preview.WaitFor())
-		assertSVGAttributes(t, preview, "", "", "true")
+		for _, mode := range []struct {
+			name, theme string
+			dark        bool
+		}{
+			{"GoshtosoLight", "goshtoso", false},
+			{"GoshtosoDark", "goshtoso", true},
+			{"MinimalLight", "minimal", false},
+			{"MinimalDark", "minimal", true},
+		} {
+			t.Run(mode.name, func(t *testing.T) {
+				page, _, dialog := openMagnifyingGlassModal(t)
+				setThemeMode(t, page, mode.theme, mode.dark)
+				_, err := dialog.Evaluate(`async el => { await Promise.all(el.getAnimations({ subtree: true }).map(animation => animation.finished.catch(() => {}))); }`, nil)
+				require.NoError(t, err)
+				decorativeControl := page.Locator("#icon-catalog-fragment input[type='checkbox']")
+				before, err := decorativeControl.BoundingBox()
+				require.NoError(t, err)
+				require.NotNil(t, before)
+				require.NoError(t, decorativeControl.Check())
+				_, err = page.WaitForFunction(`() => document.querySelector('#icon-label').disabled`, nil)
+				require.NoError(t, err)
+				after, err := decorativeControl.BoundingBox()
+				require.NoError(t, err)
+				require.NotNil(t, after)
+				assert.InDelta(t, before.Y, after.Y, 0.5, "toggling decorative must keep the checkbox under the pointer")
+				preview := dialog.Locator("[data-testid='icon-live-preview']")
+				require.NoError(t, preview.WaitFor())
+				assertSVGAttributes(t, preview, "", "", "true")
 
-		require.NoError(t, decorativeControl.Uncheck())
-		require.NoError(t, page.Locator("#icon-label").Fill(""))
-		assertSVGAttributes(t, preview, "", "", "true")
+				require.NoError(t, decorativeControl.Uncheck())
+				require.NoError(t, page.Locator("#icon-label").Fill(""))
+				assertSVGAttributes(t, preview, "", "", "true")
+			})
+		}
 	})
 
 	t.Run("bundled sprite and license return success", func(t *testing.T) {
