@@ -4,6 +4,7 @@ import (
 	"github.com/araihu/goshtoso/components/button"
  "github.com/araihu/goshtoso/components/dropdown"
 	"github.com/araihu/goshtoso/components/popover"
+ "github.com/araihu/goshtoso/components/sidebar"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -30,6 +31,11 @@ templ popoverDemoContent() {
 })`,
 		)
 
+        @demo.DemoSection(
+            demo.DemoSectionProps{Title: "Popover inside a sidebar", Description: "An account popover owns its trigger independently of the containing sidebar."},
+            sidebarPopoverPreview(),
+            `@sidebar.Overlay(sidebar.OverlayConfig{Sidebar: sidebar.Config{FooterSlot: accountPopover}})`,
+        )
 		@demo.ExpressionOverridesNote("Popover")
   @demo.DemoSection(demo.DemoSectionProps{Title:"Nested action menu",Description:"Escape closes the innermost open surface first and restores its trigger. Press Escape again to close the enclosing popover."},nestedPopoverPreview(),`@popover.Popover(popover.Config{Content: dropdownMenu})`)
 
@@ -140,4 +146,43 @@ templ nestedInboxTrigger() {
 templ nestedInboxContent() {
  <p>Inbox with a nested action menu.</p>
  @dropdown.Dropdown(dropdown.Config{ID:"nested-inbox-actions",Label:"Inbox actions",Sections:[]dropdown.Section{{Items:[]dropdown.Item{{Label:"Inspect notification",Href:"#"}}}}})
+}
+
+
+templ sidebarPopoverPreview() {
+    <div id="sidebar-popover-example">
+        @sidebar.Overlay(sidebar.OverlayConfig{
+            ID: "account-navigation",
+            TriggerLabel: "Open account navigation",
+            Trigger: sidebarPopoverLabel(),
+            Sidebar: sidebar.Config{
+                LogoText: "Account navigation",
+                DisableSkipLink: true,
+                FooterSlot: sidebarAccountPopover(),
+            },
+        })
+    </div>
+}
+
+templ sidebarPopoverLabel() {
+    <span>Open account navigation</span>
+}
+
+templ sidebarAccountPopover() {
+    @popover.Popover(popover.Config{
+        ID: "sidebar-account",
+        Trigger: sidebarAccountTrigger(),
+        Content: sidebarAccountContent(),
+        Role: "dialog",
+        Label: "Account choices",
+        Placement: popover.PlacementTopStart,
+    })
+}
+
+templ sidebarAccountTrigger() {
+    @button.Button(button.WithID("sidebar-account-trigger")) { Choose account }
+}
+
+templ sidebarAccountContent() {
+    <button type="button" id="sidebar-account-close" x-on:click="closeAndFocus()">Close account choices</button>
 }
