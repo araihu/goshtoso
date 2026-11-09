@@ -420,8 +420,8 @@ func TestDaggerCachesMatchingPlaywrightDriverAndBrowsers(t *testing.T) {
 	}
 	module := string(data)
 	for _, expected := range []string{
-		`const PLAYWRIGHT_VERSION = "v0.6201.0"`,
-		`const PLAYWRIGHT_DRIVER_VERSION = "1.62.1"`,
+		`const PLAYWRIGHT_VERSION = "v0.6401.0"`,
+		`const PLAYWRIGHT_DRIVER_VERSION = "1.64.1"`,
 		`.withEnvVariable("PLAYWRIGHT_DRIVER_PATH", "/playwright/driver")`,
 		`ready=/playwright/.chromium-${PLAYWRIGHT_DRIVER_VERSION}-ready`,
 		`! test -f "$PLAYWRIGHT_DRIVER_PATH/package/cli.js"`,
