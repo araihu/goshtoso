@@ -10,6 +10,27 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// Record visible geometry before opening so the first painted transition frame
+// must satisfy the same bounds as the settled panel.
+func observePopoverPaints(t *testing.T, page playwright.Page, id string) {
+	t.Helper()
+	_, err := page.Evaluate(`id => {
+    window.popoverPaints = {active:true, frames:[]};
+    const sample = () => {
+      if (!popoverPaints.active) return;
+      const panel=document.querySelector('#'+id+' [data-popover-panel]');
+      const style=getComputedStyle(panel);
+      if (style.display!=='none' && style.visibility!=='hidden' && Number(style.opacity)>0) {
+        const r=panel.getBoundingClientRect();
+        popoverPaints.frames.push({left:r.left,top:r.top,right:r.right,bottom:r.bottom});
+      }
+      requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  }`, id)
+	require.NoError(t, err)
+}
+
 func assertPopoverFits(t *testing.T, page playwright.Page, id string) {
 	t.Helper()
 	_, err := page.WaitForFunction(`id => {
@@ -35,6 +56,14 @@ func assertPopoverFits(t *testing.T, page playwright.Page, id string) {
  }`, id)
 	require.NoError(t, err)
 	require.Equal(t, true, fits, "settled panel must remain in the viewport")
+	painted, err := page.Evaluate(`()=>{
+    if (!window.popoverPaints?.active) return true;
+    popoverPaints.active=false;
+    return popoverPaints.frames.length>0 && popoverPaints.frames.every(r=>
+      r.left>=7 && r.top>=7 && r.right<=innerWidth-7 && r.bottom<=innerHeight-7);
+  }`)
+	require.NoError(t, err)
+	require.Equal(t, true, painted, "every visible opening frame must remain in the viewport")
 }
 
 func TestPopover_ViewportCollisions(t *testing.T) {
@@ -50,12 +79,13 @@ func TestPopover_ViewportCollisions(t *testing.T) {
       document.documentElement.dataset.theme=config.theme;
       document.documentElement.classList.toggle('dark',config.dark);
       const box=document.querySelector('#popover-collision-scroll');
-      box.style.cssText='position:fixed;left:8px;top:calc(100vh - 100px);width:calc(100vw - 16px);height:80px;overflow:auto;transform:translateZ(0);z-index:100;padding:4px;';
+      box.style.cssText='position:fixed;left:8px;top:calc(100vh - 100px);width:calc(100vw - 16px);height:80px;overflow:auto;transform:translateZ(0);filter:drop-shadow(0 1px 1px #0002);z-index:100;padding:4px;';
       box.scrollTop=box.scrollHeight;
       document.querySelector('#popover-collision-start-panel').style.minHeight='350px';
     }`, map[string]any{"theme": theme, "dark": dark})
 				require.NoError(t, err)
 				trigger := page.Locator("#popover-collision-start [data-popover-trigger] button")
+				observePopoverPaints(t, page, "popover-collision-start")
 				require.NoError(t, trigger.Focus())
 				require.NoError(t, page.Keyboard().Press("ArrowDown"))
 				assertPopoverFits(t, page, "popover-collision-start")
@@ -88,6 +118,7 @@ func TestPopover_ViewportCollisions(t *testing.T) {
 				_, err = page.WaitForFunction(`()=>document.activeElement===document.querySelector('#popover-collision-start [data-popover-trigger] button')`, nil)
 				require.NoError(t, err)
 				// Exercise the shared Dropdown runtime near the opposite horizontal edge.
+				observePopoverPaints(t, page, "dropdown-collision-end")
 				require.NoError(t, page.Locator("#dropdown-collision-end [data-popover-trigger] button").Click())
 				assertPopoverFits(t, page, "dropdown-collision-end")
 				require.NoError(t, page.Keyboard().Press("Escape"))
@@ -98,6 +129,7 @@ func TestPopover_ViewportCollisions(t *testing.T) {
       root.style.cssText='position:fixed;right:8px;bottom:8px;z-index:101';
     }`)
 				require.NoError(t, err)
+				observePopoverPaints(t, page, "filters-popover")
 				require.NoError(t, page.Locator("#filters-popover [data-popover-trigger] button").Click())
 				assertPopoverFits(t, page, "filters-popover")
 				position, err := page.Locator("#filters-popover-panel").Evaluate(`p=>getComputedStyle(p).position`, nil)

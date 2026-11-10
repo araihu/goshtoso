@@ -161,6 +161,9 @@
       setPanelStyle(menu, "left", left + "px");
       setPanelStyle(menu, "top", y + "px");
       menu.dataset.popoverPlacement = (top ? "top" : "bottom") + (preferred.endsWith("end") ? "-end" : "-start");
+      // x-show starts its transition before Alpine's next-tick positioning.
+      // Keep the measurable panel hidden until viewport clamping is complete.
+      state.positioned = true;
     }
 
     function schedule() {
@@ -229,6 +232,10 @@
     var positioner;
     return {
       isOpen: false,
+      positioned: false,
+      get panelVisibility() {
+        return { visibility: this.positioned ? "visible" : "hidden" };
+      },
       openedWithKeyboard: false,
       leaveTimeout: null,
       focusRestoreObserver: null,
@@ -373,11 +380,15 @@
         sync();
         this.$watch("isOpen", sync);
         this.$watch("openedWithKeyboard", sync);
+        this.$watch("positioned", function (ready) {
+          if (ready && this.openedWithKeyboard) this.focusFirstItem();
+        }.bind(this));
       },
       open: function () {
         this.cancelFocusRestore();
         clearTimeout(this.leaveTimeout);
         this.leaveTimeout = null;
+        if (!this.isOpen && !this.openedWithKeyboard) this.positioned = false;
         this.isOpen = true;
         this.syncTrigger();
       },
@@ -394,9 +405,10 @@
         this.open();
       },
       openFromKeyboard: function () {
+        if (!this.isOpen && !this.openedWithKeyboard) this.positioned = false;
         this.openedWithKeyboard = true;
         this.open();
-        this.focusFirstItem();
+        if (this.positioned) this.focusFirstItem();
       },
       closeAndFocus: function () {
         if (this.destroyed || (!this.isOpen && !this.openedWithKeyboard)) return;
