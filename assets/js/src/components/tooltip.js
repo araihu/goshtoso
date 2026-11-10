@@ -263,7 +263,8 @@
       });
       return;
     }
-    root.addEventListener("click", function () { hide(panel); });
+    // Dismiss before a custom action opens another layer or stops bubbling.
+    root.addEventListener("click", function () { hide(panel); }, true);
     root.addEventListener("mouseenter", show);
     root.addEventListener("focusin", show);
     root.addEventListener("mouseleave", function () {
