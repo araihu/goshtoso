@@ -244,7 +244,8 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `Description` | `string` | Description is the main banner content |
+| `Description` | `string` | Description is the main banner text when Content is nil. |
+| `Content` | `templ.Component` | Content replaces the description and built-in CTA. Use it to render custom markup and actions, including native forms, inside the banner. |
 | `Tone` | `Tone` | Tone determines the color scheme |
 | `Position` | `Position` | Position determines if banner is fixed or relative |
 | `Persistent` | `bool` | Persistent disables the dismiss button (default: banners are dismissible) |
@@ -252,6 +253,7 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 | `DismissHTMX` | `*HTMXConfig` | DismissHTMX configures a declarative server action for dismiss. It may be combined with DismissAction, which keeps its existing local behavior. |
 | `CTA` | `*CTAConfig` | CTA is the call-to-action button config (optional) |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the banner root. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends HTML attributes to the banner root. A supplied role overrides the default banner landmark for use inside a page section. |
 
 **CookieBannerConfig**
 
