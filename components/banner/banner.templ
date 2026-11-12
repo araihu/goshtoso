@@ -47,9 +47,14 @@ templ simpleBanner(cfg Config) {
 		x-show="show"
 		x-cloak
 		class={ cfg.containerClasses() }
-		role="banner"
+		if cfg.RootAttrs["role"] == nil {
+			role="banner"
+		}
+		{ cfg.RootAttrs... }
 	>
-		if cfg.CTA != nil {
+		if cfg.Content != nil {
+			@cfg.Content
+		} else if cfg.CTA != nil {
 			<div class="mx-auto flex flex-wrap items-center gap-2 px-6">
 				<p class={ cfg.textClasses() }>{ cfg.Description }</p>
 				if cfg.CTA.Href != "" && cfg.CTA.OnClick == "" && cfg.CTA.HTMX == nil {

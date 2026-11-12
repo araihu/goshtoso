@@ -3,7 +3,10 @@ package banner
 import (
 	"bytes"
 	"context"
+	"io"
 	"testing"
+
+	"github.com/a-h/templ"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -33,4 +36,23 @@ func TestBannerCTA_PreservesRelativeHref(t *testing.T) {
 	})
 
 	assert.Contains(t, rendered, `href="/docs?tab=api"`)
+}
+
+func TestBannerCustomContentOwnsItsActions(t *testing.T) {
+	rendered := renderBanner(t, Config{
+		Description: "Default description",
+		CTA:         &CTAConfig{ActionLabel: "Default CTA"},
+		Persistent:  true,
+		RootAttrs:   templ.Attributes{"role": "group", "aria-labelledby": "notice"},
+		Content: templ.ComponentFunc(func(_ context.Context, w io.Writer) error {
+			_, err := io.WriteString(w, `<h2 id="notice">Pending request</h2><form method="post"><button>Accept</button></form>`)
+			return err
+		}),
+	})
+	assert.Contains(t, rendered, `role="group"`)
+	assert.Contains(t, rendered, `aria-labelledby="notice"`)
+	assert.Contains(t, rendered, `<form method="post"><button>Accept</button></form>`)
+	assert.NotContains(t, rendered, `role="banner"`)
+	assert.NotContains(t, rendered, "Default description")
+	assert.NotContains(t, rendered, "Default CTA")
 }

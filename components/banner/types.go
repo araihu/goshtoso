@@ -24,8 +24,11 @@ const (
 
 // Config holds configuration for the banner
 type Config struct {
-	// Description is the main banner content
+	// Description is the main banner text when Content is nil.
 	Description string
+	// Content replaces the description and built-in CTA. Use it to render
+	// custom markup and actions, including native forms, inside the banner.
+	Content templ.Component
 	// Tone determines the color scheme
 	Tone Tone
 	// Position determines if banner is fixed or relative
@@ -41,6 +44,9 @@ type Config struct {
 	CTA *CTAConfig
 	// RootClass allows additional CSS classes on the banner root.
 	RootClass string
+	// RootAttrs appends HTML attributes to the banner root. A supplied role
+	// overrides the default banner landmark for use inside a page section.
+	RootAttrs templ.Attributes
 }
 
 // CTAConfig holds call-to-action button configuration
