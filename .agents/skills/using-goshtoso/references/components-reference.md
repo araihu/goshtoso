@@ -253,7 +253,7 @@ import "github.com/araihu/goshtoso/components/banner"  // package banner
 | `DismissHTMX` | `*HTMXConfig` | DismissHTMX configures a declarative server action for dismiss. It may be combined with DismissAction, which keeps its existing local behavior. |
 | `CTA` | `*CTAConfig` | CTA is the call-to-action button config (optional) |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the banner root. |
-| `RootAttrs` | `templ.Attributes` | RootAttrs appends HTML attributes to the banner root. A supplied role overrides the default banner landmark for use inside a page section. |
+| `RootAttrs` | `templ.Attributes` | RootAttrs appends HTML attributes to the banner root. Names are case-insensitive. A nonempty string role overrides the default banner landmark. Use RootClass for CSS classes. The banner owns its Alpine x-data, x-show and x-cloak attributes. |
 
 **CookieBannerConfig**
 
