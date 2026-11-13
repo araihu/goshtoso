@@ -38,13 +38,15 @@ type Option struct {
 
 // Config holds the combobox configuration. ID must be globally unique per page.
 type Config struct {
-	ID             string
-	Name           string
-	Label          string
-	Placeholder    string
-	Mode           Mode
-	Source         Source
-	Selected       []string
+	ID          string
+	Name        string
+	Label       string
+	Placeholder string
+	Mode        Mode
+	Source      Source
+	Selected    []string
+	// EnableSearch filters options. Client-mode search is internal UI state
+	// and is excluded from parent form values; server mode submits q.
 	EnableSearch   bool
 	EnableClearAll bool
 	// DisablePersistence keeps client selection in the current DOM only.
@@ -64,6 +66,9 @@ type Config struct {
 func (c Config) triggerAttributes() templ.Attributes {
 	attrs := make(templ.Attributes, len(c.TriggerAttrs)+1)
 	maps.Copy(attrs, c.TriggerAttrs)
+	if _, exists := attrs["aria-controls"]; !exists {
+		attrs["aria-controls"] = c.ID + "-options"
+	}
 	if c.Required {
 		if _, exists := attrs["aria-required"]; !exists {
 			attrs["aria-required"] = "true"

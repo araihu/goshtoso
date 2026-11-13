@@ -3,10 +3,11 @@ package popover
 import "github.com/araihu/goshtoso/expressions"
 
 // Popover renders consumer-owned trigger and content with shared open/close
-// lifecycle, focus restoration, ARIA wiring, and CSS placement.
+// lifecycle, focus restoration, ARIA wiring, and collision-aware placement.
 templ popoverTemplate(cfg Config) {
 	<div
 		data-popover-root
+		data-popover-placement={ string(cfg.placement()) }
 		x-data="goshtosoPopover($el)"
 		x-on:keydown.esc.window="handleEscape($event)"
 		x-on:click.outside="close()"
@@ -42,6 +43,8 @@ templ popoverTemplate(cfg Config) {
 			data-popover-panel
 			x-ref="panel"
 			x-cloak
+			style="visibility:hidden"
+			x-bind:style="panelVisibility"
 			x-show="isOpen || openedWithKeyboard"
 			x-transition:enter="transition ease-out duration-150 motion-reduce:transition-none"
 			x-transition:enter-start="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"
@@ -50,7 +53,7 @@ templ popoverTemplate(cfg Config) {
 			x-transition:leave-start="opacity-100 scale-100"
 			x-transition:leave-end="opacity-0 scale-95 motion-reduce:opacity-100 motion-reduce:scale-100"
 			if cfg.TrapFocus {
-				x-trap.noreturn="openedWithKeyboard"
+				x-trap.noreturn="openedWithKeyboard && positioned"
 			}
 			if panelID := cfg.panelID(); panelID != "" {
 				id={ panelID }

@@ -19,6 +19,16 @@ const (
 	InteractionPressed Interaction = "pressed"
 )
 
+// Density controls content spacing and type size without changing card semantics.
+type Density string
+
+const (
+	// DensityDefault preserves the original spacious card treatment.
+	DensityDefault Density = ""
+	// DensityCompact fits previews and metadata into dense application surfaces.
+	DensityCompact Density = "compact"
+)
+
 // Layout represents card layout
 type Layout string
 
@@ -54,6 +64,8 @@ type Config struct {
 	Appearance Appearance
 	// Layout determines vertical or horizontal layout
 	Layout Layout
+	// Density selects content spacing and typography. The zero value preserves existing cards.
+	Density Density
 	// Interaction determines optional card motion.
 	Interaction Interaction
 	// RootClass allows additional CSS classes on the card root.
@@ -95,6 +107,9 @@ func (cfg Config) imageContainerClasses() string {
 	if cfg.Layout == LayoutHorizontal {
 		return "col-span-3 overflow-hidden " + cfg.MediaClass
 	}
+	if cfg.Density == DensityCompact {
+		return "aspect-video overflow-hidden " + cfg.MediaClass
+	}
 	return "h-44 md:h-64 overflow-hidden " + cfg.MediaClass
 }
 
@@ -108,6 +123,12 @@ func (cfg Config) imageClasses() string {
 
 // ContentClasses returns the content container classes
 func (cfg Config) contentClasses() string {
+	if cfg.Density == DensityCompact {
+		if cfg.Layout == LayoutHorizontal {
+			return "flex flex-col justify-center gap-2 p-3 col-span-5"
+		}
+		return "flex flex-col gap-2 p-3"
+	}
 	if cfg.Layout == LayoutHorizontal {
 		return "flex flex-col justify-center p-6 col-span-5"
 	}
@@ -121,11 +142,17 @@ func (cfg Config) tagClasses() string {
 
 // TitleClasses returns the title classes
 func (cfg Config) titleClasses() string {
+	if cfg.Density == DensityCompact {
+		return "text-balance text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong"
+	}
 	return "text-balance text-xl lg:text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong"
 }
 
 // DescriptionClasses returns the description classes
 func (cfg Config) descriptionClasses() string {
+	if cfg.Density == DensityCompact {
+		return "text-pretty text-xs"
+	}
 	return "text-pretty text-sm"
 }
 

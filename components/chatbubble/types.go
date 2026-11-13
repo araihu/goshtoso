@@ -30,6 +30,10 @@ type Config struct {
 	Side Side
 	// Message is the bubble text.
 	Message string
+	// MessageContent replaces Message with application-owned rich content when nonnil.
+	// The caller owns sanitization and accessible content. A nil value preserves
+	// the escaped, whitespace-preserving plain Message renderer.
+	MessageContent templ.Component
 	// SenderName is shown above the bubble (hidden when Grouped).
 	SenderName string
 	// Timestamp is shown next to the sender name, e.g. "11:32 AM".

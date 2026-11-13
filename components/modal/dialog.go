@@ -14,6 +14,10 @@ type DialogConfig struct {
 	ID string
 	// Title labels the dialog for assistive technology.
 	Title string
+	// HeaderContent replaces the ordinary title/close header when nonnil.
+	// Title remains a screen-reader label. The host supplies all header actions,
+	// including closing through the modal:close event. Compact still omits headers.
+	HeaderContent templ.Component
 	// Content is the dialog body, including any application-owned controls.
 	Content templ.Component
 	// Compact renders a headerless, unpadded dialog near the top of the viewport.

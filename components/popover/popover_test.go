@@ -32,6 +32,8 @@ func TestPopoverRendersConsumerTriggerAndPanelContract(t *testing.T) {
 		`data-popover-root`,
 		`data-popover-trigger`,
 		`data-popover-panel`,
+		`style="visibility:hidden"`,
+		`x-bind:style="panelVisibility"`,
 		`id="actions-panel"`,
 		`role="menu"`,
 		`aria-label="Actions menu"`,
