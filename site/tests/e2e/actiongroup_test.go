@@ -348,8 +348,10 @@ func TestActionGroupOverflowInheritsReducedMotionDropdownContract(t *testing.T) 
 	require.NoError(t, trigger.Click())
 	_, err = page.WaitForFunction(`() => {
 		const menu = document.querySelector("#action-group-stacked [data-action-group-overflow] [role=menu]");
-		if (!menu || getComputedStyle(menu).display === "none") return false;
+		if (!menu) return false;
 		const style = getComputedStyle(menu);
+		if (style.display === "none" || style.visibility !== "visible" ||
+			!menu.hasAttribute("data-popover-placement") || menu.getClientRects().length === 0) return false;
 		return style.transitionProperty === "none" &&
 			style.opacity === "1" &&
 			style.transform === "none";
