@@ -67,12 +67,11 @@ templ bannerDemoContent() {
 			bannerContentPreview(),
 			`@banner.Banner(banner.Config{
     Content:    bannerContent(),
-    Persistent: true,
     RootAttrs: templ.Attributes{"role": "group", "aria-labelledby": "setup-heading"},
 })
 
 templ bannerContent() {
-    <div class="flex w-full flex-wrap items-center gap-3">
+    <div class="flex w-full flex-wrap items-center justify-between gap-3">
         <p id="setup-heading">Finish setting up your workspace</p>
         @link.Link("/components/form") { Continue }
         @link.Link("/components/panel") { View options }
@@ -149,14 +148,13 @@ templ bannerContentPreview() {
 	<div id="banner-content" class="w-full max-w-2xl mx-auto">
 		@banner.Banner(banner.Config{
 			Content: bannerContent(),
-			Persistent: true,
 			RootAttrs: templ.Attributes{"role": "group", "aria-labelledby": "setup-heading"},
 		})
 	</div>
 }
 
 templ bannerContent() {
-	<div class="flex w-full flex-wrap items-center gap-3">
+	<div class="flex w-full flex-wrap items-center justify-between gap-3">
 		<p id="setup-heading">Finish setting up your workspace</p>
 		@link.Link("/components/form") { Continue }
 		@link.Link("/components/panel") { View options }

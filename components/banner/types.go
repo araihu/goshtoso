@@ -1,6 +1,12 @@
 package banner
 
-import "github.com/a-h/templ"
+import (
+	"maps"
+	"slices"
+	"strings"
+
+	"github.com/a-h/templ"
+)
 
 // Tone represents a banner's semantic color treatment.
 type Tone string
@@ -44,9 +50,31 @@ type Config struct {
 	CTA *CTAConfig
 	// RootClass allows additional CSS classes on the banner root.
 	RootClass string
-	// RootAttrs appends HTML attributes to the banner root. A supplied role
-	// overrides the default banner landmark for use inside a page section.
+	// RootAttrs appends HTML attributes to the banner root. Names are
+	// case-insensitive. A nonempty string role overrides the default banner
+	// landmark. Use RootClass for CSS classes. The banner owns its Alpine
+	// x-data, x-show and x-cloak attributes.
 	RootAttrs templ.Attributes
+}
+
+func (cfg Config) rootAttrs() templ.Attributes {
+	attrs := templ.Attributes{"role": "banner"}
+	for _, key := range slices.Sorted(maps.Keys(cfg.RootAttrs)) {
+		name := strings.ToLower(key)
+		switch name {
+		case "class", "x-data", "x-show", "x-cloak":
+			continue
+		case "role":
+			if role, ok := cfg.RootAttrs[key].(string); ok && strings.TrimSpace(role) != "" {
+				attrs[name] = role
+			}
+		default:
+			if !strings.HasPrefix(name, "x-show.") {
+				attrs[name] = cfg.RootAttrs[key]
+			}
+		}
+	}
+	return attrs
 }
 
 // CTAConfig holds call-to-action button configuration

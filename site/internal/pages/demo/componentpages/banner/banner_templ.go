@@ -124,12 +124,11 @@ func bannerDemoContent() templ.Component {
 			bannerContentPreview(),
 			`@banner.Banner(banner.Config{
     Content:    bannerContent(),
-    Persistent: true,
     RootAttrs: templ.Attributes{"role": "group", "aria-labelledby": "setup-heading"},
 })
 
 templ bannerContent() {
-    <div class="flex w-full flex-wrap items-center gap-3">
+    <div class="flex w-full flex-wrap items-center justify-between gap-3">
         <p id="setup-heading">Finish setting up your workspace</p>
         @link.Link("/components/form") { Continue }
         @link.Link("/components/panel") { View options }
@@ -316,9 +315,8 @@ func bannerContentPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Content:    bannerContent(),
-			Persistent: true,
-			RootAttrs:  templ.Attributes{"role": "group", "aria-labelledby": "setup-heading"},
+			Content:   bannerContent(),
+			RootAttrs: templ.Attributes{"role": "group", "aria-labelledby": "setup-heading"},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -348,7 +346,7 @@ func bannerContent() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"flex w-full flex-wrap items-center gap-3\"><p id=\"setup-heading\">Finish setting up your workspace</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"flex w-full flex-wrap items-center justify-between gap-3\"><p id=\"setup-heading\">Finish setting up your workspace</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
