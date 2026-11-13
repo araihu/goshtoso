@@ -176,7 +176,7 @@ templ iconPickerModal() {
 						<svg data-testid="icon-live-preview" xmlns="http://www.w3.org/2000/svg" x-bind:class="previewClass" x-bind:aria-hidden="isDecorative" x-bind:role="isDecorative ? null : 'img'" x-bind:aria-label="isDecorative ? null : label" viewBox="0 0 24 24"><use x-bind:href="spriteHref"></use></svg>
 					</div>
 					<p class="mt-3 font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted" x-text="selected.symbol"></p>
-					<div data-component-code class="mt-4" x-effect="document.querySelector('#icon-workbench-code code').textContent = code">
+					<div data-component-code class="mt-4 [&_pre]:min-h-48" x-effect="document.querySelector('#icon-workbench-code code').textContent = code">
 						@codeblock.CodeBlock(codeblock.Config{
 							ID: "icon-workbench-code",
 							Language: "templ",
@@ -215,7 +215,7 @@ templ iconPickerModal() {
 								"x-bind:disabled": "decorative",
 							},
 						})
-						<p class="mt-1 text-xs text-on-surface-muted dark:text-on-surface-dark-muted" x-show="!decorative && !label.trim()">Blank label renders a decorative icon.</p>
+						<p class="mt-1 text-xs text-on-surface-muted dark:text-on-surface-dark-muted" x-bind:class="{ invisible: decorative || label.trim() }">Blank label renders a decorative icon.</p>
 					</div>
 					<div class="rounded-radius border border-outline p-3 dark:border-outline-dark">
 						@checkbox.Checkbox(checkbox.Config{

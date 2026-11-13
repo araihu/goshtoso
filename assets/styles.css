@@ -6497,6 +6497,9 @@
       }
     }
   }
+  .\[\&_pre\]\:min-h-48 pre {
+    min-height: calc(var(--spacing) * 48);
+  }
   .\[\&\:\:-moz-range-thumb\]\:size-4::-moz-range-thumb {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);

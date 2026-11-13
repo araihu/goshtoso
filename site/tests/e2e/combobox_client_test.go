@@ -152,6 +152,9 @@ func TestCombobox_ClientMode_MultiToggleAndClear(t *testing.T) {
 	kotlinChecked, err := kotlinCheckbox.IsChecked()
 	require.NoError(t, err)
 	assert.True(t, kotlinChecked, "direct checkbox click should keep selected option visually checked")
+	accessibleCheckboxes, err := page.Locator("#skills").GetByRole(*playwright.AriaRoleCheckbox).Count()
+	require.NoError(t, err)
+	assert.Zero(t, accessibleCheckboxes, "the listbox option is the only accessible selection control")
 
 	// Deselect "go" by clicking it again (toggle off).
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="go"]`).First().Click())

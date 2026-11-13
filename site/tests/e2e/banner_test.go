@@ -58,6 +58,17 @@ func TestBannerComponentDemoVariants(t *testing.T) {
 		require.NoError(t, cta.Locator("button").Filter(playwright.LocatorFilterOptions{HasText: "Start free trial"}).WaitFor())
 	})
 
+	t.Run("custom actions belong to the banner", func(t *testing.T) {
+		require.NoError(t, page.SetViewportSize(390, 844))
+		group := page.Locator("#banner-content [role='group']")
+		require.NoError(t, group.GetByText("Finish setting up your workspace").WaitFor())
+		for _, href := range []string{"/components/form", "/components/panel"} {
+			require.NoError(t, group.Locator(`a[href="`+href+`"]`).Click(playwright.LocatorClickOptions{Trial: new(true)}))
+		}
+		require.NoError(t, group.Locator("button[aria-label='dismiss banner']").Click())
+		require.NoError(t, group.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	})
+
 	t.Run("semantic tones render user-facing copy", func(t *testing.T) {
 		variants := page.Locator("#banner-variants")
 		for _, text := range []string{

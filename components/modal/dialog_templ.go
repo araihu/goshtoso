@@ -75,7 +75,7 @@ func dialogTemplate(cfg DialogConfig) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" x-data=\"{open:false}\" x-on:modal:open.window=\"if ($event.detail && $event.detail.id === $el.dataset.modalId) open=true\" x-on:modal:close.window=\"if ($event.detail && $event.detail.id === $el.dataset.modalId) open=false\" x-effect=\"if (open && $el.isConnected && !$el.open) $el.showModal(); if (!open && $el.open) $el.close()\" x-on:cancel.prevent=\"open=false\" x-on:close=\"open=false\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" x-data=\"{open:false}\" x-on:modal:open.window=\"if ($event.detail && $event.detail.id === $el.dataset.modalId) open=true\" x-on:modal:close.window=\"if ($event.detail && $event.detail.id === $el.dataset.modalId) open=false\" x-effect=\"window.goshtosoSyncDialog($el, open)\" x-on:cancel.prevent=\"open=false\" x-on:close=\"open=false\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

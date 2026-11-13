@@ -148,6 +148,7 @@ func TestBuildWritesDeterministicMinifiedArtifactsAndCheckDetectsDrift(t *testin
 		"assets/js/src/components/code-block.js":       `(() => { window.codeBlockFixture = true })();`,
 		"assets/js/src/components/structured-input.js": `(() => { window.structuredInputFixture = true })();`,
 		"assets/js/src/components/tooltip.js":          `(() => { window.tooltipFixture = true })();`,
+		"assets/js/src/components/modal.js":            `(() => { window.modalFixture = true })();`,
 		"assets/js/src/components/popover.js":          `(() => { window.popoverFixture = true })();`,
 		"assets/js/src/components/data.js":             `(() => { window.dataFixture = true })();`,
 		"assets/js/src/components/navigation.js":       `(() => { window.navigationFixture = true })();`,

@@ -46,10 +46,16 @@ templ simpleBanner(cfg Config) {
 		x-data="{ show: true }"
 		x-show="show"
 		x-cloak
-		class={ cfg.containerClasses() }
-		role="banner"
+		class={ cfg.containerClasses(), templ.KV("gap-4", cfg.Content != nil && !cfg.Persistent) }
+		{ cfg.rootAttrs()... }
 	>
-		if cfg.CTA != nil {
+		if cfg.Content != nil {
+			if cfg.Persistent {
+				@cfg.Content
+			} else {
+				<div class="min-w-0 flex-1">@cfg.Content</div>
+			}
+		} else if cfg.CTA != nil {
 			<div class="mx-auto flex flex-wrap items-center gap-2 px-6">
 				<p class={ cfg.textClasses() }>{ cfg.Description }</p>
 				if cfg.CTA.Href != "" && cfg.CTA.OnClick == "" && cfg.CTA.HTMX == nil {
@@ -75,7 +81,12 @@ templ simpleBanner(cfg Config) {
 		
 		if !cfg.Persistent {
 			<button 
-				class="absolute top-1/2 -translate-y-1/2 right-4 p-1 hover:opacity-70 transition-opacity motion-reduce:transition-none"
+				type="button"
+				class={
+					"p-1 hover:opacity-70 transition-opacity motion-reduce:transition-none",
+					templ.KV("absolute top-1/2 -translate-y-1/2 right-4", cfg.Content == nil),
+					templ.KV("shrink-0 self-center", cfg.Content != nil),
+				}
 			aria-label={ expressions.From(ctx).Banner.DismissAriaLabel }
 			@click={ dismissAction }
 			if cfg.DismissHTMX != nil { { cfg.DismissHTMX.attrs()... } }

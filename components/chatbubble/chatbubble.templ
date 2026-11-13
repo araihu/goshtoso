@@ -26,7 +26,7 @@ import (
 //	    Timestamp:      "11:32 AM",
 //	    ShowAvatar:     true,
 //	    AvatarInitials: "AL",
-	//	    AvatarTone:     avatar.ToneInfo,
+//	    AvatarTone:     avatar.ToneInfo,
 //	})
 templ chatBubbleTemplate(cfg Config) {
 	<div
@@ -46,10 +46,10 @@ templ chatBubbleTemplate(cfg Config) {
 					@bubbleHeader(cfg)
 				}
 				if cfg.MessageContent != nil {
- @cfg.MessageContent
- } else {
- <p class="whitespace-pre-wrap break-words">{ cfg.Message }</p>
- }
+					@cfg.MessageContent
+				} else {
+					<p class="whitespace-pre-wrap break-words">{ cfg.Message }</p>
+				}
 			</div>
 			if cfg.Status != "" {
 				<span class="px-1 text-xs text-on-surface/60 dark:text-on-surface-dark/60">
@@ -68,7 +68,7 @@ templ chatBubbleTemplate(cfg Config) {
 //	@chatbubble.TypingIndicator(chatbubble.Config{
 //	    ShowAvatar:     true,
 //	    AvatarInitials: "AL",
-	//	    AvatarTone:     avatar.ToneInfo,
+//	    AvatarTone:     avatar.ToneInfo,
 //	})
 templ typingIndicatorTemplate(cfg Config) {
 	<div class={ cfg.rowClasses() } data-mine="false" aria-label={ expressions.From(ctx).ChatBubble.TypingAriaLabel } aria-live="polite">
