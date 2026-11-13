@@ -15,7 +15,8 @@ const (
 	ActivationContext Activation = "context"
 )
 
-// Placement controls the panel's CSS position relative to the trigger.
+// Placement is the preferred panel position relative to the trigger.
+// Panels flip vertically and shift horizontally to fit the visible viewport.
 type Placement string
 
 const (
@@ -42,8 +43,12 @@ type Config struct {
 	// Activation controls whether the popover opens on click, hover, or
 	// context-menu activation. The default is ActivationClick.
 	Activation Activation
-	// Placement controls the panel's CSS placement. The default is
-	// PlacementBottomStart.
+	// Placement is the preferred panel placement. The default is
+	// PlacementBottomStart. The runtime flips or shifts near viewport edges,
+	// constrains oversized panels with scrolling, and uses the native popover
+	// top layer to escape clipping or transformed ancestors when supported.
+	// Without that browser capability, positioning respects clipping bounds.
+	// Scrolling keeps an open panel available and clamped within those bounds.
 	Placement Placement
 	// Role sets the optional ARIA role on the panel, such as "menu" or
 	// "dialog".
