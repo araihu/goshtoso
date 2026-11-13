@@ -16,11 +16,12 @@ import (
 
 // IndustryCfg: client-mode single-select.
 var IndustryCfg = combobox.Config{
-	ID:          "industry",
-	Name:        "industry",
-	Label:       "Industry (client mode)",
-	Placeholder: "Select an industry",
-	Mode:        combobox.ModeSingle,
+	ID:           "industry",
+	Name:         "industry",
+	Label:        "Industry (client mode)",
+	Placeholder:  "Select an industry",
+	Mode:         combobox.ModeSingle,
+	EnableSearch: true,
 	Source: combobox.Source{Static: []combobox.Option{
 		{Value: "tech", Label: "Technology"},
 		{Value: "health", Label: "Healthcare"},
@@ -308,7 +309,7 @@ func comboboxIndustryPreview() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"combobox-industry\" class=\"w-full max-w-xs mx-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"combobox-industry\" class=\"w-full max-w-xs mx-auto\"><form id=\"combobox-client-form\" class=\"flex flex-col gap-3\"><label for=\"combobox-record-search\">Search records</label> <input id=\"combobox-record-search\" type=\"search\" name=\"q\" value=\"records\" class=\"w-full rounded-radius border border-outline bg-surface px-3 py-2 dark:border-outline-dark dark:bg-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -316,7 +317,7 @@ func comboboxIndustryPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p class=\"text-sm\">Option filtering stays internal. This form submits its record query and selected industry.</p></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -451,7 +452,7 @@ func comboboxClusterPreview() templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templruntime.NewAttributeExpression(ClusterCfg.OptionsEndpoint).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/combobox/combobox.templ`, Line: 241, Col: 39}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/combobox/combobox.templ`, Line: 247, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
@@ -498,7 +499,7 @@ func skillCount(count string) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(count)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/combobox/combobox.templ`, Line: 258, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `site/internal/pages/demo/componentpages/combobox/combobox.templ`, Line: 264, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {

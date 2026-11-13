@@ -95,7 +95,8 @@ templ modalDemoContent() {
     PrimaryAction: &modal.ButtonAction{OnClick: "alert('Deleted!')"},
 })`,
 		)
-		@demo.DemoSection(demo.DemoSectionProps{Title:"Compact content dialog",Description:"A headerless dialog keeps its editable content visible and retains the draft when closed."},modalCompactPreview(),`@modal.Dialog(modal.DialogConfig{
+		@demo.DemoSection(demo.DemoSectionProps{Title:"Custom content header",Description:"HeaderContent replaces the ordinary header while preserving the screen-reader Title, responsive sizing and native dialog lifecycle. The host provides its own actions."},customHeaderPreview(),`@modal.Dialog(modal.DialogConfig{ID:"assetDetails",Title:"Asset details",HeaderContent:assetHeader(),Content:assetContent(),FullscreenMobile:true})`)
+@demo.DemoSection(demo.DemoSectionProps{Title:"Compact content dialog",Description:"A headerless dialog keeps its editable content visible and retains the draft when closed."},modalCompactPreview(),`@modal.Dialog(modal.DialogConfig{
     ID:      "compactNote",
     Title:   "Quick note",
     Compact: true,
@@ -258,3 +259,14 @@ templ compactNoteContent() {
   @button.Button(button.WithAttrs(templ.Attributes{"x-on:click":"$dispatch('modal:close', {id:'compactNote'})"})) { Done }
  </div>
 }
+
+templ customHeaderPreview(){
+<div id="custom-header-example" x-data="{}">
+@button.Button(button.WithAttrs(templ.Attributes{"data-custom-header-open":""}),button.WithAlpine(&button.AlpineConfig{OnClick:"$dispatch('modal:open',{id:'assetDetails'})"})){Open asset details}
+@modal.Dialog(modal.DialogConfig{ID:"assetDetails",Title:"Asset details",HeaderContent:assetHeader(),Content:assetContent(),FullscreenMobile:true})
+</div>
+}
+templ assetHeader(){
+<header class="flex items-center justify-between p-2"><strong>Selected asset</strong>@button.Button(button.WithAlpine(&button.AlpineConfig{OnClick:"$dispatch('modal:close',{id:'assetDetails'})"})){Done}</header>
+}
+templ assetContent(){<p>Application-owned content and header actions.</p>}

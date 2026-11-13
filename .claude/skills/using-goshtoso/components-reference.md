@@ -362,6 +362,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 **Entry points:** `Card(cfg Config)`
 
 - **Appearance** — AppearanceDefault = "", AppearancePrimary = "primary"
+- **Density** — DensityDefault = "", DensityCompact = "compact"
 - **Interaction** — InteractionDefault = "", InteractionPressed = "pressed"
 - **Layout** — LayoutVertical = "vertical", LayoutHorizontal = "horizontal"
 
@@ -381,6 +382,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 | `Footer` | `templ.Component` | Footer is optional footer content (buttons, links, etc.) |
 | `Appearance` | `Appearance` | Appearance determines the card's visual treatment. |
 | `Layout` | `Layout` | Layout determines vertical or horizontal layout |
+| `Density` | `Density` | Density selects content spacing and typography. The zero value preserves existing cards. |
 | `Interaction` | `Interaction` | Interaction determines optional card motion. |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the card root. |
 
@@ -458,6 +460,7 @@ import "github.com/araihu/goshtoso/components/chatbubble"  // package chatbubble
 |-------|------|-------------|
 | `Side` | `Side` | Side determines alignment + color (received/sent/auto). |
 | `Message` | `string` | Message is the bubble text. |
+| `MessageContent` | `templ.Component` | MessageContent replaces Message with application-owned rich content when nonnil. The caller owns sanitization and accessible content. A nil value preserves the escaped, whitespace-preserving plain Message renderer. |
 | `SenderName` | `string` | SenderName is shown above the bubble (hidden when Grouped). |
 | `Timestamp` | `string` | Timestamp is shown next to the sender name, e.g. "11:32 AM". |
 | `Status` | `Status` | Status renders under any bubble; conventionally use it for sent messages. |
@@ -551,7 +554,7 @@ import "github.com/araihu/goshtoso/components/combobox"  // package combobox
 | `Mode` | `Mode` |  |
 | `Source` | `Source` |  |
 | `Selected` | `[]string` |  |
-| `EnableSearch` | `bool` |  |
+| `EnableSearch` | `bool` | EnableSearch filters options. Client-mode search is internal UI state and is excluded from parent form values; server mode submits q. |
 | `EnableClearAll` | `bool` |  |
 | `DisablePersistence` | `bool` | DisablePersistence keeps client selection in the current DOM only. Use it when URL parameters or server-rendered state own the selection. |
 | `Required` | `bool` |  |
@@ -1170,6 +1173,7 @@ import "github.com/araihu/goshtoso/components/modal"  // package modal
 |-------|------|-------------|
 | `ID` | `string` | ID identifies modal:open and modal:close events through their detail.id. |
 | `Title` | `string` | Title labels the dialog for assistive technology. |
+| `HeaderContent` | `templ.Component` | HeaderContent replaces the ordinary title/close header when nonnil. Title remains a screen-reader label. The host supplies all header actions, including closing through the modal:close event. Compact still omits headers. |
 | `Content` | `templ.Component` | Content is the dialog body, including any application-owned controls. |
 | `Compact` | `bool` | Compact renders a headerless, unpadded dialog near the top of the viewport. Title remains available to assistive technology. Compact overrides FullscreenMobile. |
 | `FullscreenMobile` | `bool` | FullscreenMobile fills the viewport below the sm breakpoint. |
@@ -1413,7 +1417,7 @@ import "github.com/araihu/goshtoso/components/popover"  // package popover
 | `Trigger` | `templ.Component` | Trigger is the consumer-owned interactive trigger component. |
 | `Content` | `templ.Component` | Content is the consumer-owned panel content. |
 | `Activation` | `Activation` | Activation controls whether the popover opens on click, hover, or context-menu activation. The default is ActivationClick. |
-| `Placement` | `Placement` | Placement controls the panel's CSS placement. The default is PlacementBottomStart. |
+| `Placement` | `Placement` | Placement is the preferred panel placement. The default is PlacementBottomStart. The runtime flips or shifts near viewport edges, constrains oversized panels with scrolling, and uses the native popover top layer to escape clipping or transformed ancestors when supported. Without that browser capability, positioning respects clipping bounds. Scrolling keeps an open panel available and clamped within those bounds. |
 | `Role` | `string` | Role sets the optional ARIA role on the panel, such as "menu" or "dialog". |
 | `Label` | `string` | Label sets the optional accessible name on the panel. |
 | `RootClass` | `string` | RootClass appends classes to the relative root. |

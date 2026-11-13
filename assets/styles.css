@@ -322,6 +322,7 @@
     --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     --animate-bounce: bounce 1s infinite;
     --blur-md: 12px;
+    --aspect-video: 16 / 9;
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
@@ -974,6 +975,9 @@
   }
   .aspect-3\/1 {
     aspect-ratio: 3/1;
+  }
+  .aspect-video {
+    aspect-ratio: var(--aspect-video);
   }
   .size-1\.5 {
     width: calc(var(--spacing) * 1.5);
@@ -4442,6 +4446,14 @@
         background-color: color-mix(in oklab, var(--color-danger) 10%, transparent);
       }
     }
+    .hover\:bg-on-surface\/10:hover {
+      background-color: color-mix(in srgb, oklch(26.9% 0 none) 10%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-on-surface\/10:hover {
+        background-color: color-mix(in oklab, var(--color-on-surface) 10%, transparent);
+      }
+    }
     .hover\:bg-outline\/10:hover {
       background-color: color-mix(in srgb, oklch(87% 0 none) 10%, transparent);
     }
@@ -4691,6 +4703,12 @@
     background-color: color-mix(in srgb, oklch(65.6% 0.241 354.308) 10%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-danger) 10%, transparent);
+    }
+  }
+  .focus-visible\:bg-on-surface\/15:focus-visible {
+    background-color: color-mix(in srgb, oklch(26.9% 0 none) 15%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-on-surface) 15%, transparent);
     }
   }
   .focus-visible\:bg-surface-alt:focus-visible {
@@ -6204,6 +6222,14 @@
         background-color: color-mix(in oklab, var(--color-danger) 10%, transparent);
       }
     }
+    .dark\:hover\:bg-on-surface-dark\/10:where(.dark, .dark *):hover {
+      background-color: color-mix(in srgb, oklch(87% 0 none) 10%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .dark\:hover\:bg-on-surface-dark\/10:where(.dark, .dark *):hover {
+        background-color: color-mix(in oklab, var(--color-on-surface-dark) 10%, transparent);
+      }
+    }
     .dark\:hover\:bg-outline-dark\/20:where(.dark, .dark *):hover {
       background-color: color-mix(in srgb, oklch(37.1% 0 none) 20%, transparent);
     }
@@ -6354,6 +6380,12 @@
     background-color: color-mix(in srgb, oklch(65.6% 0.241 354.308) 10%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-danger) 10%, transparent);
+    }
+  }
+  .dark\:focus-visible\:bg-on-surface-dark\/15:where(.dark, .dark *):focus-visible {
+    background-color: color-mix(in srgb, oklch(87% 0 none) 15%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-on-surface-dark) 15%, transparent);
     }
   }
   .dark\:focus-visible\:bg-surface-alt\/10:where(.dark, .dark *):focus-visible {

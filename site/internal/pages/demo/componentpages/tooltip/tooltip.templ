@@ -1,6 +1,8 @@
 package tooltippage
 
 import (
+	"github.com/araihu/goshtoso/components/button"
+	"github.com/araihu/goshtoso/components/drawer"
 	"github.com/araihu/goshtoso/components/tooltip"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
@@ -25,6 +27,24 @@ templ tooltipDemoContent() {
 		)
 
 		@demo.ExpressionOverridesNote("Tooltip")
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Action tooltips",
+				Description: "Hover or focus for context, then activate the button to open its details.",
+			},
+			tooltipActionPreview(),
+			`templ detailsButton() {
+    @button.Button(button.WithType("button"), button.WithAttrs(templ.Attributes{
+        "x-on:click.stop": "$dispatch('drawer:open', { id: 'details' })",
+    })) { Open details }
+}
+@tooltip.Tooltip("details-tip", "View details",
+    tooltip.WithTrigger(detailsButton()), tooltip.WithPortal(true))
+@drawer.Drawer(drawer.Config{ID: "details", Title: "Details"}) {
+    <p>Additional details appear here.</p>
+}`,
+		)
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -53,6 +73,22 @@ templ tooltipDemoContent() {
 )`,
 		)
 	</div>
+}
+
+templ tooltipDetailsButton() {
+	@button.Button(button.WithType("button"), button.WithAttrs(templ.Attributes{
+		"id": "tooltip-action-trigger",
+		"x-on:click.stop": "$dispatch('drawer:open', { id: 'tooltip-details' })",
+	})) { Open details }
+}
+
+templ tooltipActionPreview() {
+	<div class="flex justify-center py-8">
+		@tooltip.Tooltip("details-tip", "View details", tooltip.WithTrigger(tooltipDetailsButton()), tooltip.WithPortal(true))
+	</div>
+	@drawer.Drawer(drawer.Config{ID: "tooltip-details", Title: "Details"}) {
+		<p class="p-4">Additional details appear here.</p>
+	}
 }
 
 // tooltipDefaultPreview renders the four hover positions.

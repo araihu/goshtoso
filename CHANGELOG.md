@@ -2,6 +2,23 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.6.2] - 2026-11-13
+
+### Added
+
+- Public Card density, rich ChatBubble content and custom native Dialog headers.
+- Banner content and action slots.
+
+### Fixed
+
+- Keep Popover panels in the viewport and scope their triggers to their owner.
+- Keep Combobox search out of form values and expose multiselect state through
+  the option. Restore Dropdown hover feedback and dismiss Tooltip before a
+  custom trigger action.
+- Ignore a queued native Dialog open after a fragment removes the dialog.
+- Serve demonstration photographs from the site module so consumer builds
+  do not embed them.
+
 ## [v0.6.0] - 2026-11-03
 
 ### Added

@@ -1433,6 +1433,8 @@ func itemClassList(cfg Config, item Item) string {
 	}
 	if item.Disabled {
 		out += " " + cfg.disabledClasses()
+	} else {
+		out += " cursor-pointer"
 	}
 	return out
 }
