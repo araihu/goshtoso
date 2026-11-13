@@ -226,3 +226,11 @@ func diskFileContents(t *testing.T, root string) map[string][]byte {
 	}
 	return result
 }
+
+func TestDemoImagesAreNotDistributedInLibrary(t *testing.T) {
+	for _, name := range []string{"images/avatars/avatar-1.webp", "images/cards/card-img-1.webp", "images/carousel/slide-1.webp"} {
+		if _, err := fs.Stat(FS(), name); !errors.Is(err, fs.ErrNotExist) {
+			t.Errorf("%s is present in the library: %v", name, err)
+		}
+	}
+}

@@ -22,6 +22,12 @@ func (s *Server) setupAssetRoutes() {
 	assetsDir := filepath.Join(s.projectRoot, "assets")
 	assetsHandler := http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir)))
 	s.mux.Handle("/assets/", libraryassets.WithCacheControl(assetsHandler))
+	// Demo images belong to the site module. Preserve their public URLs.
+	for _, category := range []string{"avatars", "cards", "carousel"} {
+		prefix := "/assets/images/" + category + "/"
+		files := http.FileServer(http.Dir(filepath.Join(s.projectRoot, "site", "assets", "images", category)))
+		s.mux.Handle(prefix, libraryassets.WithCacheControl(http.StripPrefix(prefix, files)))
+	}
 	// Versioned dependencies must match the linked module, including standalone builds.
 	s.mux.Handle("/assets/js/runtime/", libraryassets.Handler())
 	bootstrapSprite := filepath.Join(s.projectRoot, "site", "internal", "demoicons", "bootstrapicons", "sprite.svg")
