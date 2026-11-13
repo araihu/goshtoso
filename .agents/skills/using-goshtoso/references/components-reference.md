@@ -551,7 +551,7 @@ import "github.com/araihu/goshtoso/components/combobox"  // package combobox
 | `Mode` | `Mode` |  |
 | `Source` | `Source` |  |
 | `Selected` | `[]string` |  |
-| `EnableSearch` | `bool` |  |
+| `EnableSearch` | `bool` | EnableSearch filters options. Client-mode search is internal UI state and is excluded from parent form values; server mode submits q. |
 | `EnableClearAll` | `bool` |  |
 | `DisablePersistence` | `bool` | DisablePersistence keeps client selection in the current DOM only. Use it when URL parameters or server-rendered state own the selection. |
 | `Required` | `bool` |  |

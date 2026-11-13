@@ -197,9 +197,13 @@
   function filterClientOptions(root) {
     var search = root.querySelector("[data-combobox-search]");
     var query = search ? search.value.trim().toLowerCase() : "";
+    var visible = 0;
     root.querySelectorAll("[data-combobox-option]").forEach(function(option) {
       option.hidden = !option.textContent.toLowerCase().includes(query);
+      if (!option.hidden) visible += 1;
     });
+    var empty = root.querySelector("[data-combobox-empty]");
+    if (empty) empty.hidden = visible > 0;
   }
   document.addEventListener("input", function(event) {
     if (!event.target.matches("[data-combobox-search]") || event.target.hasAttribute("hx-get")) return;
@@ -270,6 +274,7 @@
       focusIndex: -1,
       init: function() {
         restoreSelected(root);
+        filterClientOptions(root);
       },
       restoreSelection: function() {
         restoreSelected(root);
