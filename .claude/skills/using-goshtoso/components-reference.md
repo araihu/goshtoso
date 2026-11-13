@@ -362,6 +362,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 **Entry points:** `Card(cfg Config)`
 
 - **Appearance** — AppearanceDefault = "", AppearancePrimary = "primary"
+- **Density** — DensityDefault = "", DensityCompact = "compact"
 - **Interaction** — InteractionDefault = "", InteractionPressed = "pressed"
 - **Layout** — LayoutVertical = "vertical", LayoutHorizontal = "horizontal"
 
@@ -381,6 +382,7 @@ import "github.com/araihu/goshtoso/components/card"  // package card
 | `Footer` | `templ.Component` | Footer is optional footer content (buttons, links, etc.) |
 | `Appearance` | `Appearance` | Appearance determines the card's visual treatment. |
 | `Layout` | `Layout` | Layout determines vertical or horizontal layout |
+| `Density` | `Density` | Density selects content spacing and typography. The zero value preserves existing cards. |
 | `Interaction` | `Interaction` | Interaction determines optional card motion. |
 | `RootClass` | `string` | RootClass allows additional CSS classes on the card root. |
 

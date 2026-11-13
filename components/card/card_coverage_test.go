@@ -255,3 +255,24 @@ func TestCardTitlePrefix(t *testing.T) {
 		t.Fatalf("missing description must not be referenced: %s", heading)
 	}
 }
+
+func TestCompactDensityKeepsDefaultCardsUnchanged(t *testing.T) {
+	defaults := Config{}
+	if defaults.contentClasses() != "flex flex-col gap-4 p-6" || !strings.Contains(defaults.titleClasses(), "lg:text-2xl") {
+		t.Fatal("default density changed")
+	}
+	compact := Config{Density: DensityCompact, Image: "preview.svg", ImageAlt: "Preview", Title: "Shared image", Description: "Small preview", Footer: templ.Raw("<a href='/view'>View</a>")}
+	html := render(t, Card(compact))
+	for _, part := range []string{"aspect-video", "gap-2 p-3", "text-sm font-semibold", "text-pretty text-xs", "Shared image", "Small preview", "href='/view'"} {
+		if !strings.Contains(html, part) {
+			t.Errorf("compact card lost %q", part)
+		}
+	}
+	compact.Layout = LayoutHorizontal
+	if compact.contentClasses() != "flex flex-col justify-center gap-2 p-3 col-span-5" {
+		t.Fatal("horizontal compact content lost grid alignment")
+	}
+	if !strings.Contains(compact.imageContainerClasses(), "col-span-3") {
+		t.Fatal("horizontal media lost grid alignment")
+	}
+}
