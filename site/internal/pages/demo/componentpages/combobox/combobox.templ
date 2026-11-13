@@ -120,7 +120,7 @@ var IndustryCfg = combobox.Config{
 		@demo.DemoSection(
 			demo.DemoSectionProps{
 				Title:       "Client Multi-Select",
-				Description: "Use arrow keys to move between enabled options, Enter or Space to select, and Escape to return to the trigger. Checkbox selection supports Clear all. Option.Trailing renders supporting content without changing the selected label. DisablePersistence lets server-rendered state own the selection after navigation.",
+				Description: "Use arrow keys to move between enabled options, Enter or Space to select, and Escape to return to the trigger. Each option announces its selected state. The visual checkboxes and Clear all make selections easy to scan and reset. Option.Trailing renders supporting content without changing the selected label. DisablePersistence lets server-rendered state own the selection after navigation.",
 			},
 			comboboxSkillsPreview(),
 			`var SkillsCfg = combobox.Config{
