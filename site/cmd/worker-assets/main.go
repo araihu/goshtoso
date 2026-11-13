@@ -98,6 +98,9 @@ func assetPaths(root string) ([]string, error) {
 	if err := appendFiles(&paths, libraryassets.FS(), "/assets/", false); err != nil {
 		return nil, err
 	}
+	if err := appendFiles(&paths, os.DirFS(filepath.Join(root, "site/assets/images")), "/assets/images/", false); err != nil {
+		return nil, err
+	}
 	if err := appendFiles(&paths, os.DirFS(filepath.Join(root, "site/assets/js")), "/site-assets/js/", true); err != nil {
 		return nil, err
 	}
