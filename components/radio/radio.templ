@@ -30,7 +30,7 @@ templ radioTemplate(cfg Config) {
 templ radioSegmented(cfg Config) {
 	<label for={ cfg.ID } class={ cfg.segmentedLabelClasses() + " " + cfg.RootClass }>
 		@segmentedInput(cfg)
-		<span>
+		<span class="flex">
 			@radioLabelContent(cfg)
 		</span>
 	</label>

@@ -111,7 +111,7 @@ func radioDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = demo.DemoSection(demo.DemoSectionProps{Title: "Segmented with icons", Description: "LabelLeading adds a decorative icon while native radios retain one-choice selection and arrow-key navigation."}, radioIconPreview(), `@radio.RadioBar() {
+		templ_7745c5c3_Err = demo.DemoSection(demo.DemoSectionProps{Title: "Segmented with icons", Description: "LabelLeading centers a decorative icon alongside each label. Use the arrow keys to change the selection."}, radioIconPreview(), `@radio.RadioBar() {
     @radio.Radio(radio.Config{ID: "mode-system", Name: "mode", Value: "system", Label: "System", Segmented: true, Checked: true, LabelLeading: modeIcon()})
     @radio.Radio(radio.Config{ID: "mode-light", Name: "mode", Value: "light", Label: "Light", Segmented: true, LabelLeading: sunIcon()})
     @radio.Radio(radio.Config{ID: "mode-dark", Name: "mode", Value: "dark", Label: "Dark", Segmented: true, LabelLeading: moonIcon()})

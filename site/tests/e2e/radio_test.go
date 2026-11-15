@@ -217,6 +217,26 @@ func TestRadioReducedMotionStopsVisualTransitions(t *testing.T) {
 	require.NoError(t, err, "radio visual transitions should be disabled under reduced motion")
 }
 
+func TestRadioIconSegmentsCenterLabelContent(t *testing.T) {
+	page := newIsolatedPage(t)
+	navigateToRadioDemo(t, page)
+
+	for _, mode := range []string{"system", "light", "dark"} {
+		label := page.Locator("label[for='mode-" + mode + "']")
+		centered, err := label.Evaluate(`label => {
+			const centerY = element => {
+				const { y, height } = element.getBoundingClientRect();
+				return y + height / 2;
+			};
+			const icon = label.querySelector('svg');
+			return Math.abs(centerY(icon) - centerY(label)) <= 1 &&
+				Math.abs(centerY(icon.nextElementSibling) - centerY(label)) <= 1;
+		}`, nil)
+		require.NoError(t, err)
+		assert.Equal(t, true, centered, "%s icon and text should be centered", mode)
+	}
+}
+
 func TestRadioIconSegmentsKeepNativeKeyboardSelection(t *testing.T) {
 	page := newIsolatedPage(t)
 	_, err := page.Goto(baseURL + "/components/radio")
