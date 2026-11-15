@@ -2,6 +2,12 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.6.3] - 2026-11-15
+
+### Fixed
+
+- Vertically center icons and text within segmented radio options.
+
 ## [v0.6.2] - 2026-11-13
 
 ### Added
