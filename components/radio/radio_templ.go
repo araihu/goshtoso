@@ -94,7 +94,7 @@ func radioSegmented(cfg Config) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.ID).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 31, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 31, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -112,7 +112,7 @@ func radioSegmented(cfg Config) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.CSSClasses(templ_7745c5c3_Var4).String()).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 1, Col: 0}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 1, Col: 0}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
@@ -186,7 +186,7 @@ func segmentedInput(cfg Config) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.ID).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 43, Col: 13}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 43, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
@@ -199,7 +199,7 @@ func segmentedInput(cfg Config) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Name).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 45, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 45, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 			if templ_7745c5c3_Err != nil {
@@ -212,7 +212,7 @@ func segmentedInput(cfg Config) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Value).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 46, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 46, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 			if templ_7745c5c3_Err != nil {
@@ -243,7 +243,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Get).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 56, Col: 25}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 56, Col: 25}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 					if templ_7745c5c3_Err != nil {
@@ -262,7 +262,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var11 string
 					templ_7745c5c3_Var11, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Post).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 59, Col: 27}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 59, Col: 27}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 					if templ_7745c5c3_Err != nil {
@@ -281,7 +281,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var12 string
 					templ_7745c5c3_Var12, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Put).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 62, Col: 25}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 62, Col: 25}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12)
 					if templ_7745c5c3_Err != nil {
@@ -300,7 +300,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var13 string
 					templ_7745c5c3_Var13, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Delete).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 65, Col: 31}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 65, Col: 31}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var13)
 					if templ_7745c5c3_Err != nil {
@@ -319,7 +319,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var14 string
 					templ_7745c5c3_Var14, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Patch).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 68, Col: 29}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 68, Col: 29}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 					if templ_7745c5c3_Err != nil {
@@ -338,7 +338,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var15 string
 					templ_7745c5c3_Var15, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Target).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 71, Col: 31}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 71, Col: 31}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 					if templ_7745c5c3_Err != nil {
@@ -357,7 +357,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var16 string
 					templ_7745c5c3_Var16, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Swap).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 74, Col: 27}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 74, Col: 27}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 					if templ_7745c5c3_Err != nil {
@@ -376,7 +376,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templruntime.NewAttributeExpression(trigger).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 77, Col: 24}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 77, Col: 24}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var17)
 					if templ_7745c5c3_Err != nil {
@@ -395,7 +395,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Indicator).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 80, Col: 37}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 80, Col: 37}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var18)
 					if templ_7745c5c3_Err != nil {
@@ -420,7 +420,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var19 string
 					templ_7745c5c3_Var19, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Confirm).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 86, Col: 33}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 86, Col: 33}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var19)
 					if templ_7745c5c3_Err != nil {
@@ -439,7 +439,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Vals).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 89, Col: 27}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 89, Col: 27}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var20)
 					if templ_7745c5c3_Err != nil {
@@ -458,7 +458,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var21 string
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Include).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 92, Col: 33}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 92, Col: 33}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var21)
 					if templ_7745c5c3_Err != nil {
@@ -479,7 +479,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var22 string
 					templ_7745c5c3_Var22, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Alpine.Data).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 97, Col: 28}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 97, Col: 28}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 					if templ_7745c5c3_Err != nil {
@@ -498,7 +498,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var23 string
 					templ_7745c5c3_Var23, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Alpine.Model).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 100, Col: 30}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 100, Col: 30}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var23)
 					if templ_7745c5c3_Err != nil {
@@ -517,7 +517,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var24 string
 					templ_7745c5c3_Var24, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Alpine.OnChange).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 103, Col: 37}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 103, Col: 37}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var24)
 					if templ_7745c5c3_Err != nil {
@@ -536,7 +536,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var25 string
 					templ_7745c5c3_Var25, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Alpine.BindChecked).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 106, Col: 43}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 106, Col: 43}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var25)
 					if templ_7745c5c3_Err != nil {
@@ -555,7 +555,7 @@ func segmentedInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var26 string
 					templ_7745c5c3_Var26, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Alpine.BindDisabled).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 109, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 109, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var26)
 					if templ_7745c5c3_Err != nil {
@@ -654,7 +654,7 @@ func standardRadio(cfg Config) templ.Component {
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.ID).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 126, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 126, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var29)
 			if templ_7745c5c3_Err != nil {
@@ -672,7 +672,7 @@ func standardRadio(cfg Config) templ.Component {
 			var templ_7745c5c3_Var31 string
 			templ_7745c5c3_Var31, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.CSSClasses(templ_7745c5c3_Var30).String()).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 1, Col: 0}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 1, Col: 0}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var31)
 			if templ_7745c5c3_Err != nil {
@@ -750,7 +750,7 @@ func radioWithDescription(cfg Config) templ.Component {
 			var templ_7745c5c3_Var34 string
 			templ_7745c5c3_Var34, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.CSSClasses(templ_7745c5c3_Var33).String()).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 1, Col: 0}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 1, Col: 0}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var34)
 			if templ_7745c5c3_Err != nil {
@@ -785,7 +785,7 @@ func radioWithDescription(cfg Config) templ.Component {
 		var templ_7745c5c3_Var35 string
 		templ_7745c5c3_Var35, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.ID).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 139, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 139, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var35)
 		if templ_7745c5c3_Err != nil {
@@ -811,7 +811,7 @@ func radioWithDescription(cfg Config) templ.Component {
 			var templ_7745c5c3_Var36 string
 			templ_7745c5c3_Var36, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HelperTextID).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 143, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 143, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var36)
 			if templ_7745c5c3_Err != nil {
@@ -824,7 +824,7 @@ func radioWithDescription(cfg Config) templ.Component {
 			var templ_7745c5c3_Var37 string
 			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.HelperText)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 143, Col: 120}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 143, Col: 120}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 			if templ_7745c5c3_Err != nil {
@@ -842,7 +842,7 @@ func radioWithDescription(cfg Config) templ.Component {
 			var templ_7745c5c3_Var38 string
 			templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.HelperText)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 145, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 145, Col: 96}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 			if templ_7745c5c3_Err != nil {
@@ -890,7 +890,7 @@ func radioWithContainer(cfg Config) templ.Component {
 			var templ_7745c5c3_Var40 string
 			templ_7745c5c3_Var40, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.ID).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 153, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 153, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var40)
 			if templ_7745c5c3_Err != nil {
@@ -908,7 +908,7 @@ func radioWithContainer(cfg Config) templ.Component {
 			var templ_7745c5c3_Var42 string
 			templ_7745c5c3_Var42, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.CSSClasses(templ_7745c5c3_Var41).String()).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 1, Col: 0}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 1, Col: 0}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var42)
 			if templ_7745c5c3_Err != nil {
@@ -989,7 +989,7 @@ func radioInput(cfg Config) templ.Component {
 			var templ_7745c5c3_Var44 string
 			templ_7745c5c3_Var44, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.ID).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 172, Col: 13}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 172, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var44)
 			if templ_7745c5c3_Err != nil {
@@ -1002,7 +1002,7 @@ func radioInput(cfg Config) templ.Component {
 			var templ_7745c5c3_Var45 string
 			templ_7745c5c3_Var45, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Name).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 174, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 174, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var45)
 			if templ_7745c5c3_Err != nil {
@@ -1015,7 +1015,7 @@ func radioInput(cfg Config) templ.Component {
 			var templ_7745c5c3_Var46 string
 			templ_7745c5c3_Var46, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Value).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 175, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 175, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var46)
 			if templ_7745c5c3_Err != nil {
@@ -1033,7 +1033,7 @@ func radioInput(cfg Config) templ.Component {
 			var templ_7745c5c3_Var48 string
 			templ_7745c5c3_Var48, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.CSSClasses(templ_7745c5c3_Var47).String()).Resolve(ctx)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 1, Col: 0}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 1, Col: 0}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var48)
 			if templ_7745c5c3_Err != nil {
@@ -1063,7 +1063,7 @@ func radioInput(cfg Config) templ.Component {
 				var templ_7745c5c3_Var49 string
 				templ_7745c5c3_Var49, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HelperTextID).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 184, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 184, Col: 38}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var49)
 				if templ_7745c5c3_Err != nil {
@@ -1083,7 +1083,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var50 string
 					templ_7745c5c3_Var50, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Get).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 188, Col: 25}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 188, Col: 25}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var50)
 					if templ_7745c5c3_Err != nil {
@@ -1102,7 +1102,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var51 string
 					templ_7745c5c3_Var51, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Post).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 191, Col: 27}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 191, Col: 27}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var51)
 					if templ_7745c5c3_Err != nil {
@@ -1121,7 +1121,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var52 string
 					templ_7745c5c3_Var52, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Put).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 194, Col: 25}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 194, Col: 25}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var52)
 					if templ_7745c5c3_Err != nil {
@@ -1140,7 +1140,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var53 string
 					templ_7745c5c3_Var53, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Delete).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 197, Col: 31}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 197, Col: 31}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var53)
 					if templ_7745c5c3_Err != nil {
@@ -1159,7 +1159,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var54 string
 					templ_7745c5c3_Var54, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Patch).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 200, Col: 29}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 200, Col: 29}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var54)
 					if templ_7745c5c3_Err != nil {
@@ -1178,7 +1178,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var55 string
 					templ_7745c5c3_Var55, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Target).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 203, Col: 31}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 203, Col: 31}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var55)
 					if templ_7745c5c3_Err != nil {
@@ -1197,7 +1197,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var56 string
 					templ_7745c5c3_Var56, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Swap).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 206, Col: 27}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 206, Col: 27}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var56)
 					if templ_7745c5c3_Err != nil {
@@ -1216,7 +1216,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var57 string
 					templ_7745c5c3_Var57, templ_7745c5c3_Err = templruntime.NewAttributeExpression(trigger).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 209, Col: 24}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 209, Col: 24}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var57)
 					if templ_7745c5c3_Err != nil {
@@ -1235,7 +1235,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var58 string
 					templ_7745c5c3_Var58, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Indicator).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 212, Col: 37}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 212, Col: 37}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var58)
 					if templ_7745c5c3_Err != nil {
@@ -1260,7 +1260,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var59 string
 					templ_7745c5c3_Var59, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Confirm).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 218, Col: 33}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 218, Col: 33}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var59)
 					if templ_7745c5c3_Err != nil {
@@ -1279,7 +1279,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var60 string
 					templ_7745c5c3_Var60, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Vals).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 221, Col: 27}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 221, Col: 27}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var60)
 					if templ_7745c5c3_Err != nil {
@@ -1298,7 +1298,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var61 string
 					templ_7745c5c3_Var61, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HTMX.Include).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 224, Col: 33}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 224, Col: 33}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var61)
 					if templ_7745c5c3_Err != nil {
@@ -1319,7 +1319,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var62 string
 					templ_7745c5c3_Var62, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Alpine.Data).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 229, Col: 28}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 229, Col: 28}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var62)
 					if templ_7745c5c3_Err != nil {
@@ -1338,7 +1338,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var63 string
 					templ_7745c5c3_Var63, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Alpine.Model).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 232, Col: 30}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 232, Col: 30}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var63)
 					if templ_7745c5c3_Err != nil {
@@ -1357,7 +1357,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var64 string
 					templ_7745c5c3_Var64, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Alpine.OnChange).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 235, Col: 37}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 235, Col: 37}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var64)
 					if templ_7745c5c3_Err != nil {
@@ -1376,7 +1376,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var65 string
 					templ_7745c5c3_Var65, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Alpine.BindChecked).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 238, Col: 43}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 238, Col: 43}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var65)
 					if templ_7745c5c3_Err != nil {
@@ -1395,7 +1395,7 @@ func radioInput(cfg Config) templ.Component {
 					var templ_7745c5c3_Var66 string
 					templ_7745c5c3_Var66, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.Alpine.BindDisabled).Resolve(ctx)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 241, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 241, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var66)
 					if templ_7745c5c3_Err != nil {
@@ -1464,7 +1464,7 @@ func radioGroupTemplate(cfg GroupConfig) templ.Component {
 			var templ_7745c5c3_Var68 string
 			templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 260, Col: 105}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 260, Col: 105}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var68))
 			if templ_7745c5c3_Err != nil {
@@ -1533,7 +1533,7 @@ func groupRadioItem(cfg Config) templ.Component {
 		var templ_7745c5c3_Var70 string
 		templ_7745c5c3_Var70, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.ID).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 277, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 277, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var70)
 		if templ_7745c5c3_Err != nil {
@@ -1588,7 +1588,7 @@ func groupRadioItemWithDescription(cfg Config) templ.Component {
 		var templ_7745c5c3_Var72 string
 		templ_7745c5c3_Var72, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.ID).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 287, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 287, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var72)
 		if templ_7745c5c3_Err != nil {
@@ -1623,7 +1623,7 @@ func groupRadioItemWithDescription(cfg Config) templ.Component {
 				var templ_7745c5c3_Var74 string
 				templ_7745c5c3_Var74, templ_7745c5c3_Err = templruntime.NewAttributeExpression(templ.CSSClasses(templ_7745c5c3_Var73).String()).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 1, Col: 0}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 1, Col: 0}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var74)
 				if templ_7745c5c3_Err != nil {
@@ -1676,7 +1676,7 @@ func groupRadioItemWithDescription(cfg Config) templ.Component {
 		var templ_7745c5c3_Var75 string
 		templ_7745c5c3_Var75, templ_7745c5c3_Err = templruntime.NewAttributeExpression(cfg.HelperText).Resolve(ctx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 301, Col: 122}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 301, Col: 122}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var75)
 		if templ_7745c5c3_Err != nil {
@@ -1689,7 +1689,7 @@ func groupRadioItemWithDescription(cfg Config) templ.Component {
 		var templ_7745c5c3_Var76 string
 		templ_7745c5c3_Var76, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.HelperText)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 301, Col: 141}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 301, Col: 141}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var76))
 		if templ_7745c5c3_Err != nil {
@@ -1736,7 +1736,7 @@ func radioLabelContent(cfg Config) templ.Component {
 			var templ_7745c5c3_Var78 string
 			templ_7745c5c3_Var78, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 310, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 310, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var78))
 			if templ_7745c5c3_Err != nil {
@@ -1750,7 +1750,7 @@ func radioLabelContent(cfg Config) templ.Component {
 			var templ_7745c5c3_Var79 string
 			templ_7745c5c3_Var79, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `radio.templ`, Line: 313, Col: 13}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/radio/radio.templ`, Line: 313, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var79))
 			if templ_7745c5c3_Err != nil {
