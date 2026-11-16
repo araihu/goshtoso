@@ -8,13 +8,13 @@ require (
 	github.com/araihu/assets v0.2.6
 	github.com/araihu/muamba v0.0.6
 	github.com/evanw/esbuild v0.28.2
-	github.com/gofrs/flock v0.13.1
+	github.com/gofrs/flock v0.13.2
 	github.com/sergi/go-diff v1.4.0
 	github.com/stretchr/testify v1.12.1
 	go.yaml.in/yaml/v3 v3.0.6
-	golang.org/x/image v0.47.0
+	golang.org/x/image v0.48.0
 	golang.org/x/net v0.62.0
-	golang.org/x/sys v0.49.0
+	golang.org/x/sys v0.50.0
 )
 
 require (
