@@ -155,6 +155,13 @@ func TestCombobox_ClientMode_MultiToggleAndClear(t *testing.T) {
 	accessibleCheckboxes, err := page.Locator("#skills").GetByRole(*playwright.AriaRoleCheckbox).Count()
 	require.NoError(t, err)
 	assert.Zero(t, accessibleCheckboxes, "the listbox option is the only accessible selection control")
+	listbox := page.Locator("#skills").GetByRole(*playwright.AriaRoleListbox)
+	multiselectable, err := listbox.GetAttribute("aria-multiselectable")
+	require.NoError(t, err)
+	assert.Equal(t, "true", multiselectable)
+	selectedOptions, err := listbox.Locator(`[role="option"][aria-selected="true"]`).Count()
+	require.NoError(t, err)
+	assert.Equal(t, 3, selectedOptions)
 
 	// Deselect "go" by clicking it again (toggle off).
 	require.NoError(t, page.Locator(`#skills [data-combobox-option][data-value="go"]`).First().Click())

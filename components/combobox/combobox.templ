@@ -115,7 +115,15 @@ func hxValsJSON(value string) string {
 // optionsList renders just the <ul>. Swap target for search and lazy first-load.
 templ optionsList(cfg Config, state State) {
  {{ cfg = cfg.withExpressions(ctx) }}
-	<ul id={ cfg.ID + "-options" } class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox" aria-labelledby={ cfg.ID + "-trigger" }>
+	<ul
+		id={ cfg.ID + "-options" }
+		class="flex max-h-52 flex-col overflow-y-auto py-1"
+		role="listbox"
+		aria-labelledby={ cfg.ID + "-trigger" }
+		if cfg.Mode == ModeMultiple {
+			aria-multiselectable="true"
+		}
+	>
 		if len(state.Options) == 0 && (!cfg.isClientMode() || !cfg.EnableSearch) {
 			<li class="px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60">{ expressions.From(ctx).Combobox.EmptyText }</li>
 		}
