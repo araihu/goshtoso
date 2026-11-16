@@ -105,6 +105,7 @@ func TestOptionsList_AriaSelectedMatchesState(t *testing.T) {
 	require.NoError(t, optionsList(cfg, state).Render(context.Background(), &buf))
 	html := buf.String()
 
+	assert.Contains(t, html, `aria-multiselectable="true"`)
 	assert.Contains(t, html, `data-value="a" aria-selected="true"`)
 	assert.Contains(t, html, `data-value="b" aria-selected="false"`)
 	assert.Contains(t, html, `data-value="c" aria-selected="true"`)
@@ -259,6 +260,7 @@ func TestCombobox_RootDeclaresCloseOnSelectBehavior(t *testing.T) {
 		require.NoError(t, Combobox(cfg, State{Options: cfg.Source.Static}).Render(context.Background(), &buf))
 
 		assert.Contains(t, buf.String(), `data-combobox-close-on-select="true"`)
+		assert.NotContains(t, buf.String(), `aria-multiselectable`)
 	})
 
 	t.Run("multi-select stays open after selection", func(t *testing.T) {
