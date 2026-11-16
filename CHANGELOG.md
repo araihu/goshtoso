@@ -2,6 +2,16 @@
 
 All notable changes to Goshtoso are documented in this file.
 
+## [v0.6.4] - 2026-11-16
+
+### Fixed
+
+- Expose Combobox multiple-selection support to assistive technology.
+
+### Changed
+
+- Update Go dependencies and build container images.
+
 ## [v0.6.3] - 2026-11-15
 
 ### Fixed
