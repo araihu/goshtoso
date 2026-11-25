@@ -649,6 +649,7 @@ import "github.com/araihu/goshtoso/components/drawer"  // package drawer
 |-------|------|-------------|
 | `ID` | `string` | ID uniquely identifies the drawer. Required. Used for the Alpine state var name (`{ID}IsOpen`) and for the aria-labelledby target (`{ID}Title`). |
 | `Title` | `string` | Title is the drawer heading. Required for accessibility. |
+| `HeaderLeading` | `templ.Component` | HeaderLeading renders an optional control before the title, such as back navigation. |
 | `Side` | `Side` | Side the drawer slides in from. Default: SideRight. |
 | `Width` | `Width` | Width preset. Default: WidthMD. Applies to left and right drawers. |
 | `Height` | `Height` | Height preset. Default: HeightMD. Applies to top and bottom drawers. |

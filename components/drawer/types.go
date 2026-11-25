@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"unicode"
+
+	"github.com/a-h/templ"
 )
 
 // Side is the edge the drawer slides from.
@@ -51,6 +53,9 @@ type Config struct {
 
 	// Title is the drawer heading. Required for accessibility.
 	Title string
+
+	// HeaderLeading renders an optional control before the title, such as back navigation.
+	HeaderLeading templ.Component
 
 	// Side the drawer slides in from. Default: SideRight.
 	Side Side
