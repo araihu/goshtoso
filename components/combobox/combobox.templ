@@ -155,6 +155,9 @@ templ clientOptionLI(cfg Config, state State, opt Option) {
 		if cfg.Mode == ModeMultiple {
 			@optionCheckbox(state.isSelected(opt.Value))
 		}
+		if opt.Leading != nil {
+			<div class="shrink-0">@opt.Leading</div>
+		}
 		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.isSelected(opt.Value)) } { opt.LabelAttrs... }>{ opt.Label }</span>
 		if opt.Trailing != nil {
 			<span class="ml-auto shrink-0">@opt.Trailing</span>
@@ -186,6 +189,9 @@ templ serverOptionLI(cfg Config, state State, opt Option) {
 	>
 		if cfg.Mode == ModeMultiple {
 			@optionCheckbox(state.isSelected(opt.Value))
+		}
+		if opt.Leading != nil {
+			<div class="shrink-0">@opt.Leading</div>
 		}
 		<span data-combobox-option-label class={ "truncate " + optLabelClass(state.isSelected(opt.Value)) } { opt.LabelAttrs... }>{ opt.Label }</span>
 		if opt.Trailing != nil {
