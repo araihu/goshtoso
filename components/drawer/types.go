@@ -1,8 +1,11 @@
 package drawer
 
 import (
+	"fmt"
 	"strings"
 	"unicode"
+
+	"github.com/a-h/templ"
 )
 
 // Side is the edge the drawer slides from.
@@ -51,6 +54,9 @@ type Config struct {
 	// Title is the drawer heading. Required for accessibility.
 	Title string
 
+	// HeaderLeading renders an optional control before the title, such as back navigation.
+	HeaderLeading templ.Component
+
 	// Side the drawer slides in from. Default: SideRight.
 	Side Side
 
@@ -69,6 +75,11 @@ type Config struct {
 
 	// Persistent disables click-backdrop and Esc-to-close. Default: false.
 	Persistent bool
+
+	// NonModalMinWidth makes the open drawer nonmodal at this viewport width in CSS pixels.
+	// The application can reserve space beside the panel using its aria-modal state.
+	// Zero keeps the drawer modal at every width.
+	NonModalMinWidth int
 
 	// PanelClass allows extra CSS classes on the panel (not the overlay).
 	PanelClass string
@@ -229,4 +240,15 @@ func jsStringSingle(s string) string {
 		}
 	}
 	return b.String()
+}
+
+func (cfg Config) alpineState() string {
+	return fmt.Sprintf("goshtosoDrawer('%s', %d)", cfg.stateVar(), cfg.NonModalMinWidth)
+}
+
+func (cfg Config) modalOpen() string {
+	if cfg.NonModalMinWidth > 0 {
+		return cfg.stateVar() + " && !wide"
+	}
+	return cfg.stateVar()
 }

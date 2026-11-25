@@ -2,6 +2,7 @@ package drawerpage
 
 import (
 	"github.com/araihu/goshtoso/components/drawer"
+	"github.com/araihu/goshtoso/components/dropdown"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -15,7 +16,7 @@ templ drawerDemoContent() {
 		@demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Drawer",
-				Description: "Slide-over panels for detail views, configuration forms, and HTMX-driven workflows that need more room than a modal.",
+				Description: "Slide-over panels for detail views and configuration forms.",
 			},
 			drawerDefaultPreview(),
 			`@drawer.Drawer(drawer.Config{
@@ -29,6 +30,21 @@ templ drawerDemoContent() {
 		)
 
 		@demo.ExpressionOverridesNote("Drawer")
+
+		@demo.DemoSection(
+			demo.DemoSectionProps{
+				Title:       "Responsive Drawer",
+				Description: "Set NonModalMinWidth to keep the surrounding page interactive at wider viewport sizes.",
+			},
+			drawerResponsivePreview(),
+			`@drawer.Drawer(drawer.Config{
+    ID:               "responsiveDrawer",
+    Title:            "Deployment details",
+    NonModalMinWidth: 1100,
+}) {
+    <p>Ready for review</p>
+}`,
+		)
 
 		@demo.DemoSection(
 			demo.DemoSectionProps{
@@ -170,6 +186,33 @@ templ drawerDefaultPreview() {
 					<p class="font-medium">Current status</p>
 					<p class="mt-1 text-on-surface-muted dark:text-on-surface-dark-muted">Ready for review</p>
 				</div>
+			</div>
+		}
+	</div>
+}
+
+templ drawerResponsivePreview() {
+	<div id="drawer-responsive" class="w-full max-w-2xl mx-auto">
+		<button
+			type="button"
+			x-data
+			x-on:click="$dispatch('drawer:open', { id: 'responsiveDrawer' })"
+			class="inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt"
+		>
+			Open responsive drawer
+		</button>
+		@drawer.Drawer(drawer.Config{
+			ID:               "responsiveDrawer",
+			Title:            "Deployment details",
+			NonModalMinWidth: 1100,
+		}) {
+			<div class="space-y-4 p-4">
+				<p>Ready for review</p>
+				@dropdown.Dropdown(dropdown.Config{
+					ID:       "deploymentActions",
+					Label:    "Deployment actions",
+					Sections: []dropdown.Section{{Items: []dropdown.Item{{Label: "Review deployment", Href: "#drawer-responsive"}}}},
+				})
 			</div>
 		}
 	</div>

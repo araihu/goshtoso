@@ -16,6 +16,7 @@ func TestAuthoredComponentRuntimeSourcesParse(t *testing.T) {
 		"combobox-client.js": "assets/js/src/components/combobox-client.js",
 		"code-block.js":      "assets/js/src/components/code-block.js",
 		"carousel.js":        "assets/js/src/components/carousel.js",
+		"drawer.js":          "assets/js/src/components/drawer.js",
 		"dropdown.js":        "assets/js/src/components/dropdown.js",
 		"navigation.js":      "assets/js/src/components/navigation.js",
 		"popover.js":         "assets/js/src/components/popover.js",

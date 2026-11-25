@@ -31,6 +31,9 @@ type Option struct {
 	Disabled bool
 	// LabelAttrs adds non-conflicting attributes to the option label, such as typography styles.
 	LabelAttrs templ.Attributes
+	// Leading renders non-interactive content before the label and after any checkbox.
+	// Like Trailing, it does not contribute to the trigger label or submitted value.
+	Leading templ.Component
 	// Trailing renders non-interactive supporting content at the end of the option.
 	// It is excluded from the selected trigger label and submitted value.
 	Trailing templ.Component

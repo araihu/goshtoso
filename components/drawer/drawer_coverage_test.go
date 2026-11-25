@@ -123,7 +123,7 @@ func TestCoverageRenderPersistentDrawerWithCustomBody(t *testing.T) {
 	})
 
 	for _, want := range []string{
-		`x-data="{settingsDrawerIsOpen: false}"`,
+		`x-data="goshtosoDrawer(&#39;settingsDrawerIsOpen&#39;, 0)"`,
 		`aria-labelledby="settings-drawerTitle"`,
 		`id="settings-panel-body"`,
 		`role="dialog"`,

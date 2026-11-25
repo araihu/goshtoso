@@ -574,6 +574,7 @@ import "github.com/araihu/goshtoso/components/combobox"  // package combobox
 | `Label` | `string` |  |
 | `Disabled` | `bool` |  |
 | `LabelAttrs` | `templ.Attributes` | LabelAttrs adds non-conflicting attributes to the option label, such as typography styles. |
+| `Leading` | `templ.Component` | Leading renders non-interactive content before the label and after any checkbox. Like Trailing, it does not contribute to the trigger label or submitted value. |
 | `Trailing` | `templ.Component` | Trailing renders non-interactive supporting content at the end of the option. It is excluded from the selected trigger label and submitted value. |
 
 **Source**
@@ -649,11 +650,13 @@ import "github.com/araihu/goshtoso/components/drawer"  // package drawer
 |-------|------|-------------|
 | `ID` | `string` | ID uniquely identifies the drawer. Required. Used for the Alpine state var name (`{ID}IsOpen`) and for the aria-labelledby target (`{ID}Title`). |
 | `Title` | `string` | Title is the drawer heading. Required for accessibility. |
+| `HeaderLeading` | `templ.Component` | HeaderLeading renders an optional control before the title, such as back navigation. |
 | `Side` | `Side` | Side the drawer slides in from. Default: SideRight. |
 | `Width` | `Width` | Width preset. Default: WidthMD. Applies to left and right drawers. |
 | `Height` | `Height` | Height preset. Default: HeightMD. Applies to top and bottom drawers. |
 | `BodyID` | `string` | BodyID is the id attribute of the inner content container. Exposed so HTMX targets can swap content directly: hx-target="#{BodyID}". Default: "{ID}-body". |
 | `Persistent` | `bool` | Persistent disables click-backdrop and Esc-to-close. Default: false. |
+| `NonModalMinWidth` | `int` | NonModalMinWidth makes the open drawer nonmodal at this viewport width in CSS pixels. The application can reserve space beside the panel using its aria-modal state. Zero keeps the drawer modal at every width. |
 | `PanelClass` | `string` | PanelClass allows extra CSS classes on the panel (not the overlay). |
 
 ## dropdown

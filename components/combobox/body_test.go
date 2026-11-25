@@ -436,10 +436,10 @@ func TestBody_ClientMode_ClearAllAlwaysRendered(t *testing.T) {
 	})
 }
 
-func TestOptionTrailingIsSeparateFromSelection(t *testing.T) {
+func TestOptionSlotsAreSeparateFromSelection(t *testing.T) {
 	for _, client := range []bool{true, false} {
 		t.Run(map[bool]string{true: "client", false: "server"}[client], func(t *testing.T) {
-			option := Option{Value: "warning", Label: "Warning", Trailing: templ.Raw(`<span id="warning-count">3</span>`)}
+			option := Option{Value: "warning", Label: "Warning", Leading: templ.Raw(`<span id="warning-icon"></span>`), Trailing: templ.Raw(`<span id="warning-count">3</span>`)}
 			cfg := Config{ID: "severity", Name: "severity", Mode: ModeMultiple, Source: Source{Static: []Option{option}}, Selected: []string{"warning"}}
 			state := cfg.InitialState()
 			var buf bytes.Buffer
@@ -450,6 +450,12 @@ func TestOptionTrailingIsSeparateFromSelection(t *testing.T) {
 			}
 			assert.Contains(t, buf.String(), `id="warning-count">3</span>`)
 			assert.Contains(t, buf.String(), `>Warning</span>`)
+			html := buf.String()
+			checkbox := strings.Index(html, `type="checkbox"`)
+			icon := strings.Index(html, `id="warning-icon"`)
+			label := strings.Index(html, `data-combobox-option-label`)
+			count := strings.Index(html, `id="warning-count"`)
+			assert.True(t, checkbox >= 0 && checkbox < icon && icon < label && label < count, "option content order")
 			assert.Equal(t, "Warning", triggerLabelText(cfg, state))
 		})
 	}

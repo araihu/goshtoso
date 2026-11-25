@@ -49,10 +49,25 @@ func TestDrawerDemoPage(t *testing.T) {
 	}))
 	require.NoError(t, dialog.GetByText("Deployment target").WaitFor())
 
-	require.NoError(t, dialog.GetByRole("button", playwright.LocatorGetByRoleOptions{
-		Name: "Close",
-	}).Click())
-	require.NoError(t, dialog.WaitFor(playwright.LocatorWaitForOptions{
-		State: playwright.WaitForSelectorStateHidden,
-	}))
+	closeDrawer := func(dialog playwright.Locator) {
+		require.NoError(t, dialog.GetByRole("button", playwright.LocatorGetByRoleOptions{Name: "Close"}).Click())
+		require.NoError(t, dialog.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	}
+	closeDrawer(dialog)
+
+	require.NoError(t, page.SetViewportSize(1280, 900))
+	require.NoError(t, page.GetByRole("button", playwright.PageGetByRoleOptions{Name: "Open responsive drawer"}).Click())
+	dialog = page.GetByRole("dialog", playwright.PageGetByRoleOptions{Name: "Deployment details"})
+	require.NoError(t, playwright.NewPlaywrightAssertions().Locator(dialog).ToHaveAttribute("aria-modal", "false"))
+	require.NoError(t, page.SetViewportSize(390, 900))
+	require.NoError(t, playwright.NewPlaywrightAssertions().Locator(dialog).ToHaveAttribute("aria-modal", "true"))
+	control := dialog.GetByRole("button", playwright.LocatorGetByRoleOptions{Name: "Deployment actions"})
+	require.NoError(t, control.Press("Enter"))
+	item := dialog.GetByRole("menuitem", playwright.LocatorGetByRoleOptions{Name: "Review deployment"})
+	require.NoError(t, item.WaitFor())
+	require.NoError(t, item.Press("Escape"))
+	require.NoError(t, item.WaitFor(playwright.LocatorWaitForOptions{State: playwright.WaitForSelectorStateHidden}))
+	require.NoError(t, playwright.NewPlaywrightAssertions().Locator(dialog).ToBeVisible())
+
+	closeDrawer(dialog)
 }
