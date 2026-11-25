@@ -69,7 +69,7 @@ templ drawerTemplate(cfg Config) {
 			x-transition:leave-end={ cfg.enterStart() }
 			x-trap.noscroll={ cfg.modalOpen() }
 			if !cfg.Persistent {
-				x-on:keydown.esc.window={ fmt.Sprintf("if (!$event.defaultPrevented && !($el.contains($event.target) && $event.target.closest?.('[data-popover-panel], [data-popover-trigger] [aria-expanded=true]'))) { %s }", closeReq) }
+				x-on:keydown.esc.window={ fmt.Sprintf("if (!($el.contains($event.target) && $event.target.closest?.('[data-popover-panel], [data-popover-trigger] [aria-expanded=true]'))) { %s }", closeReq) }
 			}
 			class={ cfg.panelClasses() }
 			role="dialog"

@@ -283,9 +283,9 @@ func drawerTemplate(cfg Config) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var16 string
-				templ_7745c5c3_Var16, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("if (!$event.defaultPrevented && !($el.contains($event.target) && $event.target.closest?.('[data-popover-panel], [data-popover-trigger] [aria-expanded=true]'))) { %s }", closeReq)).Resolve(ctx)
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templruntime.NewAttributeExpression(fmt.Sprintf("if (!($el.contains($event.target) && $event.target.closest?.('[data-popover-panel], [data-popover-trigger] [aria-expanded=true]'))) { %s }", closeReq)).Resolve(ctx)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/drawer/drawer.templ`, Line: 72, Col: 221}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/drawer/drawer.templ`, Line: 72, Col: 193}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var16)
 				if templ_7745c5c3_Err != nil {
