@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/araihu/goshtoso/components/drawer"
+	"github.com/araihu/goshtoso/components/dropdown"
 	"github.com/araihu/goshtoso/site/internal/pages/demo"
 )
 
@@ -64,7 +65,7 @@ func drawerDemoContent() templ.Component {
 		templ_7745c5c3_Err = demo.ComponentDemo(
 			demo.ComponentDemoProps{
 				Title:       "Drawer",
-				Description: "Slide-over panels for detail views, configuration forms, and HTMX-driven workflows that need more room than a modal.",
+				Description: "Slide-over panels for detail views and configuration forms. Set NonModalMinWidth to keep the surrounding page interactive at wider viewport sizes.",
 			},
 			drawerDefaultPreview(),
 			`@drawer.Drawer(drawer.Config{
@@ -72,6 +73,7 @@ func drawerDemoContent() templ.Component {
     Title: "Project details",
     Side:  drawer.SideRight,
     Width: drawer.WidthLG,
+    NonModalMinWidth: 1100,
 }) {
     <div id="projectDetails-body">...</div>
 }`,
@@ -284,22 +286,35 @@ func drawerDefaultPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"space-y-4 p-4\"><div><p class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Deployment target</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Production cluster, rolling update, two approvals required.</p></div><div class=\"rounded-radius border border-outline p-3 text-sm dark:border-outline-dark\"><p class=\"font-medium\">Current status</p><p class=\"mt-1 text-on-surface-muted dark:text-on-surface-dark-muted\">Ready for review</p></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"space-y-4 p-4\"><div><p class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Deployment target</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Production cluster, rolling update, two approvals required.</p></div><div class=\"rounded-radius border border-outline p-3 text-sm dark:border-outline-dark\"><p class=\"font-medium\">Current status</p><p class=\"mt-1 text-on-surface-muted dark:text-on-surface-dark-muted\">Ready for review</p></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = dropdown.Dropdown(dropdown.Config{
+				ID:       "projectActions",
+				Label:    "Project actions",
+				Sections: []dropdown.Section{{Items: []dropdown.Item{{Label: "Review deployment", Href: "#drawer-default"}}}},
+			}).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
 		templ_7745c5c3_Err = drawer.Drawer(drawer.Config{
-			ID:    "projectDetails",
-			Title: "Project details",
-			Side:  drawer.SideRight,
-			Width: drawer.WidthLG,
+			ID:               "projectDetails",
+			Title:            "Project details",
+			Side:             drawer.SideRight,
+			Width:            drawer.WidthLG,
+			NonModalMinWidth: 1100,
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -324,7 +339,7 @@ func drawerLeftPreview() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div id=\"drawer-left\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'filtersDrawer' })\" class=\"inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Open filters</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div id=\"drawer-left\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'filtersDrawer' })\" class=\"inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Open filters</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -340,7 +355,7 @@ func drawerLeftPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"space-y-3 p-4 text-sm\"><label class=\"flex items-center gap-2\"><input type=\"checkbox\" class=\"size-4 rounded border-outline text-primary dark:border-outline-dark\"> <span>Only active records</span></label> <label class=\"flex items-center gap-2\"><input type=\"checkbox\" class=\"size-4 rounded border-outline text-primary dark:border-outline-dark\"> <span>Needs attention</span></label></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"space-y-3 p-4 text-sm\"><label class=\"flex items-center gap-2\"><input type=\"checkbox\" class=\"size-4 rounded border-outline text-primary dark:border-outline-dark\"> <span>Only active records</span></label> <label class=\"flex items-center gap-2\"><input type=\"checkbox\" class=\"size-4 rounded border-outline text-primary dark:border-outline-dark\"> <span>Needs attention</span></label></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -355,7 +370,7 @@ func drawerLeftPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -380,7 +395,7 @@ func drawerPersistentPreview() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"drawer-persistent\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'editProfile' })\" class=\"inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Open persistent drawer</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div id=\"drawer-persistent\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'editProfile' })\" class=\"inline-flex items-center justify-center rounded-radius border border-outline px-4 py-2 text-sm font-medium text-on-surface hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:text-on-surface-dark dark:hover:bg-surface-dark-alt\">Open persistent drawer</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -396,7 +411,7 @@ func drawerPersistentPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<form class=\"space-y-4 p-4\"><div><label for=\"drawer-name\" class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Display name</label> <input id=\"drawer-name\" name=\"name\" value=\"Goshtoso\" class=\"mt-1 w-full rounded-radius border border-outline bg-surface px-3 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Backdrop clicks and Escape are ignored while this form is open.</p></form>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<form class=\"space-y-4 p-4\"><div><label for=\"drawer-name\" class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Display name</label> <input id=\"drawer-name\" name=\"name\" value=\"Goshtoso\" class=\"mt-1 w-full rounded-radius border border-outline bg-surface px-3 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark\"></div><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Backdrop clicks and Escape are ignored while this form is open.</p></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -410,7 +425,7 @@ func drawerPersistentPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -435,7 +450,7 @@ func drawerHTMXPreview() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div id=\"drawer-htmx\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'orderDrawer' })\" class=\"inline-flex items-center justify-center rounded-radius bg-primary px-4 py-2 text-sm font-medium text-on-primary hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary-dark dark:text-on-primary-dark dark:hover:bg-primary-dark/90\">Open order drawer</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"drawer-htmx\" class=\"w-full max-w-2xl mx-auto\"><button type=\"button\" x-data x-on:click=\"$dispatch('drawer:open', { id: 'orderDrawer' })\" class=\"inline-flex items-center justify-center rounded-radius bg-primary px-4 py-2 text-sm font-medium text-on-primary hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-primary-dark dark:text-on-primary-dark dark:hover:bg-primary-dark/90\">Open order drawer</button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -451,7 +466,7 @@ func drawerHTMXPreview() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"orderDrawerBody\" class=\"space-y-4 p-4\"><div><p class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Order #42</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">This body has a stable id so an HTMX response can replace only the drawer content.</p></div><div class=\"rounded-radius border border-outline p-3 text-sm dark:border-outline-dark\"><p class=\"font-medium\">Swap target</p><p class=\"mt-1 font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">#orderDrawerBody</p></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div id=\"orderDrawerBody\" class=\"space-y-4 p-4\"><div><p class=\"text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Order #42</p><p class=\"mt-1 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">This body has a stable id so an HTMX response can replace only the drawer content.</p></div><div class=\"rounded-radius border border-outline p-3 text-sm dark:border-outline-dark\"><p class=\"font-medium\">Swap target</p><p class=\"mt-1 font-mono text-xs text-on-surface-muted dark:text-on-surface-dark-muted\">#orderDrawerBody</p></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -466,7 +481,7 @@ func drawerHTMXPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

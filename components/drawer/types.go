@@ -243,17 +243,7 @@ func jsStringSingle(s string) string {
 }
 
 func (cfg Config) alpineState() string {
-	state := cfg.stateVar()
-	if cfg.NonModalMinWidth <= 0 {
-		return fmt.Sprintf("{%s: false}", state)
-	}
-	return fmt.Sprintf(`{%s:false, wide:false, init(){
-		const query = window.matchMedia('(min-width: %dpx)');
-		const update = () => { this.wide = query.matches };
-		update();
-		query.addEventListener('change', update);
-		this.destroy = () => query.removeEventListener('change', update)
-	}}`, state, cfg.NonModalMinWidth)
+	return fmt.Sprintf("goshtosoDrawer('%s', %d)", cfg.stateVar(), cfg.NonModalMinWidth)
 }
 
 func (cfg Config) modalOpen() string {

@@ -17,7 +17,7 @@ type classification struct {
 var componentJavaScript = map[string]string{
 	"action-group.js": "actiongroup", "carousel.js": "carousel", "code-block.js": "codeblock", "combobox-client.js": "combobox",
 	"combobox.js": "combobox", "dropdown.js": "dropdown", "palette.js": "palette",
-	"search.js": "search", "select.js": "select", "popover.js": "popover", "structured-input.js": "structuredinput",
+	"search.js": "search", "select.js": "select", "popover.js": "popover", "drawer.js": "drawer", "structured-input.js": "structuredinput",
 	"table.js": "table", "tabs.js": "tabs", "tooltip.js": "tooltip",
 }
 
