@@ -1,6 +1,7 @@
 package drawer
 
 import (
+	"fmt"
 	"strings"
 	"unicode"
 )
@@ -69,6 +70,11 @@ type Config struct {
 
 	// Persistent disables click-backdrop and Esc-to-close. Default: false.
 	Persistent bool
+
+	// NonModalMinWidth makes the open drawer nonmodal at this viewport width in CSS pixels.
+	// The application can reserve space beside the panel using its aria-modal state.
+	// Zero keeps the drawer modal at every width.
+	NonModalMinWidth int
 
 	// PanelClass allows extra CSS classes on the panel (not the overlay).
 	PanelClass string
@@ -229,4 +235,25 @@ func jsStringSingle(s string) string {
 		}
 	}
 	return b.String()
+}
+
+func (cfg Config) alpineState() string {
+	state := cfg.stateVar()
+	if cfg.NonModalMinWidth <= 0 {
+		return fmt.Sprintf("{%s: false}", state)
+	}
+	return fmt.Sprintf(`{%s:false, wide:false, init(){
+		const query = window.matchMedia('(min-width: %dpx)');
+		const update = () => { this.wide = query.matches };
+		update();
+		query.addEventListener('change', update);
+		this.destroy = () => query.removeEventListener('change', update)
+	}}`, state, cfg.NonModalMinWidth)
+}
+
+func (cfg Config) modalOpen() string {
+	if cfg.NonModalMinWidth > 0 {
+		return cfg.stateVar() + " && !wide"
+	}
+	return cfg.stateVar()
 }

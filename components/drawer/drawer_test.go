@@ -46,3 +46,12 @@ func TestDrawerRenderDoesNotEmitInvalidStateIdentifier(t *testing.T) {
 		t.Fatalf("rendered safe Alpine identifier missing:\n%s", html)
 	}
 }
+
+func TestResponsiveDrawerDisablesModalInteractionsTogether(t *testing.T) {
+	html := renderDrawer(t, Config{ID: "settings", NonModalMinWidth: 1100})
+	for _, attr := range []string{"(min-width: 1100px)", `x-trap.noscroll="settingsIsOpen &amp;&amp; !wide"`, `x-show="settingsIsOpen &amp;&amp; !wide"`, "x-bind:aria-modal"} {
+		if !strings.Contains(html, attr) {
+			t.Errorf("missing %q", attr)
+		}
+	}
+}

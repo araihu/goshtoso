@@ -34,7 +34,7 @@ templ drawerTemplate(cfg Config) {
 	{{ eventID := cfg.eventIDLiteral() }}
 	{{ closeReq := fmt.Sprintf("$dispatch('drawer:close-request', {id: '%s'})", eventID) }}
 	<div
-		x-data={ fmt.Sprintf("{%s: false}", state) }
+		x-data={ cfg.alpineState() }
 		x-on:drawer:open.window={ fmt.Sprintf("if ($event.detail && $event.detail.id === '%s') { %s = true }", eventID, state) }
 		x-on:drawer:close.window={ fmt.Sprintf("if ($event.detail && $event.detail.id === '%s') { %s = false }", eventID, state) }
 		x-on:drawer:close-request.window={ fmt.Sprintf("if ($event.detail && $event.detail.id === '%s' && !$event.defaultPrevented) { %s = false }", eventID, state) }
@@ -42,7 +42,7 @@ templ drawerTemplate(cfg Config) {
 		<!-- Overlay -->
 		<div
 			x-cloak
-			x-show={ state }
+			x-show={ cfg.modalOpen() }
 			x-transition:enter="transition-opacity duration-200 motion-reduce:transition-none"
 			x-transition:enter-start="opacity-0"
 			x-transition:enter-end="opacity-100"
@@ -67,13 +67,17 @@ templ drawerTemplate(cfg Config) {
 			x-transition:leave="transition-transform ease-in duration-150 motion-reduce:transition-none"
 			x-transition:leave-start={ cfg.enterEnd() }
 			x-transition:leave-end={ cfg.enterStart() }
-			x-trap.noscroll={ state }
+			x-trap.noscroll={ cfg.modalOpen() }
 			if !cfg.Persistent {
 				x-on:keydown.esc.window={ closeReq }
 			}
 			class={ cfg.panelClasses() }
 			role="dialog"
-			aria-modal="true"
+			if cfg.NonModalMinWidth > 0 {
+                x-bind:aria-modal="wide ? 'false' : 'true'"
+            } else {
+                aria-modal="true"
+            }
 			aria-labelledby={ titleID }
 		>
 			<!-- Header -->

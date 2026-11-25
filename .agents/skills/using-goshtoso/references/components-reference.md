@@ -654,6 +654,7 @@ import "github.com/araihu/goshtoso/components/drawer"  // package drawer
 | `Height` | `Height` | Height preset. Default: HeightMD. Applies to top and bottom drawers. |
 | `BodyID` | `string` | BodyID is the id attribute of the inner content container. Exposed so HTMX targets can swap content directly: hx-target="#{BodyID}". Default: "{ID}-body". |
 | `Persistent` | `bool` | Persistent disables click-backdrop and Esc-to-close. Default: false. |
+| `NonModalMinWidth` | `int` | NonModalMinWidth makes the open drawer nonmodal at this viewport width in CSS pixels. The application can reserve space beside the panel using its aria-modal state. Zero keeps the drawer modal at every width. |
 | `PanelClass` | `string` | PanelClass allows extra CSS classes on the panel (not the overlay). |
 
 ## dropdown
